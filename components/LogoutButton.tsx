@@ -1,5 +1,4 @@
 "use client";
 export default function LogoutButton(){
-  async function out(){ await fetch("/api/auth/logout",{method:"POST"}); location.href="/login"; }
-  return <button className="ghost" onClick={out}>Đăng xuất</button>
+  return <form action="/api/auth/logout" method="post"><button className="ghost" style={{width:"100%"}}>Đăng xuất</button></form>
 }

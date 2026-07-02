@@ -1,24 +1,28 @@
 {
-  "name": "msgiang-english-web",
+  "name": "msgiang-english-official-backend-v9",
   "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "seed:admin": "node scripts/seed-admin.mjs"
+    "seed:admin": "node --env-file=.env.local scripts/seed-admin.mjs",
+    "check": "next build"
   },
   "dependencies": {
-    "@supabase/supabase-js": "latest",
-    "bcryptjs": "latest",
     "next": "latest",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "@supabase/supabase-js": "latest",
+    "bcryptjs": "latest",
+    "papaparse": "latest",
+    "xlsx": "latest",
+    "mammoth": "^1.9.1"
   },
   "devDependencies": {
+    "typescript": "latest",
     "@types/node": "latest",
     "@types/react": "latest",
-    "@types/react-dom": "latest",
-    "typescript": "latest"
+    "@types/react-dom": "latest"
   }
 }

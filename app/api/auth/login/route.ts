@@ -1,19 +1,37 @@
-import { NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
-import crypto from "crypto";
+import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
+import { verifyPassword } from "@/lib/password";
+import { createSessionResponse, sanitizeUser } from "@/lib/auth";
+import { getSettings } from "@/lib/settings";
 
-export async function POST(req:Request){
-  const {phone,password}=await req.json();
-  const supabase=supabaseAdmin();
-  const {data:u}=await supabase.from("app_users").select("*").eq("phone",String(phone).trim()).single();
-  if(!u || u.status!=="active") return NextResponse.json({error:"Sai thông tin đăng nhập"},{status:401});
-  const ok=await bcrypt.compare(String(password||""),u.password_hash);
-  if(!ok) return NextResponse.json({error:"Sai thông tin đăng nhập"},{status:401});
-  const token=crypto.randomBytes(32).toString("hex");
-  const expires=new Date(Date.now()+14*864e5);
-  await supabase.from("app_sessions").insert({user_id:u.id,token,expires_at:expires.toISOString()});
-  const res=NextResponse.json({ok:true,mustChange:u.must_change_password});
-  res.cookies.set("msg_session",token,{httpOnly:true,sameSite:"lax",path:"/",expires});
-  return res;
+function normalizePhone(v: string) {
+  return String(v || "").replace(/\s+/g, "").replace(/^\+84/, "0");
+}
+
+export async function POST(req: NextRequest) {
+  const body = await req.json().catch(() => ({}));
+  const input = String(body.phone || body.username || "").trim();
+  const password = String(body.password || "");
+
+  if (!input || !password) {
+    return NextResponse.json({ error: "Thiếu tài khoản hoặc mật khẩu" }, { status: 400 });
+  }
+
+  const supabase = supabaseAdmin();
+  const { data: users, error } = await supabase.from("official_users").select("*").eq("status", "active");
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  const normalized = normalizePhone(input);
+  const user = (users || []).find((u: any) => u.phone === input || normalizePhone(u.phone) === normalized);
+  if (!user) return NextResponse.json({ error: "Sai thông tin đăng nhập" }, { status: 401 });
+
+  const ok = await verifyPassword(password, user.password_hash);
+  if (!ok) return NextResponse.json({ error: "Sai thông tin đăng nhập" }, { status: 401 });
+
+  const settings = await getSettings();
+  return createSessionResponse(user.id, {
+    ok: true,
+    user: sanitizeUser(user),
+    settings,
+  });
 }
