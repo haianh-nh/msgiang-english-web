@@ -257,3 +257,16 @@ Không cần chạy SQL mới nếu V8 đã chạy đủ tới migration 009.
 - Form đăng nhập không còn tự điền `admin` / `123456`.
 - Tắt đăng nhập nhanh ở production.
 - Thêm khối đổi mật khẩu tài khoản trong Cài đặt.
+
+
+## V9 Login Refresh Fix
+
+- Sửa hiện tượng login xong đôi khi hiện dữ liệu demo cũ như 196 học sinh.
+- Login sẽ tải dữ liệu thật trước khi render.
+
+
+## V9 Class Delete Cleanup Fix
+
+- Xóa lớp sẽ dọn học phí, lịch, điểm danh, vắng/học bù và đánh giá liên quan.
+- Frontend gọi API xóa server thật trước, sau đó refresh state từ Supabase.
+- Không cần chạy SQL mới.

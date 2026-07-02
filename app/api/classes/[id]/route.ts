@@ -56,7 +56,63 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   if (!canManage(user)) return NextResponse.json({ error: "Không có quyền xóa lớp" }, { status: 403 });
 
   const { id } = await params;
-  const { error } = await supabaseAdmin().from("official_classes").delete().eq("id", id);
+  const supabase = supabaseAdmin();
+
+  const { data: classRow, error: classError } = await supabase
+    .from("official_classes")
+    .select("id, name")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (classError) return NextResponse.json({ error: classError.message }, { status: 500 });
+  if (!classRow) return NextResponse.json({ error: "Không tìm thấy lớp" }, { status: 404 });
+
+  const { data: students, error: studentsError } = await supabase
+    .from("official_students")
+    .select("id")
+    .eq("class_id", id);
+
+  if (studentsError) return NextResponse.json({ error: studentsError.message }, { status: 500 });
+
+  const studentIds = (students || []).map((s: any) => String(s.id)).filter(Boolean);
+  const cleanupErrors: string[] = [];
+
+  async function cleanup(label: string, query: any) {
+    const { error } = await query;
+    if (error) cleanupErrors.push(`${label}: ${error.message}`);
+  }
+
+  await cleanup("attendance_sessions", supabase.from("official_attendance_sessions").delete().eq("class_id", id));
+  await cleanup("session_cancellations", supabase.from("official_session_cancellations").delete().eq("class_id", id));
+  await cleanup("class_makeup_sessions", supabase.from("official_class_makeup_sessions").delete().eq("class_id", id));
+  await cleanup("makeup_plans_source", supabase.from("official_makeup_plans").delete().eq("source_class_id", id));
+  await cleanup("makeup_plans_target", supabase.from("official_makeup_plans").delete().eq("target_class_id", id));
+  await cleanup("absence_records_class", supabase.from("official_absence_records").delete().eq("source_class_id", id));
+  await cleanup("evaluations_class", supabase.from("official_evaluations").delete().eq("class_id", id));
+
+  if (studentIds.length) {
+    await cleanup("tuition_status_students", supabase.from("official_tuition_status").delete().in("student_id", studentIds));
+    await cleanup("attendance_rows_students", supabase.from("official_attendance_rows").delete().in("student_id", studentIds));
+    await cleanup("absence_records_students", supabase.from("official_absence_records").delete().in("student_id", studentIds));
+    await cleanup("makeup_plans_students", supabase.from("official_makeup_plans").delete().in("student_id", studentIds));
+    await cleanup("evaluations_students", supabase.from("official_evaluations").delete().in("student_id", studentIds));
+  }
+
+  await cleanup("class_schedules", supabase.from("official_class_schedules").delete().eq("class_id", id));
+  await cleanup("students", supabase.from("official_students").delete().eq("class_id", id));
+
+  const { error } = await supabase.from("official_classes").delete().eq("id", id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({ ok: true });
+
+  await supabase
+    .from("official_v48_state")
+    .delete()
+    .neq("user_id", "00000000-0000-0000-0000-000000000000");
+
+  if (cleanupErrors.length) {
+    return NextResponse.json({ ok: true, warning: "Đã xóa lớp nhưng có một số mục phụ cần kiểm tra", cleanupErrors });
+  }
+
+  return NextResponse.json({ ok: true, deletedClassId: id, deletedStudentIds: studentIds });
 }
+
