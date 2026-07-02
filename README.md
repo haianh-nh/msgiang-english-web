@@ -250,3 +250,10 @@ POST /api/maintenance/clear-expired-sessions
 ```
 
 Không cần chạy SQL mới nếu V8 đã chạy đủ tới migration 009.
+
+
+## V9 Security Login Fix
+
+- Form đăng nhập không còn tự điền `admin` / `123456`.
+- Tắt đăng nhập nhanh ở production.
+- Thêm khối đổi mật khẩu tài khoản trong Cài đặt.
