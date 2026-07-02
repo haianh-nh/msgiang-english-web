@@ -585,6 +585,7 @@
     const root = document.getElementById('root');
     const modalBackdrop = document.getElementById('modalBackdrop');
     let officialSaveTimer=null;
+    let suppressLocalSave=false;
     normalizeV9Data();
     function mapBackendUser(u){
       if(!u) return null;
@@ -613,13 +614,15 @@
         applyOfficialSettings(data.settings);
         currentUser=mapBackendUser(data.user);
         if(currentUser){
-          await refreshAllOfficialDataForCurrentUser();
+          clearVolatileOfficialState();
+          await refreshAllOfficialDataForCurrentUser({criticalOnly:true});
         }
       }catch(e){
         console.warn('Official bootstrap failed',e);
         currentUser=null;
       }
       render();
+      if(currentUser) refreshOfficialDataInBackground();
     }
     function queueOfficialSave(){
       if(!currentUser) return;
@@ -640,60 +643,100 @@
     }
     
     
-    async function refreshAllOfficialDataForCurrentUser(){
-      if(!currentUser) return;
-      try{
-        const cls=await officialFetch('/api/classes');
-        db.classes=cls.classes||[];
-        if(cls.teachers?.length) db.teachers=cls.teachers;
-      }catch(e){console.warn('Class refresh after login failed',e)}
-      await refreshOfficialTeachers();
-      await refreshOfficialScheduleState();
-      await refreshOfficialAttendanceState();
-      await refreshOfficialTuitionState();
-      await refreshOfficialLibrary();
-      if(typeof refreshOfficialEvaluations==='function') await refreshOfficialEvaluations();
+    
+    function clearVolatileOfficialState(){
+      db.classes=[];
+      db.classCancellations={};
+      db.classMakeupSessions=[];
+      db.makeupPlans=[];
+      db.attendanceSessions={};
+      db.absenceRecords=[];
+      if(currentUser && (currentUser.roles||[]).some(r=>r==='admin'||r==='manager')){
+        db.tuitionRollup={};
+        db.payments={};
+        db.tuitionMessages={};
+      }
     }
 
-    async function refreshOfficialClasses(){
+    async function runRefreshWithoutRepeatedSaves(fn){
+      const previous=suppressLocalSave;
+      suppressLocalSave=true;
+      try{return await fn();}
+      finally{suppressLocalSave=previous;}
+    }
+
+    async function refreshAllOfficialDataForCurrentUser(options={}){
+      if(!currentUser) return;
+      const criticalOnly=!!options.criticalOnly;
+      const skipClasses=!!options.skipClasses;
+
+      await runRefreshWithoutRepeatedSaves(async()=>{
+        if(!skipClasses){
+          await refreshOfficialClasses({skipSave:true});
+        }
+        if(criticalOnly) return;
+
+        const jobs=[
+          refreshOfficialTeachers({skipSave:true}),
+          refreshOfficialScheduleState({skipSave:true}),
+          refreshOfficialAttendanceState({skipSave:true}),
+          refreshOfficialTuitionState({skipSave:true}),
+          refreshOfficialLibrary({skipSave:true})
+        ];
+        if(typeof refreshOfficialEvaluations==='function') jobs.push(refreshOfficialEvaluations({skipSave:true}));
+        await Promise.allSettled(jobs);
+      });
+
+      saveLocalOnly();
+    }
+
+    async function refreshOfficialDataInBackground(){
+      if(!currentUser) return;
+      try{
+        await refreshAllOfficialDataForCurrentUser({skipClasses:true});
+        render();
+      }catch(e){console.warn('Background refresh failed',e)}
+    }
+
+    async function refreshOfficialClasses(options={}){
       if(!currentUser) return;
       try{
         const data=await officialFetch('/api/classes');
         db.classes=data.classes||[];
         if(Array.isArray(data.teachers) && data.teachers.length) db.teachers=data.teachers;
-        save();
+        if(!options.skipSave) save();
       }catch(e){console.warn('Không tải được lớp thật',e)}
     }
-    async function refreshOfficialTeachers(){
+    async function refreshOfficialTeachers(options={}){
       if(!currentUser || !(currentUser.roles||[]).some(r=>r==='admin'||r==='manager')) return;
       try{
         const data=await officialFetch('/api/teachers');
         db.teachers=data.teachers||[];
-        save();
+        if(!options.skipSave) save();
       }catch(e){console.warn('Không tải được giáo viên thật',e)}
     }
-    
-    async function refreshOfficialScheduleState(){
+
+    async function refreshOfficialScheduleState(options={}){
       if(!currentUser) return;
       try{
         const data=await officialFetch('/api/schedule/state');
         db.classCancellations=data.classCancellations||{};
         db.classMakeupSessions=data.classMakeupSessions||[];
         db.makeupPlans=data.makeupPlans||[];
-        save();
+        if(!options.skipSave) save();
       }catch(e){console.warn('Không tải được dữ liệu lịch/học bù',e)}
     }
-    async function refreshOfficialAttendanceState(){
+    async function refreshOfficialAttendanceState(options={}){
       if(!currentUser) return;
       try{
         const data=await officialFetch('/api/attendance/state');
         db.attendanceSessions=data.attendanceSessions||{};
         db.absenceRecords=data.absenceRecords||[];
-        save();
+        if(!options.skipSave) save();
       }catch(e){console.warn('Không tải được dữ liệu điểm danh',e)}
     }
 
-    
+
     function tuitionMonthKey(){
       db.settings ||= {};
       db.settings.tuitionFilter ||= {};
@@ -731,7 +774,7 @@
       await refreshOfficialTuitionState();
       render();
     }
-    async function refreshOfficialTuitionState(){
+    async function refreshOfficialTuitionState(options={}){
       if(!currentUser || !(currentUser.roles||[]).some(r=>r==='admin'||r==='manager')) return;
       try{
         const data=await officialFetch(`/api/tuition/state?month=${encodeURIComponent(tuitionMonthKey())}`);
@@ -740,17 +783,17 @@
         db.payments=data.payments||{};
         db.tuitionMessages=data.tuitionMessages||{};
         if(data.unitPrice){ db.settings.unitPrice=Number(data.unitPrice); }
-        save();
+        if(!options.skipSave) save();
       }catch(e){console.warn('Không tải được dữ liệu học phí',e)}
     }
 
     
-    async function refreshOfficialLibrary(){
+    async function refreshOfficialLibrary(options={}){
       if(!currentUser || !(currentUser.roles||[]).some(r=>['admin','manager','teacher'].includes(r))) return;
       try{
         const data=await officialFetch('/api/library');
         db.exerciseLibrary=data.items||[];
-        save();
+        if(!options.skipSave) save();
       }catch(e){console.warn('Không tải được thư viện bài tập',e)}
     }
 
@@ -789,14 +832,14 @@
       await refreshOfficialEvaluations();
       render();
     }
-    async function refreshOfficialEvaluations(){
+    async function refreshOfficialEvaluations(options={}){
       if(!currentUser || !(currentUser.roles||[]).some(r=>['admin','manager','teacher'].includes(r))) return;
       try{
         const data=await officialFetch(`/api/evaluations?month=${encodeURIComponent(evaluationMonthKey())}`);
         const currentMonth=evaluationMonthKey();
         const other=(db.evaluations||[]).filter(e=>normalizeEvaluationMonthValue(e.monthKey||e.month)!==currentMonth);
         db.evaluations=[...other,...(data.items||[])];
-        save();
+        if(!options.skipSave) save();
       }catch(e){console.warn('Không tải được đánh giá thật',e)}
     }
 
@@ -819,7 +862,8 @@
       db.evaluations ||= [];
       db.evaluations.forEach(e=>{e.monthKey ||= normalizeEvaluationMonthValue?normalizeEvaluationMonthValue(e.month):new Date().toISOString().slice(0,7); e.month=e.monthKey});
     }
-        function save(){localStorage.setItem('msgiang_v48_data', JSON.stringify(db)); queueOfficialSave()}
+        function save(){if(suppressLocalSave) return; localStorage.setItem('msgiang_v48_data', JSON.stringify(db)); queueOfficialSave()}
+    function saveLocalOnly(){try{localStorage.setItem('msgiang_v48_data', JSON.stringify(db));}catch(e){console.warn('Local save failed',e)}}
     function saveUser(){localStorage.setItem('msgiang_v48_route', route)}
     const hasRole = r => currentUser?.roles?.includes(r);
     const isAdmin = () => hasRole('admin'); const isManager = () => hasRole('manager'); const isTeacher = () => hasRole('teacher'); const isParent = () => hasRole('parent');
@@ -1965,14 +2009,15 @@ Ms.Giang English`;
         route='overview';
         saveUser();
 
-        // V9 login refresh fix:
-        // Không render ngay bằng dữ liệu SEED/demo trong localStorage.
-        // Tải dữ liệu thật trước rồi mới render để tránh hiện nhầm 196 học sinh.
-        db.classes=[];
-        await refreshAllOfficialDataForCurrentUser();
+        // V10 performance fix:
+        // Tải dữ liệu quan trọng trước để không hiện dữ liệu demo, render nhanh,
+        // sau đó tải lịch/điểm danh/học phí/thư viện/đánh giá ở nền.
+        clearVolatileOfficialState();
+        await refreshAllOfficialDataForCurrentUser({criticalOnly:true});
 
         render();
         toast(currentUser?.mustChangePassword?'Cần đổi mật khẩu trước khi sử dụng':'Đăng nhập thành công');
+        refreshOfficialDataInBackground();
       }catch(e){
         toast(e.message||'Sai thông tin đăng nhập');
       } finally { if(btn){btn.disabled=false; btn.textContent='Đăng nhập'} }
@@ -2463,11 +2508,7 @@ function classCard(c,i){
         if(Array.isArray(u.children)) u.children=u.children.filter(id=>!studentIds.includes(id));
       });
 
-      await refreshOfficialClasses();
-      await refreshOfficialScheduleState();
-      await refreshOfficialAttendanceState();
-      await refreshOfficialTuitionState();
-      if(typeof refreshOfficialEvaluations==='function') await refreshOfficialEvaluations();
+      await refreshAllOfficialDataForCurrentUser();
 
       save(); closeModal(); route='classes'; saveUser(); render(); toast(`Đã xóa lớp ${c.name} và dữ liệu liên quan`);
     }

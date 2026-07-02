@@ -270,3 +270,12 @@ Không cần chạy SQL mới nếu V8 đã chạy đủ tới migration 009.
 - Xóa lớp sẽ dọn học phí, lịch, điểm danh, vắng/học bù và đánh giá liên quan.
 - Frontend gọi API xóa server thật trước, sau đó refresh state từ Supabase.
 - Không cần chạy SQL mới.
+
+
+## V10 Performance Fix
+
+- Login/bootstrap render nhanh hơn.
+- Dữ liệu nặng tải nền.
+- Các API phụ chạy song song thay vì tuần tự.
+- Giảm số lần stringify localStorage và save snapshot.
+- Không cần SQL mới.
