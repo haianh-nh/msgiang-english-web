@@ -33,6 +33,12 @@ export function canManage(user: any) {
   return hasRole(user, "admin") || hasRole(user, "manager");
 }
 
+// Backward-compatible alias for older tuition files that may still exist in a local repo.
+// The current official app uses canManage() for tuition permissions.
+export function canTuition(user: any) {
+  return canManage(user);
+}
+
 export async function currentUser() {
   const token = (await cookies()).get(SESSION_COOKIE)?.value;
   if (!token) return null;
