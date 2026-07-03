@@ -23,11 +23,110 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       return ['schedule','makeup','attendance','tuition','homework','evaluation','teachers','settings'].includes(r);
     }
     function routeLoadingMarkup(title='Đang tải dữ liệu...'){
-      return `<div class="blockedBox"><h2>⏳ ${title}</h2><p>Web đang tải dữ liệu cần thiết cho mục này. Lần sau sẽ nhanh hơn do có cache.</p></div>`;
+      return `<div class="blockedBox"><h2>⏳ ${title}</h2><p>Web đang tải dữ liệu cần thiết cho mục này. Lần sau sẽ nhanh hơn do có cache.</p><button class="btn ghost" onclick="refreshCurrentRouteData()">Tải lại dữ liệu</button></div>`;
     }
+    function refreshCurrentRouteData(){const key=routeDataKey(route); lazyRouteState[key]={}; render(); ensureRouteData(route,{force:true})}
+
+    const MODULE_CACHE_TTL_MS=10*60*1000;
+    function moduleCacheUserKey(){
+      const uid=currentUser?.id || currentUser?.phone || currentUser?.name || 'anonymous';
+      return `msgiang_module_cache_v15_${uid}`;
+    }
+    function readModuleCacheStore(){
+      try{return JSON.parse(localStorage.getItem(moduleCacheUserKey())||'{}')||{}}
+      catch(e){return {}}
+    }
+    function writeModuleCacheStore(store){
+      try{localStorage.setItem(moduleCacheUserKey(), JSON.stringify(store||{}))}
+      catch(e){console.warn('Module cache save failed',e)}
+    }
+    function moduleCacheKeyForRoute(r){
+      const key=routeDataKey(r);
+      if(key==='schedule') return `schedule:${isoDate(weekStartDate())}`;
+      if(key==='attendance') return `attendance:${isoDate(weekStartDate())}`;
+      if(key==='tuition') return `tuition:${tuitionMonthKey()}`;
+      if(key==='evaluation') return `evaluation:${evaluationMonthKey()}`;
+      if(key==='library') return 'library:latest';
+      if(key==='teachers') return 'teachers:latest';
+      return `core:${key}`;
+    }
+    function moduleCacheGet(cacheKey){
+      const store=readModuleCacheStore();
+      const item=store[cacheKey];
+      if(!item || !item.ts || Date.now()-item.ts>MODULE_CACHE_TTL_MS) return null;
+      return item.payload || null;
+    }
+    function moduleCacheSet(cacheKey,payload){
+      if(!cacheKey || !payload) return;
+      const store=readModuleCacheStore();
+      store[cacheKey]={ts:Date.now(),payload};
+      const keys=Object.keys(store).sort((a,b)=>(store[b]?.ts||0)-(store[a]?.ts||0));
+      keys.slice(30).forEach(k=>delete store[k]);
+      writeModuleCacheStore(store);
+    }
+    function moduleCacheRemove(cacheKey){
+      const store=readModuleCacheStore();
+      delete store[cacheKey];
+      writeModuleCacheStore(store);
+    }
+    function applyCachedPayload(key,payload){
+      if(!payload) return false;
+      if(key==='schedule'){
+        db.classCancellations=payload.classCancellations||{};
+        db.classMakeupSessions=payload.classMakeupSessions||[];
+        db.makeupPlans=payload.makeupPlans||[];
+        return true;
+      }
+      if(key==='attendance'){
+        db.attendanceSessions=payload.attendanceSessions||{};
+        db.absenceRecords=payload.absenceRecords||[];
+        return true;
+      }
+      if(key==='tuition'){
+        db.tuitionRollup=payload.tuitionRollup||{};
+        db.tuitionRollupMonth=payload.tuitionRollupMonth||tuitionMonthKey();
+        db.payments=payload.payments||{};
+        db.tuitionMessages=payload.tuitionMessages||{};
+        if(payload.unitPrice) db.settings.unitPrice=Number(payload.unitPrice);
+        return true;
+      }
+      if(key==='library'){
+        db.exerciseLibrary=payload.exerciseLibrary||[];
+        return true;
+      }
+      if(key==='evaluation'){
+        const currentMonth=evaluationMonthKey();
+        const other=(db.evaluations||[]).filter(e=>normalizeEvaluationMonthValue(e.monthKey||e.month)!==currentMonth);
+        db.evaluations=[...other,...(payload.evaluations||[])];
+        return true;
+      }
+      if(key==='teachers'){
+        db.teachers=payload.teachers||[];
+        return true;
+      }
+      return false;
+    }
+    function hydrateRouteCache(r){
+      if(!currentUser || !routeNeedsLazyData(r)) return false;
+      const key=routeDataKey(r);
+      const mainPayload=moduleCacheGet(moduleCacheKeyForRoute(r));
+      let ok=false;
+      if(mainPayload) ok=applyCachedPayload(key,mainPayload);
+      if(key==='attendance'){
+        const schedulePayload=moduleCacheGet(`schedule:${isoDate(weekStartDate())}`);
+        if(schedulePayload) applyCachedPayload('schedule',schedulePayload);
+      }
+      if(ok){
+        lazyRouteState[key]={loaded:true,loading:false,loadedAt:Date.now(),fromCache:true};
+        saveLocalOnly();
+      }
+      return ok;
+    }
+
     async function ensureRouteData(r, options={}){
       if(!currentUser || !routeNeedsLazyData(r)) return;
       const key=routeDataKey(r);
+      if(!options.force && !lazyRouteState[key]?.loaded && hydrateRouteCache(r)) return;
       if(lazyRouteState[key]?.loaded && !options.force) return;
       if(lazyRouteState[key]?.loading) return;
       lazyRouteState[key]={...(lazyRouteState[key]||{}),loading:true};
@@ -54,6 +153,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
     function isRouteWaitingForData(r){
       if(!routeNeedsLazyData(r)) return false;
       const key=routeDataKey(r);
+      if(!lazyRouteState[key]?.loaded) hydrateRouteCache(r);
       return !lazyRouteState[key]?.loaded;
     }
     normalizeV9Data();
@@ -181,6 +281,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       try{
         const data=await officialFetch('/api/teachers');
         db.teachers=data.teachers||[];
+        moduleCacheSet('teachers:latest', {teachers:db.teachers});
         if(!options.skipSave) save();
       }catch(e){console.warn('Không tải được giáo viên thật',e)}
     }
@@ -194,6 +295,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
         db.classCancellations=data.classCancellations||{};
         db.classMakeupSessions=data.classMakeupSessions||[];
         db.makeupPlans=data.makeupPlans||[];
+        moduleCacheSet(`schedule:${isoDate(weekStartDate())}`, {classCancellations:db.classCancellations,classMakeupSessions:db.classMakeupSessions,makeupPlans:db.makeupPlans});
         if(!options.skipSave) save();
       }catch(e){console.warn('Không tải được dữ liệu lịch/học bù',e)}
     }
@@ -205,6 +307,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
         const data=await officialFetch(`/api/attendance/state?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`);
         db.attendanceSessions=data.attendanceSessions||{};
         db.absenceRecords=data.absenceRecords||[];
+        moduleCacheSet(`attendance:${isoDate(weekStartDate())}`, {attendanceSessions:db.attendanceSessions,absenceRecords:db.absenceRecords});
         if(!options.skipSave) save();
       }catch(e){console.warn('Không tải được dữ liệu điểm danh',e)}
     }
@@ -244,6 +347,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       db.payments={};
       db.tuitionMessages={};
       lazyRouteState.tuition={};
+      moduleCacheRemove(`tuition:${tuitionMonthKey()}`);
       save();
       await ensureRouteData('tuition',{force:true});
       render();
@@ -257,6 +361,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
         db.payments=data.payments||{};
         db.tuitionMessages=data.tuitionMessages||{};
         if(data.unitPrice){ db.settings.unitPrice=Number(data.unitPrice); }
+        moduleCacheSet(`tuition:${tuitionMonthKey()}`, {tuitionRollup:db.tuitionRollup,tuitionRollupMonth:db.tuitionRollupMonth,payments:db.payments,tuitionMessages:db.tuitionMessages,unitPrice:db.settings.unitPrice});
         if(!options.skipSave) save();
       }catch(e){console.warn('Không tải được dữ liệu học phí',e)}
     }
@@ -267,6 +372,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       try{
         const data=await officialFetch('/api/library');
         db.exerciseLibrary=data.items||[];
+        moduleCacheSet('library:latest', {exerciseLibrary:db.exerciseLibrary});
         if(!options.skipSave) save();
       }catch(e){console.warn('Không tải được thư viện bài tập',e)}
     }
@@ -303,6 +409,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       db.settings.evaluationFilter ||= {};
       db.settings.evaluationFilter.month=`${year}-${month}`;
       lazyRouteState.evaluation={};
+      moduleCacheRemove(`evaluation:${evaluationMonthKey()}`);
       save();
       await ensureRouteData('evaluation',{force:true});
       render();
@@ -314,6 +421,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
         const currentMonth=evaluationMonthKey();
         const other=(db.evaluations||[]).filter(e=>normalizeEvaluationMonthValue(e.monthKey||e.month)!==currentMonth);
         db.evaluations=[...other,...(data.items||[])];
+        moduleCacheSet(`evaluation:${evaluationMonthKey()}`, {evaluations:(data.items||[])});
         if(!options.skipSave) save();
       }catch(e){console.warn('Không tải được đánh giá thật',e)}
     }
@@ -1387,8 +1495,8 @@ Ms.Giang English`;
     function mondayOf(d){const x=new Date(d); const day=x.getDay()||7; x.setDate(x.getDate()-day+1); x.setHours(0,0,0,0); return x}
     function addDays(d,n){const x=new Date(d); x.setDate(x.getDate()+n); return x}
     function weekStartDate(){db.settings.weekStart ||= isoDate(mondayOf(new Date())); return parseISODate(db.settings.weekStart)}
-    function setWeekStart(v){db.settings.weekStart=isoDate(mondayOf(parseISODate(v))); lazyRouteState.schedule={}; lazyRouteState.attendance={}; save(); render(); ensureRouteData(route,{force:true})}
-    function shiftWeek(n){db.settings.weekStart=isoDate(addDays(weekStartDate(),n*7)); lazyRouteState.schedule={}; lazyRouteState.attendance={}; save(); render(); ensureRouteData(route,{force:true})}
+    function setWeekStart(v){db.settings.weekStart=isoDate(mondayOf(parseISODate(v))); lazyRouteState.schedule={}; lazyRouteState.attendance={}; moduleCacheRemove(`schedule:${isoDate(weekStartDate())}`); moduleCacheRemove(`attendance:${isoDate(weekStartDate())}`); save(); render(); ensureRouteData(route,{force:true})}
+    function shiftWeek(n){db.settings.weekStart=isoDate(addDays(weekStartDate(),n*7)); lazyRouteState.schedule={}; lazyRouteState.attendance={}; moduleCacheRemove(`schedule:${isoDate(weekStartDate())}`); moduleCacheRemove(`attendance:${isoDate(weekStartDate())}`); save(); render(); ensureRouteData(route,{force:true})}
     function formatVNDate(d){return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`}
     function weekLabel(){const m=weekStartDate(); return `${formatVNDate(m)} - ${formatVNDate(addDays(m,6))}/${addDays(m,6).getFullYear()}`}
     function dayDateFor(dayKey){const idx=WEEK_DAYS.findIndex(d=>d.key===dayKey); return addDays(weekStartDate(), idx<0?0:idx)}

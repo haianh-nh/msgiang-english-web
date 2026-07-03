@@ -2,19 +2,19 @@
 const nextConfig = {
   async rewrites() {
     return [
-      { source: "/", destination: "/index-v14.html" }
+      { source: "/", destination: "/index-v15.html" }
     ];
   },
   async headers() {
     return [
       {
-        source: "/v14/:path*",
+        source: "/v15/:path*",
         headers: [
           { key: "Cache-Control", value: "public, max-age=31536000, immutable" }
         ]
       },
       {
-        source: "/index-v14.html",
+        source: "/index-v15.html",
         headers: [
           { key: "Cache-Control", value: "no-store, max-age=0" }
         ]

@@ -307,3 +307,11 @@ Không cần chạy SQL mới nếu V8 đã chạy đủ tới migration 009.
 - Tối ưu học phí/đánh giá/thư viện/lớp học bằng cách select cột cần thiết.
 - Thêm migration `010_performance_indexes.sql`.
 - Không đổi logic nghiệp vụ hoặc UI/UX.
+
+
+## V15 Module Cache
+
+- Thêm cache theo từng module trong `localStorage`.
+- Cache theo user, TTL 10 phút.
+- Chuyển tab/reload trong thời gian ngắn sẽ nhanh hơn.
+- Không đổi logic nghiệp vụ, UI/UX chính hoặc SQL.
