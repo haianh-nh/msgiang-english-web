@@ -87,7 +87,7 @@ export async function GET() {
 
   const { data, error } = await supabaseAdmin()
     .from("official_exercise_library")
-    .select("*")
+    .select("id, type, title, level, skill, unit, file_name, mime_type, file_size, storage_bucket, storage_path, public_url, uploaded_by, uploader_name, created_at")
     .is("deleted_at", null)
     .order("created_at", { ascending: false });
 

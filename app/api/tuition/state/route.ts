@@ -75,7 +75,7 @@ export async function GET(req: NextRequest) {
   if (selectedKeys.length) {
     const { data: r, error: re } = await supabase
       .from("official_attendance_rows")
-      .select("*")
+      .select("session_key, student_id, row_type, status")
       .in("session_key", selectedKeys);
     if (re) return NextResponse.json({ error: re.message }, { status: 500 });
     selectedRows = r || [];
@@ -108,7 +108,7 @@ export async function GET(req: NextRequest) {
   if (prevKeys.length) {
     const { data: r, error: pre } = await supabase
       .from("official_attendance_rows")
-      .select("*")
+      .select("session_key, student_id, row_type, status")
       .in("session_key", prevKeys);
     if (pre) return NextResponse.json({ error: pre.message }, { status: 500 });
     prevRows = r || [];
@@ -133,7 +133,7 @@ export async function GET(req: NextRequest) {
   if (priorMonths.length) {
     const { data: st, error: ste } = await supabase
       .from("official_tuition_status")
-      .select("*")
+      .select("student_id, month_key, paid")
       .in("month_key", priorMonths);
     if (ste) return NextResponse.json({ error: ste.message }, { status: 500 });
     priorStatusRows = st || [];
@@ -182,7 +182,7 @@ export async function GET(req: NextRequest) {
   // 3) Statuses in selected month for buttons / sent state.
   const { data: statuses, error: te } = await supabase
     .from("official_tuition_status")
-    .select("*")
+    .select("student_id, month_key, paid, paid_at, paid_by, message_sent, message_sent_at, message_sent_by")
     .eq("month_key", monthKey);
 
   if (te) return NextResponse.json({ error: te.message }, { status: 500 });

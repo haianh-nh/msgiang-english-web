@@ -79,16 +79,18 @@ export async function GET(req: NextRequest) {
   const monthKey = month ? normalizeMonthKey(month) : null;
 
   try {
-    const classIds = await accessibleClassIds(user);
-    if (!classIds.length) return NextResponse.json({ ok: true, items: [] });
-
     let query = supabaseAdmin()
       .from("official_evaluations")
-      .select("*")
-      .in("class_id", classIds)
+      .select("id, student_id, class_id, month_key, scores, status, comment, strengths, improvements, suggestion, updated_at, published_at, created_by, updated_by")
       .order("updated_at", { ascending: false });
 
     if (monthKey) query = query.eq("month_key", monthKey);
+
+    if (!canManage(user)) {
+      const classIds = await accessibleClassIds(user);
+      if (!classIds.length) return NextResponse.json({ ok: true, items: [] });
+      query = query.in("class_id", classIds);
+    }
 
     const { data, error } = await query;
     if (error) throw error;
@@ -120,9 +122,11 @@ export async function POST(req: NextRequest) {
 
   if (studentError || !student) return NextResponse.json({ error: "Không tìm thấy học sinh" }, { status: 404 });
 
-  const classIds = await accessibleClassIds(user);
-  if (!classIds.includes(student.class_id)) {
-    return NextResponse.json({ error: "Không có quyền đánh giá học sinh này" }, { status: 403 });
+  if (!canManage(user)) {
+    const classIds = await accessibleClassIds(user);
+    if (!classIds.includes(student.class_id)) {
+      return NextResponse.json({ error: "Không có quyền đánh giá học sinh này" }, { status: 403 });
+    }
   }
 
   const now = new Date().toISOString();

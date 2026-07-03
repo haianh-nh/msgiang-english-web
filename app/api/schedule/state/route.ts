@@ -1,16 +1,46 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 
-export async function GET() {
+function validDate(v: string | null) {
+  const s = String(v || "");
+  return /^\d{4}-\d{2}-\d{2}$/.test(s) ? s : "";
+}
+
+export async function GET(req: NextRequest) {
   const { response } = await requireUser();
   if (response) return response;
 
+  const url = new URL(req.url);
+  const start = validDate(url.searchParams.get("start"));
+  const end = validDate(url.searchParams.get("end"));
+
   const supabase = supabaseAdmin();
+
+  let cancellationsQuery = supabase
+    .from("official_session_cancellations")
+    .select("id, session_key, class_id, session_date, day_key, start_time, end_time, reason, created_at")
+    .order("session_date", { ascending: true });
+
+  let makeupSessionsQuery = supabase
+    .from("official_class_makeup_sessions")
+    .select("id, class_id, source_session_key, makeup_date, day_key, start_time, end_time, reason, status, created_at, updated_at")
+    .neq("status", "cancelled")
+    .order("makeup_date", { ascending: true });
+
+  if (start && end) {
+    cancellationsQuery = cancellationsQuery.gte("session_date", start).lt("session_date", end);
+    makeupSessionsQuery = makeupSessionsQuery.gte("makeup_date", start).lt("makeup_date", end);
+  }
+
   const [cRes, cmRes, mRes] = await Promise.all([
-    supabase.from("official_session_cancellations").select("*"),
-    supabase.from("official_class_makeup_sessions").select("*").neq("status", "cancelled"),
-    supabase.from("official_makeup_plans").select("*"),
+    cancellationsQuery,
+    makeupSessionsQuery,
+    supabase
+      .from("official_makeup_plans")
+      .select("id, absence_id, student_id, source_class_id, source_session_key, target_class_id, target_session_key, status, created_by, created_at, cancelled_at")
+      .neq("status", "cancelled")
+      .order("created_at", { ascending: false }),
   ]);
 
   if (cRes.error) return NextResponse.json({ error: cRes.error.message }, { status: 500 });
@@ -58,5 +88,5 @@ export async function GET() {
     cancelledAt: r.cancelled_at,
   }));
 
-  return NextResponse.json({ ok: true, classCancellations, classMakeupSessions, makeupPlans });
+  return NextResponse.json({ ok: true, start: start || null, end: end || null, classCancellations, classMakeupSessions, makeupPlans });
 }

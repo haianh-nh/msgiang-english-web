@@ -279,3 +279,31 @@ Không cần chạy SQL mới nếu V8 đã chạy đủ tới migration 009.
 - Các API phụ chạy song song thay vì tuần tự.
 - Giảm số lần stringify localStorage và save snapshot.
 - Không cần SQL mới.
+
+
+## V11 Clean Production Lite
+
+- Tách file HTML khổng lồ thành:
+  - `/public/index-v11.html`
+  - `/public/v11/app.css`
+  - `/public/v11/app.js`
+  - `/public/v11/favicon.png`
+- Trang `/` redirect sang `/index-v11.html`.
+- Giữ toàn bộ logic backend/API của V10.
+- Mục tiêu: giảm kích thước HTML ban đầu, giúp browser cache CSS/JS tốt hơn và phản hồi mở trang ổn hơn.
+
+
+## V13 Lazy Load Tabs
+
+- Login/bootstrap chỉ tải dữ liệu lõi và lớp học.
+- Lịch, điểm danh, học phí, thư viện, đánh giá, giáo viên chỉ tải khi mở đúng tab.
+- Chuyển tháng/tuần sẽ refresh đúng module.
+- Không đổi SQL, API, UI workflow hoặc logic nghiệp vụ.
+
+
+## V14 API + Index Optimization
+
+- Tối ưu query cho lịch/điểm danh theo tuần.
+- Tối ưu học phí/đánh giá/thư viện/lớp học bằng cách select cột cần thiết.
+- Thêm migration `010_performance_indexes.sql`.
+- Không đổi logic nghiệp vụ hoặc UI/UX.

@@ -128,10 +128,18 @@ export async function fetchClassesV48(user?: any) {
   let query = supabase
     .from("official_classes")
     .select(`
-      *,
-      official_teachers:teacher_id(*),
-      official_students(*),
-      official_class_schedules(*)
+      id,
+      name,
+      grade,
+      teacher_id,
+      assistant_name,
+      start_date,
+      end_date,
+      status,
+      created_at,
+      official_teachers:teacher_id(id,name),
+      official_students(id,name,parent_name,parent_phone,note),
+      official_class_schedules(id,day_of_week,start_time,end_time,sort_order)
     `)
     .order("name", { ascending: true });
 
@@ -149,7 +157,7 @@ export async function fetchClassesV48(user?: any) {
 export async function fetchTeachersV48() {
   const { data, error } = await supabaseAdmin()
     .from("official_teachers")
-    .select("*, official_users:user_id(*)")
+    .select("id,user_id,name,phone,email,status,note, official_users:user_id(id,phone,email,roles,status,must_change_password)")
     .order("name", { ascending: true });
 
   if (error) throw error;

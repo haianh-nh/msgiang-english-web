@@ -2,7 +2,23 @@
 const nextConfig = {
   async rewrites() {
     return [
-      { source: "/", destination: "/index-v48-port.html" }
+      { source: "/", destination: "/index-v14.html" }
+    ];
+  },
+  async headers() {
+    return [
+      {
+        source: "/v14/:path*",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" }
+        ]
+      },
+      {
+        source: "/index-v14.html",
+        headers: [
+          { key: "Cache-Control", value: "no-store, max-age=0" }
+        ]
+      }
     ];
   }
 };
