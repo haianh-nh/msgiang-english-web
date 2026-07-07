@@ -1,0 +1,3 @@
+class_name,teacher_name,schedule_1_day,schedule_1_start,schedule_1_end,schedule_2_day,schedule_2_start,schedule_2_end,student_name,parent_phone,note
+G3.1,Ms Giang,1,17:00,18:30,3,17:00,18:30,Nguyen Van A,0900000000,
+G3.1,Ms Giang,1,17:00,18:30,3,17:00,18:30,Tran Thi B,0911111111,

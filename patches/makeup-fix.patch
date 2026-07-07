@@ -1,0 +1,278 @@
+--- /mnt/data/patch_backup/app.js	2026-07-07 04:38:56.412573301 +0000
++++ public/v15/app.js	2026-07-07 04:42:25.052827350 +0000
+@@ -2360,7 +2360,7 @@
+       const rows=absenteesForSession(sourceSessionKey);
+       modal(`<div class="modalHead"><h2>Danh sách vắng - ${s?.className||''}</h2><button class="close" onclick="closeModal()">×</button></div>
+       <div class="modalInfoGrid"><div><p><b>Buổi học:</b> ${s?sessionLabelFromKey(sourceSessionKey):'-'}</p><p><b>Số học sinh vắng:</b> ${rows.length}</p></div></div>
+-      ${rows.length?`<div class="modalTableWrap"><table class="modalTable"><thead><tr><th>STT</th><th>Học sinh</th><th>Lớp</th><th>Ghi chú</th><th>Trạng thái</th></tr></thead><tbody>${rows.map((x,i)=>`<tr><td>${i+1}</td><td><b>${x.student.name}</b></td><td>${x.sourceClass.name}</td><td>${x.reason||'Vắng'}</td><td>${x.record?.id && absenceRecordStatus(x.record.id)==='scheduled'?'<span class="makeupBadge">Đã xếp học bù</span>':'<span class="unpaidBadge">Chờ xếp</span>'}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">Buổi này không có học sinh vắng.</div>'}`)
++      ${rows.length?`<div class="modalTableWrap"><table class="modalTable"><thead><tr><th>STT</th><th>Học sinh</th><th>Lớp</th><th>Ghi chú</th><th>Trạng thái</th></tr></thead><tbody>${rows.map((x,i)=>`<tr><td>${i+1}</td><td><b>${x.student.name}</b></td><td>${x.sourceClass.name}</td><td>${x.reason||'Vắng'}</td><td>${x.record?.id?absenceRecordStatusBadge(x.record.id):'<span class="unpaidBadge">Chờ xếp</span>'}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">Buổi này không có học sinh vắng.</div>'}`)
+     }
+ 
+     function groupedClassesForUser(){
+@@ -2442,22 +2442,40 @@
+       return d.getTime()<Date.now();
+     }
+     function makeupPlanCompleted(plan){
++      if(String(plan?.status||'')==='completed') return true;
+       const row=makeupPlanAttendanceRow(plan);
+       return !!row && (row.status==='present' || row.status==='late');
+     }
+     function makeupPlanMissed(plan){
++      // Chỉ coi là lỡ học bù khi buổi học bù đã được lưu điểm danh và học sinh bị đánh Vắng.
++      // Không tự ẩn plan chỉ vì đã qua giờ kết thúc, vì giáo viên vẫn được điểm danh đến 23:59
++      // và Admin/Quản lí còn có thể sửa ngoài giờ.
+       if(makeupPlanCompleted(plan)) return false;
+       const row=makeupPlanAttendanceRow(plan);
+-      if(row?.status==='absent') return true;
+-      return targetSessionPast(plan);
++      return row?.status==='absent';
+     }
+     function activeMakeupPlans(){
+       normalizeMakeupPlans();
+-      return (db.makeupPlans||[]).filter(p=>p && p.status!=='cancelled' && !makeupPlanCompleted(p) && !makeupPlanMissed(p));
++      return (db.makeupPlans||[]).filter(p=>{
++        if(!p) return false;
++        const st=String(p.status||'scheduled');
++        return st==='scheduled' && !makeupPlanCompleted(p) && !makeupPlanMissed(p);
++      });
+     }
+     function absenceRecordStatus(absenceIdValue){
+-      const plan=(db.makeupPlans||[]).find(p=>p.absenceId===absenceIdValue && p.status!=='cancelled' && !makeupPlanCompleted(p) && !makeupPlanMissed(p));
+-      return plan?'scheduled':'pending';
++      const plans=(db.makeupPlans||[]).filter(p=>p?.absenceId===absenceIdValue && String(p.status||'scheduled')!=='cancelled');
++      if(plans.some(p=>String(p.status||'')==='completed' || makeupPlanCompleted(p))) return 'completed';
++      const scheduled=plans.find(p=>{
++        const st=String(p?.status||'scheduled');
++        return st==='scheduled' && !makeupPlanMissed(p);
++      });
++      return scheduled?'scheduled':'pending';
++    }
++    function absenceRecordStatusBadge(absenceIdValue){
++      const st=absenceRecordStatus(absenceIdValue);
++      if(st==='completed') return '<span class="pill green">Đã học bù</span>';
++      if(st==='scheduled') return '<span class="makeupBadge">Đã xếp học bù</span>';
++      return '<span class="unpaidBadge">Chờ xếp</span>';
+     }
+ 
+ 
+@@ -2714,6 +2732,18 @@
+         rec.updatedAt=data.session?.updatedAt || new Date().toLocaleString('vi-VN');
+         db.absenceRecords = (db.absenceRecords||[]).filter(a=>a.sourceSessionKey!==sessionKey);
+         db.absenceRecords.push(...(data.absenceRecords||[]));
++        (data.makeupPlanUpdates||[]).forEach(u=>{
++          const p=(db.makeupPlans||[]).find(x=>String(x.id)===String(u.id));
++          if(p){
++            p.status=u.status;
++            if(u.cancelledAt) p.cancelledAt=u.cancelledAt;
++          }
++        });
++        (data.makeupAbsenceRecords||[]).forEach(a=>{
++          db.absenceRecords = (db.absenceRecords||[]).filter(x=>String(x.id)!==String(a.id));
++          db.absenceRecords.push(a);
++        });
++        v18fUpdateScheduleModuleCache();
+         v18fUpdateAttendanceModuleCache();
+         v20l4InvalidateScheduleAfterAttendanceSave(sessionKey);
+         await refreshOfficialTuitionState();
+--- /mnt/data/patch_backup/attendance.js	2026-07-07 04:38:56.423532321 +0000
++++ public/v15/modules/attendance.js	2026-07-07 04:39:26.229166152 +0000
+@@ -9,7 +9,7 @@
+       const sessions=sessionsForAttendancePage().sort((a,b)=>dateTimeForSession(a,'start')-dateTimeForSession(b,'start'));
+       return `<div class="screenTitle"><div><h1>Điểm danh</h1><p>Theo buổi học trong tuần. Giáo viên điểm danh trong giờ mở; Admin/Quản lí có thể điểm danh sớm và sửa ngoài giờ.</p></div></div>
+       ${managerScopeControl('managerAttendanceScope','Hiển thị điểm danh')}
+-      <div class="grid3">${sessions.map((s,i)=>{const key=sessionKeyFor(s); const w=attendanceWindowInfo(key); const rec=ensureAttendanceSessions()[attendanceKey(key)]; const mk=makeupCountForSession(key); const total=totalRosterCountForSession(s.classId,key); const canClosedEdit=attendanceCanOverride() && rec?.saved && !w.open; return `<div class="classCard" style="--i:${i}"><h3>${s.className}</h3><div class="classMeta">${dayNameFromKey(s.day)} • ${s.start}-${s.end}<br>${s.teacher||''}</div><div class="classCount"><b>${s.students} chính thức • ${mk} học bù</b></div><div style="margin:8px 0"><span class="capacityBadge ${total>=15?'full':''}">Tổng ${total}/15</span></div>${attendanceCardStatusMarkup(key)}<div class="attendanceActionRow"><button class="btn primary" onclick="openAttendance('${s.classId}','${key}')">${attendancePrimaryActionLabel(key)}</button>${canClosedEdit?`<button class="tinyEditBtn" onclick="editAttendance('${key}')">Sửa</button>`:''}</div></div>`}).join('')||'<div class="empty">Không có lớp phù hợp với bộ lọc hiện tại.</div>'}</div>`
++      <div class="grid3">${sessions.map((s,i)=>{const key=sessionKeyFor(s); const w=attendanceWindowInfo(key); const rec=ensureAttendanceSessions()[attendanceKey(key)]; const mk=makeupCountForSession(key); const total=totalRosterCountForSession(s.classId,key); const capacity=db.settings.capacity||15; const canClosedEdit=attendanceCanOverride() && rec?.saved && !w.open; return `<div class="classCard" style="--i:${i}"><h3>${s.className}</h3><div class="classMeta">${dayNameFromKey(s.day)} • ${s.start}-${s.end}<br>${s.teacher||''}</div><div class="classCount"><b>${s.students} chính thức • ${mk} học bù</b></div><div style="margin:8px 0"><span class="capacityBadge ${total>=capacity?'full':''}">Tổng ${total}/${capacity}</span></div>${attendanceCardStatusMarkup(key)}<div class="attendanceActionRow"><button class="btn primary" onclick="openAttendance('${s.classId}','${key}')">${attendancePrimaryActionLabel(key)}</button>${canClosedEdit?`<button class="tinyEditBtn" onclick="editAttendance('${key}')">Sửa</button>`:''}</div></div>`}).join('')||'<div class="empty">Không có lớp phù hợp với bộ lọc hiện tại.</div>'}</div>`
+     }
+ 
+     function attendanceStatusButtons(sessionKey,studentId,type,current,editable){
+@@ -29,13 +29,14 @@
+       const canOpenClosedEdit=attendanceCanOverride() && rec.saved && !w.open && !canEdit;
+       const roster=rosterForAttendance(id,sessionKey);
+       const total=totalRosterCountForSession(id,sessionKey);
++      const capacity=db.settings.capacity||15;
+       const mk=makeupCountForSession(sessionKey);
+       const manualCanPlace=sessionStatus(s).key==='todo';
+       const manualOptions=classStudentsForManualMakeup(id).map(st=>`<option value="${st.id}">${st.name} • ${st.className}</option>`).join('');
+       modal(`<div class="modalHead"><h2>Điểm danh ${c.name}</h2><button class="close" onclick="closeModal()">×</button></div>
+-      <div class="${attendanceModalBoxClass(sessionKey,canEdit)}"><b>${attendanceModalStatusTitle(sessionKey,canEdit)}</b><p>${sessionLabelFromKey(sessionKey)} • ${w.label}</p><div><span class="capacityBadge ${total>=15?'full':''}">Tổng ${total}/15</span> <span class="makeupBadge">${mk} học bù</span></div>${rec.saved?`<span class="attSavedTag">Đã lưu lúc ${rec.updatedAt||'-'}</span>`:''}</div>
++      <div class="${attendanceModalBoxClass(sessionKey,canEdit)}"><b>${attendanceModalStatusTitle(sessionKey,canEdit)}</b><p>${sessionLabelFromKey(sessionKey)} • ${w.label}</p><div><span class="capacityBadge ${total>=capacity?'full':''}">Tổng ${total}/${capacity}</span> <span class="makeupBadge">${mk} học bù</span></div>${rec.saved?`<span class="attSavedTag">Đã lưu lúc ${rec.updatedAt||'-'}</span>`:''}</div>
+       ${(!w.open && !canEdit)?`<div class="blockedBox"><h2>🔒 ${attendanceCanOverride()?'Điểm danh đã khóa':'Điểm danh chưa mở/đã khóa'}</h2><p>Giáo viên chỉ điểm danh từ 15 phút trước giờ học đến 23:59 cùng ngày. Admin/Quản lí có thể điểm danh sớm hoặc sửa ngoài giờ.</p>${canOpenClosedEdit?`<div style="margin-top:12px"><button class="tinyEditBtn" onclick="editAttendance('${sessionKey}')">Sửa điểm danh</button></div>`:''}</div>`:`
+-      <div class="manualMakeupBox"><b>Thêm học bù</b><div class="mini">Học bù xếp tự do, không bắt buộc cùng khối. Chỉ thêm trước khi buổi học bắt đầu; tổng sĩ số chính thức + học bù tối đa 15 học sinh.</div><div class="inline2" style="margin-top:8px"><label>Chọn học sinh khác lớp<select id="manualMakeupStudent" class="input" ${(!canEdit||total>=15||!manualCanPlace)?'disabled':''}><option value="">-- Chọn học sinh --</option>${manualOptions}</select></label>${!manualCanPlace?'<button class="btn ghost" disabled>Chỉ xếp trước giờ học</button>':total>=15?'<button class="btn ghost" disabled>Đã đủ 15 học sinh</button>':`<button class="btn primary" ${canEdit?`onclick="addManualMakeupToAttendance('${id}','${sessionKey}')"`:'disabled'}>+ Thêm học bù</button>`}</div></div>
++      <div class="manualMakeupBox"><b>Thêm học bù</b><div class="mini">Học bù xếp tự do, không bắt buộc cùng khối. Chỉ thêm trước khi buổi học bắt đầu; tổng sĩ số chính thức + học bù tối đa 15 học sinh.</div><div class="inline2" style="margin-top:8px"><label>Chọn học sinh khác lớp<select id="manualMakeupStudent" class="input" ${(!canEdit||total>=capacity||!manualCanPlace)?'disabled':''}><option value="">-- Chọn học sinh --</option>${manualOptions}</select></label>${!manualCanPlace?'<button class="btn ghost" disabled>Chỉ xếp trước giờ học</button>':total>=capacity?`<button class="btn ghost" disabled>Đã đủ ${capacity} học sinh</button>`:`<button class="btn primary" ${canEdit?`onclick="addManualMakeupToAttendance('${id}','${sessionKey}')"`:'disabled'}>+ Thêm học bù</button>`}</div></div>
+       <div class="tableWrap"><table><thead><tr><th>Học sinh</th><th>Loại</th><th>Trạng thái</th><th>Ghi chú</th></tr></thead><tbody>
+       ${roster.map(x=>{const rowKey=`${x.type}_${x.student.id}`; const row=rec.rows[rowKey]||{status:'present',note:''}; const label=x.type==='official'?'Chính thức':x.type==='makeup'?'🔁 Học bù':'🔁 Học bù'; return `<tr><td><b>${x.student.name}</b><div class="mini">${x.type==='official'?c.name:`Lớp chính: ${x.sourceClass.name||x.student.className||'-'}`}</div></td><td><span class="pill ${x.type==='official'?'gray':'blue'}">${label}</span></td><td>${attendanceStatusButtons(sessionKey,x.student.id,x.type,row.status,canEdit)}</td><td><input class="attNote" value="${String(row.note||'').replace(/"/g,'&quot;')}" ${canEdit?`oninput="setAttendanceNote('${sessionKey}','${x.student.id}','${x.type}',this.value)"`:'disabled'} placeholder="Ghi chú..."></td></tr>`}).join('')}
+       </tbody></table></div>
+--- /mnt/data/patch_backup/schedule.js	2026-07-07 04:38:56.433833964 +0000
++++ public/v15/modules/schedule.js	2026-07-07 04:39:26.229442324 +0000
+@@ -67,5 +67,5 @@
+     function mobileScheduleList(sessions){
+       const dayMap=v18eScheduleDayMap(sessions);
+       const byDay=WEEK_DAYS.map((d,i)=>({day:d, sessions:dayMap.get(d.key)||[], i}));
+-      return `<div class="mobileScheduleList">${byDay.map(({day,sessions,i})=>`<div class="dayBlock ${isTodayDayKey(day.key)?'todayColumn':''}" style="--i:${i}"><h3>${day.label} <span class="mini">${formatVNDate(dayDateFor(day.key))}${isTodayDayKey(day.key)?' • Hôm nay':''}</span></h3>${sessions.length?sessions.map(s=>{const st=sessionStatus(s); const key=sessionKeyFor(s); const plans=makeupCountForSession(key); const absent=absentCountForSession(key); const hasAttendance=scheduleAbsenceCountVisible(key); const isMakeup=s.type==='class_makeup'; let action=''; if(st.key==='cancelled'){const cm=classMakeupForSourceSession(key); action=`${cm?`<span class="classMakeupBadge">Dạy bù: ${classMakeupLabel(cm)}</span>`:'<span class="pill gray">Nghỉ buổi học</span>'}`} else if(isMakeup){action=`<span class="classMakeupBadge">Dạy bù cả lớp</span>`} else if(st.key==='done'){action=scheduleAbsenceBadgeMarkup(key)} else if(st.key==='live'){action=`<span class="statusDot live">${st.label}</span>${hasAttendance?` ${scheduleAbsenceBadgeMarkup(key)}`:''}`} else {action=`${hasAttendance?scheduleAbsenceBadgeMarkup(key):(plans?`<span class="makeupBadge">${plans} học bù</span>`:'<span class="pill gray">Chưa dạy</span>')}`} return `<div class="dayLesson"><b>${s.start} - ${s.end} • ${s.className}</b> <span class="statusDot ${st.key}">${st.label}</span>${isMakeup?' <span class="classMakeupBadge">Dạy bù</span>':''}<div class="mini">${s.teacher||'-'} • Tổng ${isMakeup?Number(s.students||0)+plans:totalRosterCountForSession(s.classId,key)}/15</div><div class="lessonActions">${action}</div></div>`}).join(''):'<div class="emptySlot">Không có lớp</div>'}</div>`).join('')}</div>`;
++      return `<div class="mobileScheduleList">${byDay.map(({day,sessions,i})=>`<div class="dayBlock ${isTodayDayKey(day.key)?'todayColumn':''}" style="--i:${i}"><h3>${day.label} <span class="mini">${formatVNDate(dayDateFor(day.key))}${isTodayDayKey(day.key)?' • Hôm nay':''}</span></h3>${sessions.length?sessions.map(s=>{const st=sessionStatus(s); const key=sessionKeyFor(s); const plans=makeupCountForSession(key); const absent=absentCountForSession(key); const hasAttendance=scheduleAbsenceCountVisible(key); const isMakeup=s.type==='class_makeup'; let action=''; if(st.key==='cancelled'){const cm=classMakeupForSourceSession(key); action=`${cm?`<span class="classMakeupBadge">Dạy bù: ${classMakeupLabel(cm)}</span>`:'<span class="pill gray">Nghỉ buổi học</span>'}`} else if(isMakeup){action=`<span class="classMakeupBadge">Dạy bù cả lớp</span>`} else if(st.key==='done'){action=scheduleAbsenceBadgeMarkup(key)} else if(st.key==='live'){action=`<span class="statusDot live">${st.label}</span>${hasAttendance?` ${scheduleAbsenceBadgeMarkup(key)}`:''}`} else {action=`${hasAttendance?scheduleAbsenceBadgeMarkup(key):(plans?`<span class="makeupBadge">${plans} học bù</span>`:'<span class="pill gray">Chưa dạy</span>')}`} return `<div class="dayLesson"><b>${s.start} - ${s.end} • ${s.className}</b> <span class="statusDot ${st.key}">${st.label}</span>${isMakeup?' <span class="classMakeupBadge">Dạy bù</span>':''}<div class="mini">${s.teacher||'-'} • Tổng ${isMakeup?Number(s.students||0)+plans:totalRosterCountForSession(s.classId,key)}/${db.settings.capacity||15}</div><div class="lessonActions">${action}</div></div>`}).join(''):'<div class="emptySlot">Không có lớp</div>'}</div>`).join('')}</div>`;
+     }
+--- /mnt/data/patch_backup/attendance_save_route.ts	2026-07-07 04:38:56.443836853 +0000
++++ app/api/attendance/save/route.ts	2026-07-07 04:39:50.230076955 +0000
+@@ -46,6 +46,107 @@
+     }));
+ }
+ 
++function mapAbsenceRecord(a: any) {
++  return {
++    id: a.id,
++    studentId: a.student_id,
++    sourceClassId: a.source_class_id,
++    sourceSessionKey: a.source_session_key,
++    sourceSessionLabel: a.source_session_label,
++    reason: a.reason || "Vắng",
++    generatedFromAttendance: !!a.generated_from_attendance,
++    status: a.status || "pending",
++    createdAt: a.created_at,
++    updatedAt: a.updated_at,
++  };
++}
++
++async function syncMakeupPlansFromAttendance(supabase: any, sessionKey: string, normalizedRows: any[]) {
++  const makeupStatusByStudent = new Map(
++    normalizedRows
++      .filter((r: any) => r.row_type === "makeup")
++      .map((r: any) => [String(r.student_id), String(r.status)])
++  );
++
++  if (!makeupStatusByStudent.size) {
++    return { makeupPlanUpdates: [], makeupAbsenceRecords: [] };
++  }
++
++  const { data: plans, error: planError } = await supabase
++    .from("official_makeup_plans")
++    .select("id, absence_id, student_id, status")
++    .eq("target_session_key", sessionKey)
++    .eq("status", "scheduled");
++
++  if (planError) throw planError;
++
++  const completedIds: string[] = [];
++  const missed: any[] = [];
++  for (const plan of plans || []) {
++    const nextStatus = makeupStatusByStudent.get(String(plan.student_id));
++    if (nextStatus === "present" || nextStatus === "late") completedIds.push(String(plan.id));
++    if (nextStatus === "absent") missed.push(plan);
++  }
++
++  const now = new Date().toISOString();
++  const makeupPlanUpdates: any[] = [];
++
++  if (completedIds.length) {
++    const { data, error } = await supabase
++      .from("official_makeup_plans")
++      .update({ status: "completed" })
++      .in("id", completedIds)
++      .select("id, absence_id, status, cancelled_at");
++    if (error) throw error;
++    for (const row of data || []) {
++      makeupPlanUpdates.push({
++        id: row.id,
++        absenceId: row.absence_id,
++        status: row.status,
++        cancelledAt: row.cancelled_at,
++      });
++    }
++  }
++
++  let makeupAbsenceRecords: any[] = [];
++  if (missed.length) {
++    const missedIds = missed.map((p: any) => String(p.id));
++    const missedAbsenceIds = missed.map((p: any) => String(p.absence_id)).filter(Boolean);
++
++    const { data, error } = await supabase
++      .from("official_makeup_plans")
++      .update({ status: "cancelled", cancelled_at: now })
++      .in("id", missedIds)
++      .select("id, absence_id, status, cancelled_at");
++    if (error) throw error;
++    for (const row of data || []) {
++      makeupPlanUpdates.push({
++        id: row.id,
++        absenceId: row.absence_id,
++        status: row.status,
++        cancelledAt: row.cancelled_at,
++      });
++    }
++
++    if (missedAbsenceIds.length) {
++      const { error: absenceError } = await supabase
++        .from("official_absence_records")
++        .update({ status: "pending", updated_at: now })
++        .in("id", missedAbsenceIds);
++      if (absenceError) throw absenceError;
++
++      const { data: absences, error: readAbsenceError } = await supabase
++        .from("official_absence_records")
++        .select("id, student_id, source_class_id, source_session_key, source_session_label, reason, generated_from_attendance, status, created_at, updated_at")
++        .in("id", missedAbsenceIds);
++      if (readAbsenceError) throw readAbsenceError;
++      makeupAbsenceRecords = (absences || []).map(mapAbsenceRecord);
++    }
++  }
++
++  return { makeupPlanUpdates, makeupAbsenceRecords };
++}
++
+ async function userCanSaveAttendance(user: any, classId: string, body: any) {
+   if (canManage(user)) return true;
+   if (!attendanceWindowOpen(body)) return false;
+@@ -167,6 +268,13 @@
+     if (rowsError) return NextResponse.json({ error: rowsError.message }, { status: 500 });
+   }
+ 
++  let makeupSync = { makeupPlanUpdates: [] as any[], makeupAbsenceRecords: [] as any[] };
++  try {
++    makeupSync = await syncMakeupPlansFromAttendance(supabase, sessionKey, normalizedRows);
++  } catch (e: any) {
++    return NextResponse.json({ error: e.message || "Không cập nhật được trạng thái học bù" }, { status: 500 });
++  }
++
+   const absentRows = officialRows.filter((r: any) => r.status === "absent");
+   const existingById = new Map((existingAbsences || []).map((a: any) => [String(a.id), a]));
+ 
+@@ -223,17 +331,8 @@
+       manualMakeups,
+       updatedAt: sessionRow.updated_at,
+     },
+-    absenceRecords: (absData || []).map((a: any) => ({
+-      id: a.id,
+-      studentId: a.student_id,
+-      sourceClassId: a.source_class_id,
+-      sourceSessionKey: a.source_session_key,
+-      sourceSessionLabel: a.source_session_label,
+-      reason: a.reason || "Vắng",
+-      generatedFromAttendance: !!a.generated_from_attendance,
+-      status: a.status || "pending",
+-      createdAt: a.created_at,
+-      updatedAt: a.updated_at,
+-    })),
++    absenceRecords: (absData || []).map(mapAbsenceRecord),
++    makeupPlanUpdates: makeupSync.makeupPlanUpdates,
++    makeupAbsenceRecords: makeupSync.makeupAbsenceRecords,
+   });
+ }
+--- /mnt/data/patch_backup/makeup_plans_route.ts	2026-07-07 04:38:56.458786984 +0000
++++ app/api/makeup/plans/route.ts	2026-07-07 04:40:06.422783711 +0000
+@@ -102,7 +102,7 @@
+     .from("official_makeup_plans")
+     .select("id", { count: "exact", head: true })
+     .eq("target_session_key", targetSessionKey)
+-    .neq("status", "cancelled");
++    .eq("status", "scheduled");
+   if (me) return NextResponse.json({ error: me.message }, { status: 500 });
+ 
+   if ((officialCount || 0) + (makeupCount || 0) >= capacity) {
+@@ -114,7 +114,7 @@
+     .select("id,status")
+     .eq("target_session_key", targetSessionKey)
+     .eq("student_id", studentId)
+-    .neq("status", "cancelled")
++    .eq("status", "scheduled")
+     .maybeSingle();
+ 
+   if (existing) return NextResponse.json({ error: "Học sinh đã có trong buổi học bù này" }, { status: 400 });

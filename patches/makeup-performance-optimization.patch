@@ -1,0 +1,485 @@
+diff -ruN '--exclude=node_modules' '--exclude=.next' orig_opt/msgiang-english-web-main/app/api/attendance/state/route.ts work_opt/msgiang-english-web-main/app/api/attendance/state/route.ts
+--- orig_opt/msgiang-english-web-main/app/api/attendance/state/route.ts	2026-07-04 07:05:28.000000000 +0000
++++ work_opt/msgiang-english-web-main/app/api/attendance/state/route.ts	2026-07-07 09:00:41.504987899 +0000
+@@ -11,6 +11,28 @@
+   return /^\d{4}-\d{2}-\d{2}$/.test(s) ? s : "";
+ }
+ 
++function monthsInDateRange(start: string, end: string) {
++  if (!start || !end) return [];
++  const out: string[] = [];
++  const d = new Date(`${start}T00:00:00+07:00`);
++  const endDate = new Date(`${end}T00:00:00+07:00`);
++  if (!Number.isFinite(d.getTime()) || !Number.isFinite(endDate.getTime())) return [];
++  // end is exclusive; include every month touched by [start, end).
++  while (d.getTime() < endDate.getTime()) {
++    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
++    if (!out.includes(key)) out.push(key);
++    d.setDate(d.getDate() + 1);
++  }
++  return out;
++}
++
++function applySessionMonthFilter(query: any, column: string, months: string[]) {
++  const safe = months.filter((m) => /^\d{4}-\d{2}$/.test(m));
++  if (!safe.length) return query;
++  if (safe.length === 1) return query.like(column, `%|${safe[0]}-%`);
++  return query.or(safe.map((m) => `${column}.like.*|${m}-*`).join(","));
++}
++
+ export async function GET(req: NextRequest) {
+   const { response } = await requireUser();
+   if (response) return response;
+@@ -30,13 +52,20 @@
+     sessionsQuery = sessionsQuery.gte("session_date", start).lt("session_date", end);
+   }
+ 
++  let absQuery = supabase
++    .from("official_absence_records")
++    .select("id, student_id, source_class_id, source_session_key, source_session_label, reason, generated_from_attendance, status, created_at, updated_at")
++    .eq("status", "pending")
++    .order("created_at", { ascending: true });
++
++  // Pending học bù chỉ cần theo tháng của tuần đang xem; tránh kéo toàn bộ nhiều tháng về frontend.
++  if (start && end) {
++    absQuery = applySessionMonthFilter(absQuery, "source_session_key", monthsInDateRange(start, end));
++  }
++
+   const [sessionsRes, absRes] = await Promise.all([
+     sessionsQuery,
+-    supabase
+-      .from("official_absence_records")
+-      .select("id, student_id, source_class_id, source_session_key, source_session_label, reason, generated_from_attendance, status, created_at, updated_at")
+-      .eq("status", "pending")
+-      .order("created_at", { ascending: true }),
++    absQuery,
+   ]);
+ 
+   if (sessionsRes.error) return NextResponse.json({ error: sessionsRes.error.message }, { status: 500 });
+diff -ruN '--exclude=node_modules' '--exclude=.next' orig_opt/msgiang-english-web-main/app/api/makeup/state/route.ts work_opt/msgiang-english-web-main/app/api/makeup/state/route.ts
+--- orig_opt/msgiang-english-web-main/app/api/makeup/state/route.ts	1970-01-01 00:00:00.000000000 +0000
++++ work_opt/msgiang-english-web-main/app/api/makeup/state/route.ts	2026-07-07 09:00:19.451446500 +0000
+@@ -0,0 +1,131 @@
++import { NextRequest, NextResponse } from "next/server";
++import { requireUser } from "@/lib/auth";
++import { supabaseAdmin } from "@/lib/supabase";
++
++function validMonth(v: string | null) {
++  const s = String(v || "");
++  if (/^\d{4}-\d{2}$/.test(s)) return s;
++  return new Date().toISOString().slice(0, 7);
++}
++
++function attendanceKey(sessionKey: string) {
++  return `att_${sessionKey}`;
++}
++
++function sessionKeyMonthLike(monthKey: string) {
++  // Session key format: classId|YYYY-MM-DD|Day|HH:mm-HH:mm
++  return `%|${monthKey}-%`;
++}
++
++function mapAbsence(a: any) {
++  return {
++    id: a.id,
++    studentId: a.student_id,
++    sourceClassId: a.source_class_id,
++    sourceSessionKey: a.source_session_key,
++    sourceSessionLabel: a.source_session_label,
++    reason: a.reason || "Vắng",
++    generatedFromAttendance: !!a.generated_from_attendance,
++    status: a.status || "pending",
++    createdAt: a.created_at,
++    updatedAt: a.updated_at,
++  };
++}
++
++function mapPlan(r: any) {
++  return {
++    id: r.id,
++    absenceId: r.absence_id,
++    studentId: r.student_id,
++    sourceClassId: r.source_class_id,
++    sourceSessionKey: r.source_session_key,
++    targetClassId: r.target_class_id,
++    targetSessionKey: r.target_session_key,
++    status: r.status,
++    createdBy: r.created_by,
++    createdAt: r.created_at,
++    cancelledAt: r.cancelled_at,
++  };
++}
++
++export async function GET(req: NextRequest) {
++  const { response } = await requireUser();
++  if (response) return response;
++
++  const url = new URL(req.url);
++  const month = validMonth(url.searchParams.get("month"));
++  const supabase = supabaseAdmin();
++
++  // API riêng cho tab Học bù: chỉ kéo dữ liệu của tháng đang xem.
++  // Điều này tránh việc tab Học bù phải tải toàn bộ lịch/điểm danh nhiều tháng rồi lọc ở frontend.
++  const [absRes, planRes] = await Promise.all([
++    supabase
++      .from("official_absence_records")
++      .select("id, student_id, source_class_id, source_session_key, source_session_label, reason, generated_from_attendance, status, created_at, updated_at")
++      .like("source_session_key", sessionKeyMonthLike(month))
++      .order("created_at", { ascending: true }),
++    supabase
++      .from("official_makeup_plans")
++      .select("id, absence_id, student_id, source_class_id, source_session_key, target_class_id, target_session_key, status, created_by, created_at, cancelled_at")
++      .like("source_session_key", sessionKeyMonthLike(month))
++      .order("created_at", { ascending: false }),
++  ]);
++
++  if (absRes.error) return NextResponse.json({ error: absRes.error.message }, { status: 500 });
++  if (planRes.error) return NextResponse.json({ error: planRes.error.message }, { status: 500 });
++
++  const plans = planRes.data || [];
++  const targetSessionKeys = Array.from(new Set(plans.map((p: any) => String(p.target_session_key || "")).filter(Boolean)));
++
++  let attendanceSessions: Record<string, any> = {};
++  if (targetSessionKeys.length) {
++    const [sessionRes, rowRes] = await Promise.all([
++      supabase
++        .from("official_attendance_sessions")
++        .select("session_key, session_date, saved, editable, manual_makeups, updated_at")
++        .in("session_key", targetSessionKeys),
++      supabase
++        .from("official_attendance_rows")
++        .select("session_key, student_id, row_type, status, note")
++        .in("session_key", targetSessionKeys),
++    ]);
++
++    if (sessionRes.error) return NextResponse.json({ error: sessionRes.error.message }, { status: 500 });
++    if (rowRes.error) return NextResponse.json({ error: rowRes.error.message }, { status: 500 });
++
++    const rowsBySession = new Map<string, any[]>();
++    for (const r of rowRes.data || []) {
++      const arr = rowsBySession.get(r.session_key) || [];
++      arr.push(r);
++      rowsBySession.set(r.session_key, arr);
++    }
++
++    for (const s of sessionRes.data || []) {
++      const rows: Record<string, any> = {};
++      for (const r of rowsBySession.get(s.session_key) || []) {
++        rows[`${r.row_type}_${r.student_id}`] = {
++          studentId: r.student_id,
++          type: r.row_type,
++          status: r.status,
++          note: r.note || "",
++        };
++      }
++      attendanceSessions[attendanceKey(s.session_key)] = {
++        sessionKey: s.session_key,
++        saved: !!s.saved,
++        editable: !!s.editable,
++        rows,
++        manualMakeups: Array.isArray(s.manual_makeups) ? s.manual_makeups : [],
++        updatedAt: s.updated_at,
++      };
++    }
++  }
++
++  return NextResponse.json({
++    ok: true,
++    month,
++    attendanceSessions,
++    absenceRecords: (absRes.data || []).map(mapAbsence),
++    makeupPlans: plans.map(mapPlan),
++  });
++}
+diff -ruN '--exclude=node_modules' '--exclude=.next' orig_opt/msgiang-english-web-main/app/api/schedule/state/route.ts work_opt/msgiang-english-web-main/app/api/schedule/state/route.ts
+--- orig_opt/msgiang-english-web-main/app/api/schedule/state/route.ts	2026-07-07 04:56:58.000000000 +0000
++++ work_opt/msgiang-english-web-main/app/api/schedule/state/route.ts	2026-07-07 09:00:41.505575965 +0000
+@@ -8,6 +8,25 @@
+   return /^\d{4}-\d{2}-\d{2}$/.test(s) ? s : "";
+ }
+ 
++function datesInRange(start: string, end: string) {
++  if (!start || !end) return [];
++  const out: string[] = [];
++  const d = new Date(`${start}T00:00:00+07:00`);
++  const endDate = new Date(`${end}T00:00:00+07:00`);
++  if (!Number.isFinite(d.getTime()) || !Number.isFinite(endDate.getTime())) return [];
++  while (d.getTime() < endDate.getTime() && out.length < 45) {
++    out.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`);
++    d.setDate(d.getDate() + 1);
++  }
++  return out;
++}
++
++function applyTargetSessionDateFilter(query: any, dates: string[]) {
++  const safe = dates.filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d));
++  if (!safe.length) return query;
++  return query.or(safe.map((d) => `target_session_key.like.*|${d}|*`).join(","));
++}
++
+ const CLASS_MAKEUP_SELECT =
+   "id, class_id, source_session_key, teacher_id, makeup_date, day_key, start_time, end_time, reason, status, created_at, updated_at";
+ 
+@@ -92,15 +111,21 @@
+     classMakeupQuery = classMakeupQuery.gte("makeup_date", start).lt("makeup_date", end);
+   }
+ 
++  let studentMakeupPlanQuery = supabase
++    .from("official_makeup_plans")
++    .select("id, absence_id, student_id, source_class_id, source_session_key, target_class_id, target_session_key, status, created_by, created_at, cancelled_at")
++    .order("created_at", { ascending: false });
++
++  // Lịch dạy chỉ cần học bù có buổi đích trong tuần đang xem.
++  // API riêng /api/makeup/state sẽ xử lý tab Học bù theo tháng.
++  if (start && end) {
++    studentMakeupPlanQuery = applyTargetSessionDateFilter(studentMakeupPlanQuery, datesInRange(start, end));
++  }
++
+   const [cRes, makeupRes, mRes] = await Promise.all([
+     cancellationsQuery,
+     classMakeupQuery,
+-    // Trả cả plan đã cancelled để popup lịch dạy vẫn giữ lịch sử học bù vắng.
+-    // Frontend vẫn chỉ tính sĩ số/xếp mới bằng plan đang scheduled.
+-    supabase
+-      .from("official_makeup_plans")
+-      .select("id, absence_id, student_id, source_class_id, source_session_key, target_class_id, target_session_key, status, created_by, created_at, cancelled_at")
+-      .order("created_at", { ascending: false }),
++    studentMakeupPlanQuery,
+   ]);
+ 
+   if (cRes.error) return NextResponse.json({ error: cRes.error.message }, { status: 500 });
+diff -ruN '--exclude=node_modules' '--exclude=.next' orig_opt/msgiang-english-web-main/public/index-v15.html work_opt/msgiang-english-web-main/public/index-v15.html
+--- orig_opt/msgiang-english-web-main/public/index-v15.html	2026-07-07 08:36:01.000000000 +0000
++++ work_opt/msgiang-english-web-main/public/index-v15.html	2026-07-07 09:01:12.230197487 +0000
+@@ -6,7 +6,7 @@
+   <meta name="theme-color" content="#d91633" />
+   <title>Ms.Giang English Center</title>
+   <link rel="icon" href="/v15/favicon.png">
+-  <link rel="stylesheet" href="/v15/app.css?v=20reset1">
++  <link rel="stylesheet" href="/v15/app.css?v=20opt1">
+   <style>
+   body{margin:0;background:#fff7f9;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+   #bootLoader{min-height:100vh;display:grid;place-items:center;color:#9f1239}
+@@ -19,12 +19,12 @@
+   <div id="root"><div id="bootLoader"><div class="bootCard"><b>Ms.Giang English Center</b><span>Đang mở ứng dụng...</span></div></div></div>
+   <div id="modalBackdrop" class="modalBackdrop"></div>
+   <div id="toast" class="toast"></div>
+-  <script src="/v15/modules/classes.js?v=20reset1" defer></script>
+-  <script src="/v15/modules/schedule.js?v=20reset1" defer></script>
+-  <script src="/v15/modules/attendance.js?v=20reset1" defer></script>
+-  <script src="/v15/modules/tuition.js?v=20reset1" defer></script>
+-  <script src="/v15/modules/library.js?v=20reset1" defer></script>
+-  <script src="/v15/modules/evaluation.js?v=20reset1" defer></script>
+-  <script src="/v15/app.js?v=20reset1" defer></script>
++  <script src="/v15/modules/classes.js?v=20opt1" defer></script>
++  <script src="/v15/modules/schedule.js?v=20opt1" defer></script>
++  <script src="/v15/modules/attendance.js?v=20opt1" defer></script>
++  <script src="/v15/modules/tuition.js?v=20opt1" defer></script>
++  <script src="/v15/modules/library.js?v=20opt1" defer></script>
++  <script src="/v15/modules/evaluation.js?v=20opt1" defer></script>
++  <script src="/v15/app.js?v=20opt1" defer></script>
+ </body>
+ </html>
+\ No newline at end of file
+diff -ruN '--exclude=node_modules' '--exclude=.next' orig_opt/msgiang-english-web-main/public/v15/app.js work_opt/msgiang-english-web-main/public/v15/app.js
+--- orig_opt/msgiang-english-web-main/public/v15/app.js	2026-07-07 08:14:42.000000000 +0000
++++ work_opt/msgiang-english-web-main/public/v15/app.js	2026-07-07 09:01:10.642560101 +0000
+@@ -292,6 +292,14 @@
+         absenceRecords: db.absenceRecords || []
+       });
+     }
++    function v18fUpdateMakeupModuleCache(){
++      moduleCacheSet(`makeup:${makeupCurrentMonthKey()}`, {
++        makeupMonth: makeupCurrentMonthKey(),
++        makeupPlans: db.makeupPlans || [],
++        absenceRecords: db.absenceRecords || [],
++        attendanceSessions: db.attendanceSessions || {}
++      });
++    }
+     function v18fUpdateTuitionModuleCache(){
+       moduleCacheSet(`tuition:${tuitionMonthKey()}`, {
+         tuitionRollup: db.tuitionRollup || {},
+@@ -341,6 +349,11 @@
+         v20bMarkLoaded('attendance');
+         return;
+       }
++      if(key==='makeup'){
++        v18fUpdateMakeupModuleCache();
++        v20bMarkLoaded('makeup');
++        return;
++      }
+       if(key==='tuition'){
+         v18fUpdateTuitionModuleCache();
+         v20bMarkLoaded('tuition');
+@@ -365,6 +378,7 @@
+     function v20b13InvalidateScheduleAfterMutation(){
+       lazyRouteState.schedule={};
+       lazyRouteState.attendance={};
++      lazyRouteState.makeup={};
+       v18Memo.weekKey='';
+       v18Memo.weekSessions=null;
+       v18Memo.attendancePageKey='';
+@@ -568,7 +582,7 @@
+       if(key==='core') return 'classes:latest';
+       if(key==='schedule') return `schedule:${isoDate(weekStartDate())}`;
+       if(key==='attendance') return `attendance:${isoDate(weekStartDate())}`;
+-      if(key==='makeup') return `makeup:${isoDate(weekStartDate())}`;
++      if(key==='makeup') return `makeup:${makeupCurrentMonthKey()}`;
+       if(key==='tuition') return `tuition:${tuitionMonthKey()}`;
+       if(key==='evaluation') return `evaluation:${evaluationMonthKey()}`;
+       if(key==='library') return 'library:latest';
+@@ -663,11 +677,10 @@
+         return true;
+       }
+       if(key==='makeup'){
+-        if(payload.classCancellations || payload.classMakeupSessions || payload.makeupPlans){
+-          applyCachedPayload('schedule', payload);
+-        }
+-        if(payload.attendanceSessions || payload.absenceRecords){
+-          applyCachedPayload('attendance', payload);
++        db.makeupPlans=payload.makeupPlans||[];
++        db.absenceRecords=payload.absenceRecords||[];
++        if(payload.attendanceSessions){
++          db.attendanceSessions={...(db.attendanceSessions||{}),...(payload.attendanceSessions||{})};
+         }
+         return true;
+       }
+@@ -711,10 +724,7 @@
+         if(schedulePayload) applyCachedPayload('schedule',schedulePayload);
+       }
+       if(key==='makeup'){
+-        const schedulePayload=moduleCacheGet(`schedule:${isoDate(weekStartDate())}`);
+-        const attendancePayload=moduleCacheGet(`attendance:${isoDate(weekStartDate())}`);
+-        if(schedulePayload){ applyCachedPayload('schedule',schedulePayload); ok=true; }
+-        if(attendancePayload){ applyCachedPayload('attendance',attendancePayload); ok=true; }
++        // Học bù có API/cache riêng theo tháng, không cần hydrate từ lịch tuần/điểm danh tuần nữa.
+       }
+       if(ok){
+         lazyRouteState[key]={loaded:true,loading:false,loadedAt:Date.now(),fromCache:true};
+@@ -782,7 +792,7 @@
+           const jobs=[];
+           // V20L.4: schedule page also needs attendance/absence data so lesson cards can show "Vắng: x".
+           if(key==='schedule') jobs.push(refreshOfficialClasses({skipSave:true}), refreshOfficialScheduleState({skipSave:true}), refreshOfficialAttendanceState({skipSave:true}));
+-          if(key==='makeup') jobs.push(refreshOfficialClasses({skipSave:true}), refreshOfficialScheduleState({skipSave:true}), refreshOfficialAttendanceState({skipSave:true}));
++          if(key==='makeup') jobs.push(refreshOfficialClasses({skipSave:true}), refreshOfficialMakeupState({skipSave:true}));
+           if(key==='attendance') jobs.push(refreshOfficialClasses({skipSave:true}), refreshOfficialScheduleState({skipSave:true}), refreshOfficialAttendanceState({skipSave:true}));
+           if(key==='tuition') jobs.push(refreshOfficialTuitionState({skipSave:true}));
+           if(key==='library') jobs.push(refreshOfficialLibrary({skipSave:true}));
+@@ -791,15 +801,7 @@
+           const results=await Promise.allSettled(jobs);
+           anyChanged=v18iAnyChanged(results);
+         });
+-        if(key==='makeup'){
+-          moduleCacheSet(`makeup:${isoDate(weekStartDate())}`, {
+-            classCancellations: db.classCancellations || {},
+-            classMakeupSessions: db.classMakeupSessions || [],
+-            makeupPlans: db.makeupPlans || [],
+-            attendanceSessions: db.attendanceSessions || {},
+-            absenceRecords: db.absenceRecords || []
+-          });
+-        }
++        if(key==='makeup') v18fUpdateMakeupModuleCache();
+         lazyRouteState[key]={loaded:true,loading:false,loadedAt:Date.now(),unchanged:!anyChanged,fromCache:false,refreshingAfterCache:false};
+         saveLocalOnly();
+       }catch(e){
+@@ -1158,6 +1160,32 @@
+       }catch(e){console.warn('Không tải được dữ liệu điểm danh',e); return false}
+     }
+ 
++    async function refreshOfficialMakeupState(options={}){
++      if(!currentUser) return false;
++      try{
++        const month=makeupCurrentMonthKey();
++        const data=await officialFetch(`/api/makeup/state?month=${encodeURIComponent(month)}`);
++        const payload={
++          makeupMonth:data.month||month,
++          makeupPlans:data.makeupPlans||[],
++          absenceRecords:data.absenceRecords||[],
++          attendanceSessions:data.attendanceSessions||{}
++        };
++        const changed=v18iHashPayload(`makeup:${month}`,payload);
++        const localNeedsApply=String(db.makeupMonth||'')!==String(payload.makeupMonth||month);
++        if(changed || localNeedsApply){
++          db.makeupMonth=payload.makeupMonth||month;
++          db.makeupPlans=payload.makeupPlans;
++          db.absenceRecords=payload.absenceRecords;
++          db.attendanceSessions={...(db.attendanceSessions||{}),...(payload.attendanceSessions||{})};
++          v18Touch();
++          if(!options.skipSave) save();
++        }
++        moduleCacheSet(`makeup:${month}`, payload);
++        return changed || localNeedsApply;
++      }catch(e){console.warn('Không tải được dữ liệu học bù theo tháng',e); return false}
++    }
++
+ 
+     function tuitionMonthKey(){
+       db.settings ||= {};
+@@ -2634,7 +2662,7 @@
+         await officialFetch(`/api/makeup/plans/${encodeURIComponent(planId)}`,{method:'DELETE'});
+         p.status='cancelled'; p.cancelledAt=new Date().toLocaleString('vi-VN');
+         const rec=(db.absenceRecords||[]).find(a=>a.id===p.absenceId); if(rec) rec.status='pending';
+-        v20bAfterMutation(['schedule','attendance']);
++        v20bAfterMutation(['schedule','attendance','makeup']);
+         v20b13InvalidateScheduleAfterMutation();
+         save(); toast('Đã hủy học bù, học sinh quay lại danh sách chờ xếp'); openScheduleMakeup(targetClassId,targetSessionKey);
+       }catch(e){toast(e.message||'Không hủy được học bù')}
+@@ -2865,7 +2893,7 @@
+         v20l4InvalidateScheduleAfterAttendanceSave(sessionKey);
+         await refreshOfficialTuitionState();
+         v18fUpdateTuitionModuleCache();
+-        v20bAfterMutation(['attendance','schedule','tuition']);
++        v20bAfterMutation(['attendance','schedule','makeup','tuition']);
+         save(); toast('Đã lưu điểm danh và cập nhật lịch dạy/học bù'); openAttendance(sessionObjectFromKey(sessionKey).classId,sessionKey,false);
+       }catch(e){toast(e.message||'Không lưu được điểm danh')}
+     }
+@@ -4051,7 +4079,7 @@
+         await officialFetch(`/api/schedule/class-makeup?sourceSessionKey=${encodeURIComponent(cm.sourceSessionKey)}`,{method:'DELETE'});
+         db.classMakeupSessions=(db.classMakeupSessions||[]).map(m=>m.sourceSessionKey===cm.sourceSessionKey?{...m,status:'cancelled'}:m);
+         v18fUpdateScheduleModuleCache();
+-        v20bAfterMutation(['schedule','attendance']);
++        v20bAfterMutation(['schedule','attendance','makeup']);
+         v20b13InvalidateScheduleAfterMutation();
+         save(); closeModal(); toast('Đã hủy lịch dạy bù'); render();
+       }catch(e){toast(e.message||'Không hủy được lịch dạy bù')}
+@@ -4086,7 +4114,7 @@
+         const data=await officialFetch('/api/schedule/class-makeup',{method:'POST',body:JSON.stringify({sourceSessionKey,classId:src.classId,date,day,start,end,reason,teacherId,teacherName})});
+         db.classMakeupSessions = v20bMergeClassMakeupSessions(db.classMakeupSessions||[], [data.classMakeup]);
+         v20b7MergeClassSnapshotsFromMakeups(db.classMakeupSessions);
+-        v20bAfterMutation(['schedule','attendance']);
++        v20bAfterMutation(['schedule','attendance','makeup']);
+         v20b13InvalidateScheduleAfterMutation();
+         save(); closeModal(); toast('Đã lưu lịch dạy bù'); render();
+       }catch(e){toast(e.message||'Không lưu được lịch dạy bù')}
+@@ -4138,7 +4166,7 @@
+         const data=await officialFetch('/api/makeup/plans',{method:'POST',body:JSON.stringify({id:'mk_'+Date.now(),absenceId:absenceIdValue,studentId,sourceClassId,sourceSessionKey:sourceSessionKey||null,targetClassId,targetSessionKey})});
+         db.makeupPlans.push(data.plan);
+         rec.status='scheduled';
+-        v20bAfterMutation(['schedule','attendance']);
++        v20bAfterMutation(['schedule','attendance','makeup']);
+         v20b13InvalidateScheduleAfterMutation();
+         save(); toast('Đã xếp học bù vào đúng buổi đã chọn'); openScheduleMakeup(targetClassId,targetSessionKey);
+       }catch(e){toast(e.message||'Không xếp được học bù')}
+diff -ruN '--exclude=node_modules' '--exclude=.next' orig_opt/msgiang-english-web-main/supabase/migrations/012_makeup_month_performance_indexes.sql work_opt/msgiang-english-web-main/supabase/migrations/012_makeup_month_performance_indexes.sql
+--- orig_opt/msgiang-english-web-main/supabase/migrations/012_makeup_month_performance_indexes.sql	1970-01-01 00:00:00.000000000 +0000
++++ work_opt/msgiang-english-web-main/supabase/migrations/012_makeup_month_performance_indexes.sql	2026-07-07 09:00:19.459178190 +0000
+@@ -0,0 +1,19 @@
++-- V20 reset/optimization: speed up monthly makeup filters that search session_key by month.
++-- Session keys are stored as: classId|YYYY-MM-DD|Day|HH:mm-HH:mm.
++-- Trigram indexes help LIKE '%|YYYY-MM-%' queries used by /api/makeup/state and monthly pending absence lookup.
++create extension if not exists pg_trgm;
++
++create index if not exists idx_official_absence_records_source_session_trgm
++  on official_absence_records using gin (source_session_key gin_trgm_ops);
++
++create index if not exists idx_official_makeup_plans_source_session_trgm
++  on official_makeup_plans using gin (source_session_key gin_trgm_ops);
++
++create index if not exists idx_official_makeup_plans_target_session_trgm
++  on official_makeup_plans using gin (target_session_key gin_trgm_ops);
++
++create index if not exists idx_official_absence_records_status_source_session
++  on official_absence_records(status, source_session_key);
++
++create index if not exists idx_official_makeup_plans_status_source_session
++  on official_makeup_plans(status, source_session_key);

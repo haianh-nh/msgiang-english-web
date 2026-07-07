@@ -1,0 +1,224 @@
+diff -ru '--exclude=node_modules' '--exclude=.next' orig_hocbu/msgiang-english-web-main/app/api/attendance/save/route.ts work_hocbu/msgiang-english-web-main/app/api/attendance/save/route.ts
+--- orig_hocbu/msgiang-english-web-main/app/api/attendance/save/route.ts	2026-07-07 07:18:26.000000000 +0000
++++ work_hocbu/msgiang-english-web-main/app/api/attendance/save/route.ts	2026-07-07 07:45:37.069534993 +0000
+@@ -61,6 +61,31 @@
+   };
+ }
+ 
++async function cancelMakeupPlansForCorrectedAbsences(supabase: any, absenceIds: string[]) {
++  const ids = [...new Set((absenceIds || []).map(String).filter(Boolean))];
++  if (!ids.length) return { makeupPlanUpdates: [] as any[] };
++
++  // Khi Admin/Quản lí sửa điểm danh gốc từ Vắng -> Có mặt/Muộn,
++  // các lịch học bù phát sinh từ lượt vắng sai phải bị hủy theo lỗi nguồn.
++  // Không đưa học sinh về Chờ xếp, vì lượt vắng gốc sẽ bị xóa ở bước sau.
++  const { data, error } = await supabase
++    .from("official_makeup_plans")
++    .update({ status: "cancelled", cancelled_at: new Date().toISOString() })
++    .in("absence_id", ids)
++    .neq("status", "cancelled")
++    .select("id, absence_id, status, cancelled_at");
++  if (error) throw error;
++
++  return {
++    makeupPlanUpdates: (data || []).map((row: any) => ({
++      id: row.id,
++      absenceId: row.absence_id,
++      status: row.status,
++      cancelledAt: row.cancelled_at,
++    })),
++  };
++}
++
+ async function syncMakeupPlansFromAttendance(supabase: any, sessionKey: string, normalizedRows: any[]) {
+   const makeupStatusByStudent = new Map(
+     normalizedRows
+@@ -249,17 +274,41 @@
+ 
+   if (existingAbsError) return NextResponse.json({ error: existingAbsError.message }, { status: 500 });
+ 
+-  const scheduledConflicts = (existingAbsences || []).filter((a: any) => {
+-    const nextStatus = rowStatusByAbsenceId.get(String(a.id));
+-    return String(a.status || "") === "scheduled" && nextStatus && nextStatus !== "absent";
+-  });
++  const canManageAttendance = canManage(user);
++  const correctedAbsenceIds = (existingAbsences || [])
++    .filter((a: any) => {
++      const nextStatus = rowStatusByAbsenceId.get(String(a.id));
++      return nextStatus && nextStatus !== "absent";
++    })
++    .map((a: any) => String(a.id));
++
++  let correctedPlanRows: any[] = [];
++  if (correctedAbsenceIds.length) {
++    const { data: linkedPlans, error: linkedPlanError } = await supabase
++      .from("official_makeup_plans")
++      .select("id, absence_id, status")
++      .in("absence_id", correctedAbsenceIds);
++    if (linkedPlanError) return NextResponse.json({ error: linkedPlanError.message }, { status: 500 });
++    correctedPlanRows = linkedPlans || [];
++  }
+ 
+-  if (scheduledConflicts.length) {
++  // Giáo viên thường có thể sửa nhầm khi lượt vắng chưa được xếp học bù.
++  // Nếu đã từng có makeupPlan liên quan, chỉ Admin/Quản lí được sửa để hệ thống hủy lịch học bù đúng cách.
++  if (correctedPlanRows.length && !canManageAttendance) {
+     return NextResponse.json({
+-      error: "Có lượt vắng đã được xếp học bù. Hãy hủy lịch học bù trước khi đổi học sinh từ Vắng sang Có mặt/Muộn.",
++      error: "Lượt vắng này đã được xếp học bù. Hãy báo Admin/Quản lí sửa điểm danh gốc để hệ thống hủy lịch học bù đúng cách.",
+     }, { status: 409 });
+   }
+ 
++  let correctionSync = { makeupPlanUpdates: [] as any[] };
++  if (canManageAttendance && correctedAbsenceIds.length) {
++    try {
++      correctionSync = await cancelMakeupPlansForCorrectedAbsences(supabase, correctedAbsenceIds);
++    } catch (e: any) {
++      return NextResponse.json({ error: e.message || "Không hủy được lịch học bù khi sửa điểm danh gốc" }, { status: 500 });
++    }
++  }
++
+   const sessionRow = {
+     session_key: sessionKey,
+     class_id: classId,
+@@ -300,8 +349,18 @@
+   const absentRows = officialRows.filter((r: any) => r.status === "absent");
+   const existingById = new Map((existingAbsences || []).map((a: any) => [String(a.id), a]));
+ 
++  const correctedAbsenceIdSet = new Set(canManageAttendance ? correctedAbsenceIds : []);
+   const deleteIds = (existingAbsences || [])
+-    .filter((a: any) => rowStatusByAbsenceId.get(String(a.id)) !== "absent" && String(a.status || "") !== "scheduled")
++    .filter((a: any) => {
++      const nextStatus = rowStatusByAbsenceId.get(String(a.id));
++      if (nextStatus === "absent") return false;
++      const currentStatus = String(a.status || "");
++      // Giáo viên thường vẫn không được xóa lượt vắng đã xếp học bù.
++      // Admin/Quản lí sửa điểm danh gốc thì được xóa cả lượt đang scheduled,
++      // vì các makeupPlan liên quan đã bị hủy ở trên.
++      if (currentStatus === "scheduled" && !correctedAbsenceIdSet.has(String(a.id))) return false;
++      return true;
++    })
+     .map((a: any) => String(a.id));
+ 
+   if (deleteIds.length) {
+@@ -354,7 +413,7 @@
+       updatedAt: sessionRow.updated_at,
+     },
+     absenceRecords: (absData || []).map(mapAbsenceRecord),
+-    makeupPlanUpdates: makeupSync.makeupPlanUpdates,
++    makeupPlanUpdates: [...correctionSync.makeupPlanUpdates, ...makeupSync.makeupPlanUpdates],
+     makeupAbsenceRecords: makeupSync.makeupAbsenceRecords,
+     makeupResolvedAbsenceIds: makeupSync.makeupResolvedAbsenceIds,
+   });
+diff -ru '--exclude=node_modules' '--exclude=.next' orig_hocbu/msgiang-english-web-main/public/v15/app.js work_hocbu/msgiang-english-web-main/public/v15/app.js
+--- orig_hocbu/msgiang-english-web-main/public/v15/app.js	2026-07-07 07:18:39.000000000 +0000
++++ work_hocbu/msgiang-english-web-main/public/v15/app.js	2026-07-07 07:44:26.412160902 +0000
+@@ -2252,7 +2252,7 @@
+         return roster.map(x=>{
+           const rowKey=`${x.type}_${x.student.id}`;
+           const row=rec.rows?.[rowKey];
+-          if(row?.status!=='absent') return null;
++          if(!rosterRowCountsAsAbsent(x,row)) return null;
+           const isOfficial=x.type==='official';
+           const isMakeup=x.type==='makeup' || x.type==='manual_makeup';
+           const sourceClass=isOfficial ? c : (x.sourceClass||classById(x.student.classId)||c);
+@@ -2330,6 +2330,11 @@
+       if(row.status==='absent') return '<span class="pill statusAbsent">Vắng</span>';
+       return '<span class="pill gray">Chưa chọn</span>';
+     }
++    function rosterRowCountsAsAbsent(x,row){
++      if(row?.status!=='absent') return false;
++      if((x.type==='makeup'||x.type==='manual_makeup') && x.plan && makeupPlanCancelledBySourceCorrection(x.plan)) return false;
++      return true;
++    }
+     function sessionPopupStudentRow(x,sessionKey){
+       const rec=ensureAttendanceSessions()[attendanceKey(sessionKey)];
+       const row=rec?.rows?.[`${x.type}_${x.student.id}`];
+@@ -2345,7 +2350,7 @@
+       const official=roster.filter(x=>x.type==='official');
+       const makeups=roster.filter(x=>x.type!=='official');
+       const rec=ensureAttendanceSessions()[attendanceKey(sessionKey)];
+-      const absentRows=roster.filter(x=>rec?.rows?.[`${x.type}_${x.student.id}`]?.status==='absent');
++      const absentRows=roster.filter(x=>rosterRowCountsAsAbsent(x,rec?.rows?.[`${x.type}_${x.student.id}`]));
+       const st=sessionStatus(s);
+       const title=`${s.className} • ${sessionLabelFromKey(sessionKey)}`;
+       modal(`<div class="modalHead"><h2>Danh sách buổi học</h2><button class="close" onclick="closeModal()">×</button></div>
+@@ -2424,24 +2429,39 @@
+       return activeMakeupPlans().filter(p=>p.targetSessionKey===sessionKey);
+     }
+ 
++    function makeupPlanSourceAbsenceExists(plan){
++      if(!plan?.absenceId) return true;
++      return (db.absenceRecords||[]).some(a=>String(a.id)===String(plan.absenceId));
++    }
++    function makeupPlanCancelledBySourceCorrection(plan){
++      // Không cần thêm cột DB: nếu plan đã cancelled nhưng absenceRecord gốc không còn,
++      // nghĩa là Admin/Quản lí đã sửa điểm danh gốc từ Vắng -> Có mặt/Muộn.
++      // Trường hợp này không được hiển thị như Vắng học bù và không tính vào sĩ số.
++      return String(plan?.status||'')==='cancelled' && plan?.absenceId && !makeupPlanSourceAbsenceExists(plan);
++    }
+     function makeupPlansForSession(sessionKey){
+-      // Lịch dạy/điểm danh cần xem được cả lịch sử học bù đã hoàn tất hoặc đã vắng.
+-      // Các hàm tính sĩ số/xếp mới vẫn dùng plannedMakeupsForSession() để chỉ tính scheduled.
++      // Lịch dạy/điểm danh cần xem được lịch sử học bù đã hoàn tất hoặc vắng thật.
++      // Riêng plan bị hủy vì sửa điểm danh gốc là lịch xếp nhầm, không đưa vào roster/sĩ số.
++      // Các hàm tính sức chứa/xếp mới vẫn dùng plannedMakeupsForSession() để chỉ tính scheduled.
+       normalizeMakeupPlans();
+-      return (db.makeupPlans||[]).filter(p=>p?.targetSessionKey===sessionKey);
++      return (db.makeupPlans||[]).filter(p=>p?.targetSessionKey===sessionKey && !makeupPlanCancelledBySourceCorrection(p));
+     }
+ 
+     function makeupPlanStatusBadge(plan){
+       const st=String(plan?.status||'scheduled');
++      if(makeupPlanCancelledBySourceCorrection(plan)) return '<span class="pill gray">Đã hủy xếp học bù</span>';
+       if(st==='completed' || makeupPlanCompleted(plan)) return '<span class="pill green">Đã học bù</span>';
+-      if(st==='cancelled' || makeupPlanMissed(plan)) return '<span class="pill red">Vắng học bù</span>';
++      if(st==='cancelled') return makeupPlanMissed(plan)?'<span class="pill red">Vắng học bù</span>':'<span class="pill gray">Đã hủy xếp học bù</span>';
++      if(makeupPlanMissed(plan)) return '<span class="pill red">Vắng học bù</span>';
+       return '<span class="makeupBadge">Đã xếp học bù</span>';
+     }
+ 
+     function makeupPlanHistoryText(plan){
+       const st=String(plan?.status||'scheduled');
++      if(makeupPlanCancelledBySourceCorrection(plan)) return 'Đã hủy do sửa điểm danh gốc';
+       if(st==='completed' || makeupPlanCompleted(plan)) return 'Đã đến học bù';
+-      if(st==='cancelled' || makeupPlanMissed(plan)) return 'Không đến buổi học bù này • Cần xếp lại';
++      if(st==='cancelled') return makeupPlanMissed(plan)?'Không đến buổi học bù này • Cần xếp lại':'Đã hủy xếp học bù';
++      if(makeupPlanMissed(plan)) return 'Không đến buổi học bù này • Cần xếp lại';
+       return 'Đang được xếp vào buổi này';
+     }
+ 
+@@ -2477,6 +2497,7 @@
+       return d.getTime()<Date.now();
+     }
+     function makeupPlanCompleted(plan){
++      if(makeupPlanCancelledBySourceCorrection(plan)) return false;
+       if(String(plan?.status||'')==='completed') return true;
+       const row=makeupPlanAttendanceRow(plan);
+       return !!row && (row.status==='present' || row.status==='late');
+@@ -2485,6 +2506,7 @@
+       // Chỉ coi là lỡ học bù khi buổi học bù đã được lưu điểm danh và học sinh bị đánh Vắng.
+       // Không tự ẩn plan chỉ vì đã qua giờ kết thúc, vì giáo viên vẫn được điểm danh đến 23:59
+       // và Admin/Quản lí còn có thể sửa ngoài giờ.
++      if(makeupPlanCancelledBySourceCorrection(plan)) return false;
+       if(makeupPlanCompleted(plan)) return false;
+       const row=makeupPlanAttendanceRow(plan);
+       return row?.status==='absent';
+@@ -2492,7 +2514,7 @@
+     function activeMakeupPlans(){
+       normalizeMakeupPlans();
+       return (db.makeupPlans||[]).filter(p=>{
+-        if(!p) return false;
++        if(!p || makeupPlanCancelledBySourceCorrection(p)) return false;
+         const st=String(p.status||'scheduled');
+         return st==='scheduled' && !makeupPlanCompleted(p) && !makeupPlanMissed(p);
+       });
+@@ -2782,7 +2804,7 @@
+           const p=(db.makeupPlans||[]).find(x=>String(x.id)===String(u.id));
+           if(p){
+             p.status=u.status;
+-            if(u.cancelledAt) p.cancelledAt=u.cancelledAt;
++            if(Object.prototype.hasOwnProperty.call(u,'cancelledAt')) p.cancelledAt=u.cancelledAt;
+           }
+         });
+         const resolvedAbsenceIds=new Set((data.makeupResolvedAbsenceIds||[]).map(String));

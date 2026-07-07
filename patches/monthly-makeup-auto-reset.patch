@@ -1,0 +1,101 @@
+diff -ruN '--exclude=node_modules' '--exclude=.next' orig_reset/msgiang-english-web-main/public/v15/app.js work_reset/msgiang-english-web-main/public/v15/app.js
+--- orig_reset/msgiang-english-web-main/public/v15/app.js	2026-07-07 08:06:33.000000000 +0000
++++ work_reset/msgiang-english-web-main/public/v15/app.js	2026-07-07 08:14:42.689320999 +0000
+@@ -2544,18 +2544,43 @@
+ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm thấy học sinh')}
+     function safeClassName(id){return h(classById(id)?.name || 'Không tìm thấy lớp')}
+     function safeSessionLabel(key){return key?sessionLabelFromKey(key):'-'}
+-    function makeupPlanRows(){
++    function sessionKeyMonth(key){
++      const parts=String(key||'').split('|');
++      const date=parts.length>=4?parts[1]:'';
++      return /^\d{4}-\d{2}-\d{2}$/.test(date)?date.slice(0,7):'';
++    }
++    function makeupCurrentMonthKey(){
++      return isoDate(new Date()).slice(0,7);
++    }
++    function formatMonthKeyVN(key=makeupCurrentMonthKey()){
++      const [y,m]=String(key||'').split('-');
++      return /^\d{4}$/.test(y||'') && /^\d{2}$/.test(m||'') ? `Tháng ${m} / ${y}` : 'Tháng hiện tại';
++    }
++    function absenceRecordMonth(record){
++      return sessionKeyMonth(record?.sourceSessionKey) || String(record?.createdAt||'').slice(0,7);
++    }
++    function makeupPlanMonth(plan){
++      return sessionKeyMonth(plan?.sourceSessionKey) || sessionKeyMonth(plan?.targetSessionKey) || String(plan?.createdAt||'').slice(0,7);
++    }
++    function sameMakeupMonth(item,monthKey=makeupCurrentMonthKey()){
++      if(!monthKey) return true;
++      if(item?.record) return absenceRecordMonth(item.record)===monthKey;
++      if(item?.plan) return makeupPlanMonth(item.plan)===monthKey;
++      return absenceRecordMonth(item)===monthKey || makeupPlanMonth(item)===monthKey;
++    }
++    function makeupPlanRows(monthKey=null){
+       return activeMakeupPlans().map(p=>({
+         plan:p,
+         student:studentById(p.studentId),
+         sourceClass:classById(p.sourceClassId),
+         targetClass:classById(p.targetClassId)
+-      }));
++      })).filter(x=>!monthKey || sameMakeupMonth(x,monthKey));
+     }
+-    function completedMakeupRows(){
++    function completedMakeupRows(monthKey=null){
+       normalizeMakeupPlans();
+       return (db.makeupPlans||[])
+         .filter(p=>p && !makeupPlanCancelledBySourceCorrection(p))
++        .filter(p=>!monthKey || makeupPlanMonth(p)===monthKey)
+         .filter(p=>String(p.status||'')==='completed' || makeupPlanCompleted(p))
+         .map(p=>({
+           plan:p,
+@@ -2570,9 +2595,10 @@
+           return bk.localeCompare(ak) || String(a.student.name||'').localeCompare(String(b.student.name||''),'vi');
+         });
+     }
+-    function pendingMakeupRows(){
++    function pendingMakeupRows(monthKey=null){
+       ensureAbsenceRecords();
+       return (db.absenceRecords||[])
++        .filter(a=>a && (!monthKey || absenceRecordMonth(a)===monthKey))
+         .filter(a=>a && absenceRecordStatus(a.id)==='pending')
+         .map(a=>({record:a, student:studentById(a.studentId), sourceClass:classById(a.sourceClassId), sourceSession:sessionObjectFromKey(a.sourceSessionKey)}))
+         .filter(x=>x.student?.id && x.sourceClass?.id)
+@@ -2594,7 +2620,8 @@
+       const alreadyInTarget=new Set(plannedMakeupsForSession(targetSessionKey).map(p=>p.studentId));
+       // V20L.3: dữ liệu học bù lấy từ attendance/state. Không giới hạn cùng khối và không ẩn do khác tuần.
+       // Chỉ loại chính lớp nhận, lượt đã xếp, học sinh đã có trong buổi đích, và lớp nhận không còn hoạt động.
+-      return pendingMakeupRows()
++      const targetMonth=sessionKeyMonth(targetSessionKey)||makeupCurrentMonthKey();
++      return pendingMakeupRows(targetMonth)
+         .filter(x=>!alreadyInTarget.has(x.student.id))
+         .filter(x=>String(x.sourceClass.id)!==String(targetClassId))
+         .sort((a,b)=>String(a.student.name||'').localeCompare(String(b.student.name||''),'vi') || String(a.sourceClass.name||'').localeCompare(String(b.sourceClass.name||''),'vi',{numeric:true}));
+@@ -4516,18 +4543,20 @@
+ 
+     function makeupPage(){
+       db.makeupPlans ||= []; ensureAbsenceRecords(); normalizeMakeupPlans();
+-      const activeRows=makeupPlanRows();
+-      const pendingRows=pendingMakeupRows();
+-      const completedRows=completedMakeupRows();
++      const monthKey=makeupCurrentMonthKey();
++      const activeRows=makeupPlanRows(monthKey);
++      const pendingRows=pendingMakeupRows(monthKey);
++      const completedRows=completedMakeupRows(monthKey);
++      const monthAbsenceCount=(db.absenceRecords||[]).filter(a=>absenceRecordMonth(a)===monthKey).length;
+       const activeTable=activeRows.length?activeRows.map((x,i)=>`<tr><td>${i+1}</td><td><b>${safeStudentName(x.plan.studentId)}</b></td><td>${safeClassName(x.plan.sourceClassId)}${x.plan.sourceSessionKey?`<div class="mini">${safeSessionLabel(x.plan.sourceSessionKey)}</div>`:''}</td><td>${safeClassName(x.plan.targetClassId)}</td><td>${x.plan.targetSessionKey?`<span class="sessionTag">${safeSessionLabel(x.plan.targetSessionKey)}</span>`:'-'}</td><td><span class="pill blue">${h(x.plan.status||'scheduled')}</span><div class="mini">${h(makeupTargetStatusText(x.plan))}</div></td><td><button class="btn ghost" onclick="cancelMakeupPlan('${x.plan.id}','${x.plan.targetClassId}','${x.plan.targetSessionKey}')">Hủy</button></td></tr>`).join(''):'<tr><td colspan="7">Chưa có lịch học bù đã xếp.</td></tr>';
+       const pendingTable=pendingRows.length?pendingRows.map((x,i)=>`<tr><td>${i+1}</td><td><b>${h(x.student.name)}</b><div class="mini">${h(classGradeLabel(x.sourceClass.name))}</div></td><td>${h(x.sourceClass.name)}</td><td>${h(x.record.sourceSessionLabel||safeSessionLabel(x.record.sourceSessionKey))}</td><td>${h(x.record.reason||'Vắng')}</td><td><span class="pill yellow">Chờ xếp</span></td></tr>`).join(''):'<tr><td colspan="6">Chưa có học sinh chờ học bù. Hãy lưu điểm danh với trạng thái Vắng trước.</td></tr>';
+       const completedTable=completedRows.length?completedRows.map((x,i)=>`<tr><td>${i+1}</td><td><b>${safeStudentName(x.plan.studentId)}</b><div class="mini">${h(x.student?.contact||'')}</div></td><td>${safeClassName(x.plan.sourceClassId)}</td><td>${x.plan.sourceSessionKey?`<span class="sessionTag">${safeSessionLabel(x.plan.sourceSessionKey)}</span>`:'-'}</td><td>${safeClassName(x.plan.targetClassId)}</td><td>${x.plan.targetSessionKey?`<span class="sessionTag">${safeSessionLabel(x.plan.targetSessionKey)}</span>`:'-'}</td><td><span class="pill green">Đã học bù</span></td></tr>`).join(''):'<tr><td colspan="7">Chưa có học sinh đã hoàn tất học bù.</td></tr>';
+-      return `<div class="screenTitle"><div><h1>Học bù</h1><p>Học bù được xếp tự do vào bất kỳ buổi <b>Chưa dạy</b>, không bắt buộc cùng khối. Mỗi lượt vắng chỉ được xếp một lần.</p></div><button class="btn primary" onclick="go('schedule')">Sang lịch dạy để xếp</button></div>
+-      <div class="rulesBox"><b>Quy tắc học bù</b><p>Tab này chỉ xử lý học sinh nghỉ cá nhân. Học sinh đã điểm danh học bù xong sẽ nằm ở bảng <b>Đã học bù</b> để xem lại lịch sử; học bù vắng không tạo thêm lượt nghỉ mới và lượt vắng gốc quay lại Chờ xếp. Nghỉ cá nhân không tạo khấu trừ học phí.</p></div>
+-      <div class="statGrid"><div class="stat"><div class="statIcon redgrad">🚫</div><div><h3>Lượt vắng</h3><strong>${db.absenceRecords.length}</strong><small>dữ liệu cào từ điểm danh</small></div></div><div class="stat"><div class="statIcon bluegrad">🔁</div><div><h3>Đã xếp</h3><strong>${activeRows.length}</strong><small>đang có lịch học bù</small></div></div><div class="stat"><div class="statIcon greengrad">✅</div><div><h3>Đã học bù</h3><strong>${completedRows.length}</strong><small>lịch sử đã hoàn tất</small></div></div><div class="stat"><div class="statIcon yellowgrad">⏳</div><div><h3>Chờ xếp</h3><strong>${pendingRows.length}</strong><small>hiển thị từ mọi khối</small></div></div></div>
+-      <div class="panel"><div class="panelHead"><div><h2>Chờ xếp học bù</h2><div class="mini">Danh sách này lấy từ các học sinh được lưu điểm danh là Vắng.</div></div><button class="btn ghost" onclick="refreshCurrentRouteData()">Tải lại dữ liệu</button></div><div class="tableWrap"><table><thead><tr><th>STT</th><th>Học sinh</th><th>Lớp vắng</th><th>Buổi vắng</th><th>Lý do</th><th>Trạng thái</th></tr></thead><tbody>${pendingTable}</tbody></table></div></div>
++      return `<div class="screenTitle"><div><h1>Học bù</h1><p>Đang xử lý riêng cho <b>${formatMonthKeyVN(monthKey)}</b>. Sang tháng mới, tab này tự reset danh sách chờ/xếp/đã học bù của tháng cũ.</p></div><button class="btn primary" onclick="go('schedule')">Sang lịch dạy để xếp</button></div>
++      <div class="rulesBox"><b>Quy tắc học bù</b><p>Tab này chỉ xử lý học sinh nghỉ cá nhân trong <b>${formatMonthKeyVN(monthKey)}</b>. Khi sang tháng mới, hệ thống tự ẩn dữ liệu học bù tháng cũ khỏi tab này để bắt đầu tháng mới từ 0. Dữ liệu lịch dạy và điểm danh cũ vẫn được giữ nguyên để xem lại ai vắng, ai học bù và trạng thái của buổi đó.</p></div>
++      <div class="statGrid"><div class="stat"><div class="statIcon redgrad">🚫</div><div><h3>Lượt vắng</h3><strong>${monthAbsenceCount}</strong><small>trong ${formatMonthKeyVN(monthKey)}</small></div></div><div class="stat"><div class="statIcon bluegrad">🔁</div><div><h3>Đã xếp</h3><strong>${activeRows.length}</strong><small>đang có lịch học bù tháng này</small></div></div><div class="stat"><div class="statIcon greengrad">✅</div><div><h3>Đã học bù</h3><strong>${completedRows.length}</strong><small>lịch sử hoàn tất tháng này</small></div></div><div class="stat"><div class="statIcon yellowgrad">⏳</div><div><h3>Chờ xếp</h3><strong>${pendingRows.length}</strong><small>tự reset khi sang tháng</small></div></div></div>
++      <div class="panel"><div class="panelHead"><div><h2>Chờ xếp học bù</h2><div class="mini">Chỉ hiện học sinh vắng buổi chính trong ${formatMonthKeyVN(monthKey)}. Dữ liệu tháng cũ không bị xóa khỏi lịch sử điểm danh.</div></div><button class="btn ghost" onclick="refreshCurrentRouteData()">Tải lại dữ liệu</button></div><div class="tableWrap"><table><thead><tr><th>STT</th><th>Học sinh</th><th>Lớp vắng</th><th>Buổi vắng</th><th>Lý do</th><th>Trạng thái</th></tr></thead><tbody>${pendingTable}</tbody></table></div></div>
+       <div class="panel"><div class="panelHead"><h2>Đã xếp học bù</h2><span class="pill blue">${activeRows.length} lượt</span></div><div class="tableWrap"><table><thead><tr><th>STT</th><th>Học sinh</th><th>Lượt vắng</th><th>Lớp nhận</th><th>Buổi học bù</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody>${activeTable}</tbody></table></div></div>
+-      <div class="panel"><div class="panelHead"><div><h2>Đã học bù</h2><div class="mini">Lịch sử học sinh đã hoàn tất học bù: ai vắng buổi nào và học bù vào buổi nào.</div></div><span class="pill green">${completedRows.length} lượt</span></div><div class="tableWrap"><table><thead><tr><th>STT</th><th>Học sinh</th><th>Lớp vắng</th><th>Buổi vắng</th><th>Lớp học bù</th><th>Buổi học bù</th><th>Trạng thái</th></tr></thead><tbody>${completedTable}</tbody></table></div></div>`;
++      <div class="panel"><div class="panelHead"><div><h2>Đã học bù</h2><div class="mini">Lịch sử học sinh đã hoàn tất học bù trong ${formatMonthKeyVN(monthKey)}: ai vắng buổi nào và học bù vào buổi nào.</div></div><span class="pill green">${completedRows.length} lượt</span></div><div class="tableWrap"><table><thead><tr><th>STT</th><th>Học sinh</th><th>Lớp vắng</th><th>Buổi vắng</th><th>Lớp học bù</th><th>Buổi học bù</th><th>Trạng thái</th></tr></thead><tbody>${completedTable}</tbody></table></div></div>`;
+     }
+ 
+ 

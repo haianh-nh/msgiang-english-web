@@ -1,0 +1,58 @@
+diff --git a/mnt/data/base/msgiang-english-web-main/public/v15/app.js b/mnt/data/work/msgiang-english-web-main/public/v15/app.js
+index 0fca3f2..e29e1e7 100644
+--- a/mnt/data/base/msgiang-english-web-main/public/v15/app.js
++++ b/mnt/data/work/msgiang-english-web-main/public/v15/app.js
+@@ -2243,23 +2243,36 @@ Ms.Giang English`;
+       const c=classById(s.classId);
+       ensureAbsenceRecords();
+ 
+-      // 1) Nếu buổi này đã điểm danh thật, lấy đúng học sinh vắng trong bản điểm danh đó.
++      // 1) Nếu buổi này đã điểm danh thật, số vắng trên lịch phải là tổng vắng của buổi học:
++      //    học chính thức vắng + học bù vắng. Học bù vắng chỉ là lịch sử/cần xếp lại,
++      //    không tạo thêm absenceRecord mới.
+       const rec=ensureAttendanceSessions()[attendanceKey(sessionKey)];
+       if(rec?.saved){
+         const roster=rosterForAttendance(s.classId,sessionKey);
+-        return roster.filter(x=>x.type==='official' && rec.rows[`official_${x.student.id}`]?.status==='absent')
+-          .map(x=>({
+-            record:{id:absenceId(x.student.id,sessionKey),reason:rec.rows[`official_${x.student.id}`]?.note||'Vắng'},
++        return roster.map(x=>{
++          const rowKey=`${x.type}_${x.student.id}`;
++          const row=rec.rows?.[rowKey];
++          if(row?.status!=='absent') return null;
++          const isOfficial=x.type==='official';
++          const isMakeup=x.type==='makeup' || x.type==='manual_makeup';
++          const sourceClass=isOfficial ? c : (x.sourceClass||classById(x.student.classId)||c);
++          return {
++            type:x.type,
++            plan:x.plan||null,
++            record:isOfficial ? {id:absenceId(x.student.id,sessionKey),reason:row.note||'Vắng'} : null,
+             student:x.student,
+-            sourceClass:c,
++            sourceClass,
+             sourceSessionKey:sessionKey,
+-            reason:rec.rows[`official_${x.student.id}`]?.note||'Vắng'
+-          }));
++            reason:row.note || (isMakeup?'Vắng học bù':'Vắng')
++          };
++        }).filter(x=>x?.student?.id);
+       }
+ 
+-      // 2) Nếu là dữ liệu, lấy đúng record theo sessionKey = lớp + ngày + giờ.
++      // 2) Nếu chưa có bản điểm danh đã lưu, chỉ lấy các lượt vắng chính thức đã ghi nhận.
+       const fromRecords=db.absenceRecords.filter(a=>a.sourceSessionKey===sessionKey);
+       return fromRecords.map(a=>({
++        type:'official',
++        plan:null,
+         record:a,
+         student:studentById(a.studentId),
+         sourceClass:c,
+@@ -2361,7 +2374,7 @@ Ms.Giang English`;
+       const rows=absenteesForSession(sourceSessionKey);
+       modal(`<div class="modalHead"><h2>Danh sách vắng - ${s?.className||''}</h2><button class="close" onclick="closeModal()">×</button></div>
+       <div class="modalInfoGrid"><div><p><b>Buổi học:</b> ${s?sessionLabelFromKey(sourceSessionKey):'-'}</p><p><b>Số học sinh vắng:</b> ${rows.length}</p></div></div>
+-      ${rows.length?`<div class="modalTableWrap"><table class="modalTable"><thead><tr><th>STT</th><th>Học sinh</th><th>Lớp</th><th>Ghi chú</th><th>Trạng thái</th></tr></thead><tbody>${rows.map((x,i)=>`<tr><td>${i+1}</td><td><b>${x.student.name}</b></td><td>${x.sourceClass.name}</td><td>${x.reason||'Vắng'}</td><td>${x.record?.id?absenceRecordStatusBadge(x.record.id):'<span class="unpaidBadge">Chờ xếp</span>'}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">Buổi này không có học sinh vắng.</div>'}`)
++      ${rows.length?`<div class="modalTableWrap"><table class="modalTable"><thead><tr><th>STT</th><th>Học sinh</th><th>Lớp</th><th>Ghi chú</th><th>Trạng thái</th></tr></thead><tbody>${rows.map((x,i)=>{const isMakeup=x.type==='makeup'||x.type==='manual_makeup'; const status=isMakeup?(x.plan?makeupPlanStatusBadge(x.plan):'<span class="pill red">Vắng học bù</span>'):(x.record?.id?absenceRecordStatusBadge(x.record.id):'<span class="unpaidBadge">Chờ xếp</span>'); const note=isMakeup?`${h(x.reason||'Vắng học bù')}<div class="mini">Không tính thêm lượt nghỉ • Cần xếp lại nếu chưa hoàn tất</div>`:h(x.reason||'Vắng'); return `<tr><td>${i+1}</td><td><b>${h(x.student.name)}</b></td><td>${h(x.sourceClass?.name||'-')}</td><td>${note}</td><td>${status}</td></tr>`}).join('')}</tbody></table></div>`:'<div class="empty">Buổi này không có học sinh vắng.</div>'}`)
+     }
+ 
+     function groupedClassesForUser(){

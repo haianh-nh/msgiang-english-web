@@ -1,0 +1,47 @@
+--- /mnt/data/orig_completed/msgiang-english-web-main/public/v15/app.js	2026-07-07 07:44:26.000000000 +0000
++++ /mnt/data/add_completed/msgiang-english-web-main/public/v15/app.js	2026-07-07 08:06:33.385934132 +0000
+@@ -2552,6 +2552,24 @@
+         targetClass:classById(p.targetClassId)
+       }));
+     }
++    function completedMakeupRows(){
++      normalizeMakeupPlans();
++      return (db.makeupPlans||[])
++        .filter(p=>p && !makeupPlanCancelledBySourceCorrection(p))
++        .filter(p=>String(p.status||'')==='completed' || makeupPlanCompleted(p))
++        .map(p=>({
++          plan:p,
++          student:studentById(p.studentId),
++          sourceClass:classById(p.sourceClassId),
++          targetClass:classById(p.targetClassId)
++        }))
++        .filter(x=>x.student?.id)
++        .sort((a,b)=>{
++          const ak=String(a.plan.targetSessionKey||a.plan.createdAt||'');
++          const bk=String(b.plan.targetSessionKey||b.plan.createdAt||'');
++          return bk.localeCompare(ak) || String(a.student.name||'').localeCompare(String(b.student.name||''),'vi');
++        });
++    }
+     function pendingMakeupRows(){
+       ensureAbsenceRecords();
+       return (db.absenceRecords||[])
+@@ -4500,13 +4518,16 @@
+       db.makeupPlans ||= []; ensureAbsenceRecords(); normalizeMakeupPlans();
+       const activeRows=makeupPlanRows();
+       const pendingRows=pendingMakeupRows();
++      const completedRows=completedMakeupRows();
+       const activeTable=activeRows.length?activeRows.map((x,i)=>`<tr><td>${i+1}</td><td><b>${safeStudentName(x.plan.studentId)}</b></td><td>${safeClassName(x.plan.sourceClassId)}${x.plan.sourceSessionKey?`<div class="mini">${safeSessionLabel(x.plan.sourceSessionKey)}</div>`:''}</td><td>${safeClassName(x.plan.targetClassId)}</td><td>${x.plan.targetSessionKey?`<span class="sessionTag">${safeSessionLabel(x.plan.targetSessionKey)}</span>`:'-'}</td><td><span class="pill blue">${h(x.plan.status||'scheduled')}</span><div class="mini">${h(makeupTargetStatusText(x.plan))}</div></td><td><button class="btn ghost" onclick="cancelMakeupPlan('${x.plan.id}','${x.plan.targetClassId}','${x.plan.targetSessionKey}')">Hủy</button></td></tr>`).join(''):'<tr><td colspan="7">Chưa có lịch học bù đã xếp.</td></tr>';
+       const pendingTable=pendingRows.length?pendingRows.map((x,i)=>`<tr><td>${i+1}</td><td><b>${h(x.student.name)}</b><div class="mini">${h(classGradeLabel(x.sourceClass.name))}</div></td><td>${h(x.sourceClass.name)}</td><td>${h(x.record.sourceSessionLabel||safeSessionLabel(x.record.sourceSessionKey))}</td><td>${h(x.record.reason||'Vắng')}</td><td><span class="pill yellow">Chờ xếp</span></td></tr>`).join(''):'<tr><td colspan="6">Chưa có học sinh chờ học bù. Hãy lưu điểm danh với trạng thái Vắng trước.</td></tr>';
++      const completedTable=completedRows.length?completedRows.map((x,i)=>`<tr><td>${i+1}</td><td><b>${safeStudentName(x.plan.studentId)}</b><div class="mini">${h(x.student?.contact||'')}</div></td><td>${safeClassName(x.plan.sourceClassId)}</td><td>${x.plan.sourceSessionKey?`<span class="sessionTag">${safeSessionLabel(x.plan.sourceSessionKey)}</span>`:'-'}</td><td>${safeClassName(x.plan.targetClassId)}</td><td>${x.plan.targetSessionKey?`<span class="sessionTag">${safeSessionLabel(x.plan.targetSessionKey)}</span>`:'-'}</td><td><span class="pill green">Đã học bù</span></td></tr>`).join(''):'<tr><td colspan="7">Chưa có học sinh đã hoàn tất học bù.</td></tr>';
+       return `<div class="screenTitle"><div><h1>Học bù</h1><p>Học bù được xếp tự do vào bất kỳ buổi <b>Chưa dạy</b>, không bắt buộc cùng khối. Mỗi lượt vắng chỉ được xếp một lần.</p></div><button class="btn primary" onclick="go('schedule')">Sang lịch dạy để xếp</button></div>
+-      <div class="rulesBox"><b>Quy tắc học bù</b><p>Tab này chỉ xử lý học sinh nghỉ cá nhân. Học sinh đã điểm danh học bù xong sẽ tự ẩn khỏi danh sách; đã xếp nhưng qua buổi không điểm danh sẽ quay lại Chờ xếp. Nghỉ cá nhân không tạo khấu trừ học phí.</p></div>
+-      <div class="statGrid"><div class="stat"><div class="statIcon redgrad">🚫</div><div><h3>Lượt vắng</h3><strong>${db.absenceRecords.length}</strong><small>dữ liệu cào từ điểm danh</small></div></div><div class="stat"><div class="statIcon bluegrad">🔁</div><div><h3>Đã xếp</h3><strong>${activeRows.length}</strong><small>đang có lịch học bù</small></div></div><div class="stat"><div class="statIcon yellowgrad">⏳</div><div><h3>Chờ xếp</h3><strong>${pendingRows.length}</strong><small>hiển thị từ mọi khối</small></div></div></div>
++      <div class="rulesBox"><b>Quy tắc học bù</b><p>Tab này chỉ xử lý học sinh nghỉ cá nhân. Học sinh đã điểm danh học bù xong sẽ nằm ở bảng <b>Đã học bù</b> để xem lại lịch sử; học bù vắng không tạo thêm lượt nghỉ mới và lượt vắng gốc quay lại Chờ xếp. Nghỉ cá nhân không tạo khấu trừ học phí.</p></div>
++      <div class="statGrid"><div class="stat"><div class="statIcon redgrad">🚫</div><div><h3>Lượt vắng</h3><strong>${db.absenceRecords.length}</strong><small>dữ liệu cào từ điểm danh</small></div></div><div class="stat"><div class="statIcon bluegrad">🔁</div><div><h3>Đã xếp</h3><strong>${activeRows.length}</strong><small>đang có lịch học bù</small></div></div><div class="stat"><div class="statIcon greengrad">✅</div><div><h3>Đã học bù</h3><strong>${completedRows.length}</strong><small>lịch sử đã hoàn tất</small></div></div><div class="stat"><div class="statIcon yellowgrad">⏳</div><div><h3>Chờ xếp</h3><strong>${pendingRows.length}</strong><small>hiển thị từ mọi khối</small></div></div></div>
+       <div class="panel"><div class="panelHead"><div><h2>Chờ xếp học bù</h2><div class="mini">Danh sách này lấy từ các học sinh được lưu điểm danh là Vắng.</div></div><button class="btn ghost" onclick="refreshCurrentRouteData()">Tải lại dữ liệu</button></div><div class="tableWrap"><table><thead><tr><th>STT</th><th>Học sinh</th><th>Lớp vắng</th><th>Buổi vắng</th><th>Lý do</th><th>Trạng thái</th></tr></thead><tbody>${pendingTable}</tbody></table></div></div>
+-      <div class="panel"><div class="panelHead"><h2>Đã xếp học bù</h2><span class="pill blue">${activeRows.length} lượt</span></div><div class="tableWrap"><table><thead><tr><th>STT</th><th>Học sinh</th><th>Lượt vắng</th><th>Lớp nhận</th><th>Buổi học bù</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody>${activeTable}</tbody></table></div></div>`;
++      <div class="panel"><div class="panelHead"><h2>Đã xếp học bù</h2><span class="pill blue">${activeRows.length} lượt</span></div><div class="tableWrap"><table><thead><tr><th>STT</th><th>Học sinh</th><th>Lượt vắng</th><th>Lớp nhận</th><th>Buổi học bù</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody>${activeTable}</tbody></table></div></div>
++      <div class="panel"><div class="panelHead"><div><h2>Đã học bù</h2><div class="mini">Lịch sử học sinh đã hoàn tất học bù: ai vắng buổi nào và học bù vào buổi nào.</div></div><span class="pill green">${completedRows.length} lượt</span></div><div class="tableWrap"><table><thead><tr><th>STT</th><th>Học sinh</th><th>Lớp vắng</th><th>Buổi vắng</th><th>Lớp học bù</th><th>Buổi học bù</th><th>Trạng thái</th></tr></thead><tbody>${completedTable}</tbody></table></div></div>`;
+     }
+ 
+ 

@@ -1,0 +1,141 @@
+diff -ruN '--exclude=node_modules' '--exclude=.next' /mnt/data/base_absence_total/msgiang-english-web-main/app/api/attendance/save/route.ts /mnt/data/checkproj/msgiang-english-web-main/app/api/attendance/save/route.ts
+--- /mnt/data/base_absence_total/msgiang-english-web-main/app/api/attendance/save/route.ts	2026-07-07 04:39:50.000000000 +0000
++++ /mnt/data/checkproj/msgiang-english-web-main/app/api/attendance/save/route.ts	2026-07-07 07:18:26.443890960 +0000
+@@ -69,32 +69,41 @@
+   );
+ 
+   if (!makeupStatusByStudent.size) {
+-    return { makeupPlanUpdates: [], makeupAbsenceRecords: [] };
++    return { makeupPlanUpdates: [], makeupAbsenceRecords: [], makeupResolvedAbsenceIds: [] };
+   }
+ 
++  // Lấy tất cả plan thuộc đúng buổi, không chỉ status=scheduled.
++  // Như vậy nếu giáo viên/Admin sửa điểm danh từ Vắng học bù -> Có mặt,
++  // plan đã từng bị cancelled vẫn được chuyển lại thành completed.
++  const makeupStudentIds = [...makeupStatusByStudent.keys()];
+   const { data: plans, error: planError } = await supabase
+     .from("official_makeup_plans")
+     .select("id, absence_id, student_id, status")
+     .eq("target_session_key", sessionKey)
+-    .eq("status", "scheduled");
++    .in("student_id", makeupStudentIds);
+ 
+   if (planError) throw planError;
+ 
+   const completedIds: string[] = [];
++  const completedAbsenceIds: string[] = [];
+   const missed: any[] = [];
+   for (const plan of plans || []) {
+     const nextStatus = makeupStatusByStudent.get(String(plan.student_id));
+-    if (nextStatus === "present" || nextStatus === "late") completedIds.push(String(plan.id));
++    if (nextStatus === "present" || nextStatus === "late") {
++      completedIds.push(String(plan.id));
++      if (plan.absence_id) completedAbsenceIds.push(String(plan.absence_id));
++    }
+     if (nextStatus === "absent") missed.push(plan);
+   }
+ 
+   const now = new Date().toISOString();
+   const makeupPlanUpdates: any[] = [];
++  let makeupResolvedAbsenceIds: string[] = [];
+ 
+   if (completedIds.length) {
+     const { data, error } = await supabase
+       .from("official_makeup_plans")
+-      .update({ status: "completed" })
++      .update({ status: "completed", cancelled_at: null })
+       .in("id", completedIds)
+       .select("id, absence_id, status, cancelled_at");
+     if (error) throw error;
+@@ -106,6 +115,18 @@
+         cancelledAt: row.cancelled_at,
+       });
+     }
++
++    if (completedAbsenceIds.length) {
++      const uniqueCompletedAbsenceIds = [...new Set(completedAbsenceIds)];
++      // official_absence_records hiện chỉ cho phép pending/scheduled/cancelled.
++      // Khi học bù đã đến, giữ status=scheduled để không còn nằm trong query Chờ xếp.
++      const { error: completeAbsenceError } = await supabase
++        .from("official_absence_records")
++        .update({ status: "scheduled", updated_at: now })
++        .in("id", uniqueCompletedAbsenceIds);
++      if (completeAbsenceError) throw completeAbsenceError;
++      makeupResolvedAbsenceIds = uniqueCompletedAbsenceIds;
++    }
+   }
+ 
+   let makeupAbsenceRecords: any[] = [];
+@@ -129,22 +150,23 @@
+     }
+ 
+     if (missedAbsenceIds.length) {
++      const uniqueMissedAbsenceIds = [...new Set(missedAbsenceIds)];
+       const { error: absenceError } = await supabase
+         .from("official_absence_records")
+         .update({ status: "pending", updated_at: now })
+-        .in("id", missedAbsenceIds);
++        .in("id", uniqueMissedAbsenceIds);
+       if (absenceError) throw absenceError;
+ 
+       const { data: absences, error: readAbsenceError } = await supabase
+         .from("official_absence_records")
+         .select("id, student_id, source_class_id, source_session_key, source_session_label, reason, generated_from_attendance, status, created_at, updated_at")
+-        .in("id", missedAbsenceIds);
++        .in("id", uniqueMissedAbsenceIds);
+       if (readAbsenceError) throw readAbsenceError;
+       makeupAbsenceRecords = (absences || []).map(mapAbsenceRecord);
+     }
+   }
+ 
+-  return { makeupPlanUpdates, makeupAbsenceRecords };
++  return { makeupPlanUpdates, makeupAbsenceRecords, makeupResolvedAbsenceIds };
+ }
+ 
+ async function userCanSaveAttendance(user: any, classId: string, body: any) {
+@@ -268,7 +290,7 @@
+     if (rowsError) return NextResponse.json({ error: rowsError.message }, { status: 500 });
+   }
+ 
+-  let makeupSync = { makeupPlanUpdates: [] as any[], makeupAbsenceRecords: [] as any[] };
++  let makeupSync = { makeupPlanUpdates: [] as any[], makeupAbsenceRecords: [] as any[], makeupResolvedAbsenceIds: [] as string[] };
+   try {
+     makeupSync = await syncMakeupPlansFromAttendance(supabase, sessionKey, normalizedRows);
+   } catch (e: any) {
+@@ -334,5 +356,6 @@
+     absenceRecords: (absData || []).map(mapAbsenceRecord),
+     makeupPlanUpdates: makeupSync.makeupPlanUpdates,
+     makeupAbsenceRecords: makeupSync.makeupAbsenceRecords,
++    makeupResolvedAbsenceIds: makeupSync.makeupResolvedAbsenceIds,
+   });
+ }
+diff -ruN '--exclude=node_modules' '--exclude=.next' /mnt/data/base_absence_total/msgiang-english-web-main/public/v15/app.js /mnt/data/checkproj/msgiang-english-web-main/public/v15/app.js
+--- /mnt/data/base_absence_total/msgiang-english-web-main/public/v15/app.js	2026-07-07 07:12:08.000000000 +0000
++++ /mnt/data/checkproj/msgiang-english-web-main/public/v15/app.js	2026-07-07 07:18:39.111520159 +0000
+@@ -2498,7 +2498,10 @@
+       });
+     }
+     function absenceRecordStatus(absenceIdValue){
+-      const plans=(db.makeupPlans||[]).filter(p=>p?.absenceId===absenceIdValue && String(p.status||'scheduled')!=='cancelled');
++      const plans=(db.makeupPlans||[]).filter(p=>p?.absenceId===absenceIdValue);
++      // Ưu tiên dữ liệu điểm danh thật. Nếu plan từng bị Vắng học bù/cancelled
++      // nhưng sau đó giáo viên sửa lại thành Có mặt/Muộn, phải hiện Đã học bù,
++      // không được giữ ở Chờ xếp.
+       if(plans.some(p=>String(p.status||'')==='completed' || makeupPlanCompleted(p))) return 'completed';
+       const scheduled=plans.find(p=>{
+         const st=String(p?.status||'scheduled');
+@@ -2782,9 +2785,13 @@
+             if(u.cancelledAt) p.cancelledAt=u.cancelledAt;
+           }
+         });
++        const resolvedAbsenceIds=new Set((data.makeupResolvedAbsenceIds||[]).map(String));
++        if(resolvedAbsenceIds.size){
++          db.absenceRecords = (db.absenceRecords||[]).filter(a=>!resolvedAbsenceIds.has(String(a.id)));
++        }
+         (data.makeupAbsenceRecords||[]).forEach(a=>{
+           db.absenceRecords = (db.absenceRecords||[]).filter(x=>String(x.id)!==String(a.id));
+-          db.absenceRecords.push(a);
++          if(String(a.status||'pending')==='pending') db.absenceRecords.push(a);
+         });
+         v18fUpdateScheduleModuleCache();
+         v18fUpdateAttendanceModuleCache();
