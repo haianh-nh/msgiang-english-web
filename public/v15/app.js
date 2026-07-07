@@ -197,11 +197,46 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       if(saved) saved.textContent='Chưa lưu thay đổi';
       return true;
     }
+    function smartNormalizeText(v){
+      return String(v??'')
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g,'')
+        .replace(/đ/g,'d')
+        .replace(/[^a-z0-9]+/g,' ')
+        .replace(/\s+/g,' ')
+        .trim();
+    }
+    function smartInitials(text){
+      return smartNormalizeText(text).split(' ').filter(Boolean).map(t=>t[0]).join('');
+    }
+    function smartSearchIndex(...parts){
+      const clean=smartNormalizeText(parts.filter(x=>x!==null&&x!==undefined).join(' '));
+      const compact=clean.replace(/\s+/g,'');
+      const initials=clean.split(' ').filter(Boolean).map(t=>t[0]).join('');
+      return `${clean} ${compact} ${initials}`.trim();
+    }
+    function smartSubsequence(needle,haystack){
+      needle=String(needle||''); haystack=String(haystack||'');
+      if(needle.length<2 || haystack.length<needle.length) return false;
+      let j=0;
+      for(let i=0;i<haystack.length&&j<needle.length;i++) if(haystack[i]===needle[j]) j++;
+      return j===needle.length;
+    }
+    function smartSearchMatch(index,query){
+      const q=smartNormalizeText(query);
+      if(!q) return true;
+      const idx=String(index||'');
+      const compactIdx=idx.replace(/\s+/g,'');
+      const compactQ=q.replace(/\s+/g,'');
+      if(idx.includes(q) || compactIdx.includes(compactQ)) return true;
+      return q.split(' ').filter(Boolean).every(token=>idx.includes(token) || compactIdx.includes(token) || smartSubsequence(token,compactIdx));
+    }
     function v18bUpdateClassListNow(){
       const list=document.getElementById('classList');
       if(!list) return;
-      const q=(document.getElementById('classSearch')?.value||'').toLowerCase();
-      const cls=sortClassesByGrade(classesForClassPage().filter(c=>(c.name+c.teacher+c.ta+c.time).toLowerCase().includes(q)));
+      const q=document.getElementById('classSearch')?.value||'';
+      const cls=sortClassesByGrade(classesForClassPage().filter(c=>smartSearchMatch(smartSearchIndex(c.name,c.teacher,c.ta,c.time,classGradeLabel(c.name),(c.students||[]).map(s=>s.name).join(' ')),q)));
       list.innerHTML=classSectionsMarkup(cls);
     }
     let v18dShellKey='';
@@ -2208,16 +2243,19 @@ Ms.Giang English`;
       return canReceiveMakeupClass(classById(s.classId)) && sessionStatus(s).key==='todo';
     }
     function makeupFreeSearchText(...parts){
-      return parts.map(x=>String(x||'')).join(' ').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d');
+      return smartSearchIndex(...parts);
     }
     function filterMakeupCandidates(q){
-      const term=makeupFreeSearchText(q).trim();
       const rows=[...document.querySelectorAll('[data-makeup-candidate]')];
       let shown=0;
       rows.forEach(row=>{
-        const ok=!term || String(row.dataset.search||'').includes(term);
+        const ok=smartSearchMatch(row.dataset.search||'',q);
         row.style.display=ok?'':'none';
         if(ok) shown++;
+      });
+      document.querySelectorAll('[data-makeup-group]').forEach(group=>{
+        const visible=[...group.querySelectorAll('[data-makeup-candidate]')].some(row=>row.style.display!=='none');
+        group.style.display=visible?'':'none';
       });
       const el=document.getElementById('makeupSearchCount');
       if(el) el.textContent=`Hiện ${shown}/${rows.length} lượt chờ`;
@@ -4120,6 +4158,48 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
       }catch(e){toast(e.message||'Không lưu được lịch dạy bù')}
     }
 
+    function makeupCandidateSearchIndex(x,label,reason){
+      return makeupFreeSearchText(
+        x.student?.name,
+        smartInitials(x.student?.name),
+        x.sourceClass?.name,
+        classGradeLabel(x.sourceClass?.name),
+        label,
+        reason,
+        String(label||'').replace(/\D/g,''),
+        String(x.record?.sourceSessionKey||'').replace(/\D/g,'')
+      );
+    }
+    function makeupCandidateTableRows(rows,targetClassId,targetSessionKey){
+      return rows.map((x,i)=>{
+        const label=x.record.sourceSessionLabel||sessionLabelFromKey(x.record.sourceSessionKey);
+        const reason=x.record.reason||'Vắng';
+        const search=makeupCandidateSearchIndex(x,label,reason);
+        return `<tr data-makeup-candidate data-search="${h(search)}"><td>${i+1}</td><td><b>${h(x.student.name)}</b><div class="mini">${h(classGradeLabel(x.sourceClass.name))}</div></td><td><span class="pill blue">${h(x.sourceClass.name)}</span></td><td>${h(label)}</td><td>${h(reason)}</td><td><button class="btn primary smallBtn" onclick="scheduleMakeupFromAbsence('${x.record.id}','${x.student.id}','${x.sourceClass.id}','${x.record.sourceSessionKey}','${targetClassId}','${targetSessionKey}')">Xếp</button></td></tr>`;
+      }).join('');
+    }
+    function groupedMakeupCandidateTables(candidates,targetClassId,targetSessionKey){
+      const map=new Map();
+      candidates.forEach(x=>{
+        const k=classGradeLabel(x.sourceClass?.name);
+        if(!map.has(k)) map.set(k,[]);
+        map.get(k).push(x);
+      });
+      const groups=[...map.entries()].sort((a,b)=>{
+        const av=a[1][0]?.sourceClass?.name||a[0];
+        const bv=b[1][0]?.sourceClass?.name||b[0];
+        return gradeOrderValue(av)-gradeOrderValue(bv) || String(a[0]).localeCompare(String(b[0]),'vi',{numeric:true});
+      });
+      return groups.map(([grade,items])=>{
+        const sorted=items.sort((a,b)=>String(a.sourceClass?.name||'').localeCompare(String(b.sourceClass?.name||''),'vi',{numeric:true}) || String(a.student?.name||'').localeCompare(String(b.student?.name||''),'vi'));
+        return `<section class="makeupGroup" data-makeup-group><div class="makeupGroupHead"><h3>${h(grade)}</h3><span class="pill gray">${sorted.length} lượt</span></div><div class="modalTableWrap makeupAssignTableWrap"><table class="modalTable makeupAssignTable"><thead><tr><th>STT</th><th>Học sinh</th><th>Lớp vắng</th><th>Buổi vắng</th><th>Lý do</th><th></th></tr></thead><tbody>${makeupCandidateTableRows(sorted,targetClassId,targetSessionKey)}</tbody></table></div></section>`;
+      }).join('');
+    }
+    function scheduledMakeupTable(plans,targetClassId,targetSessionKey){
+      if(!plans.length) return '';
+      return `<h3>Đã xếp trong buổi này</h3><div class="modalTableWrap makeupAssignTableWrap"><table class="modalTable makeupAssignTable"><thead><tr><th>STT</th><th>Học sinh</th><th>Lớp gốc</th><th>Buổi học bù</th><th>Trạng thái</th><th></th></tr></thead><tbody>${plans.map((p,i)=>`<tr><td>${i+1}</td><td><b>${safeStudentName(p.studentId)}</b></td><td>${safeClassName(p.sourceClassId)}</td><td>${safeSessionLabel(p.targetSessionKey)}</td><td>${makeupPlanStatusBadge(p)}</td><td><button class="btn ghost smallBtn" onclick="cancelMakeupPlan('${p.id}','${targetClassId}','${targetSessionKey}')">Hủy</button></td></tr>`).join('')}</tbody></table></div>`;
+    }
+
     function openScheduleMakeup(targetClassId,targetSessionKey=null){
       normalizeMakeupPlans(); ensureAbsenceRecords();
       const target=classById(targetClassId)||{};
@@ -4131,21 +4211,16 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
       const canPlace=!!(targetSessionKey && st?.key==='todo' && canReceiveMakeupClass(target) && total<capacity);
       const allPending=pendingMakeupRows();
       const candidates=canPlace?absentCandidatesForTargetSession(targetClassId,targetSessionKey):[];
-      const candidateCards=candidates.map((x,i)=>{
-        const label=x.record.sourceSessionLabel||sessionLabelFromKey(x.record.sourceSessionKey);
-        const reason=x.record.reason||'Vắng';
-        const search=makeupFreeSearchText(x.student.name,x.sourceClass.name,label,reason,classGradeLabel(x.sourceClass.name));
-        return `<div class="makeupCandidateCard" data-makeup-candidate data-search="${h(search)}" style="--i:${i}"><div class="makeupCandidateMain"><b>${h(x.student.name)}</b><span class="pill blue">${h(x.sourceClass.name)}</span><span class="pill gray">${h(classGradeLabel(x.sourceClass.name))}</span></div><div class="mini">Buổi vắng: ${h(label)}</div><div class="mini">Lý do: ${h(reason)}</div><button class="btn primary" onclick="scheduleMakeupFromAbsence('${x.record.id}','${x.student.id}','${x.sourceClass.id}','${x.record.sourceSessionKey}','${targetClassId}','${targetSessionKey}')">Xếp vào buổi này</button></div>`;
-      }).join('');
-      const planCards=plans.map((p,i)=>`<div class="makeupCandidateCard scheduled" style="--i:${i}"><div class="makeupCandidateMain"><b>${safeStudentName(p.studentId)}</b><span class="pill blue">Đã xếp</span></div><div class="mini">Lớp gốc: ${safeClassName(p.sourceClassId)}</div><div class="mini">Buổi học bù: ${safeSessionLabel(p.targetSessionKey)}</div><button class="btn ghost" onclick="cancelMakeupPlan('${p.id}','${targetClassId}','${targetSessionKey}')">Hủy</button></div>`).join('');
+      const candidateTables=groupedMakeupCandidateTables(candidates,targetClassId,targetSessionKey);
+      const planTable=scheduledMakeupTable(plans,targetClassId,targetSessionKey);
       const emptyReason=!targetSessionKey?'Chọn một buổi chưa dạy trong thời khóa biểu.':!canReceiveMakeupClass(target)?'Không thể xếp học bù vào lớp đã kết thúc hoặc đã hủy.':st?.key!=='todo'?`Buổi này đang ở trạng thái ${st?.label||'-'}. Chỉ được xếp học bù vào buổi Chưa dạy.`:total>=capacity?`Buổi này đã đủ ${capacity} học sinh.`:allPending.length?'Không có lượt vắng phù hợp cho buổi này.':'Chưa có học sinh chờ học bù. Hãy lưu điểm danh với trạng thái Vắng trước.';
       modal(`<div class="modalHead"><h2>Xếp học bù - ${h(target.name||'Lớp')}</h2><button class="close" onclick="closeModal()">×</button></div>
       <div class="rulesBox compactRules"><b>${targetSessionKey?sessionLabelFromKey(targetSessionKey):'Chưa chọn buổi'}</b><div style="margin-top:8px"><span class="capacityBadge ${total>=capacity?'full':''}">Tổng ${total}/${capacity}</span> <span class="pill blue">${plans.length} học bù đã xếp</span> <span class="pill gray">${allPending.length} lượt đang chờ</span></div></div>
       ${!canPlace?`<div class="empty">${h(emptyReason)}</div>`:`
-      <div class="makeupSearchBox"><label>Tìm học sinh chờ học bù<input id="makeupCandidateSearch" class="input" placeholder="Nhập tên học sinh, lớp gốc, buổi vắng..." oninput="filterMakeupCandidates(this.value)"></label><span class="pill gray" id="makeupSearchCount">Hiện ${candidates.length}/${candidates.length} lượt chờ</span></div>
+      <div class="makeupSearchBox"><label>Tìm học sinh chờ học bù<input id="makeupCandidateSearch" class="input" placeholder="Gõ tên, viết tắt, lớp, buổi vắng..." oninput="filterMakeupCandidates(this.value)"></label><span class="pill gray" id="makeupSearchCount">Hiện ${candidates.length}/${candidates.length} lượt chờ</span></div>
       <h3>Chờ xếp (${candidates.length})</h3>
-      ${candidates.length?`<div class="makeupCandidateList">${candidateCards}</div>`:`<div class="empty">${h(emptyReason)}</div>`}`}
-      ${plans.length?`<h3>Đã xếp trong buổi này</h3><div class="makeupCandidateList scheduledList">${planCards}</div>`:''}`);
+      ${candidates.length?candidateTables:`<div class="empty">${h(emptyReason)}</div>`}`}
+      ${planTable}`);
     }
 
     async function scheduleMakeupFromAbsence(absenceIdValue,studentId,sourceClassId,sourceSessionKey,targetClassId,targetSessionKey=''){
@@ -4309,7 +4384,7 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
       if(v18Memo.library.key===key) return v18Memo.library.rows;
       const rows=(db.exerciseLibrary||[])
         .filter(x=>x.type===type)
-        .filter(x=>!q || [x.title,x.level,x.skill,x.unit,x.fileName,x.uploadedBy].join(' ').toLowerCase().includes(q))
+        .filter(x=>!q || smartSearchMatch(smartSearchIndex(x.title,x.level,x.skill,x.unit,x.fileName,x.uploadedBy), q))
         .filter(x=>level==='all' || x.level===level)
         .filter(x=>skill==='all' || x.skill===skill)
         .filter(x=>unit==='all' || x.unit===unit)
@@ -4502,10 +4577,9 @@ function canManageLibrary(){return isAdmin()||isManager()||isTeachingUser()}
     }
     function visibleBillingRows(){return baseBillingRows()}
     function filteredBillingRows(){
-      const f=tuitionFilterState(); const q=String(f.q||'').toLowerCase().trim();
+      const f=tuitionFilterState(); const q=String(f.q||'').trim();
       return baseBillingRows().filter(r=>{
-        const text=`${r.student.name} ${r.className} ${r.student.contact||''}`.toLowerCase();
-        const okQ=!q || text.includes(q);
+        const okQ=!q || smartSearchMatch(smartSearchIndex(r.student.name,smartInitials(r.student.name),r.className,classGradeLabel(r.className),r.student.contact||''), q);
         const okStatus=f.status==='paid'?r.paid:f.status==='unpaid'?!r.paid:true;
         return okQ && okStatus;
       });

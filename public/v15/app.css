@@ -1955,3 +1955,55 @@ body{
 .tuitionScrollHint,.compactNotice,.newClassHint{
   color:#475467;
 }
+
+/* V20S — Makeup scheduling table + smarter search UI */
+.makeupGroup{
+  margin:12px 0 18px;
+}
+.makeupGroupHead{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin:4px 2px 8px;
+}
+.makeupGroupHead h3{
+  margin:0;
+  font-size:17px;
+  letter-spacing:-.01em;
+  color:#8a102a;
+}
+.makeupAssignTableWrap{
+  max-height:44vh;
+  margin:0 0 12px;
+  border-radius:16px;
+}
+.makeupAssignTable{
+  min-width:860px;
+}
+.makeupAssignTable th:last-child,
+.makeupAssignTable td:last-child{
+  text-align:right;
+  width:104px;
+}
+.makeupAssignTable td{
+  vertical-align:middle;
+}
+.smallBtn{
+  min-height:34px!important;
+  padding:8px 14px!important;
+  border-radius:12px!important;
+  font-size:13px!important;
+  line-height:1!important;
+}
+.makeupSearchBox input::placeholder{
+  color:#667085;
+}
+@media(max-width:760px){
+  .makeupAssignTable{
+    min-width:760px;
+  }
+  .makeupAssignTableWrap{
+    max-height:55vh;
+  }
+}

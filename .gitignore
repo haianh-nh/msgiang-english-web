@@ -4,9 +4,3 @@ out
 .vercel
 .env*.local
 .DS_Store
-.env.local
-.env
-node_modules
-.next
-.vercel
-.DS_Store
