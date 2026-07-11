@@ -230,6 +230,29 @@ export async function GET(req: NextRequest) {
     })
     .sort((a: any, b: any) => String(a.date || "").localeCompare(String(b.date || "")));
 
+  const sourceAbsenceIds = uniq((mRes.data || []).map((r: any) => r.absence_id));
+  const sourceAbsenceRes = sourceAbsenceIds.length
+    ? await supabase
+        .from("official_absence_records")
+        .select("id, student_id, source_class_id, source_session_key, source_session_label, reason, generated_from_attendance, status, created_at, updated_at")
+        .in("id", sourceAbsenceIds)
+    : ({ data: [], error: null } as any);
+
+  if (sourceAbsenceRes.error) return NextResponse.json({ error: sourceAbsenceRes.error.message }, { status: 500 });
+
+  const sourceAbsenceRecords = (sourceAbsenceRes.data || []).map((a: any) => ({
+    id: a.id,
+    studentId: a.student_id,
+    sourceClassId: a.source_class_id,
+    sourceSessionKey: a.source_session_key,
+    sourceSessionLabel: a.source_session_label,
+    reason: a.reason || "Vắng",
+    generatedFromAttendance: !!a.generated_from_attendance,
+    status: a.status || "pending",
+    createdAt: a.created_at,
+    updatedAt: a.updated_at,
+  }));
+
   const makeupPlans = (mRes.data || []).map((r: any) => ({
     id: r.id,
     absenceId: r.absence_id,
@@ -252,5 +275,6 @@ export async function GET(req: NextRequest) {
     classCancellations,
     classMakeupSessions,
     makeupPlans,
+    sourceAbsenceRecords,
   });
 }

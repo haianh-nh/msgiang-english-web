@@ -708,6 +708,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
         db.classMakeupSessions=v20bMergeClassMakeupSessions(db.classMakeupSessions||[],payload.classMakeupSessions||[]);
         v20b7MergeClassSnapshotsFromMakeups(db.classMakeupSessions);
         db.makeupPlans=payload.makeupPlans||[];
+        if(payload.sourceAbsenceRecords?.length) mergeAbsenceRecords(payload.sourceAbsenceRecords);
         return true;
       }
       if(key==='attendance'){
@@ -841,7 +842,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
         await runRefreshWithoutRepeatedSaves(async()=>{
           const jobs=[];
           // V20L.4: schedule page also needs attendance/absence data so lesson cards can show "Vắng: x".
-          if(key==='schedule') jobs.push(refreshOfficialClasses({skipSave:true}), refreshOfficialScheduleState({skipSave:true}), refreshOfficialAttendanceState({skipSave:true}));
+          if(key==='schedule') jobs.push(refreshOfficialClasses({skipSave:true}), refreshOfficialScheduleState({skipSave:true}), refreshOfficialAttendanceState({skipSave:true}), refreshOfficialMakeupState({skipSave:true,applyGlobal:true}));
           if(key==='makeup') jobs.push(refreshOfficialClasses({skipSave:true}), refreshOfficialMakeupState({skipSave:true}));
           if(key==='attendance') jobs.push(refreshOfficialClasses({skipSave:true}), refreshOfficialScheduleState({skipSave:true}), refreshOfficialAttendanceState({skipSave:true}));
           if(key==='tuition') jobs.push(refreshOfficialTuitionState({skipSave:true}));
@@ -1162,13 +1163,14 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
         const start=isoDate(weekStartDate());
         const end=isoDate(addDays(weekStartDate(),7));
         const data=await officialFetch(`/api/schedule/state?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`);
-        const payload={classCancellations:data.classCancellations||{},classMakeupSessions:data.classMakeupSessions||[],makeupPlans:data.makeupPlans||[]};
+        const payload={classCancellations:data.classCancellations||{},classMakeupSessions:data.classMakeupSessions||[],makeupPlans:data.makeupPlans||[],sourceAbsenceRecords:data.sourceAbsenceRecords||[]};
         const changed=v18iHashPayload(`schedule:${isoDate(weekStartDate())}`,payload);
         const localNeedsApply=
           (!Object.keys(db.classCancellations||{}).length && Object.keys(payload.classCancellations||{}).length>0) ||
           (!(db.classMakeupSessions||[]).length && (payload.classMakeupSessions||[]).length>0) ||
           (payload.classMakeupSessions||[]).some(m=>!(db.classMakeupSessions||[]).some(x=>String(x.id||x.sourceSessionKey)===String(m.id||m.sourceSessionKey) && String(x.teacherId||'')===String(m.teacherId||''))) ||
-          (!(db.makeupPlans||[]).length && (payload.makeupPlans||[]).length>0);
+          (!(db.makeupPlans||[]).length && (payload.makeupPlans||[]).length>0) ||
+          (payload.sourceAbsenceRecords||[]).some(a=>!(db.absenceRecords||[]).some(x=>String(x.id)===String(a.id) && String(x.status||'')===String(a.status||'') && String(x.updatedAt||'')===String(a.updatedAt||'')));
         if(changed || localNeedsApply){
           db.classCancellations=payload.classCancellations;
           // V20B.18:
@@ -1177,13 +1179,15 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
           db.classMakeupSessions=payload.classMakeupSessions||[];
           v20b7MergeClassSnapshotsFromMakeups(db.classMakeupSessions);
           db.makeupPlans=payload.makeupPlans;
+          if(payload.sourceAbsenceRecords?.length) mergeAbsenceRecords(payload.sourceAbsenceRecords);
           v18Touch();
           if(!options.skipSave) save();
         }
         moduleCacheSet(`schedule:${isoDate(weekStartDate())}`, {
           classCancellations: db.classCancellations || {},
           classMakeupSessions: db.classMakeupSessions || [],
-          makeupPlans: db.makeupPlans || []
+          makeupPlans: db.makeupPlans || [],
+          sourceAbsenceRecords: payload.sourceAbsenceRecords || []
         });
         return changed || localNeedsApply;
       }catch(e){
@@ -1213,7 +1217,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
     async function refreshOfficialMakeupState(options={}){
       if(!currentUser) return false;
       try{
-        const month=makeupCurrentMonthKey();
+        const month=options.month || makeupCurrentMonthKey();
         const data=await officialFetch(`/api/makeup/state?month=${encodeURIComponent(month)}`);
         const payload={
           makeupMonth:data.month||month,
@@ -1236,7 +1240,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
           attendanceSessions:payload.attendanceSessions||{}
         };
         const localNeedsApply=JSON.stringify(currentMakeupComparable)!==JSON.stringify(payloadComparable);
-        if(changed || localNeedsApply){
+        if(changed || localNeedsApply || options.applyGlobal){
           db.makeupMonth=payload.makeupMonth||month;
           db.makeupTabState={
             month:db.makeupMonth,
@@ -1248,7 +1252,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
           // Khi đang ở tab Học bù, đồng bộ global để các thao tác phụ dùng dữ liệu tháng đúng.
           // Khi sang Lịch dạy/Điểm danh, global có thể bị thay bằng subset theo tuần nhưng
           // db.makeupTabState vẫn giữ nguồn dữ liệu tháng cho tab Học bù.
-          if(route==='makeup'){
+          if(route==='makeup' || options.applyGlobal){
             db.makeupPlans=payload.makeupPlans||[];
             db.absenceRecords=payload.absenceRecords||[];
           }
@@ -1257,7 +1261,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
           if(!options.skipSave) save();
         }
         moduleCacheSet(`makeup:${month}`, payload);
-        return changed || localNeedsApply;
+        return changed || localNeedsApply || !!options.applyGlobal;
       }catch(e){console.warn('Không tải được dữ liệu học bù theo tháng',e); return false}
     }
 
@@ -2602,6 +2606,17 @@ Ms.Giang English`;
       db.absenceRecords ||= [];
       return db.absenceRecords;
     }
+    function mergeAbsenceRecords(rows=[]){
+      ensureAbsenceRecords();
+      const byId=new Map((db.absenceRecords||[]).map(a=>[String(a.id),a]));
+      (rows||[]).forEach(a=>{
+        if(!a?.id) return;
+        const old=byId.get(String(a.id))||{};
+        byId.set(String(a.id),{...old,...a});
+      });
+      db.absenceRecords=[...byId.values()];
+      return db.absenceRecords;
+    }
 
     function makeupPlanAttendanceRow(plan){
       if(!plan?.targetSessionKey) return null;
@@ -2717,6 +2732,9 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
         });
     }
     function pendingMakeupRows(monthKey=null){
+      if(monthKey && db.makeupTabState?.month===monthKey){
+        return makeupTabPendingRows(db.makeupTabState,monthKey);
+      }
       ensureAbsenceRecords();
       return (db.absenceRecords||[])
         .filter(a=>a && (!monthKey || absenceRecordMonth(a)===monthKey))
@@ -2735,7 +2753,7 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
       normalizeMakeupPlans();
       const target=classById(targetClassId);
       const targetSession=sessionObjectFromKey(targetSessionKey);
-      if(!canReceiveMakeupClass(target) || !targetSession || sessionStatus(targetSession).key!=='todo') return [];
+      if(!canReceiveMakeupClass(target) || !targetSession || !canReceiveMakeupSession(targetSessionKey)) return [];
       const capacity=db.settings.capacity||15;
       if(totalRosterCountForSession(targetClassId,targetSessionKey)>=capacity) return [];
       const alreadyInTarget=new Set(plannedMakeupsForSession(targetSessionKey).map(p=>p.studentId));
@@ -3014,7 +3032,7 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
       const studentId=document.getElementById('manualMakeupStudent')?.value;
       if(!studentId){toast('Chọn học sinh học bù');return}
       const targetSession=sessionObjectFromKey(sessionKey);
-      if(!targetSession || sessionStatus(targetSession).key!=='todo'){toast('Chỉ được xếp học bù trước khi buổi học bắt đầu');return}
+      if(!targetSession || !canReceiveMakeupSession(sessionKey)){toast(makeupSessionPlacementReason(sessionKey)||'Không thể xếp học bù vào buổi này');return}
       if(!canReceiveMakeupClass(classById(targetClassId))){toast('Không thể xếp học bù vào lớp đã kết thúc hoặc đã hủy');return}
       const currentTotal=totalRosterCountForSession(targetClassId,sessionKey);
       if(currentTotal>=(db.settings.capacity||15)){toast(`Lớp đã đủ tối đa ${db.settings.capacity||15} học sinh, không thể thêm học bù`);return}
@@ -4260,8 +4278,20 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
       return `<h3>Đã xếp trong buổi này</h3><div class="modalTableWrap makeupAssignTableWrap"><table class="modalTable makeupAssignTable"><thead><tr><th>STT</th><th>Học sinh</th><th>Lớp gốc</th><th>Buổi học bù</th><th>Trạng thái</th><th></th></tr></thead><tbody>${plans.map((p,i)=>`<tr><td>${i+1}</td><td><b>${safeStudentName(p.studentId)}</b></td><td>${safeClassName(p.sourceClassId)}</td><td>${safeSessionLabel(p.targetSessionKey)}</td><td>${makeupPlanStatusBadge(p)}</td><td><button class="btn ghost smallBtn" onclick="cancelMakeupPlan('${p.id}','${targetClassId}','${targetSessionKey}')">Hủy</button></td></tr>`).join('')}</tbody></table></div>`;
     }
 
+    let scheduleMakeupMonthLoadingKey='';
     function openScheduleMakeup(targetClassId,targetSessionKey=null){
       normalizeMakeupPlans(); ensureAbsenceRecords();
+      const targetMonth=targetSessionKey?(sessionKeyMonth(targetSessionKey)||makeupCurrentMonthKey()):makeupCurrentMonthKey();
+      const monthStateOk=!!(db.makeupTabState && db.makeupTabState.month===targetMonth && Date.now()-(db.makeupTabState.updatedAt||0)<15000);
+      if(targetSessionKey && !monthStateOk && scheduleMakeupMonthLoadingKey!==targetSessionKey){
+        scheduleMakeupMonthLoadingKey=targetSessionKey;
+        modal(`<div class="modalHead"><h2>Xếp học bù</h2><button class="close" onclick="closeModal()">×</button></div><div class="empty">Đang tải dữ liệu học bù tháng này...</div>`);
+        refreshOfficialMakeupState({skipSave:true,month:targetMonth,applyGlobal:true}).catch(e=>toast(e.message||'Không tải được dữ liệu học bù')).finally(()=>{
+          scheduleMakeupMonthLoadingKey='';
+          openScheduleMakeup(targetClassId,targetSessionKey);
+        });
+        return;
+      }
       const target=classById(targetClassId)||{};
       const targetSession=sessionObjectFromKey(targetSessionKey);
       const st=targetSession?sessionStatus(targetSession):null;
