@@ -22,12 +22,20 @@ function validTime(v: any) {
   return /^\d{2}:\d{2}$/.test(s) ? s : "";
 }
 
+function attendanceStarted(body: any) {
+  const date = validDate(body.date);
+  const start = validTime(body.start);
+  if (!date || !start) return false;
+  const startAt = new Date(`${date}T${start}:00+07:00`);
+  const now = new Date();
+  return Number.isFinite(startAt.getTime()) && now >= startAt;
+}
+
 function attendanceWindowOpen(body: any) {
   const date = validDate(body.date);
   const start = validTime(body.start);
   if (!date || !start) return false;
   const openAt = new Date(`${date}T${start}:00+07:00`);
-  openAt.setMinutes(openAt.getMinutes() - 15);
   const closeAt = new Date(`${date}T23:59:59+07:00`);
   const now = new Date();
   return Number.isFinite(openAt.getTime()) && now >= openAt && now <= closeAt;
@@ -195,6 +203,9 @@ async function syncMakeupPlansFromAttendance(supabase: any, sessionKey: string, 
 }
 
 async function userCanSaveAttendance(user: any, classId: string, body: any) {
+  // Không cho bất kỳ vai trò nào lưu điểm danh trước giờ bắt đầu buổi học.
+  // Admin/Quản lí vẫn được sửa ngoài giờ sau khi buổi học đã bắt đầu.
+  if (!attendanceStarted(body)) return false;
   if (canManage(user)) return true;
   if (!attendanceWindowOpen(body)) return false;
 
@@ -258,7 +269,7 @@ export async function POST(req: NextRequest) {
 
   if (!allowed) {
     return NextResponse.json({
-      error: "Giáo viên chỉ được điểm danh từ 15 phút trước giờ học đến 23:59 cùng ngày. Admin/Quản lí có thể điểm danh sớm hoặc sửa ngoài giờ.",
+      error: "Điểm danh chỉ mở từ giờ bắt đầu buổi học. Admin/Quản lí không được điểm danh trước giờ học, nhưng vẫn có thể sửa ngoài giờ sau khi buổi học đã bắt đầu.",
     }, { status: 403 });
   }
 

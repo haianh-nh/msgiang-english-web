@@ -2280,7 +2280,22 @@ Ms.Giang English`;
     function canReceiveMakeupSession(sessionKey){
       const s=sessionObjectFromKey(sessionKey);
       if(!s) return false;
-      return canReceiveMakeupClass(classById(s.classId)) && sessionStatus(s).key==='todo';
+      if(!canReceiveMakeupClass(classById(s.classId))) return false;
+      const st=sessionStatus(s).key;
+      // Giáo viên/TA chỉ được xếp trước giờ học. Admin/Quản lí được xếp bổ sung
+      // vào buổi đã dạy/đã đóng điểm danh để xử lý trường hợp quên xếp học bù.
+      return st==='todo' || ((isAdmin()||isManager()) && st==='done');
+    }
+    function makeupSessionPlacementReason(sessionKey){
+      const s=sessionObjectFromKey(sessionKey);
+      if(!s) return 'Chọn đúng một buổi học trong thời khóa biểu.';
+      if(!canReceiveMakeupClass(classById(s.classId))) return 'Không thể xếp học bù vào lớp đã kết thúc hoặc đã hủy.';
+      const st=sessionStatus(s);
+      if(st.key==='done' && !(isAdmin()||isManager())) return 'Buổi này đã đóng điểm danh. Chỉ Admin/Quản lí được xếp học bù bổ sung.';
+      if(st.key==='live') return 'Buổi này đang diễn ra. Hãy xếp trước giờ học hoặc để Admin/Quản lí xử lý sau khi buổi học kết thúc.';
+      if(st.key==='cancelled') return 'Không thể xếp học bù vào buổi đã nghỉ.';
+      if(st.key!=='todo' && st.key!=='done') return `Buổi này đang ở trạng thái ${st.label||'-'}.`;
+      return '';
     }
     function makeupFreeSearchText(...parts){
       return smartSearchIndex(...parts);
@@ -2324,7 +2339,7 @@ Ms.Giang English`;
 
     function absentCountForSession(sessionKey){
       // V20L.4: lịch dạy phải hiện số vắng ngay sau khi lưu điểm danh,
-      // kể cả Admin/Quản lí điểm danh sớm khi buổi học vẫn đang Chưa dạy/Đang dạy.
+      // Admin/Quản lí cũng không được điểm danh trước giờ bắt đầu buổi học.
       const s=sessionObjectFromKey(sessionKey); if(!s) return 0;
       return absenteesForSession(sessionKey).length;
     }
@@ -2473,7 +2488,7 @@ Ms.Giang English`;
           <button class="btn ghost" onclick="closeModal()">Đóng</button>
           ${st.key!=='cancelled'?`<button class="btn primary" onclick="openAttendance('${s.classId}','${sessionKey}',false)">Mở điểm danh</button>`:''}
           ${st.key==='done'&&absentRows.length?`<button class="btn ghost" onclick="openAbsencePopup('${sessionKey}')">Xem vắng</button>`:''}
-          ${canScheduleMakeup()&&st.key==='todo'?`<button class="btn primary" onclick="openScheduleMakeup('${s.classId}','${sessionKey}')">Xếp học bù</button>`:''}
+          ${canScheduleMakeup()&&canReceiveMakeupSession(sessionKey)?`<button class="btn primary" onclick="openScheduleMakeup('${s.classId}','${sessionKey}')">Xếp học bù</button>`:''}
           ${(isAdmin()||isManager())&&st.key==='todo'&&s.type!=='class_makeup'?`<button class="btn ghost" onclick="cancelClassSession('${sessionKey}')">Cho nghỉ lớp</button>`:''}
           ${(isAdmin()||isManager())&&st.key==='cancelled'?`<button class="btn ghost" onclick="uncancelClassSession('${sessionKey}')">Mở lại buổi học</button>`:''}
           ${(isAdmin()||isManager())&&classMakeupForAnySessionKey(sessionKey)?`<button class="btn ghost" onclick="cancelClassMakeup('${classMakeupForAnySessionKey(sessionKey).sourceSessionKey}')">Hủy dạy bù</button>`:''}
@@ -2756,7 +2771,7 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
     function attendanceWindowInfo(sessionKey){
       const s=sessionObjectFromKey(sessionKey); if(!s) return {open:false,label:'Không xác định buổi học',isEarly:false,isLate:false,cancelled:false};
       if(isSessionCancelled(sessionKey)) return {open:false,label:'Buổi học đã nghỉ',session:s,isEarly:false,isLate:false,cancelled:true};
-      const openAt=dateTimeForSession(s,'start'); openAt.setMinutes(openAt.getMinutes()-15);
+      const openAt=dateTimeForSession(s,'start');
       const closeAt=sessionDateEndOfDay(s);
       const now=new Date();
       const open=now>=openAt && now<=closeAt;
@@ -2769,7 +2784,7 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
         isEarly:now<openAt,
         isLate:now>closeAt,
         cancelled:false,
-        label:`Mở ${openAt.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'})} - 23:59`
+        label:`Mở từ ${openAt.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'})} đến 23:59`
       };
     }
 
@@ -2778,7 +2793,10 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
       const w=attendanceWindowInfo(sessionKey);
       if(w.cancelled) return false;
       const rec=attendanceRecord(sessionKey);
-      if(attendanceCanOverride()) return forceEdit || rec.editable || !rec.saved || w.open;
+      if(attendanceCanOverride()){
+        if(w.isEarly) return false;
+        return forceEdit || rec.editable || !rec.saved || w.open;
+      }
       return w.open && (forceEdit || rec.editable || !rec.saved);
     }
     function attendanceCardStatusMarkup(sessionKey){
@@ -2790,14 +2808,15 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
         return attendanceCanOverride()?'<span class="pill blue">Đã khóa • Có thể sửa</span>':'<span class="pill gray">Đã khóa</span>';
       }
       if(w.open) return '<span class="pill green">Đang mở điểm danh</span>';
-      if(attendanceCanOverride()) return w.isEarly?'<span class="pill blue">Có thể điểm danh sớm</span>':'<span class="pill blue">Đã khóa • Có thể sửa</span>';
+      if(attendanceCanOverride()) return w.isEarly?'<span class="pill red">Chưa mở điểm danh</span>':'<span class="pill blue">Đã khóa • Có thể sửa</span>';
       return w.isEarly?'<span class="pill red">Chưa mở điểm danh</span>':'<span class="pill gray">Đã khóa</span>';
     }
     function attendancePrimaryActionLabel(sessionKey){
       const w=attendanceWindowInfo(sessionKey);
       const rec=ensureAttendanceSessions()[attendanceKey(sessionKey)];
-      if(rec?.saved) return (attendanceCanOverride() || w.open)?'Xem / sửa':'Xem';
-      if(attendanceCanOverride() && !w.open) return w.isEarly?'Điểm danh sớm':'Điểm danh ngoài giờ';
+      if(rec?.saved) return ((attendanceCanOverride() && !w.isEarly) || w.open)?'Xem / sửa':'Xem';
+      if(w.isEarly) return 'Chưa mở';
+      if(attendanceCanOverride() && !w.open) return 'Điểm danh ngoài giờ';
       return 'Điểm danh';
     }
     function attendanceModalStatusTitle(sessionKey,canEdit=false){
@@ -2806,8 +2825,8 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
       if(w.cancelled) return 'Buổi học đã nghỉ';
       if(w.open) return rec?.saved && canEdit?'Đang sửa điểm danh':'Đang mở điểm danh';
       if(attendanceCanOverride()){
-        if(canEdit) return w.isEarly?'Admin/Quản lí đang điểm danh sớm':'Admin/Quản lí đang sửa ngoài giờ';
-        return rec?.saved?'Đã khóa • Admin/Quản lí có thể sửa':(w.isEarly?'Có thể điểm danh sớm':'Đã khóa • Có thể sửa');
+        if(canEdit) return 'Admin/Quản lí đang sửa ngoài giờ';
+        return rec?.saved?'Đã khóa • Admin/Quản lí có thể sửa':(w.isEarly?'Chưa mở điểm danh':'Đã khóa • Có thể sửa');
       }
       return w.isEarly?'Chưa mở điểm danh':'Đã khóa điểm danh';
     }
@@ -2927,7 +2946,7 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
       const rec=attendanceRecord(sessionKey);
       const s=sessionObjectFromKey(sessionKey);
       if(!s){toast('Không tìm thấy buổi học');return}
-      if(!attendanceCanEditSession(sessionKey,true)){toast('Điểm danh chỉ mở từ 15 phút trước giờ học đến 23:59. Admin/Quản lí có thể sửa ngoài giờ.');return}
+      if(!attendanceCanEditSession(sessionKey,true)){toast('Điểm danh chỉ mở từ giờ bắt đầu buổi học. Admin/Quản lí không được điểm danh trước giờ học.');return}
       // V20L.2: khi lưu, tự tạo dòng Có mặt mặc định cho toàn bộ roster.
       // Trước đây học sinh không bấm trạng thái có thể không được gửi lên backend, làm sai học phí/vắng/học bù.
       rosterForAttendance(s.classId,sessionKey).forEach(x=>{
@@ -2978,6 +2997,7 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
 
     function editAttendance(sessionKey){
       const w=attendanceWindowInfo(sessionKey);
+      if(w.isEarly){toast('Điểm danh chưa mở. Tất cả tài khoản chỉ được lưu/sửa sau giờ bắt đầu buổi học.');return}
       if(!w.open && !attendanceCanOverride()){toast('Chỉ Admin/Quản lí được sửa điểm danh ngoài giờ hoặc đã đóng');return}
       const rec=attendanceRecord(sessionKey); rec.editable=true; save(); openAttendance(sessionObjectFromKey(sessionKey).classId,sessionKey,true)
     }
@@ -4248,12 +4268,13 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
       const plans=targetSessionKey?plannedMakeupsForSession(targetSessionKey):[];
       const total=targetSessionKey?totalRosterCountForSession(targetClassId,targetSessionKey):0;
       const capacity=db.settings.capacity||15;
-      const canPlace=!!(targetSessionKey && st?.key==='todo' && canReceiveMakeupClass(target) && total<capacity);
+      const canPlace=!!(targetSessionKey && canReceiveMakeupSession(targetSessionKey) && total<capacity);
       const allPending=pendingMakeupRows();
       const candidates=canPlace?absentCandidatesForTargetSession(targetClassId,targetSessionKey):[];
       const candidateTables=groupedMakeupCandidateTables(candidates,targetClassId,targetSessionKey);
       const planTable=scheduledMakeupTable(plans,targetClassId,targetSessionKey);
-      const emptyReason=!targetSessionKey?'Chọn một buổi chưa dạy trong thời khóa biểu.':!canReceiveMakeupClass(target)?'Không thể xếp học bù vào lớp đã kết thúc hoặc đã hủy.':st?.key!=='todo'?`Buổi này đang ở trạng thái ${st?.label||'-'}. Chỉ được xếp học bù vào buổi Chưa dạy.`:total>=capacity?`Buổi này đã đủ ${capacity} học sinh.`:allPending.length?'Không có lượt vắng phù hợp cho buổi này.':'Chưa có học sinh chờ học bù. Hãy lưu điểm danh với trạng thái Vắng trước.';
+      const sessionPlacementReason=targetSessionKey?makeupSessionPlacementReason(targetSessionKey):'Chọn một buổi trong thời khóa biểu.';
+      const emptyReason=!targetSessionKey?'Chọn một buổi trong thời khóa biểu.':sessionPlacementReason|| (total>=capacity?`Buổi này đã đủ ${capacity} học sinh.`:allPending.length?'Không có lượt vắng phù hợp cho buổi này.':'Chưa có học sinh chờ học bù. Hãy lưu điểm danh với trạng thái Vắng trước.');
       modal(`<div class="modalHead"><h2>Xếp học bù - ${h(target.name||'Lớp')}</h2><button class="close" onclick="closeModal()">×</button></div>
       <div class="rulesBox compactRules"><b>${targetSessionKey?sessionLabelFromKey(targetSessionKey):'Chưa chọn buổi'}</b><div style="margin-top:8px"><span class="capacityBadge ${total>=capacity?'full':''}">Tổng ${total}/${capacity}</span> <span class="pill blue">${plans.length} học bù đã xếp</span> <span class="pill gray">${allPending.length} lượt đang chờ</span></div></div>
       ${!canPlace?`<div class="empty">${h(emptyReason)}</div>`:`
@@ -4268,7 +4289,7 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
       normalizeMakeupPlans(); ensureAbsenceRecords();
       if(!targetSessionKey){toast('Bạn cần chọn đúng buổi học bù trước');return}
       const targetSession=sessionObjectFromKey(targetSessionKey);
-      if(!targetSession || sessionStatus(targetSession).key!=='todo'){toast('Chỉ được xếp học bù vào buổi Chưa dạy');return}
+      if(!targetSession || !canReceiveMakeupSession(targetSessionKey)){toast(makeupSessionPlacementReason(targetSessionKey)||'Không thể xếp học bù vào buổi này');return}
       if(!canReceiveMakeupClass(classById(targetClassId))){toast('Không thể xếp học bù vào lớp đã kết thúc hoặc đã hủy');return}
       if(String(sourceClassId||'')===String(targetClassId||'')){toast('Học sinh đã thuộc lớp này, không cần xếp học bù vào chính lớp gốc');return}
       const capacity=db.settings.capacity||15;

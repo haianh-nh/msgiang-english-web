@@ -9,16 +9,22 @@ function inactiveClassStatus(v: any) {
   return ["ended", "inactive", "cancelled", "canceled", "deleted", "archived"].includes(String(v || "active").toLowerCase());
 }
 
-function targetSessionIsTodo(targetSessionKey: string) {
+function targetSessionCanReceiveMakeup(targetSessionKey: string, allowClosedSessionForManager: boolean) {
   // Expected key: classId|YYYY-MM-DD|Day|HH:mm-HH:mm
   const parts = String(targetSessionKey || "").split("|");
   if (parts.length < 4) return false;
   const date = parts[1];
   const slot = parts[3] || "";
-  const start = slot.split("-")[0] || "";
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !/^\d{2}:\d{2}$/.test(start)) return false;
+  const [start, end] = slot.split("-");
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !/^\d{2}:\d{2}$/.test(start || "") || !/^\d{2}:\d{2}$/.test(end || "")) return false;
   const startAt = new Date(`${date}T${start}:00+07:00`);
-  return Number.isFinite(startAt.getTime()) && new Date().getTime() < startAt.getTime();
+  const endAt = new Date(`${date}T${end}:00+07:00`);
+  const now = new Date().getTime();
+  if (!Number.isFinite(startAt.getTime()) || !Number.isFinite(endAt.getTime())) return false;
+  // Giáo viên/TA chỉ được xếp trước giờ học. Admin/Quản lí được xếp bổ sung
+  // sau khi buổi học đã kết thúc/đã đóng điểm danh khi giáo viên quên xếp học bù.
+  if (now < startAt.getTime()) return true;
+  return allowClosedSessionForManager && now > endAt.getTime();
 }
 
 export async function POST(req: NextRequest) {
@@ -59,12 +65,12 @@ export async function POST(req: NextRequest) {
   }
 
   // V20L: học bù xếp tự do, không bắt buộc cùng khối nữa.
-  // Chỉ được xếp vào lớp còn hoạt động và buổi chưa học.
+  // Giáo viên/TA chỉ được xếp trước giờ học; Admin/Quản lí được xếp bổ sung vào buổi đã qua.
   if (inactiveClassStatus(targetClass.status)) {
     return NextResponse.json({ error: "Không thể xếp học bù vào lớp đã kết thúc hoặc đã hủy" }, { status: 400 });
   }
-  if (!targetSessionIsTodo(targetSessionKey)) {
-    return NextResponse.json({ error: "Chỉ được xếp học bù vào buổi Chưa dạy" }, { status: 400 });
+  if (!targetSessionCanReceiveMakeup(targetSessionKey, canManage(user))) {
+    return NextResponse.json({ error: canManage(user) ? "Không thể xếp học bù vào buổi này" : "Chỉ Admin/Quản lí được xếp học bù vào buổi đã đóng điểm danh" }, { status: 400 });
   }
 
   const { data: absence, error: ae } = await supabase
