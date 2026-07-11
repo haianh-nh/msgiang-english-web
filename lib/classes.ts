@@ -158,7 +158,7 @@ export async function fetchClassesV48(user?: any) {
         .select(CLASS_SELECT_V48)
         .or(`teacher_id.eq.${teacher.id},assistant_teacher_id.eq.${teacher.id}`)
         .or(activeClassFilter)
-        .not("note", "like", "__tutoring_session__%")
+        .or("note.is.null,note.not.like.__tutoring_session__%")
         .order("name", { ascending: true }),
       supabase
         .from("official_class_makeup_sessions")
@@ -183,7 +183,7 @@ export async function fetchClassesV48(user?: any) {
         .select(CLASS_SELECT_V48)
         .in("id", makeupClassIds)
         .or(activeClassFilter)
-        .not("note", "like", "__tutoring_session__%")
+        .or("note.is.null,note.not.like.__tutoring_session__%")
         .order("name", { ascending: true });
       if (error) throw error;
       makeupClasses = data || [];
@@ -195,7 +195,7 @@ export async function fetchClassesV48(user?: any) {
   const { data: classes, error } = await supabase
     .from("official_classes")
     .select(CLASS_SELECT_V48)
-    .not("note", "like", "__tutoring_session__%")
+    .or("note.is.null,note.not.like.__tutoring_session__%")
     .order("name", { ascending: true });
 
   if (error) throw error;
