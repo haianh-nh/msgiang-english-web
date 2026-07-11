@@ -9,22 +9,20 @@ function inactiveClassStatus(v: any) {
   return ["ended", "inactive", "cancelled", "canceled", "deleted", "archived"].includes(String(v || "active").toLowerCase());
 }
 
-function targetSessionCanReceiveMakeup(targetSessionKey: string, allowClosedSessionForManager: boolean) {
-  // Expected key: classId|YYYY-MM-DD|Day|HH:mm-HH:mm
+function targetSessionCanReceiveMakeup(targetSessionKey: string) {
+  // API /api/makeup/plans chỉ dùng cho popup "Xếp học bù" trước giờ học.
+  // Với buổi đã học/đã đóng điểm danh, Admin/Quản lí phải thêm học bù trong màn điểm danh
+  // để dữ liệu học bù và attendance được lưu cùng nhau.
   const parts = String(targetSessionKey || "").split("|");
   if (parts.length < 4) return false;
   const date = parts[1];
   const slot = parts[3] || "";
-  const [start, end] = slot.split("-");
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !/^\d{2}:\d{2}$/.test(start || "") || !/^\d{2}:\d{2}$/.test(end || "")) return false;
+  const [start] = slot.split("-");
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !/^\d{2}:\d{2}$/.test(start || "")) return false;
   const startAt = new Date(`${date}T${start}:00+07:00`);
-  const endAt = new Date(`${date}T${end}:00+07:00`);
   const now = new Date().getTime();
-  if (!Number.isFinite(startAt.getTime()) || !Number.isFinite(endAt.getTime())) return false;
-  // Giáo viên/TA chỉ được xếp trước giờ học. Admin/Quản lí được xếp bổ sung
-  // sau khi buổi học đã kết thúc/đã đóng điểm danh khi giáo viên quên xếp học bù.
-  if (now < startAt.getTime()) return true;
-  return allowClosedSessionForManager && now > endAt.getTime();
+  if (!Number.isFinite(startAt.getTime())) return false;
+  return now < startAt.getTime();
 }
 
 export async function POST(req: NextRequest) {
@@ -65,12 +63,12 @@ export async function POST(req: NextRequest) {
   }
 
   // V20L: học bù xếp tự do, không bắt buộc cùng khối nữa.
-  // Giáo viên/TA chỉ được xếp trước giờ học; Admin/Quản lí được xếp bổ sung vào buổi đã qua.
+  // Popup xếp học bù chỉ được dùng trước giờ học. Buổi đã đóng phải thêm trong màn điểm danh.
   if (inactiveClassStatus(targetClass.status)) {
     return NextResponse.json({ error: "Không thể xếp học bù vào lớp đã kết thúc hoặc đã hủy" }, { status: 400 });
   }
-  if (!targetSessionCanReceiveMakeup(targetSessionKey, canManage(user))) {
-    return NextResponse.json({ error: canManage(user) ? "Không thể xếp học bù vào buổi này" : "Chỉ Admin/Quản lí được xếp học bù vào buổi đã đóng điểm danh" }, { status: 400 });
+  if (!targetSessionCanReceiveMakeup(targetSessionKey)) {
+    return NextResponse.json({ error: canManage(user) ? "Buổi đã điểm danh: hãy mở màn điểm danh để thêm học bù rồi lưu lại" : "Chỉ được xếp học bù trước giờ học" }, { status: 400 });
   }
 
   const { data: absence, error: ae } = await supabase

@@ -2286,9 +2286,17 @@ Ms.Giang English`;
       if(!s) return false;
       if(!canReceiveMakeupClass(classById(s.classId))) return false;
       const st=sessionStatus(s).key;
-      // Giáo viên/TA chỉ được xếp trước giờ học. Admin/Quản lí được xếp bổ sung
-      // vào buổi đã dạy/đã đóng điểm danh để xử lý trường hợp quên xếp học bù.
+      // Dùng cho màn điểm danh: buổi chưa dạy được xếp trước, Admin/Quản lí
+      // vẫn được thêm học bù vào màn điểm danh của buổi đã dạy/đã đóng.
       return st==='todo' || ((isAdmin()||isManager()) && st==='done');
+    }
+    function canOpenScheduleMakeupPopup(sessionKey){
+      const s=sessionObjectFromKey(sessionKey);
+      if(!s) return false;
+      if(!canReceiveMakeupClass(classById(s.classId))) return false;
+      // Popup "Xếp học bù" riêng chỉ dùng cho buổi chưa dạy.
+      // Buổi đã điểm danh phải thêm học bù trong màn "Mở/Xem điểm danh" rồi lưu lại.
+      return sessionStatus(s).key==='todo';
     }
     function makeupSessionPlacementReason(sessionKey){
       const s=sessionObjectFromKey(sessionKey);
@@ -2492,7 +2500,7 @@ Ms.Giang English`;
           <button class="btn ghost" onclick="closeModal()">Đóng</button>
           ${st.key!=='cancelled'?`<button class="btn primary" onclick="openAttendance('${s.classId}','${sessionKey}',false)">Mở điểm danh</button>`:''}
           ${st.key==='done'&&absentRows.length?`<button class="btn ghost" onclick="openAbsencePopup('${sessionKey}')">Xem vắng</button>`:''}
-          ${canScheduleMakeup()&&st.key==='todo'&&canReceiveMakeupSession(sessionKey)?`<button class="btn primary" onclick="openScheduleMakeup('${s.classId}','${sessionKey}')">Xếp học bù</button>`:''}
+          ${canScheduleMakeup()&&canOpenScheduleMakeupPopup(sessionKey)?`<button class="btn primary" onclick="openScheduleMakeup('${s.classId}','${sessionKey}')">Xếp học bù</button>`:''}
           ${(isAdmin()||isManager())&&st.key==='todo'&&s.type!=='class_makeup'?`<button class="btn ghost" onclick="cancelClassSession('${sessionKey}')">Cho nghỉ lớp</button>`:''}
           ${(isAdmin()||isManager())&&st.key==='cancelled'?`<button class="btn ghost" onclick="uncancelClassSession('${sessionKey}')">Mở lại buổi học</button>`:''}
           ${(isAdmin()||isManager())&&classMakeupForAnySessionKey(sessionKey)?`<button class="btn ghost" onclick="cancelClassMakeup('${classMakeupForAnySessionKey(sessionKey).sourceSessionKey}')">Hủy dạy bù</button>`:''}
@@ -2564,12 +2572,19 @@ Ms.Giang English`;
       // Trường hợp này không được hiển thị như Vắng học bù và không tính vào sĩ số.
       return String(plan?.status||'')==='cancelled' && plan?.absenceId && !makeupPlanSourceAbsenceExists(plan);
     }
+    function makeupPlanVisibleInSessionRoster(plan){
+      if(!plan || makeupPlanCancelledBySourceCorrection(plan)) return false;
+      const st=String(plan.status||'scheduled');
+      // Hủy thủ công từ tab Học bù chỉ là gỡ lịch xếp, không còn hiển thị ở Lịch dạy.
+      // Riêng Vắng học bù thật vẫn phải giữ lịch sử trong popup buổi đó.
+      if(st==='cancelled' && !makeupPlanMissed(plan) && !makeupPlanCompleted(plan)) return false;
+      return true;
+    }
     function makeupPlansForSession(sessionKey){
-      // Lịch dạy/điểm danh cần xem được lịch sử học bù đã hoàn tất hoặc vắng thật.
-      // Riêng plan bị hủy vì sửa điểm danh gốc là lịch xếp nhầm, không đưa vào roster/sĩ số.
-      // Các hàm tính sức chứa/xếp mới vẫn dùng plannedMakeupsForSession() để chỉ tính scheduled.
+      // Lịch dạy/điểm danh cần xem được scheduled, completed và lịch sử Vắng học bù thật.
+      // Không hiển thị plan đã hủy thủ công hoặc hủy do sửa điểm danh gốc.
       normalizeMakeupPlans();
-      return (db.makeupPlans||[]).filter(p=>p?.targetSessionKey===sessionKey && !makeupPlanCancelledBySourceCorrection(p));
+      return (db.makeupPlans||[]).filter(p=>p?.targetSessionKey===sessionKey && makeupPlanVisibleInSessionRoster(p));
     }
 
     function makeupPlanStatusBadge(plan){
@@ -4304,7 +4319,7 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
       const plans=targetSessionKey?plannedMakeupsForSession(targetSessionKey):[];
       const total=targetSessionKey?totalRosterCountForSession(targetClassId,targetSessionKey):0;
       const capacity=db.settings.capacity||15;
-      const canPlace=!!(targetSessionKey && canReceiveMakeupSession(targetSessionKey) && total<capacity);
+      const canPlace=!!(targetSessionKey && canOpenScheduleMakeupPopup(targetSessionKey) && total<capacity);
       const allPending=pendingMakeupRows();
       const candidates=canPlace?absentCandidatesForTargetSession(targetClassId,targetSessionKey):[];
       const candidateTables=groupedMakeupCandidateTables(candidates,targetClassId,targetSessionKey);
@@ -4325,7 +4340,7 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
       normalizeMakeupPlans(); ensureAbsenceRecords();
       if(!targetSessionKey){toast('Bạn cần chọn đúng buổi học bù trước');return}
       const targetSession=sessionObjectFromKey(targetSessionKey);
-      if(!targetSession || !canReceiveMakeupSession(targetSessionKey)){toast(makeupSessionPlacementReason(targetSessionKey)||'Không thể xếp học bù vào buổi này');return}
+      if(!targetSession || !canOpenScheduleMakeupPopup(targetSessionKey)){toast(sessionStatus(targetSession).key==='done'?'Buổi đã điểm danh: hãy bấm Mở điểm danh để thêm học bù rồi lưu lại.':(makeupSessionPlacementReason(targetSessionKey)||'Không thể xếp học bù vào buổi này'));return}
       if(!canReceiveMakeupClass(classById(targetClassId))){toast('Không thể xếp học bù vào lớp đã kết thúc hoặc đã hủy');return}
       if(String(sourceClassId||'')===String(targetClassId||'')){toast('Học sinh đã thuộc lớp này, không cần xếp học bù vào chính lớp gốc');return}
       const capacity=db.settings.capacity||15;
