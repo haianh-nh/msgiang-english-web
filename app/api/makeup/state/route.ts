@@ -57,24 +57,43 @@ export async function GET(req: NextRequest) {
   const supabase = supabaseAdmin();
 
   // API riêng cho tab Học bù: chỉ kéo dữ liệu của tháng đang xem.
-  // Điều này tránh việc tab Học bù phải tải toàn bộ lịch/điểm danh nhiều tháng rồi lọc ở frontend.
-  const [absRes, planRes] = await Promise.all([
-    supabase
-      .from("official_absence_records")
-      .select("id, student_id, source_class_id, source_session_key, source_session_label, reason, generated_from_attendance, status, created_at, updated_at")
-      .like("source_session_key", sessionKeyMonthLike(month))
-      .order("created_at", { ascending: true }),
-    supabase
-      .from("official_makeup_plans")
-      .select("id, absence_id, student_id, source_class_id, source_session_key, target_class_id, target_session_key, status, created_by, created_at, cancelled_at")
-      .like("source_session_key", sessionKeyMonthLike(month))
-      .order("created_at", { ascending: false }),
-  ]);
+  // Lấy absence trước rồi lấy plan theo cả source_session_key và absence_id.
+  // Lý do: một số plan cũ/edge-case có thể thiếu source_session_key; nếu chỉ lọc source key
+  // thì bảng Đã xếp/Đã học bù sẽ bị thiếu dù lượt vắng gốc vẫn thuộc tháng này.
+  const absRes = await supabase
+    .from("official_absence_records")
+    .select("id, student_id, source_class_id, source_session_key, source_session_label, reason, generated_from_attendance, status, created_at, updated_at")
+    .like("source_session_key", sessionKeyMonthLike(month))
+    .order("created_at", { ascending: true });
 
   if (absRes.error) return NextResponse.json({ error: absRes.error.message }, { status: 500 });
-  if (planRes.error) return NextResponse.json({ error: planRes.error.message }, { status: 500 });
 
-  const plans = planRes.data || [];
+  const absenceIds = Array.from(new Set((absRes.data || []).map((a: any) => String(a.id || "")).filter(Boolean)));
+
+  const planBySessionRes = await supabase
+    .from("official_makeup_plans")
+    .select("id, absence_id, student_id, source_class_id, source_session_key, target_class_id, target_session_key, status, created_by, created_at, cancelled_at")
+    .or(`source_session_key.like.*|${month}-*,target_session_key.like.*|${month}-*`)
+    .order("created_at", { ascending: false });
+
+  if (planBySessionRes.error) return NextResponse.json({ error: planBySessionRes.error.message }, { status: 500 });
+
+  let planByAbsenceData: any[] = [];
+  if (absenceIds.length) {
+    const planByAbsenceRes = await supabase
+      .from("official_makeup_plans")
+      .select("id, absence_id, student_id, source_class_id, source_session_key, target_class_id, target_session_key, status, created_by, created_at, cancelled_at")
+      .in("absence_id", absenceIds)
+      .order("created_at", { ascending: false });
+    if (planByAbsenceRes.error) return NextResponse.json({ error: planByAbsenceRes.error.message }, { status: 500 });
+    planByAbsenceData = planByAbsenceRes.data || [];
+  }
+
+  const planMap = new Map<string, any>();
+  for (const p of [...(planBySessionRes.data || []), ...planByAbsenceData]) {
+    if (p?.id) planMap.set(String(p.id), p);
+  }
+  const plans = Array.from(planMap.values()).sort((a: any, b: any) => String(b.created_at || "").localeCompare(String(a.created_at || "")));
   const targetSessionKeys = Array.from(new Set(plans.map((p: any) => String(p.target_session_key || "")).filter(Boolean)));
 
   let attendanceSessions: Record<string, any> = {};

@@ -385,8 +385,10 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
         return;
       }
       if(key==='makeup'){
-        v18fUpdateMakeupModuleCache();
-        v20bMarkLoaded('makeup');
+        // Không ghi cache Học bù từ dữ liệu tạm của Lịch dạy/Điểm danh.
+        // Các tab đó chỉ tải subset theo tuần; nếu cache nhầm vào makeup sẽ làm bảng Học bù hiển thị thiếu/sai.
+        moduleCacheRemove(`makeup:${makeupCurrentMonthKey()}`);
+        lazyRouteState.makeup={};
         return;
       }
       if(key==='tuition'){
@@ -712,6 +714,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
         return true;
       }
       if(key==='makeup'){
+        db.makeupMonth=payload.makeupMonth||makeupCurrentMonthKey();
         db.makeupPlans=payload.makeupPlans||[];
         db.absenceRecords=payload.absenceRecords||[];
         if(payload.attendanceSessions){
@@ -1207,7 +1210,17 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
           attendanceSessions:data.attendanceSessions||{}
         };
         const changed=v18iHashPayload(`makeup:${month}`,payload);
-        const localNeedsApply=String(db.makeupMonth||'')!==String(payload.makeupMonth||month);
+        const currentMakeupComparable={
+          makeupMonth:db.makeupMonth||'',
+          makeupPlans:db.makeupPlans||[],
+          absenceRecords:db.absenceRecords||[]
+        };
+        const payloadComparable={
+          makeupMonth:payload.makeupMonth||month,
+          makeupPlans:payload.makeupPlans||[],
+          absenceRecords:payload.absenceRecords||[]
+        };
+        const localNeedsApply=JSON.stringify(currentMakeupComparable)!==JSON.stringify(payloadComparable);
         if(changed || localNeedsApply){
           db.makeupMonth=payload.makeupMonth||month;
           db.makeupPlans=payload.makeupPlans;
