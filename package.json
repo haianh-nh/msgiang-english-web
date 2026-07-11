@@ -10,19 +10,19 @@
     "check": "next build"
   },
   "dependencies": {
-    "next": "latest",
-    "react": "latest",
-    "react-dom": "latest",
     "@supabase/supabase-js": "latest",
     "bcryptjs": "latest",
+    "mammoth": "^1.9.1",
+    "next": "latest",
     "papaparse": "latest",
-    "xlsx": "latest",
-    "mammoth": "^1.9.1"
+    "react": "latest",
+    "react-dom": "latest",
+    "xlsx": "latest"
   },
   "devDependencies": {
-    "typescript": "latest",
-    "@types/node": "latest",
+    "@types/node": "^26.1.1",
     "@types/react": "latest",
-    "@types/react-dom": "latest"
+    "@types/react-dom": "latest",
+    "typescript": "^5.7.3"
   }
 }

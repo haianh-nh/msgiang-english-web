@@ -216,6 +216,7 @@ export async function GET(req: NextRequest) {
         sourceSessionKey: r.source_session_key,
         teacherId: r.teacher_id || null,
         teacher: assignedTeacher?.name || "",
+        ta: classSnapshot?.ta || "",
         className: classSnapshot?.name || "",
         classSnapshot,
         visibleToCurrentUser: true,
@@ -223,7 +224,8 @@ export async function GET(req: NextRequest) {
         day: r.day_key,
         start: String(r.start_time || "").slice(0, 5),
         end: String(r.end_time || "").slice(0, 5),
-        reason: r.reason || "Dạy bù",
+        reason: r.reason || (String(r.source_session_key||"").startsWith("tutoring:") ? "Lớp học kèm" : "Dạy bù"),
+        sessionKind: String(r.source_session_key||"").startsWith("tutoring:") ? "tutoring" : "class_makeup",
         createdAt: r.created_at,
         updatedAt: r.updated_at,
       };

@@ -32,6 +32,17 @@ function mapAbsence(a: any) {
   };
 }
 
+
+async function deletedMonthState(supabase: any) {
+  const { data, error } = await supabase
+    .from("official_makeup_deleted_months")
+    .select("month_key,reason,deleted_at")
+    .order("month_key", { ascending: false });
+  if (error) throw error;
+  const deletedMonths = Array.from(new Set((data || []).map((r: any) => String(r.month_key || "")).filter(Boolean)));
+  return { deletedMonths, deletedRows: data || [] };
+}
+
 function mapPlan(r: any) {
   return {
     id: r.id,
@@ -55,6 +66,16 @@ export async function GET(req: NextRequest) {
   const url = new URL(req.url);
   const month = validMonth(url.searchParams.get("month"));
   const supabase = supabaseAdmin();
+
+  let deletedState: any = { deletedMonths: [], deletedRows: [] };
+  try {
+    deletedState = await deletedMonthState(supabase);
+  } catch (e: any) {
+    return NextResponse.json({ error: e.message || "Không kiểm tra được tháng đã xóa" }, { status: 500 });
+  }
+  if (deletedState.deletedMonths.includes(month)) {
+    return NextResponse.json({ ok: true, month, deleted: true, deletedMonths: deletedState.deletedMonths, deletedRows: deletedState.deletedRows, attendanceSessions: {}, absenceRecords: [], makeupPlans: [] });
+  }
 
   // API riêng cho tab Học bù: chỉ kéo dữ liệu của tháng đang xem.
   // Lấy absence trước rồi lấy plan theo cả source_session_key và absence_id.
@@ -145,6 +166,9 @@ export async function GET(req: NextRequest) {
     month,
     attendanceSessions,
     absenceRecords: (absRes.data || []).map(mapAbsence),
+    deleted: false,
+    deletedMonths: deletedState.deletedMonths,
+    deletedRows: deletedState.deletedRows,
     makeupPlans: plans.map(mapPlan),
   });
 }

@@ -328,13 +328,15 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       });
     }
     function v18fUpdateMakeupModuleCache(){
-      const month=makeupCurrentMonthKey();
+      const month=makeupSelectedMonthKey();
       const st=(db.makeupTabState && db.makeupTabState.month===month) ? db.makeupTabState : null;
       moduleCacheSet(`makeup:${month}`, {
         makeupMonth: month,
         makeupPlans: st?.makeupPlans || db.makeupPlans || [],
         absenceRecords: st?.absenceRecords || db.absenceRecords || [],
-        attendanceSessions: st?.attendanceSessions || db.attendanceSessions || {}
+        attendanceSessions: st?.attendanceSessions || db.attendanceSessions || {},
+        deletedMonths: db.deletedMakeupMonths || [],
+        availableMonths: db.makeupAvailableMonths || []
       });
     }
     function v18fUpdateTuitionModuleCache(){
@@ -687,7 +689,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       const snap=m.classSnapshot||{};
       return {
         id:m.classId,
-        name:m.className||snap.name||'Lớp dạy bù',
+        name:m.className||snap.name||m.reason||'Lớp dạy bù',
         teacher:snap.teacher||'',
         teacherId:snap.teacherId||null,
         ta:snap.ta||'',
@@ -726,11 +728,15 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
           attendanceSessions: payload.attendanceSessions||{},
           updatedAt: Date.now()
         };
+        db.deletedMakeupMonths=payload.deletedMonths||db.deletedMakeupMonths||[];
+        db.makeupAvailableMonths=payload.availableMonths||db.makeupAvailableMonths||[];
         // Giữ global để các helper cũ vẫn hoạt động khi đang ở tab Học bù,
         // nhưng dữ liệu tab Học bù chính thức luôn nằm trong db.makeupTabState.
         db.makeupPlans=payload.makeupPlans||[];
         db.absenceRecords=payload.absenceRecords||[];
         if(payload.attendanceSessions){
+          db.deletedMakeupMonths=payload.deletedMonths||db.deletedMakeupMonths||[];
+          db.makeupAvailableMonths=payload.availableMonths||db.makeupAvailableMonths||[];
           db.attendanceSessions={...(db.attendanceSessions||{}),...(payload.attendanceSessions||{})};
         }
         return true;
@@ -1217,13 +1223,15 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
     async function refreshOfficialMakeupState(options={}){
       if(!currentUser) return false;
       try{
-        const month=options.month || makeupCurrentMonthKey();
+        const month=options.month || makeupSelectedMonthKey();
         const data=await officialFetch(`/api/makeup/state?month=${encodeURIComponent(month)}`);
         const payload={
           makeupMonth:data.month||month,
           makeupPlans:data.makeupPlans||[],
           absenceRecords:data.absenceRecords||[],
-          attendanceSessions:data.attendanceSessions||{}
+          attendanceSessions:data.attendanceSessions||{},
+          deletedMonths:data.deletedMonths||[],
+          availableMonths:data.availableMonths||data.months||[]
         };
         const changed=v18iHashPayload(`makeup:${month}`,payload);
         const currentState=(db.makeupTabState && db.makeupTabState.month===month) ? db.makeupTabState : {};
@@ -1231,13 +1239,17 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
           makeupMonth:currentState.month||db.makeupMonth||'',
           makeupPlans:currentState.makeupPlans||[],
           absenceRecords:currentState.absenceRecords||[],
-          attendanceSessions:currentState.attendanceSessions||{}
+          attendanceSessions:currentState.attendanceSessions||{},
+          deletedMonths:db.deletedMakeupMonths||[],
+          availableMonths:db.makeupAvailableMonths||[]
         };
         const payloadComparable={
           makeupMonth:payload.makeupMonth||month,
           makeupPlans:payload.makeupPlans||[],
           absenceRecords:payload.absenceRecords||[],
-          attendanceSessions:payload.attendanceSessions||{}
+          attendanceSessions:payload.attendanceSessions||{},
+          deletedMonths:payload.deletedMonths||[],
+          availableMonths:payload.availableMonths||[]
         };
         const localNeedsApply=JSON.stringify(currentMakeupComparable)!==JSON.stringify(payloadComparable);
         if(changed || localNeedsApply || options.applyGlobal){
@@ -1256,6 +1268,8 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
             db.makeupPlans=payload.makeupPlans||[];
             db.absenceRecords=payload.absenceRecords||[];
           }
+          db.deletedMakeupMonths=payload.deletedMonths||db.deletedMakeupMonths||[];
+          db.makeupAvailableMonths=payload.availableMonths||db.makeupAvailableMonths||[];
           db.attendanceSessions={...(db.attendanceSessions||{}),...(payload.attendanceSessions||{})};
           v18Touch();
           if(!options.skipSave) save();
@@ -1516,8 +1530,8 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
     }
     function classMakeupAssignedToCurrentTeacher(m){
       const me=currentTeacherRecord();
-      if(String(m.teacherId||'')){
-        return !!me?.id && String(m.teacherId||'')===String(me.id);
+      if(String(m.teacherId||'') || String(m.assistantTeacherId||'')){
+        return !!me?.id && (String(m.teacherId||'')===String(me.id) || String(m.assistantTeacherId||'')===String(me.id));
       }
       // Fallback chỉ cho dữ liệu cũ chưa có teacherId.
       const n=String(currentUser?.name||'').toLowerCase();
@@ -2703,6 +2717,23 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
     function makeupCurrentMonthKey(){
       return isoDate(new Date()).slice(0,7);
     }
+    function makeupSelectedMonthKey(){
+      db.settings ||= {};
+      db.settings.makeupFilter ||= {};
+      return db.settings.makeupFilter.month || db.makeupMonth || makeupCurrentMonthKey();
+    }
+    function makeupDeletedMonthSet(){
+      return new Set((db.deletedMakeupMonths||[]).map(String));
+    }
+    function makeupMonthDeleted(monthKey){
+      return makeupDeletedMonthSet().has(String(monthKey||''));
+    }
+    function makeupAvailableMonths(){
+      const set=new Set([makeupCurrentMonthKey(), makeupSelectedMonthKey()]);
+      (db.makeupAvailableMonths||[]).forEach(m=>set.add(String(m)));
+      const deleted=makeupDeletedMonthSet();
+      return [...set].filter(m=>/^\d{4}-\d{2}$/.test(m) && !deleted.has(m)).sort().reverse();
+    }
     function formatMonthKeyVN(key=makeupCurrentMonthKey()){
       const [y,m]=String(key||'').split('-');
       return /^\d{4}$/.test(y||'') && /^\d{2}$/.test(m||'') ? `Tháng ${m} / ${y}` : 'Tháng hiện tại';
@@ -2747,6 +2778,7 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
         });
     }
     function pendingMakeupRows(monthKey=null){
+      if(monthKey && makeupMonthDeleted(monthKey)) return [];
       if(monthKey && db.makeupTabState?.month===monthKey){
         return makeupTabPendingRows(db.makeupTabState,monthKey);
       }
@@ -2774,7 +2806,8 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
       const alreadyInTarget=new Set(plannedMakeupsForSession(targetSessionKey).map(p=>p.studentId));
       // V20L.3: dữ liệu học bù lấy từ attendance/state. Không giới hạn cùng khối và không ẩn do khác tuần.
       // Chỉ loại chính lớp nhận, lượt đã xếp, học sinh đã có trong buổi đích, và lớp nhận không còn hoạt động.
-      const targetMonth=sessionKeyMonth(targetSessionKey)||makeupCurrentMonthKey();
+      const targetMonth=sessionKeyMonth(targetSessionKey)||makeupSelectedMonthKey();
+      if(makeupMonthDeleted(targetMonth)) return [];
       return pendingMakeupRows(targetMonth)
         .filter(x=>!alreadyInTarget.has(x.student.id))
         .filter(x=>String(x.sourceClass.id)!==String(targetClassId))
@@ -3186,7 +3219,7 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
         if(isTeachingUser()) return m.visibleToCurrentUser===true || classMakeupAssignedToCurrentTeacher(m);
         return allowed.has(m.classId);
       };
-      const makeup=(db.classMakeupSessions||[]).filter(canSeeMakeup).filter(m=>{const d=parseISODate(m.date); return d>=wk && d<=end;}).map(m=>{const c=v20b7MakeupClassFallback(m); return {classId:c.id||m.classId,className:c.name,teacher:m.teacher||c.teacher,teacherId:m.teacherId||c.teacherId,ta:c.ta,students:c.students?.length||m.classSnapshot?.students?.length||0,day:m.day,start:m.start,end:m.end,slot:`${m.start}-${m.end}`,date:m.date,type:'class_makeup',sourceSessionKey:m.sourceSessionKey,makeupId:m.id,reason:m.reason||''}});
+      const makeup=(db.classMakeupSessions||[]).filter(canSeeMakeup).filter(m=>{const d=parseISODate(m.date); return d>=wk && d<=end;}).map(m=>{const c=v20b7MakeupClassFallback(m); return {classId:c.id||m.classId,className:c.name,teacher:m.teacher||c.teacher,teacherId:m.teacherId||c.teacherId,ta:c.ta,students:c.students?.length||m.classSnapshot?.students?.length||0,day:m.day,start:m.start,end:m.end,slot:`${m.start}-${m.end}`,date:m.date,type:'class_makeup',sessionKind:m.sessionKind||'class_makeup',sourceSessionKey:m.sourceSessionKey,makeupId:m.id,reason:m.reason||''}});
       const rows=[...base,...makeup];
       v18Memo.weekKey=key; v18Memo.weekSessions=rows;
       return rows;
@@ -3195,7 +3228,7 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
       normalizeClassOperations();
       const wk=weekStartDate(); const end=addDays(wk,6); const c=classById(classId);
       const base=parseClassSessions(c).map(s=>({...s,date:sessionDateInCurrentWeek(s,wk),type:'regular'})).filter(s=>classSessionVisible(c,s.date));
-      const makeup=(db.classMakeupSessions||[]).filter(m=>m.classId===classId).filter(m=>{const d=parseISODate(m.date); return d>=wk && d<=end;}).map(m=>{const cc=v20b7MakeupClassFallback(m); return {classId:cc.id||m.classId,className:cc.name,teacher:m.teacher||cc.teacher,teacherId:m.teacherId||cc.teacherId,ta:cc.ta,students:cc.students?.length||m.classSnapshot?.students?.length||0,day:m.day,start:m.start,end:m.end,slot:`${m.start}-${m.end}`,date:m.date,type:'class_makeup',sourceSessionKey:m.sourceSessionKey,makeupId:m.id,reason:m.reason||''}});
+      const makeup=(db.classMakeupSessions||[]).filter(m=>m.classId===classId).filter(m=>{const d=parseISODate(m.date); return d>=wk && d<=end;}).map(m=>{const cc=v20b7MakeupClassFallback(m); return {classId:cc.id||m.classId,className:cc.name,teacher:m.teacher||cc.teacher,teacherId:m.teacherId||cc.teacherId,ta:cc.ta,students:cc.students?.length||m.classSnapshot?.students?.length||0,day:m.day,start:m.start,end:m.end,slot:`${m.start}-${m.end}`,date:m.date,type:'class_makeup',sessionKind:m.sessionKind||'class_makeup',sourceSessionKey:m.sourceSessionKey,makeupId:m.id,reason:m.reason||''}});
       return [...base,...makeup];
     }
     function defaultSessionKeyForClass(classId){const s=sessionsForClass(classId)[0]; return s?sessionKeyFor(s):''}
@@ -4222,6 +4255,68 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
       }catch(e){toast(e.message||'Không hủy được lịch dạy bù')}
     }
 
+
+    function teacherOptionsWithEmpty(selectedId='',emptyLabel='Không chọn'){
+      const active=(db.teachers||[]).filter(t=>t.status!=='inactive');
+      return `<option value="">${h(emptyLabel)}</option>`+active.map(t=>`<option value="${t.id}" ${String(t.id)===String(selectedId||'')?'selected':''}>${h(t.name)}${t.roles?.includes('manager')?' • Quản lí':''}</option>`).join('');
+    }
+    function tutoringPendingRows(monthKey=makeupSelectedMonthKey()){
+      if(makeupMonthDeleted(monthKey)) return [];
+      const st=makeupTabStateForMonth(monthKey);
+      return makeupTabPendingRows(st,monthKey);
+    }
+    function tutoringStudentChecklist(monthKey=makeupSelectedMonthKey(),query=''){
+      const rows=tutoringPendingRows(monthKey).filter(x=>smartSearchMatch(smartSearchIndex(x.student?.name,x.sourceClass?.name,x.record?.sourceSessionLabel,x.record?.reason,classGradeLabel(x.sourceClass?.name)),query));
+      if(!rows.length) return '<div class="empty">Không có học sinh chờ học bù trong tháng này.</div>';
+      const grouped=new Map();
+      rows.forEach(x=>{const g=classGradeLabel(x.sourceClass?.name||'Khác')||'Khác'; if(!grouped.has(g)) grouped.set(g,[]); grouped.get(g).push(x);});
+      return [...grouped.entries()].map(([grade,items])=>`<div class="makeupGroup"><h3>${h(grade)}</h3><div class="modalTableWrap"><table class="modalTable"><thead><tr><th>Chọn</th><th>Học sinh</th><th>Lớp vắng</th><th>Buổi vắng</th></tr></thead><tbody>${items.map(x=>`<tr><td><input type="checkbox" class="tutoringAbsenceCheck" value="${h(x.record.id)}"></td><td><b>${h(x.student.name)}</b></td><td>${h(x.sourceClass.name)}</td><td>${h(x.record.sourceSessionLabel||safeSessionLabel(x.record.sourceSessionKey))}</td></tr>`).join('')}</tbody></table></div></div>`).join('');
+    }
+    async function openTutoringClassModal(monthKey=makeupSelectedMonthKey()){
+      if(!(isAdmin()||isManager())){toast('Chỉ Admin/Quản lí được tạo lớp học kèm');return}
+      if(!db.makeupTabState || db.makeupTabState.month!==monthKey){
+        modal(`<div class="modalHead"><h2>Thêm lớp học kèm</h2><button class="close" onclick="closeModal()">×</button></div><div class="empty">Đang tải danh sách chờ học bù...</div>`);
+        await refreshOfficialMakeupState({month:monthKey,applyGlobal:true,skipSave:true}).catch(e=>toast(e.message||'Không tải được học bù'));
+      }
+      await refreshMakeupMonths();
+      const today=isoDate(new Date());
+      const monthOptions=makeupMonthOptions(monthKey);
+      const teacherOptions=classMakeupTeacherOptions('', currentTeacherRecord()?.id||'') || '<option value="">Chưa có giáo viên</option>';
+      const taOptions=teacherOptionsWithEmpty('', 'Không chọn TA');
+      modal(`<div class="modalHead"><h2>Thêm lớp học kèm</h2><button class="close" onclick="closeModal()">×</button></div>
+        <div class="formGrid"><label>Tên lớp học kèm<input id="tutoringName" class="input" placeholder="VD: Học kèm G3.3 tối thứ 7"></label><label>Tháng dữ liệu vắng<select id="tutoringMonth" class="input" onchange="openTutoringClassModal(this.value)">${monthOptions}</select></label><label>Giáo viên dạy<select id="tutoringTeacher" class="input">${teacherOptions}</select></label><label>TA<select id="tutoringTA" class="input">${taOptions}</select></label><label>Ngày dạy<input id="tutoringDate" class="input" type="date" value="${today}"></label><label>Giờ bắt đầu<input id="tutoringStart" class="input" type="time" value="19:00"></label><label>Giờ kết thúc<input id="tutoringEnd" class="input" type="time" value="20:30"></label><label>Tìm học sinh<input id="tutoringSearch" class="input" placeholder="Tìm tên, lớp, buổi vắng..." oninput="document.getElementById('tutoringList').innerHTML=tutoringStudentChecklist(document.getElementById('tutoringMonth').value,this.value)"></label></div>
+        <div class="panel softPanel"><div class="panelHead"><h2>Chọn học sinh chờ học bù</h2><span class="pill yellow">${formatMonthKeyVN(monthKey)}</span></div><div id="tutoringList">${tutoringStudentChecklist(monthKey)}</div></div>
+        <div style="text-align:right;margin-top:14px"><button class="btn ghost" onclick="closeModal()">Hủy</button><button class="btn primary" onclick="submitTutoringClass()">Tạo lớp học kèm</button></div>`);
+    }
+    async function submitTutoringClass(){
+      const name=(document.getElementById('tutoringName')?.value||'').trim();
+      const teacherId=document.getElementById('tutoringTeacher')?.value||'';
+      const assistantTeacherId=document.getElementById('tutoringTA')?.value||'';
+      const date=document.getElementById('tutoringDate')?.value||'';
+      const start=document.getElementById('tutoringStart')?.value||'';
+      const end=document.getElementById('tutoringEnd')?.value||'';
+      const absenceIds=[...document.querySelectorAll('.tutoringAbsenceCheck:checked')].map(x=>x.value);
+      if(!name){toast('Nhập tên lớp học kèm');return}
+      if(!teacherId){toast('Chọn giáo viên dạy');return}
+      if(!date||!start||!end||start>=end){toast('Ngày hoặc giờ học chưa hợp lệ');return}
+      if(!absenceIds.length){toast('Chọn ít nhất một học sinh');return}
+      try{
+        const data=await officialFetch('/api/schedule/tutoring',{method:'POST',body:JSON.stringify({name,teacherId,assistantTeacherId,date,start,end,absenceIds})});
+        db.classMakeupSessions=v20bMergeClassMakeupSessions(db.classMakeupSessions||[],[data.classMakeup]);
+        v20b7MergeClassSnapshotsFromMakeups(db.classMakeupSessions);
+        db.makeupPlans=[...(db.makeupPlans||[]).filter(p=>!(data.makeupPlans||[]).some(np=>String(np.id)===String(p.id))),...(data.makeupPlans||[])];
+        const ids=new Set(absenceIds.map(String));
+        (db.absenceRecords||[]).forEach(a=>{if(ids.has(String(a.id))) a.status='scheduled'});
+        if(db.makeupTabState){
+          db.makeupTabState.makeupPlans=[...(db.makeupTabState.makeupPlans||[]).filter(p=>!(data.makeupPlans||[]).some(np=>String(np.id)===String(p.id))),...(data.makeupPlans||[])];
+          (db.makeupTabState.absenceRecords||[]).forEach(a=>{if(ids.has(String(a.id))) a.status='scheduled'});
+        }
+        v20bAfterMutation(['schedule','makeup','attendance']);
+        v20b13InvalidateScheduleAfterMutation();
+        save(); toast('Đã tạo lớp học kèm'); closeModal(); if(route==='schedule') renderApp();
+      }catch(e){toast(e.message||'Không tạo được lớp học kèm')}
+    }
+
     function openClassMakeupModal(sourceSessionKey){
       const s=sessionObjectFromKey(sourceSessionKey); if(!s) return;
       const old=(db.classMakeupSessions||[]).find(m=>m.sourceSessionKey===sourceSessionKey);
@@ -4828,18 +4923,77 @@ function canManageLibrary(){return isAdmin()||isManager()||isTeachingUser()}
         .sort((a,b)=>String(b.plan.targetSessionKey||b.plan.createdAt||'').localeCompare(String(a.plan.targetSessionKey||a.plan.createdAt||'')) || String(a.student.name||'').localeCompare(String(b.student.name||''),'vi'));
     }
 
+    function makeupMonthOptions(selected){
+      const months=makeupAvailableMonths();
+      return months.map(m=>`<option value="${m}" ${m===selected?'selected':''}>${formatMonthKeyVN(m)}</option>`).join('') || `<option value="${selected}">${formatMonthKeyVN(selected)}</option>`;
+    }
+    async function setMakeupMonth(value){
+      const month=String(value||'').trim();
+      if(!/^\d{4}-\d{2}$/.test(month)){toast('Tháng không hợp lệ');return}
+      db.settings ||= {}; db.settings.makeupFilter ||= {}; db.settings.makeupFilter.month=month;
+      db.makeupMonth=month;
+      saveLocalOnly();
+      renderApp();
+      try{await refreshOfficialMakeupState({month,force:true,applyGlobal:true}); if(route==='makeup') renderApp();}
+      catch(e){toast(e.message||'Không tải được dữ liệu học bù tháng này')}
+    }
+    async function refreshMakeupMonths(){
+      try{
+        const data=await officialFetch('/api/makeup/months');
+        db.deletedMakeupMonths=data.deletedMonths||[];
+        db.makeupAvailableMonths=data.months||[];
+        if(makeupMonthDeleted(makeupSelectedMonthKey())){
+          db.settings ||= {}; db.settings.makeupFilter ||= {};
+          db.settings.makeupFilter.month=(db.makeupAvailableMonths||[])[0] || makeupCurrentMonthKey();
+          db.makeupMonth=db.settings.makeupFilter.month;
+        }
+        saveLocalOnly();
+        return data;
+      }catch(e){console.warn('Không tải được tháng học bù',e); return null}
+    }
+    async function deleteMakeupMonth(){
+      if(!(isAdmin()||isManager())){toast('Chỉ Admin/Quản lí được xóa dữ liệu vắng');return}
+      const month=document.getElementById('deleteMakeupMonthSelect')?.value || makeupSelectedMonthKey();
+      if(!/^\d{4}-\d{2}$/.test(month)){toast('Chọn tháng cần xóa');return}
+      if(!confirm(`Bạn có chắc muốn xóa dữ liệu vắng/học bù ${formatMonthKeyVN(month)} không?\n\nSau khi xóa, tháng này sẽ không còn hiện trong tab Học bù và không dùng để xếp học bù nữa. Lịch sử điểm danh trong Lịch dạy vẫn được giữ.`)) return;
+      try{
+        const data=await officialFetch('/api/makeup/months',{method:'POST',body:JSON.stringify({month,reason:'Xóa dữ liệu vắng từ giao diện'})});
+        db.deletedMakeupMonths=data.deletedMonths||[...(db.deletedMakeupMonths||[]),month];
+        db.makeupAvailableMonths=data.months||[];
+        db.makeupTabState=null; db.makeupPlans=[]; db.absenceRecords=[];
+        const next=(db.makeupAvailableMonths||[])[0] || makeupCurrentMonthKey();
+        db.settings ||= {}; db.settings.makeupFilter ||= {}; db.settings.makeupFilter.month=next; db.makeupMonth=next;
+        moduleCacheSet(`makeup:${month}`,{makeupMonth:month,makeupPlans:[],absenceRecords:[],attendanceSessions:{},deletedMonths:db.deletedMakeupMonths,availableMonths:db.makeupAvailableMonths});
+        v20bAfterMutation(['makeup']);
+        save(); toast('Đã xóa dữ liệu vắng của '+formatMonthKeyVN(month));
+        await refreshOfficialMakeupState({month:next,applyGlobal:true,skipSave:true});
+        renderApp();
+      }catch(e){toast(e.message||'Không xóa được dữ liệu vắng')}
+    }
+    function openDeleteMakeupMonthModal(){
+      const selected=makeupSelectedMonthKey();
+      const options=makeupMonthOptions(selected);
+      modal(`<div class="modalHead"><h2>Xóa dữ liệu vắng</h2><button class="close" onclick="closeModal()">×</button></div>
+        <div class="blockedBox"><h2>⚠️ Xác nhận trước khi xóa</h2><p>Tháng đã xóa sẽ không còn hiển thị trong tab Học bù và không còn dùng để xếp học bù. Lịch sử điểm danh ở Lịch dạy vẫn được giữ.</p></div>
+        <label>Chọn tháng cần xóa<select id="deleteMakeupMonthSelect" class="input">${options}</select></label>
+        <div style="text-align:right;margin-top:14px"><button class="btn ghost" onclick="closeModal()">Hủy</button><button class="btn primary" onclick="deleteMakeupMonth()">Xóa dữ liệu tháng</button></div>`);
+    }
+
     function makeupPage(){
       db.makeupPlans ||= []; ensureAbsenceRecords(); normalizeMakeupPlans();
-      const monthKey=makeupCurrentMonthKey();
+      const monthKey=makeupSelectedMonthKey();
+      if(!db.makeupAvailableMonths || !db.makeupAvailableMonths.length) refreshMakeupMonths().then(()=>{if(route==='makeup') renderApp()});
       const tabState=makeupTabStateForMonth(monthKey);
-      const activeRows=makeupTabActiveRows(tabState,monthKey);
-      const pendingRows=makeupTabPendingRows(tabState,monthKey);
-      const completedRows=makeupTabCompletedRows(tabState,monthKey);
-      const monthAbsenceCount=(tabState.absenceRecords||[]).filter(a=>absenceRecordMonth(a)===monthKey).length;
+      const activeRows=makeupMonthDeleted(monthKey)?[]:makeupTabActiveRows(tabState,monthKey);
+      const pendingRows=makeupMonthDeleted(monthKey)?[]:makeupTabPendingRows(tabState,monthKey);
+      const completedRows=makeupMonthDeleted(monthKey)?[]:makeupTabCompletedRows(tabState,monthKey);
+      const monthAbsenceCount=makeupMonthDeleted(monthKey)?0:(tabState.absenceRecords||[]).filter(a=>absenceRecordMonth(a)===monthKey).length;
+      const monthControls=`<div class="inline2"><label>Tháng hiển thị<select class="input" onchange="setMakeupMonth(this.value)">${makeupMonthOptions(monthKey)}</select></label>${isAdmin()||isManager()?`<button class="btn ghost" onclick="openDeleteMakeupMonthModal()">Xóa dữ liệu vắng</button>`:''}</div>`;
       const activeTable=activeRows.length?activeRows.map((x,i)=>`<tr><td>${i+1}</td><td><b>${safeStudentName(x.plan.studentId)}</b></td><td>${safeClassName(x.plan.sourceClassId)}${x.plan.sourceSessionKey?`<div class="mini">${safeSessionLabel(x.plan.sourceSessionKey)}</div>`:''}</td><td>${safeClassName(x.plan.targetClassId)}</td><td>${x.plan.targetSessionKey?`<span class="sessionTag">${safeSessionLabel(x.plan.targetSessionKey)}</span>`:'-'}</td><td><span class="pill blue">${h(x.plan.status||'scheduled')}</span><div class="mini">${h(makeupTargetStatusText(x.plan))}</div></td><td><button class="btn ghost" onclick="cancelMakeupPlan('${x.plan.id}','${x.plan.targetClassId}','${x.plan.targetSessionKey}')">Hủy</button></td></tr>`).join(''):'<tr><td colspan="7">Chưa có lịch học bù đã xếp.</td></tr>';
-      const pendingTable=pendingRows.length?pendingRows.map((x,i)=>`<tr><td>${i+1}</td><td><b>${h(x.student.name)}</b><div class="mini">${h(classGradeLabel(x.sourceClass.name))}</div></td><td>${h(x.sourceClass.name)}</td><td>${h(x.record.sourceSessionLabel||safeSessionLabel(x.record.sourceSessionKey))}</td><td>${h(x.record.reason||'Vắng')}</td><td><span class="pill yellow">Chờ xếp</span></td></tr>`).join(''):'<tr><td colspan="6">Chưa có học sinh chờ học bù. Hãy lưu điểm danh với trạng thái Vắng trước.</td></tr>';
+      const pendingTable=pendingRows.length?pendingRows.map((x,i)=>`<tr><td>${i+1}</td><td><b>${h(x.student.name)}</b><div class="mini">${h(classGradeLabel(x.sourceClass.name))}</div></td><td>${h(x.sourceClass.name)}</td><td>${h(x.record.sourceSessionLabel||safeSessionLabel(x.record.sourceSessionKey))}</td><td>${h(x.record.reason||'Vắng')}</td><td><span class="pill yellow">Chờ xếp</span></td></tr>`).join(''):'<tr><td colspan="6">Chưa có học sinh chờ học bù trong tháng này.</td></tr>';
       const completedTable=completedRows.length?completedRows.map((x,i)=>`<tr><td>${i+1}</td><td><b>${safeStudentName(x.plan.studentId)}</b><div class="mini">${h(x.student?.contact||'')}</div></td><td>${safeClassName(x.plan.sourceClassId)}</td><td>${x.plan.sourceSessionKey?`<span class="sessionTag">${safeSessionLabel(x.plan.sourceSessionKey)}</span>`:'-'}</td><td>${safeClassName(x.plan.targetClassId)}</td><td>${x.plan.targetSessionKey?`<span class="sessionTag">${safeSessionLabel(x.plan.targetSessionKey)}</span>`:'-'}</td><td><span class="pill green">Đã học bù</span></td></tr>`).join(''):'<tr><td colspan="7">Chưa có học sinh đã hoàn tất học bù.</td></tr>';
-      return `<div class="screenTitle"><div><h1>Học bù</h1><p>Tháng <b>${formatMonthKeyVN(monthKey)}</b></p></div><button class="btn primary" onclick="go('schedule')">Sang lịch dạy để xếp</button></div>
+      return `<div class="screenTitle"><div><h1>Học bù</h1><p>Đang xem <b>${formatMonthKeyVN(monthKey)}</b></p></div><button class="btn primary" onclick="go('schedule')">Sang lịch dạy để xếp</button></div>
+      <div class="panel"><div class="panelHead"><div><h2>Bộ lọc tháng</h2><div class="mini">Dữ liệu học bù không tự xóa. Admin/Quản lí có thể xóa tháng không cần xử lý tiếp.</div></div>${monthControls}</div></div>
       <div class="statGrid"><div class="stat"><div class="statIcon redgrad">🚫</div><div><h3>Lượt vắng</h3><strong>${monthAbsenceCount}</strong><small>trong ${formatMonthKeyVN(monthKey)}</small></div></div><div class="stat"><div class="statIcon bluegrad">🔁</div><div><h3>Đã xếp</h3><strong>${activeRows.length}</strong><small>đang có lịch học bù tháng này</small></div></div><div class="stat"><div class="statIcon greengrad">✅</div><div><h3>Đã học bù</h3><strong>${completedRows.length}</strong><small>lịch sử hoàn tất tháng này</small></div></div><div class="stat"><div class="statIcon yellowgrad">⏳</div><div><h3>Chờ xếp</h3><strong>${pendingRows.length}</strong><small>trong tháng này</small></div></div></div>
       <div class="panel"><div class="panelHead"><div><h2>Chờ xếp học bù</h2><div class="mini">Học sinh vắng buổi chính trong ${formatMonthKeyVN(monthKey)}</div></div><button class="btn ghost" onclick="refreshCurrentRouteData()">Tải lại dữ liệu</button></div><div class="tableWrap"><table><thead><tr><th>STT</th><th>Học sinh</th><th>Lớp vắng</th><th>Buổi vắng</th><th>Lý do</th><th>Trạng thái</th></tr></thead><tbody>${pendingTable}</tbody></table></div></div>
       <div class="panel"><div class="panelHead"><h2>Đã xếp học bù</h2><span class="pill blue">${activeRows.length} lượt</span></div><div class="tableWrap"><table><thead><tr><th>STT</th><th>Học sinh</th><th>Lượt vắng</th><th>Lớp nhận</th><th>Buổi học bù</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody>${activeTable}</tbody></table></div></div>
