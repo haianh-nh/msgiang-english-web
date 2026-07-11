@@ -94,6 +94,101 @@ async function cancelMakeupPlansForCorrectedAbsences(supabase: any, absenceIds: 
   };
 }
 
+
+async function createPendingMakeupPlansFromAttendance(supabase: any, user: any, body: any, pendingMakeupPlans: any[]) {
+  const items = Array.isArray(pendingMakeupPlans) ? pendingMakeupPlans : [];
+  if (!items.length) return { makeupPlansCreated: [] as any[] };
+  if (!canManage(user)) throw new Error("Chỉ Admin/Quản lí được thêm học bù trong màn điểm danh đã đóng");
+
+  const sessionKey = String(body.sessionKey || "");
+  const classId = String(body.classId || "");
+  const unique = new Map<string, any>();
+  for (const raw of items) {
+    const absenceId = String(raw?.absenceId || "");
+    const studentId = String(raw?.studentId || "");
+    const sourceClassId = String(raw?.sourceClassId || "");
+    const sourceSessionKey = String(raw?.sourceSessionKey || "");
+    const targetClassId = String(raw?.targetClassId || classId);
+    const targetSessionKey = String(raw?.targetSessionKey || sessionKey);
+    if (!absenceId || !studentId || !sourceClassId || !sourceSessionKey) continue;
+    if (targetClassId !== classId || targetSessionKey !== sessionKey) continue;
+    if (sourceClassId === classId) continue;
+    unique.set(absenceId, {
+      id: String(raw?.id || `mk_${Date.now()}_${unique.size}`),
+      absenceId,
+      studentId,
+      sourceClassId,
+      sourceSessionKey,
+      targetClassId,
+      targetSessionKey,
+    });
+  }
+  const plans = [...unique.values()];
+  if (!plans.length) return { makeupPlansCreated: [] as any[] };
+
+  const absenceIds = plans.map((p: any) => p.absenceId);
+  const { data: absences, error: absenceError } = await supabase
+    .from("official_absence_records")
+    .select("id,status")
+    .in("id", absenceIds);
+  if (absenceError) throw absenceError;
+  const pendingAbsenceIds = new Set((absences || []).filter((a: any) => String(a.status || "pending") === "pending").map((a: any) => String(a.id)));
+
+  const { data: existingPlans, error: existingError } = await supabase
+    .from("official_makeup_plans")
+    .select("id,absence_id,status")
+    .in("absence_id", absenceIds)
+    .neq("status", "cancelled");
+  if (existingError) throw existingError;
+  const alreadyPlannedAbsenceIds = new Set((existingPlans || []).map((p: any) => String(p.absence_id)));
+
+  const rows = plans
+    .filter((p: any) => pendingAbsenceIds.has(p.absenceId) && !alreadyPlannedAbsenceIds.has(p.absenceId))
+    .map((p: any) => ({
+      id: p.id,
+      absence_id: p.absenceId,
+      student_id: p.studentId,
+      source_class_id: p.sourceClassId,
+      source_session_key: p.sourceSessionKey,
+      target_class_id: p.targetClassId,
+      target_session_key: p.targetSessionKey,
+      status: "scheduled",
+      created_by: user.id,
+    }));
+
+  if (!rows.length) return { makeupPlansCreated: [] as any[] };
+
+  const { data, error } = await supabase
+    .from("official_makeup_plans")
+    .insert(rows)
+    .select("*");
+  if (error) throw error;
+
+  const createdAbsenceIds = (data || []).map((p: any) => String(p.absence_id)).filter(Boolean);
+  if (createdAbsenceIds.length) {
+    const { error: updateError } = await supabase
+      .from("official_absence_records")
+      .update({ status: "scheduled", updated_at: new Date().toISOString() })
+      .in("id", createdAbsenceIds);
+    if (updateError) throw updateError;
+  }
+
+  return {
+    makeupPlansCreated: (data || []).map((p: any) => ({
+      id: p.id,
+      absenceId: p.absence_id,
+      studentId: p.student_id,
+      sourceClassId: p.source_class_id,
+      sourceSessionKey: p.source_session_key,
+      targetClassId: p.target_class_id,
+      targetSessionKey: p.target_session_key,
+      status: p.status,
+      createdBy: p.created_by,
+      createdAt: p.created_at,
+    })),
+  };
+}
+
 async function syncMakeupPlansFromAttendance(supabase: any, sessionKey: string, normalizedRows: any[]) {
   const makeupStatusByStudent = new Map(
     normalizedRows
@@ -253,6 +348,7 @@ export async function POST(req: NextRequest) {
   const classId = String(body.classId || "");
   const rows = body.rows || {};
   const manualMakeups = Array.isArray(body.manualMakeups) ? body.manualMakeups : [];
+  const pendingMakeupPlans = Array.isArray(body.pendingMakeupPlans) ? body.pendingMakeupPlans : [];
 
   if (!sessionKey || !classId) {
     return NextResponse.json({ error: "Thiếu thông tin buổi điểm danh" }, { status: 400 });
@@ -317,6 +413,15 @@ export async function POST(req: NextRequest) {
       correctionSync = await cancelMakeupPlansForCorrectedAbsences(supabase, correctedAbsenceIds);
     } catch (e: any) {
       return NextResponse.json({ error: e.message || "Không hủy được lịch học bù khi sửa điểm danh gốc" }, { status: 500 });
+    }
+  }
+
+  let pendingMakeupSync = { makeupPlansCreated: [] as any[] };
+  if (pendingMakeupPlans.length) {
+    try {
+      pendingMakeupSync = await createPendingMakeupPlansFromAttendance(supabase, user, body, pendingMakeupPlans);
+    } catch (e: any) {
+      return NextResponse.json({ error: e.message || "Không thêm được học bù vào điểm danh" }, { status: 500 });
     }
   }
 
@@ -424,6 +529,7 @@ export async function POST(req: NextRequest) {
       updatedAt: sessionRow.updated_at,
     },
     absenceRecords: (absData || []).map(mapAbsenceRecord),
+    makeupPlansCreated: pendingMakeupSync.makeupPlansCreated,
     makeupPlanUpdates: [...correctionSync.makeupPlanUpdates, ...makeupSync.makeupPlanUpdates],
     makeupAbsenceRecords: makeupSync.makeupAbsenceRecords,
     makeupResolvedAbsenceIds: makeupSync.makeupResolvedAbsenceIds,

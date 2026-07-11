@@ -2492,7 +2492,7 @@ Ms.Giang English`;
           <button class="btn ghost" onclick="closeModal()">Đóng</button>
           ${st.key!=='cancelled'?`<button class="btn primary" onclick="openAttendance('${s.classId}','${sessionKey}',false)">Mở điểm danh</button>`:''}
           ${st.key==='done'&&absentRows.length?`<button class="btn ghost" onclick="openAbsencePopup('${sessionKey}')">Xem vắng</button>`:''}
-          ${canScheduleMakeup()&&canReceiveMakeupSession(sessionKey)?`<button class="btn primary" onclick="openScheduleMakeup('${s.classId}','${sessionKey}')">Xếp học bù</button>`:''}
+          ${canScheduleMakeup()&&st.key==='todo'&&canReceiveMakeupSession(sessionKey)?`<button class="btn primary" onclick="openScheduleMakeup('${s.classId}','${sessionKey}')">Xếp học bù</button>`:''}
           ${(isAdmin()||isManager())&&st.key==='todo'&&s.type!=='class_makeup'?`<button class="btn ghost" onclick="cancelClassSession('${sessionKey}')">Cho nghỉ lớp</button>`:''}
           ${(isAdmin()||isManager())&&st.key==='cancelled'?`<button class="btn ghost" onclick="uncancelClassSession('${sessionKey}')">Mở lại buổi học</button>`:''}
           ${(isAdmin()||isManager())&&classMakeupForAnySessionKey(sessionKey)?`<button class="btn ghost" onclick="cancelClassMakeup('${classMakeupForAnySessionKey(sessionKey).sourceSessionKey}')">Hủy dạy bù</button>`:''}
@@ -2982,10 +2982,16 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
           type:s.type||'regular',
           sessionLabel:sessionLabelFromKey(sessionKey),
           rows:rec.rows,
-          manualMakeups:rec.manualMakeups||[]
+          manualMakeups:rec.manualMakeups||[],
+          pendingMakeupPlans:rec.pendingMakeupPlans||[]
         })});
-        rec.saved=true; rec.editable=false; rec.rows=data.session?.rows || rec.rows; rec.manualMakeups=data.session?.manualMakeups || rec.manualMakeups || [];
+        rec.saved=true; rec.editable=false; rec.rows=data.session?.rows || rec.rows; rec.manualMakeups=data.session?.manualMakeups || rec.manualMakeups || []; rec.pendingMakeupPlans=[];
         rec.updatedAt=data.session?.updatedAt || new Date().toLocaleString('vi-VN');
+        (data.makeupPlansCreated||[]).forEach(plan=>{
+          db.makeupPlans ||= [];
+          db.makeupPlans = db.makeupPlans.filter(p=>String(p.id)!==String(plan.id));
+          db.makeupPlans.push(plan);
+        });
         db.absenceRecords = (db.absenceRecords||[]).filter(a=>a.sourceSessionKey!==sessionKey);
         db.absenceRecords.push(...(data.absenceRecords||[]));
         (data.makeupPlanUpdates||[]).forEach(u=>{
