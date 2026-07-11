@@ -73,7 +73,7 @@ export async function GET(req: NextRequest) {
   const planBySessionRes = await supabase
     .from("official_makeup_plans")
     .select("id, absence_id, student_id, source_class_id, source_session_key, target_class_id, target_session_key, status, created_by, created_at, cancelled_at")
-    .or(`source_session_key.like.*|${month}-*,target_session_key.like.*|${month}-*`)
+    .or(`source_session_key.like.%|${month}-%,target_session_key.like.%|${month}-%`)
     .order("created_at", { ascending: false });
 
   if (planBySessionRes.error) return NextResponse.json({ error: planBySessionRes.error.message }, { status: 500 });
