@@ -10,7 +10,7 @@ function schedulePage(){
       const sessions=weekSessionsForUser();
       const slots=sortedWeekSlots(sessions);
       const counts=scheduleCounts();
-      return `<div class="screenTitle"><div><h1>Thời khóa biểu tuần</h1><p>${weekLabel()}</p></div><div style="display:flex;gap:8px;flex-wrap:wrap">${isAdmin()||isManager()?'<button class="btn ghost" onclick="openTutoringClassModal()">+ Thêm lớp học kèm</button><button class="btn primary" onclick="openClassModal()">+ Tạo lớp mới</button>':''}</div></div>
+      return `<div class="screenTitle"><div><h1>Thời khóa biểu tuần</h1><p>${weekLabel()}</p></div><div style="display:flex;gap:8px;flex-wrap:wrap">${canScheduleMakeup()?'<button class="btn ghost" onclick="openTutoringClassModal()">+ Thêm lớp học kèm</button>':''}${isAdmin()||isManager()?'<button class="btn primary" onclick="openClassModal()">+ Tạo lớp mới</button>':''}</div></div>
       <div class="weekToolbar">
         <div class="weekPicker"><button class="btn ghost" onclick="shiftWeek(-1)">‹ Tuần trước</button><span class="weekRange">${weekLabel()}</span><button class="btn ghost" onclick="shiftWeek(1)">Tuần sau ›</button><input class="input" type="date" value="${isoDate(weekStartDate())}" onchange="setWeekStart(this.value)"></div>
         <div class="weekLegend"><span class="pill green">Đã dạy: ${counts.done}</span><span class="pill orange">Đang dạy: ${counts.live}</span><span class="pill blue">Chưa dạy: ${counts.todo}</span><span class="pill gray">Nghỉ: ${counts.cancelled||0}</span><span class="pill red">${cls.length} lớp</span></div>

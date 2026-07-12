@@ -3,6 +3,32 @@ import { requireUser, canManage } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 import { teacherForUser } from "@/lib/classes";
 
+
+function monthFromSessionKey(key: any) {
+  const parts = String(key || "").split("|");
+  const date = parts.length >= 2 ? parts[1] : "";
+  return /^\d{4}-\d{2}-\d{2}$/.test(date) ? date.slice(0, 7) : "";
+}
+
+function isMissingDeletedMonthsTable(error: any) {
+  const msg = String(error?.message || error?.details || "").toLowerCase();
+  return error?.code === "42P01" || msg.includes("official_makeup_deleted_months") || msg.includes("does not exist");
+}
+
+async function deletedSourceMonthSet(supabase: any, sourceSessionKeys: any[]) {
+  const months = Array.from(new Set((sourceSessionKeys || []).map(monthFromSessionKey).filter(Boolean)));
+  if (!months.length) return new Set<string>();
+  const { data, error } = await supabase
+    .from("official_makeup_deleted_months")
+    .select("month_key")
+    .in("month_key", months);
+  if (error) {
+    if (isMissingDeletedMonthsTable(error)) return new Set<string>();
+    throw error;
+  }
+  return new Set((data || []).map((r: any) => String(r.month_key || "")).filter(Boolean));
+}
+
 function absenceId(studentId: string, sessionKey: string) {
   return `${sessionKey}__${studentId}`;
 }
@@ -125,6 +151,11 @@ async function createPendingMakeupPlansFromAttendance(supabase: any, user: any, 
   }
   const plans = [...unique.values()];
   if (!plans.length) return { makeupPlansCreated: [] as any[] };
+
+  const deletedMonths = await deletedSourceMonthSet(supabase, plans.map((p: any) => p.sourceSessionKey));
+  if (deletedMonths.size) {
+    throw new Error(`Tháng dữ liệu vắng ${Array.from(deletedMonths).join(', ')} đã bị xóa, không thể thêm học bù`);
+  }
 
   const absenceIds = plans.map((p: any) => p.absenceId);
   const { data: absences, error: absenceError } = await supabase

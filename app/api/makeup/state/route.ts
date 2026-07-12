@@ -32,13 +32,23 @@ function mapAbsence(a: any) {
   };
 }
 
+function isMissingDeletedMonthsTable(error: any) {
+  const msg = String(error?.message || error?.details || "").toLowerCase();
+  return error?.code === "42P01" || msg.includes("official_makeup_deleted_months") || msg.includes("does not exist");
+}
+
 
 async function deletedMonthState(supabase: any) {
   const { data, error } = await supabase
     .from("official_makeup_deleted_months")
     .select("month_key,reason,deleted_at")
     .order("month_key", { ascending: false });
-  if (error) throw error;
+  if (error) {
+    // If the optional month-control table has not been created yet, keep Hoc bu and tutoring usable.
+    // The delete-month button will work after running migration 013.
+    if (isMissingDeletedMonthsTable(error)) return { deletedMonths: [], deletedRows: [] };
+    throw error;
+  }
   const deletedMonths = Array.from(new Set((data || []).map((r: any) => String(r.month_key || "")).filter(Boolean)));
   return { deletedMonths, deletedRows: data || [] };
 }
@@ -59,6 +69,28 @@ function mapPlan(r: any) {
   };
 }
 
+function mapSupportClass(c: any, teacherMap: Map<string, any>) {
+  const teacher = teacherMap.get(String(c.teacher_id || ""));
+  const assistant = teacherMap.get(String(c.assistant_teacher_id || ""));
+  return {
+    id: c.id,
+    name: c.name,
+    teacher: teacher?.name || "",
+    teacherId: c.teacher_id || null,
+    taId: c.assistant_teacher_id || null,
+    ta: assistant?.name || c.assistant_name || "",
+    time: "",
+    month: "",
+    students: [],
+    status: c.status || "active",
+    startDate: c.start_date || "",
+    endDate: c.end_date || "",
+    createdAt: c.created_at || "",
+    grade: c.grade || "",
+    note: c.note || "",
+  };
+}
+
 export async function GET(req: NextRequest) {
   const { response } = await requireUser();
   if (response) return response;
@@ -74,7 +106,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: e.message || "Không kiểm tra được tháng đã xóa" }, { status: 500 });
   }
   if (deletedState.deletedMonths.includes(month)) {
-    return NextResponse.json({ ok: true, month, deleted: true, deletedMonths: deletedState.deletedMonths, deletedRows: deletedState.deletedRows, attendanceSessions: {}, absenceRecords: [], makeupPlans: [] });
+    return NextResponse.json({ ok: true, month, deleted: true, deletedMonths: deletedState.deletedMonths, deletedRows: deletedState.deletedRows, attendanceSessions: {}, absenceRecords: [], makeupPlans: [], supportClasses: [] });
   }
 
   // API riêng cho tab Học bù: chỉ kéo dữ liệu của tháng đang xem.
@@ -116,6 +148,30 @@ export async function GET(req: NextRequest) {
   }
   const plans = Array.from(planMap.values()).sort((a: any, b: any) => String(b.created_at || "").localeCompare(String(a.created_at || "")));
   const targetSessionKeys = Array.from(new Set(plans.map((p: any) => String(p.target_session_key || "")).filter(Boolean)));
+
+  const supportClassIds = Array.from(new Set([
+    ...(absRes.data || []).map((a: any) => String(a.source_class_id || "")),
+    ...plans.map((p: any) => String(p.source_class_id || "")),
+    ...plans.map((p: any) => String(p.target_class_id || "")),
+  ].filter(Boolean)));
+
+  let supportClasses: any[] = [];
+  if (supportClassIds.length) {
+    const classRes = await supabase
+      .from("official_classes")
+      .select("id,name,grade,teacher_id,assistant_teacher_id,assistant_name,start_date,end_date,status,note,created_at")
+      .in("id", supportClassIds);
+    if (classRes.error) return NextResponse.json({ error: classRes.error.message }, { status: 500 });
+
+    const teacherIds = Array.from(new Set((classRes.data || []).flatMap((c: any) => [String(c.teacher_id || ""), String(c.assistant_teacher_id || "")]).filter(Boolean)));
+    let teacherMap = new Map<string, any>();
+    if (teacherIds.length) {
+      const teacherRes = await supabase.from("official_teachers").select("id,name").in("id", teacherIds);
+      if (teacherRes.error) return NextResponse.json({ error: teacherRes.error.message }, { status: 500 });
+      teacherMap = new Map((teacherRes.data || []).map((t: any) => [String(t.id), t]));
+    }
+    supportClasses = (classRes.data || []).map((c: any) => mapSupportClass(c, teacherMap));
+  }
 
   let attendanceSessions: Record<string, any> = {};
   if (targetSessionKeys.length) {
@@ -170,5 +226,6 @@ export async function GET(req: NextRequest) {
     deletedMonths: deletedState.deletedMonths,
     deletedRows: deletedState.deletedRows,
     makeupPlans: plans.map(mapPlan),
+    supportClasses,
   });
 }

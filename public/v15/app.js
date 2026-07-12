@@ -623,7 +623,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       if(key==='core') return 'classes:latest';
       if(key==='schedule') return `schedule:${isoDate(weekStartDate())}`;
       if(key==='attendance') return `attendance:${isoDate(weekStartDate())}`;
-      if(key==='makeup') return `makeup:${makeupCurrentMonthKey()}`;
+      if(key==='makeup') return `makeup:${makeupSelectedMonthKey()}`;
       if(key==='tuition') return `tuition:${tuitionMonthKey()}`;
       if(key==='evaluation') return `evaluation:${evaluationMonthKey()}`;
       if(key==='library') return 'library:latest';
@@ -661,7 +661,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       // Snapshot từ class makeup chỉ để giúp giáo viên được gán render buổi dạy bù.
       // Không được ghi đè dữ liệu lớp chính như time/schedules bằng chuỗi rỗng.
       const merged={...current};
-      ['id','name','teacher','teacherId','ta','status','startDate','endDate','createdAt','grade'].forEach(k=>{
+      ['id','name','teacher','teacherId','ta','status','startDate','endDate','createdAt','grade','note'].forEach(k=>{
         if(snap[k]!==undefined && snap[k]!==null && String(snap[k]).trim()!=='') merged[k]=snap[k];
       });
       if((snap.students||[]).length) merged.students=snap.students;
@@ -683,6 +683,16 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
         }
       });
     }
+    function v20tMergeSupportClasses(classes=[]){
+      db.classes ||= [];
+      (classes||[]).forEach(c=>{
+        if(!c?.id) return;
+        const i=db.classes.findIndex(x=>String(x.id)===String(c.id));
+        const normalized={...c, students:Array.isArray(c.students)?c.students:[], time:c.time||''};
+        if(i>=0) db.classes[i]=v20b12SafeClassSnapshotMerge(db.classes[i],normalized);
+        else db.classes.push(v20b12SafeClassSnapshotMerge({},normalized));
+      });
+    }
     function v20b7MakeupClassFallback(m){
       const c=classById(m.classId);
       if(c?.id) return c;
@@ -695,7 +705,9 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
         ta:snap.ta||'',
         students:snap.students||[],
         startDate:snap.startDate||'2026-06-01',
-        endDate:snap.endDate||''
+        endDate:snap.endDate||'',
+        grade:snap.grade||'',
+        note:snap.note||''
       };
     }
     function applyCachedPayload(key,payload){
@@ -726,12 +738,14 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
           makeupPlans: payload.makeupPlans||[],
           absenceRecords: payload.absenceRecords||[],
           attendanceSessions: payload.attendanceSessions||{},
+          supportClasses: payload.supportClasses||[],
           updatedAt: Date.now()
         };
         db.deletedMakeupMonths=payload.deletedMonths||db.deletedMakeupMonths||[];
         db.makeupAvailableMonths=payload.availableMonths||db.makeupAvailableMonths||[];
         // Giữ global để các helper cũ vẫn hoạt động khi đang ở tab Học bù,
         // nhưng dữ liệu tab Học bù chính thức luôn nằm trong db.makeupTabState.
+        v20tMergeSupportClasses(payload.supportClasses||[]);
         db.makeupPlans=payload.makeupPlans||[];
         db.absenceRecords=payload.absenceRecords||[];
         if(payload.attendanceSessions){
@@ -1230,6 +1244,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
           makeupPlans:data.makeupPlans||[],
           absenceRecords:data.absenceRecords||[],
           attendanceSessions:data.attendanceSessions||{},
+          supportClasses:data.supportClasses||[],
           deletedMonths:data.deletedMonths||[],
           availableMonths:data.availableMonths||data.months||[]
         };
@@ -1240,6 +1255,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
           makeupPlans:currentState.makeupPlans||[],
           absenceRecords:currentState.absenceRecords||[],
           attendanceSessions:currentState.attendanceSessions||{},
+          supportClasses:currentState.supportClasses||[],
           deletedMonths:db.deletedMakeupMonths||[],
           availableMonths:db.makeupAvailableMonths||[]
         };
@@ -1248,6 +1264,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
           makeupPlans:payload.makeupPlans||[],
           absenceRecords:payload.absenceRecords||[],
           attendanceSessions:payload.attendanceSessions||{},
+          supportClasses:payload.supportClasses||[],
           deletedMonths:payload.deletedMonths||[],
           availableMonths:payload.availableMonths||[]
         };
@@ -1259,8 +1276,10 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
             makeupPlans:payload.makeupPlans||[],
             absenceRecords:payload.absenceRecords||[],
             attendanceSessions:payload.attendanceSessions||{},
+            supportClasses:payload.supportClasses||[],
             updatedAt:Date.now()
           };
+          v20tMergeSupportClasses(payload.supportClasses||[]);
           // Khi đang ở tab Học bù, đồng bộ global để các thao tác phụ dùng dữ liệu tháng đúng.
           // Khi sang Lịch dạy/Điểm danh, global có thể bị thay bằng subset theo tuần nhưng
           // db.makeupTabState vẫn giữ nguồn dữ liệu tháng cho tab Học bù.
@@ -1472,6 +1491,13 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
         c.students ||= [];
       });
     }
+    function isTutoringSupportClass(c){
+      return String(c?.note||'').startsWith('__tutoring_session__') || String(c?.grade||'').toLowerCase()==='học kèm';
+    }
+    function operationalClasses(){
+      normalizeClassOperations();
+      return (db.classes||[]).filter(c=>!isTutoringSupportClass(c));
+    }
     function classStartDate(c){return parseISODate(c.startDate || '2026-06-01')}
     function classEndDate(c){return c.endDate?parseISODate(c.endDate):null}
     function classActiveForSchedule(c){
@@ -1580,9 +1606,9 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
 
     const classesForTeachingUser = () => {
       normalizeClassOperations();
-      if(isAdmin()) return db.classes;
-      if(isTeachingUser()) return db.classes.filter(c=>classBelongsToTeacher(c,currentUser.name));
-      if(isParent()) return db.classes.filter(c=>c.students.some(s=>selectedParentChildIds().includes(s.id)));
+      if(isAdmin()) return operationalClasses();
+      if(isTeachingUser()) return operationalClasses().filter(c=>classBelongsToTeacher(c,currentUser.name));
+      if(isParent()) return operationalClasses().filter(c=>c.students.some(s=>selectedParentChildIds().includes(s.id)));
       return [];
     };
     const classesForUser = () => {
@@ -1591,11 +1617,11 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       v18Memo.classesForUser ||= {};
       if(v18Memo.classesForUser.key===key) return v18Memo.classesForUser.rows;
       let rows=[];
-      if(isAdmin() || isManager()) rows=db.classes;
-      else if(isTeachingUser()) rows=db.classes.filter(c=>classBelongsToTeacher(c,currentUser.name));
+      if(isAdmin() || isManager()) rows=operationalClasses();
+      else if(isTeachingUser()) rows=operationalClasses().filter(c=>classBelongsToTeacher(c,currentUser.name));
       else if(isParent()){
         const selected=new Set(selectedParentChildIds());
-        rows=db.classes.filter(c=>(c.students||[]).some(s=>selected.has(s.id)));
+        rows=operationalClasses().filter(c=>(c.students||[]).some(s=>selected.has(s.id)));
       }
       v18Memo.classesForUser={key,rows};
       return rows;
@@ -1603,7 +1629,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
 
     function managerOwnedClasses(){
       normalizeClassOperations();
-      return db.classes.filter(c=>classBelongsToTeacher(c,currentUser.name));
+      return operationalClasses().filter(c=>classBelongsToTeacher(c,currentUser.name));
     }
     function managerScopeValue(key){
       db[key] ||= 'mine';
@@ -2707,7 +2733,11 @@ Ms.Giang English`;
 
     
 function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm thấy học sinh')}
-    function safeClassName(id){return h(classById(id)?.name || 'Không tìm thấy lớp')}
+    function classNameForDisplay(id){
+      const c=classById(id);
+      return c?.name || 'Không tìm thấy lớp';
+    }
+    function safeClassName(id){return h(classNameForDisplay(id))}
     function safeSessionLabel(key){return key?sessionLabelFromKey(key):'-'}
     function sessionKeyMonth(key){
       const parts=String(key||'').split('|');
@@ -4963,7 +4993,7 @@ function canManageLibrary(){return isAdmin()||isManager()||isTeachingUser()}
         db.makeupTabState=null; db.makeupPlans=[]; db.absenceRecords=[];
         const next=(db.makeupAvailableMonths||[])[0] || makeupCurrentMonthKey();
         db.settings ||= {}; db.settings.makeupFilter ||= {}; db.settings.makeupFilter.month=next; db.makeupMonth=next;
-        moduleCacheSet(`makeup:${month}`,{makeupMonth:month,makeupPlans:[],absenceRecords:[],attendanceSessions:{},deletedMonths:db.deletedMakeupMonths,availableMonths:db.makeupAvailableMonths});
+        moduleCacheSet(`makeup:${month}`,{makeupMonth:month,makeupPlans:[],absenceRecords:[],attendanceSessions:{},supportClasses:[],deletedMonths:db.deletedMakeupMonths,availableMonths:db.makeupAvailableMonths});
         v20bAfterMutation(['makeup']);
         save(); toast('Đã xóa dữ liệu vắng của '+formatMonthKeyVN(month));
         await refreshOfficialMakeupState({month:next,applyGlobal:true,skipSave:true});

@@ -26,6 +26,34 @@ function monthFromSessionKey(key: any) {
   return /^\d{4}-\d{2}-\d{2}$/.test(date) ? date.slice(0, 7) : "";
 }
 
+function isMissingDeletedMonthsTable(error: any) {
+  const msg = String(error?.message || error?.details || "").toLowerCase();
+  return error?.code === "42P01" || msg.includes("official_makeup_deleted_months") || msg.includes("does not exist");
+}
+
+async function safeMonthDeleted(supabase: any, monthKey: string) {
+  if (!/^\d{4}-\d{2}$/.test(String(monthKey || ""))) return false;
+  const { data, error } = await supabase
+    .from("official_makeup_deleted_months")
+    .select("month_key")
+    .eq("month_key", monthKey)
+    .maybeSingle();
+  if (error) {
+    // Older deployments may not have the month-control table yet.
+    // Creating tutoring classes must still work; the delete-month feature will be enabled after the SQL migration is run.
+    if (isMissingDeletedMonthsTable(error)) return false;
+    throw error;
+  }
+  return !!data?.month_key;
+}
+
+async function cleanupFailedTutoringCreate(supabase: any, ids: { classId?: string; classMakeupId?: string; planIds?: string[] }) {
+  const planIds = (ids.planIds || []).filter(Boolean);
+  if (planIds.length) await supabase.from("official_makeup_plans").delete().in("id", planIds);
+  if (ids.classMakeupId) await supabase.from("official_class_makeup_sessions").delete().eq("id", ids.classMakeupId);
+  if (ids.classId) await supabase.from("official_classes").delete().eq("id", ids.classId);
+}
+
 function mapPlan(p: any) {
   return {
     id: p.id,
@@ -94,8 +122,6 @@ export async function POST(req: NextRequest) {
   }
   if (!teacherId) return NextResponse.json({ error: "Chọn giáo viên dạy" }, { status: 400 });
 
-  const deletedMonth = monthFromSessionKey(String(absenceIds[0] || ""));
-
   const { data: absences, error: absError } = await supabase
     .from("official_absence_records")
     .select("id, student_id, source_class_id, source_session_key, source_session_label, status")
@@ -107,12 +133,13 @@ export async function POST(req: NextRequest) {
   const months = Array.from(new Set(found.map((a: any) => monthFromSessionKey(a.source_session_key)).filter(Boolean)));
   if (months.length !== 1) return NextResponse.json({ error: "Chỉ chọn học sinh cùng một tháng học bù" }, { status: 400 });
 
-  const { data: deleted } = await supabase
-    .from("official_makeup_deleted_months")
-    .select("month_key")
-    .eq("month_key", months[0])
-    .maybeSingle();
-  if (deleted?.month_key) return NextResponse.json({ error: "Tháng này đã bị xóa dữ liệu vắng, không thể xếp học bù" }, { status: 409 });
+  let isDeleted = false;
+  try {
+    isDeleted = await safeMonthDeleted(supabase, String(months[0] || ""));
+  } catch (e: any) {
+    return NextResponse.json({ error: e.message || "Không kiểm tra được tháng đã xóa" }, { status: 500 });
+  }
+  if (isDeleted) return NextResponse.json({ error: "Tháng này đã bị xóa dữ liệu vắng, không thể xếp học bù" }, { status: 409 });
 
   const pending = found.filter((a: any) => String(a.status || "pending") === "pending");
   if (pending.length !== found.length) return NextResponse.json({ error: "Có học sinh không còn ở trạng thái Chờ xếp" }, { status: 409 });
@@ -130,87 +157,104 @@ export async function POST(req: NextRequest) {
     ? await supabase.from("official_teachers").select("id,name").eq("id", assistantTeacherId).maybeSingle()
     : ({ data: null } as any);
 
-  const { data: klass, error: classError } = await supabase
-    .from("official_classes")
-    .insert({
-      name,
-      grade: "Học kèm",
-      teacher_id: teacherId,
-      assistant_teacher_id: assistantTeacherId,
-      start_date: date,
-      end_date: date,
-      status: "active",
-      note: "__tutoring_session__",
-    })
-    .select("id,name,teacher_id,assistant_teacher_id,status,start_date,end_date,created_at")
-    .single();
-  if (classError) return NextResponse.json({ error: classError.message }, { status: 500 });
+  let createdClassId = "";
+  let createdClassMakeupId = "";
+  let createdPlanIds: string[] = [];
 
-  const day = dayKeyFromDate(date);
-  const sourceSessionKey = `tutoring:${klass.id}`;
-  const targetSessionKey = `${klass.id}|${date}|${day}|${start}-${end}`;
+  try {
+    const { data: klass, error: classError } = await supabase
+      .from("official_classes")
+      .insert({
+        name,
+        grade: "Học kèm",
+        teacher_id: teacherId,
+        assistant_teacher_id: assistantTeacherId,
+        start_date: date,
+        end_date: date,
+        status: "active",
+        note: "__tutoring_session__",
+      })
+      .select("id,name,teacher_id,assistant_teacher_id,status,start_date,end_date,created_at")
+      .single();
+    if (classError) throw classError;
+    createdClassId = String(klass.id);
 
-  const { data: cm, error: cmError } = await supabase
-    .from("official_class_makeup_sessions")
-    .insert({
-      source_session_key: sourceSessionKey,
-      class_id: klass.id,
-      teacher_id: teacherId,
-      makeup_date: date,
-      day_key: day,
-      start_time: start,
-      end_time: end,
-      reason: name,
-      status: "active",
+    const day = dayKeyFromDate(date);
+    const sourceSessionKey = `tutoring:${klass.id}`;
+    const targetSessionKey = `${klass.id}|${date}|${day}|${start}-${end}`;
+
+    const { data: cm, error: cmError } = await supabase
+      .from("official_class_makeup_sessions")
+      .insert({
+        source_session_key: sourceSessionKey,
+        class_id: klass.id,
+        teacher_id: teacherId,
+        makeup_date: date,
+        day_key: day,
+        start_time: start,
+        end_time: end,
+        reason: name,
+        status: "active",
+        created_by: user.id,
+        updated_at: new Date().toISOString(),
+      })
+      .select("id, class_id, source_session_key, teacher_id, makeup_date, day_key, start_time, end_time, reason, status, created_at, updated_at")
+      .single();
+    if (cmError) throw cmError;
+    createdClassMakeupId = String(cm.id);
+
+    const planRows = found.map((a: any, i: number) => ({
+      id: `tutor_${klass.id}_${i}_${a.student_id}`,
+      absence_id: a.id,
+      student_id: a.student_id,
+      source_class_id: a.source_class_id,
+      source_session_key: a.source_session_key,
+      target_class_id: klass.id,
+      target_session_key: targetSessionKey,
+      status: "scheduled",
       created_by: user.id,
-      updated_at: new Date().toISOString(),
-    })
-    .select("id, class_id, source_session_key, teacher_id, makeup_date, day_key, start_time, end_time, reason, status, created_at, updated_at")
-    .single();
-  if (cmError) return NextResponse.json({ error: cmError.message }, { status: 500 });
+    }));
+    createdPlanIds = planRows.map((p: any) => String(p.id));
 
-  const planRows = found.map((a: any, i: number) => ({
-    id: `tutor_${klass.id}_${i}_${a.student_id}`,
-    absence_id: a.id,
-    student_id: a.student_id,
-    source_class_id: a.source_class_id,
-    source_session_key: a.source_session_key,
-    target_class_id: klass.id,
-    target_session_key: targetSessionKey,
-    status: "scheduled",
-    created_by: user.id,
-  }));
-  const { data: plans, error: planError } = await supabase
-    .from("official_makeup_plans")
-    .insert(planRows)
-    .select("*");
-  if (planError) return NextResponse.json({ error: planError.message }, { status: 500 });
+    const { data: plans, error: planError } = await supabase
+      .from("official_makeup_plans")
+      .insert(planRows)
+      .select("*");
+    if (planError) throw planError;
 
-  const { error: updateAbsError } = await supabase
-    .from("official_absence_records")
-    .update({ status: "scheduled", updated_at: new Date().toISOString() })
-    .in("id", absenceIds);
-  if (updateAbsError) return NextResponse.json({ error: updateAbsError.message }, { status: 500 });
+    const { error: updateAbsError } = await supabase
+      .from("official_absence_records")
+      .update({ status: "scheduled", updated_at: new Date().toISOString() })
+      .in("id", absenceIds);
+    if (updateAbsError) throw updateAbsError;
 
-  const classMakeup = mapClassMakeup({ ...cm, class_name: name, classSnapshot: {
-    id: klass.id,
-    name,
-    teacher: teacher?.name || "",
-    teacherId,
-    taId: assistantTeacherId,
-    ta: assistant?.name || "",
-    students: [],
-    status: "active",
-    startDate: date,
-    endDate: date,
-    grade: "Học kèm",
-    note: "__tutoring_session__",
-  } }, teacher?.name || "", assistant?.name || "");
+    const classMakeup = mapClassMakeup({ ...cm, class_name: name, classSnapshot: {
+      id: klass.id,
+      name,
+      teacher: teacher?.name || "",
+      teacherId,
+      taId: assistantTeacherId,
+      ta: assistant?.name || "",
+      students: [],
+      status: "active",
+      startDate: date,
+      endDate: date,
+      grade: "Học kèm",
+      note: "__tutoring_session__",
+    } }, teacher?.name || "", assistant?.name || "");
 
-  return NextResponse.json({
-    ok: true,
-    classMakeup,
-    makeupPlans: (plans || []).map(mapPlan),
-    targetSessionKey,
-  });
+    return NextResponse.json({
+      ok: true,
+      classMakeup,
+      makeupPlans: (plans || []).map(mapPlan),
+      targetSessionKey,
+    });
+  } catch (e: any) {
+    await cleanupFailedTutoringCreate(supabase, { classId: createdClassId, classMakeupId: createdClassMakeupId, planIds: createdPlanIds });
+    const msg = String(e?.message || "Không tạo được lớp học kèm");
+    if (msg.includes("duplicate") || msg.includes("unique")) {
+      return NextResponse.json({ error: "Tên lớp học kèm đã tồn tại. Hãy đổi tên lớp khác." }, { status: 409 });
+    }
+    return NextResponse.json({ error: msg }, { status: 500 });
+  }
 }

@@ -5,6 +5,33 @@ import { getSettings } from "@/lib/settings";
 import { teacherForUser } from "@/lib/classes";
 
 
+
+function monthFromSessionKey(key: any) {
+  const parts = String(key || "").split("|");
+  const date = parts.length >= 2 ? parts[1] : "";
+  return /^\d{4}-\d{2}-\d{2}$/.test(date) ? date.slice(0, 7) : "";
+}
+
+function isMissingDeletedMonthsTable(error: any) {
+  const msg = String(error?.message || error?.details || "").toLowerCase();
+  return error?.code === "42P01" || msg.includes("official_makeup_deleted_months") || msg.includes("does not exist");
+}
+
+async function sourceMonthDeleted(supabase: any, sourceSessionKey: any) {
+  const month = monthFromSessionKey(sourceSessionKey);
+  if (!month) return false;
+  const { data, error } = await supabase
+    .from("official_makeup_deleted_months")
+    .select("month_key")
+    .eq("month_key", month)
+    .maybeSingle();
+  if (error) {
+    if (isMissingDeletedMonthsTable(error)) return false;
+    throw error;
+  }
+  return !!data?.month_key;
+}
+
 function inactiveClassStatus(v: any) {
   return ["ended", "inactive", "cancelled", "canceled", "deleted", "archived"].includes(String(v || "active").toLowerCase());
 }
@@ -73,13 +100,20 @@ export async function POST(req: NextRequest) {
 
   const { data: absence, error: ae } = await supabase
     .from("official_absence_records")
-    .select("id,status")
+    .select("id,status,source_session_key")
     .eq("id", absenceId)
     .maybeSingle();
   if (ae) return NextResponse.json({ error: ae.message }, { status: 500 });
   if (!absence?.id) return NextResponse.json({ error: "Không tìm thấy lượt vắng" }, { status: 404 });
   if (String(absence.status || "pending") !== "pending") {
     return NextResponse.json({ error: "Lượt vắng này đã được xếp học bù" }, { status: 400 });
+  }
+  try {
+    if (await sourceMonthDeleted(supabase, absence.source_session_key || body.sourceSessionKey)) {
+      return NextResponse.json({ error: "Tháng dữ liệu vắng này đã bị xóa, không thể xếp học bù" }, { status: 409 });
+    }
+  } catch (e: any) {
+    return NextResponse.json({ error: e.message || "Không kiểm tra được tháng dữ liệu vắng" }, { status: 500 });
   }
 
   const { data: existingAbsencePlan } = await supabase

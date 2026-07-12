@@ -72,6 +72,8 @@ function buildClassSnapshots(classes: any[] = [], teachers: any[] = [], students
       startDate: c.start_date || "2026-06-01",
       endDate: c.end_date || "",
       createdAt: c.created_at || "",
+      grade: c.grade || "",
+      note: c.note || "",
     });
   }
 
@@ -138,7 +140,7 @@ export async function GET(req: NextRequest) {
   const classRes = allMakeupClassIds.length
     ? await supabase
         .from("official_classes")
-        .select("id,name,teacher_id,assistant_teacher_id,assistant_name,start_date,end_date,status,created_at")
+        .select("id,name,grade,note,teacher_id,assistant_teacher_id,assistant_name,start_date,end_date,status,created_at")
         .in("id", allMakeupClassIds)
     : ({ data: [], error: null } as any);
 

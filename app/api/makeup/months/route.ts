@@ -17,17 +17,28 @@ function uniq(values: any[]) {
   return Array.from(new Set(values.map((v) => String(v || "")).filter(Boolean)));
 }
 
+function isMissingDeletedMonthsTable(error: any) {
+  const msg = String(error?.message || error?.details || "").toLowerCase();
+  return error?.code === "42P01" || msg.includes("official_makeup_deleted_months") || msg.includes("does not exist");
+}
+
 async function monthState(supabase: any) {
-  const [absRes, planRes, deletedRes] = await Promise.all([
+  const [absRes, planRes] = await Promise.all([
     supabase.from("official_absence_records").select("source_session_key,created_at"),
     supabase.from("official_makeup_plans").select("source_session_key,target_session_key,created_at"),
-    supabase.from("official_makeup_deleted_months").select("month_key,reason,deleted_at").order("month_key", { ascending: false }),
   ]);
   if (absRes.error) throw absRes.error;
   if (planRes.error) throw planRes.error;
-  if (deletedRes.error) throw deletedRes.error;
 
-  const deletedMonths = uniq((deletedRes.data || []).map((r: any) => r.month_key));
+  let deletedRows: any[] = [];
+  const deletedRes = await supabase.from("official_makeup_deleted_months").select("month_key,reason,deleted_at").order("month_key", { ascending: false });
+  if (deletedRes.error) {
+    if (!isMissingDeletedMonthsTable(deletedRes.error)) throw deletedRes.error;
+  } else {
+    deletedRows = deletedRes.data || [];
+  }
+
+  const deletedMonths = uniq(deletedRows.map((r: any) => r.month_key));
   const deletedSet = new Set(deletedMonths);
   const allMonths = new Set<string>();
 
@@ -41,7 +52,7 @@ async function monthState(supabase: any) {
   }
 
   const months = Array.from(allMonths).filter((m) => !deletedSet.has(m)).sort().reverse();
-  return { months, deletedMonths, deletedRows: deletedRes.data || [] };
+  return { months, deletedMonths, deletedRows };
 }
 
 export async function GET() {
@@ -75,7 +86,12 @@ export async function POST(req: NextRequest) {
       deleted_at: new Date().toISOString(),
     }, { onConflict: "month_key" });
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    if (isMissingDeletedMonthsTable(error)) {
+      return NextResponse.json({ error: "Chưa tạo bảng official_makeup_deleted_months. Hãy chạy SQL migration 013 trước khi dùng chức năng xóa dữ liệu vắng." }, { status: 500 });
+    }
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
 
   try {
     const data = await monthState(supabase);
