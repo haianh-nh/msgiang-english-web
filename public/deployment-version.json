@@ -1,0 +1,6 @@
+{
+  "ok": true,
+  "build": "20phase6rt2",
+  "phase": "6-realtime-redeploy-v2",
+  "realtimeFrontend": true
+}

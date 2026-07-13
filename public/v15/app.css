@@ -99,6 +99,7 @@
     .statusDot.done{background:#eaf9ef;color:#11833b;border-color:#bfecc9}
     .statusDot.live{background:#fff4d7;color:#b77700;border-color:#ffe0a3;animation:pulseLive 1.4s ease-in-out infinite}
     .statusDot.todo{background:#eef5ff;color:#2365b4;border-color:#d4e6ff}
+    .statusDot.unattended{background:#fff1f2;color:#be123c;border-color:#fecdd3}
     @keyframes pulseLive{0%,100%{transform:scale(1)}50%{transform:scale(1.035);box-shadow:0 0 0 5px rgba(255,159,28,.11)}}
     .sessionConfigurator{border:1px solid #f3d2d8;background:linear-gradient(135deg,#fff,#fff8f9);border-radius:18px;padding:14px;margin-top:10px}
     .sessionConfigurator h3{margin:0 0 12px;color:#be123c}
@@ -175,6 +176,7 @@
     .strictDone{background:linear-gradient(135deg,#f8fafc,#fff)!important;border-color:#e2e8f0!important}
     .strictLive{background:linear-gradient(135deg,#fff7ed,#fff)!important;border-color:#fed7aa!important}
     .strictTodo{background:linear-gradient(135deg,#fff,#fff8f9)!important;border-color:#ffcbd4!important}
+    .strictUnattended{background:linear-gradient(135deg,#fff7f7,#fff)!important;border-color:#fecdd3!important}
     .strictTodo .todoMakeupBtn{box-shadow:0 12px 22px rgba(217,22,51,.12)}
 
   
@@ -2005,5 +2007,70 @@ body{
   }
   .makeupAssignTableWrap{
     max-height:55vh;
+  }
+}
+
+/* V20BATCH1 — confirm one or many makeup students in a single popup action */
+.makeupAssignedSection{
+  margin:16px 0 18px;
+  padding:14px;
+  border:1px solid #f5cbd4;
+  border-radius:18px;
+  background:#fffafb;
+}
+.makeupAssignedHead{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  margin:0 0 10px;
+}
+.makeupAssignedHead h3{
+  margin:0;
+  color:#111827;
+  font-size:18px;
+  letter-spacing:-.01em;
+}
+.makeupAssignedHead .btn{
+  flex:0 0 auto;
+  min-width:150px;
+}
+.makeupAssignedHead .btn:disabled{
+  opacity:.48;
+  cursor:not-allowed;
+  box-shadow:none;
+}
+.makeupAssignedTableWrap{
+  max-height:30vh;
+  margin-bottom:0;
+}
+.makeupDraftRow{
+  background:#fffbeb;
+}
+.makeupDraftRow td{
+  border-color:#fde7a8!important;
+}
+.makeupCancelDraftRow{
+  background:#fff1f2;
+}
+.makeupCancelDraftRow td{
+  border-color:#fecdd3!important;
+}
+.compactEmpty{
+  min-height:0!important;
+  padding:10px!important;
+  border:0!important;
+  background:transparent!important;
+}
+@media(max-width:760px){
+  .makeupAssignedHead{
+    align-items:stretch;
+    flex-direction:column;
+  }
+  .makeupAssignedHead .btn{
+    width:100%;
+  }
+  .makeupAssignedTableWrap{
+    max-height:38vh;
   }
 }
