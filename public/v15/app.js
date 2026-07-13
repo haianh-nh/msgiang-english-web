@@ -450,20 +450,35 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       merged.force=!!(merged.force||next.force);
       merged.applyMakeupGlobal=!!(merged.applyMakeupGlobal||next.applyMakeupGlobal);
       merged.preserveCache=!!(merged.preserveCache||next.preserveCache);
+      // Phase 4A: mọi mutation liên tiếp dùng cùng một mốc refresh trailing.
+      // Mốc xa nhất thắng để không khởi chạy schedule/state giữa lúc giáo viên còn thao tác.
+      merged.revalidateAt=Math.max(Number(merged.revalidateAt||0),Number(next.revalidateAt||0));
       if(next.renderOnRevalidate===false) merged.renderOnRevalidate=false;
       else if(merged.renderOnRevalidate===undefined) merged.renderOnRevalidate=true;
       return merged;
     }
+    function v24aArmMutationRefresh(){
+      clearTimeout(v21MutationRefreshState.timer);
+      v21MutationRefreshState.timer=null;
+      if(!v21MutationRefreshState.pending || !currentUser) return;
+      const runAt=Number(v21MutationRefreshState.pending.revalidateAt||Date.now());
+      const waitMs=Math.max(0,runAt-Date.now());
+      v21MutationRefreshState.timer=setTimeout(()=>{
+        v21MutationRefreshState.timer=null;
+        v21RunMutationRefresh().catch(e=>console.warn('Mutation refresh failed',e));
+      },waitMs);
+    }
     function v21ScheduleMutationRefresh(keys=[],options={}){
       if(!currentUser || options.noRefresh) return Promise.resolve(false);
-      const ctx=v21MergeMutationContext(v21MutationRefreshState.pending||{}, {...options, modules:v21NormalizeMutationModules(keys)});
-      v21MutationRefreshState.pending=ctx;
-      clearTimeout(v21MutationRefreshState.timer);
-      return new Promise(resolve=>{
-        v21MutationRefreshState.timer=setTimeout(()=>{
-          v21RunMutationRefresh().then(resolve).catch(e=>{console.warn('Mutation refresh failed',e);resolve(false)});
-        }, Number(options.delayMs||140));
+      const delayMs=Math.max(0,Number(options.delayMs??140));
+      const ctx=v21MergeMutationContext(v21MutationRefreshState.pending||{}, {
+        ...options,
+        modules:v21NormalizeMutationModules(keys),
+        revalidateAt:Date.now()+delayMs
       });
+      v21MutationRefreshState.pending=ctx;
+      v24aArmMutationRefresh();
+      return Promise.resolve(true);
     }
     async function v21RunMutationRefresh(){
       if(v21MutationRefreshState.running) return false;
@@ -510,7 +525,9 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
         return changed;
       }finally{
         v21MutationRefreshState.running=false;
-        if(v21MutationRefreshState.pending) v21ScheduleMutationRefresh([], {delayMs:80});
+        // Nếu có mutation mới trong lúc refresh đang chạy, chỉ chạy một lượt trailing
+        // sau đúng mốc idle đã gộp; tuyệt đối không chạy song song.
+        if(v21MutationRefreshState.pending) v24aArmMutationRefresh();
       }
     }
     function v22MutationNetworkPrefixes(keys=[],options={}){
@@ -596,7 +613,11 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
     // V22 Phase 3: dữ liệu học bù dùng cho popup được preload nền và giữ ngắn hạn trong RAM.
     // Lịch dạy không còn phải chờ /api/makeup/state mới render xong.
     const V22_MAKEUP_PREFETCH_TTL_MS=60000;
-    const V22_CORE_ROUTE_REFRESH_TTL_MS=20000;
+    // Phase 4A: danh sách lớp thay đổi ít; giữ 5 phút và vẫn invalidate ngay khi Admin/Quản lí sửa lớp.
+    const V22_CORE_ROUTE_REFRESH_TTL_MS=5*60*1000;
+    // Mutation học bù đã patch UI từ response, nên chỉ đối chiếu server sau khi người dùng ngừng thao tác.
+    const V24A_MUTATION_REVALIDATE_IDLE_MS=4500;
+    const V24A_BATCH_REVALIDATE_IDLE_MS=6500;
     const v22MakeupMonthMemoryCache=new Map();
     const v22MakeupMonthInflight=new Map();
     const v22MakeupMonthGeneration=new Map();
@@ -1031,8 +1052,11 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
           // V22 Phase 3:
           // - Core/classes đã được ensureCoreData tải trước, nên không gọi lại /api/classes nếu vẫn còn mới.
           // - Lịch dạy render bằng schedule + attendance trước; makeup tháng được preload nền cho popup.
-          const coreAge=Date.now()-(lazyRouteState.core?.loadedAt||0);
-          const shouldRefreshClasses=!lazyRouteState.core?.loaded || coreAge>V22_CORE_ROUTE_REFRESH_TTL_MS;
+          const coreState=lazyRouteState.core||{};
+          const coreAge=Date.now()-(coreState.loadedAt||0);
+          // ensurePageData Phase 4A tải core và route song song. Khi core đang tải,
+          // route không tự khởi tạo thêm một request /api/classes trùng lặp.
+          const shouldRefreshClasses=(!coreState.loaded && !coreState.loading) || (coreState.loaded && coreAge>V22_CORE_ROUTE_REFRESH_TTL_MS);
           const classJob=()=>refreshOfficialClasses({skipSave:true}).then(changed=>{
             lazyRouteState.core={...(lazyRouteState.core||{}),loaded:true,loading:false,loadedAt:Date.now(),unchanged:!changed};
             return changed;
@@ -1069,8 +1093,12 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
     }
     async function ensurePageData(r, options={}){
       if(!currentUser) return;
-      if(routeNeedsCoreData(r)) await ensureCoreData(options);
-      if(routeNeedsLazyData(r)) await ensureRouteData(r, options);
+      const jobs=[];
+      // Phase 4A: /api/classes, route state và attendance state bắt đầu cùng lúc.
+      // ensureCoreData được gọi trước nên cờ core.loading đã bật trước khi ensureRouteData kiểm tra.
+      if(routeNeedsCoreData(r)) jobs.push(ensureCoreData(options));
+      if(routeNeedsLazyData(r)) jobs.push(ensureRouteData(r, options));
+      if(jobs.length) await Promise.all(jobs);
     }
 
     let v20cPrefetchTimer=null;
@@ -1090,9 +1118,11 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       const plan={
         overview: adminLike?['schedule','attendance']:teacherLike?['schedule','attendance']:['homework','evaluation'],
         classes:['schedule'],
-        schedule: adminLike?['attendance','tuition']:['attendance','evaluation'],
+        // Phase 4A: không preload Học phí tự động từ Lịch dạy/Điểm danh.
+        // Học phí chỉ tải khi người dùng thực sự mở tab đó.
+        schedule: adminLike?['attendance']:['attendance','evaluation'],
         makeup:['schedule','attendance'],
-        attendance: adminLike?['tuition','schedule']:['schedule','evaluation'],
+        attendance: adminLike?['schedule']:['schedule','evaluation'],
         tuition:['attendance'],
         homework:['evaluation'],
         evaluation:['schedule'],
@@ -2734,8 +2764,8 @@ Ms.Giang English`;
     }
 
 
-    function absentCandidatesForTargetSession(targetClassId,targetSessionKey){
-      return pendingAbsenceCandidates(targetClassId,targetSessionKey);
+    function absentCandidatesForTargetSession(targetClassId,targetSessionKey,options={}){
+      return pendingAbsenceCandidates(targetClassId,targetSessionKey,options);
     }
 
     function dayDateForWeek(dayKey,weekStart){
@@ -3101,14 +3131,16 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
       return sessionStatus(s).label;
     }
 
-    function pendingAbsenceCandidates(targetClassId,targetSessionKey){
+    function pendingAbsenceCandidates(targetClassId,targetSessionKey,options={}){
       normalizeMakeupPlans();
       const target=classById(targetClassId);
       const targetSession=sessionObjectFromKey(targetSessionKey);
       if(!canReceiveMakeupClass(target) || !targetSession || !canReceiveMakeupSession(targetSessionKey)) return [];
       const capacity=db.settings.capacity||15;
-      if(totalRosterCountForSession(targetClassId,targetSessionKey)>=capacity) return [];
-      const alreadyInTarget=new Set(plannedMakeupsForSession(targetSessionKey).map(p=>p.studentId));
+      const stagedCancelIds=new Set((options?.cancelPlanIds||[]).map(String));
+      const stagedCancelCount=plannedMakeupsForSession(targetSessionKey).filter(p=>stagedCancelIds.has(String(p.id))).length;
+      if(Math.max(0,totalRosterCountForSession(targetClassId,targetSessionKey)-stagedCancelCount)>=capacity) return [];
+      const alreadyInTarget=new Set(plannedMakeupsForSession(targetSessionKey).filter(p=>!stagedCancelIds.has(String(p.id))).map(p=>p.studentId));
       // V20L.3: dữ liệu học bù lấy từ attendance/state. Không giới hạn cùng khối và không ẩn do khác tuần.
       // Chỉ loại chính lớp nhận, lượt đã xếp, học sinh đã có trong buổi đích, và lớp nhận không còn hoạt động.
       const targetMonth=sessionKeyMonth(targetSessionKey)||makeupSelectedMonthKey();
@@ -3158,7 +3190,14 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
         }else restoreAbsencePendingAfterMakeupCancel(cancelledPlan);
         removeMakeupPlanFromLocalState(planId);
         if(db.makeupTabState) db.makeupTabState.updatedAt=Date.now();
-        v20bAfterMutation(['schedule','makeup'],{targetSessionKey:cancelledPlan.targetSessionKey,sourceSessionKey:cancelledPlan.sourceSessionKey,month:makeupPlanMonth(cancelledPlan),preserveCache:true,renderOnRevalidate:false,delayMs:650});
+        v20bAfterMutation(['schedule','makeup'],{
+          targetSessionKey:cancelledPlan.targetSessionKey,
+          sourceSessionKey:cancelledPlan.sourceSessionKey,
+          month:makeupPlanMonth(cancelledPlan),
+          preserveCache:true,
+          renderOnRevalidate:false,
+          delayMs:V24A_MUTATION_REVALIDATE_IDLE_MS
+        });
         v22RefreshScheduleBehindMakeupModal();
         if(route==='makeup') lazyRouteState.makeup={loaded:true,loading:false,loadedAt:Date.now(),mutated:true};
         if(route==='schedule') lazyRouteState.schedule={loaded:true,loading:false,loadedAt:Date.now(),mutated:true};
@@ -4735,8 +4774,10 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
     function scheduleMakeupDraftState(targetClassId,targetSessionKey){
       const same=scheduleMakeupDraft && String(scheduleMakeupDraft.targetClassId)===String(targetClassId) && String(scheduleMakeupDraft.targetSessionKey)===String(targetSessionKey);
       if(!same){
-        scheduleMakeupDraft={targetClassId:String(targetClassId||''),targetSessionKey:String(targetSessionKey||''),items:[],searchQuery:''};
+        scheduleMakeupDraft={targetClassId:String(targetClassId||''),targetSessionKey:String(targetSessionKey||''),items:[],cancelPlanIds:[],searchQuery:''};
       }
+      scheduleMakeupDraft.items ||= [];
+      scheduleMakeupDraft.cancelPlanIds ||= [];
       return scheduleMakeupDraft;
     }
     function scheduleMakeupDraftItems(targetClassId,targetSessionKey){
@@ -4779,7 +4820,9 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
       if(!rec){toast('Không tìm thấy lượt vắng');return}
       if(absenceRecordStatus(absenceIdValue)==='scheduled'){toast('Lượt vắng này đã được xếp học bù');return}
       const capacity=db.settings.capacity||15;
-      const projected=totalRosterCountForSession(targetClassId,targetSessionKey)+draft.items.length;
+      const cancelIds=new Set((draft.cancelPlanIds||[]).map(String));
+      const cancelCount=plannedMakeupsForSession(targetSessionKey).filter(p=>cancelIds.has(String(p.id))).length;
+      const projected=Math.max(0,totalRosterCountForSession(targetClassId,targetSessionKey)-cancelCount)+draft.items.length;
       if(projected>=capacity){toast(`Buổi này đã đủ ${capacity} học sinh`);return}
       draft.items.push({
         id:`mk_${Date.now()}_${draft.items.length}_${Math.random().toString(36).slice(2,8)}`,
@@ -4794,6 +4837,23 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
       rememberScheduleMakeupSearch();
       const draft=scheduleMakeupDraftState(targetClassId,targetSessionKey);
       draft.items=draft.items.filter(x=>String(x.absenceId)!==String(absenceIdValue));
+      refreshScheduleMakeupDraftDom(targetClassId,targetSessionKey);
+    }
+    function queueMakeupCancellation(planId,targetClassId,targetSessionKey){
+      rememberScheduleMakeupSearch();
+      const draft=scheduleMakeupDraftState(targetClassId,targetSessionKey);
+      const plan=plannedMakeupsForSession(targetSessionKey).find(p=>String(p?.id||'')===String(planId||''));
+      if(!plan){toast('Không tìm thấy lịch học bù đang hoạt động');return}
+      if(String(plan.targetClassId||'')!==String(targetClassId||'') || String(plan.targetSessionKey||'')!==String(targetSessionKey||'')){
+        toast('Lịch học bù không thuộc buổi đang mở');return;
+      }
+      if(!draft.cancelPlanIds.some(id=>String(id)===String(planId))) draft.cancelPlanIds.push(String(planId));
+      refreshScheduleMakeupDraftDom(targetClassId,targetSessionKey);
+    }
+    function undoQueuedMakeupCancellation(planId,targetClassId,targetSessionKey){
+      rememberScheduleMakeupSearch();
+      const draft=scheduleMakeupDraftState(targetClassId,targetSessionKey);
+      draft.cancelPlanIds=draft.cancelPlanIds.filter(id=>String(id)!==String(planId));
       refreshScheduleMakeupDraftDom(targetClassId,targetSessionKey);
     }
     function makeupCandidateTableRows(rows,targetClassId,targetSessionKey){
@@ -4821,14 +4881,20 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
         return `<section class="makeupGroup" data-makeup-group><div class="makeupGroupHead"><h3>${h(grade)}</h3><span class="pill gray">${sorted.length} lượt</span></div><div class="modalTableWrap makeupAssignTableWrap"><table class="modalTable makeupAssignTable"><thead><tr><th>STT</th><th>Học sinh</th><th>Lớp vắng</th><th>Buổi vắng</th><th>Lý do</th><th></th></tr></thead><tbody>${makeupCandidateTableRows(sorted,targetClassId,targetSessionKey)}</tbody></table></div></section>`;
       }).join('');
     }
-    function scheduledMakeupTable(plans,draftRows,targetClassId,targetSessionKey){
-      const totalRows=plans.length+draftRows.length;
-      const confirmLabel=draftRows.length===1?'Xác nhận 1 học sinh':`Xác nhận ${draftRows.length} học sinh`;
+    function scheduledMakeupTable(plans,draftRows,draft,targetClassId,targetSessionKey){
+      const cancelIds=new Set((draft?.cancelPlanIds||[]).map(String));
+      const cancelCount=plans.filter(p=>cancelIds.has(String(p.id))).length;
+      const changeCount=draftRows.length+cancelCount;
+      const projectedAssigned=Math.max(0,plans.length-cancelCount+draftRows.length);
+      const confirmLabel=changeCount===1?'Lưu 1 thay đổi':`Lưu ${changeCount} thay đổi`;
       const rows=[
-        ...plans.map((p,i)=>`<tr><td>${i+1}</td><td><b>${safeStudentName(p.studentId)}</b></td><td>${safeClassName(p.sourceClassId)}</td><td>${safeSessionLabel(p.targetSessionKey)}</td><td>${makeupPlanStatusBadge(p)}</td><td><button class="btn ghost smallBtn" data-cancel-makeup-id="${p.id}" onclick="cancelMakeupPlan('${p.id}','${targetClassId}','${targetSessionKey}')">Hủy</button></td></tr>`),
-        ...draftRows.map((x,i)=>`<tr class="makeupDraftRow"><td>${plans.length+i+1}</td><td><b>${h(x.student.name)}</b><div class="mini">Chưa lưu vào hệ thống</div></td><td>${h(x.sourceClass.name)}</td><td>${safeSessionLabel(targetSessionKey)}</td><td><span class="pill yellow">Chưa xác nhận</span></td><td><button class="btn ghost smallBtn" onclick="removeQueuedMakeup('${x.item.absenceId}','${targetClassId}','${targetSessionKey}')">Bỏ chọn</button></td></tr>`)
+        ...plans.map((p,i)=>{
+          const pendingCancel=cancelIds.has(String(p.id));
+          return `<tr class="${pendingCancel?'makeupCancelDraftRow':''}"><td>${i+1}</td><td><b>${safeStudentName(p.studentId)}</b>${pendingCancel?'<div class="mini">Sẽ quay lại danh sách Chờ xếp sau khi lưu</div>':''}</td><td>${safeClassName(p.sourceClassId)}</td><td>${safeSessionLabel(p.targetSessionKey)}</td><td>${pendingCancel?'<span class="pill red">Chờ hủy</span>':makeupPlanStatusBadge(p)}</td><td>${pendingCancel?`<button class="btn ghost smallBtn" onclick="undoQueuedMakeupCancellation('${p.id}','${targetClassId}','${targetSessionKey}')">Hoàn tác</button>`:`<button class="btn ghost smallBtn" onclick="queueMakeupCancellation('${p.id}','${targetClassId}','${targetSessionKey}')">Hủy</button>`}</td></tr>`;
+        }),
+        ...draftRows.map((x,i)=>`<tr class="makeupDraftRow"><td>${plans.length+i+1}</td><td><b>${h(x.student.name)}</b><div class="mini">Chưa lưu vào hệ thống</div></td><td>${h(x.sourceClass.name)}</td><td>${safeSessionLabel(targetSessionKey)}</td><td><span class="pill yellow">Chờ thêm</span></td><td><button class="btn ghost smallBtn" onclick="removeQueuedMakeup('${x.item.absenceId}','${targetClassId}','${targetSessionKey}')">Bỏ chọn</button></td></tr>`)
       ];
-      return `<section id="makeupAssignedSection" class="makeupAssignedSection"><div class="makeupAssignedHead"><div><h3>Đã xếp trong buổi này (${totalRows})</h3><div class="mini">${plans.length} đã lưu${draftRows.length?` • ${draftRows.length} đang chờ xác nhận`:''}</div></div><button id="confirmMakeupBatchBtn" class="btn primary" ${draftRows.length?'':'disabled'} onclick="confirmScheduleMakeupBatch('${targetClassId}','${targetSessionKey}')">${draftRows.length?confirmLabel:'Xác nhận'}</button></div><div class="modalTableWrap makeupAssignTableWrap makeupAssignedTableWrap"><table class="modalTable makeupAssignTable"><thead><tr><th>STT</th><th>Học sinh</th><th>Lớp gốc</th><th>Buổi học bù</th><th>Trạng thái</th><th></th></tr></thead><tbody>${rows.length?rows.join(''):'<tr><td colspan="6"><div class="empty compactEmpty">Chưa có học sinh được xếp vào buổi này.</div></td></tr>'}</tbody></table></div></section>`;
+      return `<section id="makeupAssignedSection" class="makeupAssignedSection"><div class="makeupAssignedHead"><div><h3>Đã xếp trong buổi này (${projectedAssigned})</h3><div class="mini">${Math.max(0,plans.length-cancelCount)} giữ nguyên${draftRows.length?` • ${draftRows.length} chờ thêm`:''}${cancelCount?` • ${cancelCount} chờ hủy`:''}</div></div><button id="confirmMakeupBatchBtn" class="btn primary" ${changeCount?'':'disabled'} onclick="confirmScheduleMakeupBatch('${targetClassId}','${targetSessionKey}')">${changeCount?confirmLabel:'Lưu thay đổi'}</button></div><div class="modalTableWrap makeupAssignTableWrap makeupAssignedTableWrap"><table class="modalTable makeupAssignTable"><thead><tr><th>STT</th><th>Học sinh</th><th>Lớp gốc</th><th>Buổi học bù</th><th>Trạng thái</th><th></th></tr></thead><tbody>${rows.length?rows.join(''):'<tr><td colspan="6"><div class="empty compactEmpty">Chưa có học sinh được xếp vào buổi này.</div></td></tr>'}</tbody></table></div></section>`;
     }
 
     function scheduleMakeupCandidatesRegionHtml(candidates,targetClassId,targetSessionKey,emptyReason,draft){
@@ -4850,22 +4916,24 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
       const targetMonth=sessionKeyMonth(targetSessionKey)||makeupCurrentMonthKey();
       const plans=plannedMakeupsForSession(targetSessionKey);
       const draftRows=scheduleMakeupDraftRows(targetClassId,targetSessionKey);
+      const cancelIds=new Set((draft.cancelPlanIds||[]).map(String));
+      const cancelCount=plans.filter(p=>cancelIds.has(String(p.id))).length;
       const savedTotal=totalRosterCountForSession(targetClassId,targetSessionKey);
-      const projectedTotal=savedTotal+draftRows.length;
+      const projectedTotal=Math.max(0,savedTotal-cancelCount+draftRows.length);
       const capacity=db.settings.capacity||15;
       const allPending=pendingMakeupRows(targetMonth);
       const draftAbsenceIds=new Set(draft.items.map(x=>String(x.absenceId)));
       const draftStudentIds=new Set(draft.items.map(x=>String(x.studentId)));
       const canPlace=canOpenScheduleMakeupPopup(targetSessionKey) && projectedTotal<capacity;
-      const allCandidates=absentCandidatesForTargetSession(targetClassId,targetSessionKey);
+      const allCandidates=absentCandidatesForTargetSession(targetClassId,targetSessionKey,{cancelPlanIds:[...cancelIds]});
       const candidates=canPlace?allCandidates.filter(x=>!draftAbsenceIds.has(String(x.record.id)) && !draftStudentIds.has(String(x.student.id))):[];
       const sessionPlacementReason=makeupSessionPlacementReason(targetSessionKey);
       const emptyReason=sessionPlacementReason || (projectedTotal>=capacity?`Buổi này đã đủ ${capacity} học sinh.`:allPending.length?'Không có lượt vắng phù hợp cho buổi này.':'Chưa có học sinh chờ học bù. Hãy lưu điểm danh với trạng thái Vắng trước.');
       const assignedEl=root.querySelector('#makeupAssignedSection');
-      if(assignedEl) assignedEl.outerHTML=scheduledMakeupTable(plans,draftRows,targetClassId,targetSessionKey);
+      if(assignedEl) assignedEl.outerHTML=scheduledMakeupTable(plans,draftRows,draft,targetClassId,targetSessionKey);
       const summaryEl=root.querySelector('#makeupScheduleSummary');
       if(summaryEl){
-        summaryEl.innerHTML=`<span class="capacityBadge ${projectedTotal>=capacity?'full':''}">Tổng dự kiến ${projectedTotal}/${capacity}</span> <span class="pill blue">${plans.length} đã lưu</span>${draftRows.length?` <span class="pill yellow">${draftRows.length} chưa xác nhận</span>`:''} <span class="pill gray">${allPending.length} lượt đang chờ</span>`;
+        summaryEl.innerHTML=`<span class="capacityBadge ${projectedTotal>=capacity?'full':''}">Tổng dự kiến ${projectedTotal}/${capacity}</span> <span class="pill blue">${Math.max(0,plans.length-cancelCount)} giữ nguyên</span>${draftRows.length?` <span class="pill yellow">${draftRows.length} chờ thêm</span>`:''}${cancelCount?` <span class="pill red">${cancelCount} chờ hủy</span>`:''} <span class="pill gray">${allPending.length} lượt đang chờ</span>`;
       }
       const candidatesEl=root.querySelector('#makeupCandidatesRegion');
       if(candidatesEl) candidatesEl.outerHTML=scheduleMakeupCandidatesRegionHtml(candidates,targetClassId,targetSessionKey,emptyReason,draft);
@@ -4903,20 +4971,22 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
       const targetSession=sessionObjectFromKey(targetSessionKey);
       const plans=targetSessionKey?plannedMakeupsForSession(targetSessionKey):[];
       const draftRows=scheduleMakeupDraftRows(targetClassId,targetSessionKey);
+      const cancelIds=new Set((draft.cancelPlanIds||[]).map(String));
+      const cancelCount=plans.filter(p=>cancelIds.has(String(p.id))).length;
       const savedTotal=targetSessionKey?totalRosterCountForSession(targetClassId,targetSessionKey):0;
-      const projectedTotal=savedTotal+draftRows.length;
+      const projectedTotal=Math.max(0,savedTotal-cancelCount+draftRows.length);
       const capacity=db.settings.capacity||15;
       const canPlace=!!(targetSessionKey && canOpenScheduleMakeupPopup(targetSessionKey) && projectedTotal<capacity);
       const allPending=pendingMakeupRows(targetMonth);
       const draftAbsenceIds=new Set(draft.items.map(x=>String(x.absenceId)));
       const draftStudentIds=new Set(draft.items.map(x=>String(x.studentId)));
-      const allCandidates=targetSessionKey?absentCandidatesForTargetSession(targetClassId,targetSessionKey):[];
+      const allCandidates=targetSessionKey?absentCandidatesForTargetSession(targetClassId,targetSessionKey,{cancelPlanIds:[...cancelIds]}):[];
       const candidates=canPlace?allCandidates.filter(x=>!draftAbsenceIds.has(String(x.record.id)) && !draftStudentIds.has(String(x.student.id))):[];
-      const assignedTable=scheduledMakeupTable(plans,draftRows,targetClassId,targetSessionKey);
+      const assignedTable=scheduledMakeupTable(plans,draftRows,draft,targetClassId,targetSessionKey);
       const sessionPlacementReason=targetSessionKey?makeupSessionPlacementReason(targetSessionKey):'Chọn một buổi trong thời khóa biểu.';
       const emptyReason=!targetSessionKey?'Chọn một buổi trong thời khóa biểu.':sessionPlacementReason || (projectedTotal>=capacity?`Buổi này đã đủ ${capacity} học sinh.`:allPending.length?'Không có lượt vắng phù hợp cho buổi này.':'Chưa có học sinh chờ học bù. Hãy lưu điểm danh với trạng thái Vắng trước.');
       modal(`<div data-schedule-makeup-modal data-disable-modal-autofocus><div class="modalHead"><h2>Xếp học bù - ${h(target.name||'Lớp')}</h2><button class="close" onclick="closeModal()">×</button></div>
-      <div class="rulesBox compactRules"><b>${targetSessionKey?sessionLabelFromKey(targetSessionKey):'Chưa chọn buổi'}</b><div id="makeupScheduleSummary" style="margin-top:8px"><span class="capacityBadge ${projectedTotal>=capacity?'full':''}">Tổng dự kiến ${projectedTotal}/${capacity}</span> <span class="pill blue">${plans.length} đã lưu</span>${draftRows.length?` <span class="pill yellow">${draftRows.length} chưa xác nhận</span>`:''} <span class="pill gray">${allPending.length} lượt đang chờ</span></div></div>
+      <div class="rulesBox compactRules"><b>${targetSessionKey?sessionLabelFromKey(targetSessionKey):'Chưa chọn buổi'}</b><div id="makeupScheduleSummary" style="margin-top:8px"><span class="capacityBadge ${projectedTotal>=capacity?'full':''}">Tổng dự kiến ${projectedTotal}/${capacity}</span> <span class="pill blue">${Math.max(0,plans.length-cancelCount)} giữ nguyên</span>${draftRows.length?` <span class="pill yellow">${draftRows.length} chờ thêm</span>`:''}${cancelCount?` <span class="pill red">${cancelCount} chờ hủy</span>`:''} <span class="pill gray">${allPending.length} lượt đang chờ</span></div></div>
       ${assignedTable}
       ${!targetSessionKey?`<div class="empty">${h(emptyReason)}</div>`:scheduleMakeupCandidatesRegionHtml(candidates,targetClassId,targetSessionKey,emptyReason,draft)}
       </div>`);
@@ -4929,9 +4999,10 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
 
     function mergeConfirmedMakeupBatch(data){
       const plans=Array.isArray(data?.plans)?data.plans:(data?.plan?[data.plan]:[]);
+      const cancelledPlans=Array.isArray(data?.cancelledPlans)?data.cancelledPlans:[];
       const absenceRecords=Array.isArray(data?.absenceRecords)?data.absenceRecords:(data?.absenceRecord?[data.absenceRecord]:[]);
       db.makeupPlans ||= [];
-      plans.forEach(plan=>{
+      [...plans,...cancelledPlans].forEach(plan=>{
         db.makeupPlans=db.makeupPlans.filter(p=>String(p?.id||'')!==String(plan?.id||''));
         db.makeupPlans.push(plan);
       });
@@ -4945,7 +5016,7 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
       mergeAbsences(db.absenceRecords);
       if(db.makeupTabState){
         db.makeupTabState.makeupPlans ||= [];
-        plans.forEach(plan=>{
+        [...plans,...cancelledPlans].forEach(plan=>{
           db.makeupTabState.makeupPlans=db.makeupTabState.makeupPlans.filter(p=>String(p?.id||'')!==String(plan?.id||''));
           db.makeupTabState.makeupPlans.push(plan);
         });
@@ -4953,7 +5024,7 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
         mergeAbsences(db.makeupTabState.absenceRecords);
         db.makeupTabState.updatedAt=Date.now();
       }
-      return plans;
+      return {plans,cancelledPlans};
     }
     function v22RefreshScheduleBehindMakeupModal(){
       if(v18Memo.scheduleCellMap) v18Memo.scheduleCellMap.key='';
@@ -4971,30 +5042,40 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
       rememberScheduleMakeupSearch();
       const draft=scheduleMakeupDraftState(targetClassId,targetSessionKey);
       const items=[...(draft.items||[])];
-      if(!items.length){toast('Chọn ít nhất một học sinh để xác nhận');return}
+      const cancelPlanIds=[...(draft.cancelPlanIds||[])];
+      if(!items.length && !cancelPlanIds.length){toast('Chưa có thay đổi để lưu');return}
       const targetSession=sessionObjectFromKey(targetSessionKey);
-      if(!targetSession || !canOpenScheduleMakeupPopup(targetSessionKey)){toast('Buổi này không còn nhận học bù theo cách xếp trước giờ học');return}
+      if(!targetSession){toast('Không tìm thấy buổi học');return}
+      if(items.length && !canOpenScheduleMakeupPopup(targetSessionKey)){toast('Buổi này không còn nhận học bù theo cách xếp trước giờ học');return}
       const capacity=db.settings.capacity||15;
-      if(totalRosterCountForSession(targetClassId,targetSessionKey)+items.length>capacity){toast(`Số học sinh vượt quá sĩ số tối đa ${capacity}`);return}
+      const validCancelCount=plannedMakeupsForSession(targetSessionKey).filter(p=>cancelPlanIds.some(id=>String(id)===String(p.id))).length;
+      if(Math.max(0,totalRosterCountForSession(targetClassId,targetSessionKey)-validCancelCount)+items.length>capacity){toast(`Số học sinh vượt quá sĩ số tối đa ${capacity}`);return}
       const btn=document.getElementById('confirmMakeupBatchBtn');
-      if(btn){btn.disabled=true;btn.textContent='Đang xác nhận...'}
+      if(btn){btn.disabled=true;btn.textContent='Đang lưu...'}
       try{
-        const data=await officialFetch('/api/makeup/plans',{method:'POST',body:JSON.stringify({targetClassId,targetSessionKey,items}),preserveGetCache:true});
-        const plans=mergeConfirmedMakeupBatch(data);
+        const data=await officialFetch('/api/makeup/plans',{method:'POST',body:JSON.stringify({targetClassId,targetSessionKey,items,cancelPlanIds}),preserveGetCache:true});
+        const merged=mergeConfirmedMakeupBatch(data);
         draft.items=[];
+        draft.cancelPlanIds=[];
         draft.scrollTop=0;
-        const mutationMonth=sessionKeyMonth(items[0]?.sourceSessionKey)||sessionKeyMonth(targetSessionKey);
+        const firstChangedPlan=merged.plans[0]||merged.cancelledPlans[0]||null;
+        const mutationMonth=sessionKeyMonth(items[0]?.sourceSessionKey||firstChangedPlan?.sourceSessionKey)||sessionKeyMonth(targetSessionKey);
         v20bAfterMutation(['schedule','makeup'],{
           targetSessionKey,
-          sourceSessionKey:items[0]?.sourceSessionKey||'',
+          sourceSessionKey:items[0]?.sourceSessionKey||firstChangedPlan?.sourceSessionKey||'',
           month:mutationMonth,
           preserveCache:true,
           renderOnRevalidate:false,
-          delayMs:650
+          delayMs:V24A_BATCH_REVALIDATE_IDLE_MS
         });
         saveLocalOnly();
         v22RefreshScheduleBehindMakeupModal();
-        toast(`Đã xếp ${plans.length||items.length} học sinh vào buổi này`);
+        const addedCount=merged.plans.length||items.length;
+        const cancelledCount=merged.cancelledPlans.length||cancelPlanIds.length;
+        const parts=[];
+        if(addedCount) parts.push(`thêm ${addedCount}`);
+        if(cancelledCount) parts.push(`hủy ${cancelledCount}`);
+        toast(`Đã lưu thay đổi: ${parts.join(', ')} học sinh`);
         refreshScheduleMakeupDraftDom(targetClassId,targetSessionKey);
       }catch(e){
         toast(e.message||'Không xác nhận được danh sách học bù');
@@ -5746,8 +5827,9 @@ function settingsPage(){
     }
     function closeModal(force=false){
       const isScheduleMakeupModal=!!modalBackdrop?.querySelector?.('[data-schedule-makeup-modal]');
-      if(!force && isScheduleMakeupModal && (scheduleMakeupDraft?.items||[]).length){
-        if(!confirm('Bạn có học sinh chưa được xác nhận. Đóng popup sẽ bỏ các lựa chọn này.')) return;
+      const hasUnsavedMakeupChanges=(scheduleMakeupDraft?.items||[]).length || (scheduleMakeupDraft?.cancelPlanIds||[]).length;
+      if(!force && isScheduleMakeupModal && hasUnsavedMakeupChanges){
+        if(!confirm('Bạn có thay đổi chưa được lưu. Đóng popup sẽ bỏ các thay đổi này.')) return;
       }
       if(isScheduleMakeupModal) scheduleMakeupDraft=null;
       modalBackdrop.classList.remove('show');

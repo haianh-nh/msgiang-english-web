@@ -180,7 +180,10 @@ export async function POST(req: NextRequest) {
   const targetClassId = String(body.targetClassId || "");
   const targetSessionKey = String(body.targetSessionKey || "");
   const rawBatchItems = Array.isArray(body.items) ? body.items : null;
-  const isBatch = !!rawBatchItems;
+  const rawCancelPlanIds = Array.isArray(body.cancelPlanIds) ? body.cancelPlanIds : null;
+  const cancelPlanIds = (rawCancelPlanIds || []).slice(0, 51).map((id: any) => String(id || "")).filter(Boolean);
+  const isChangeSet = rawCancelPlanIds !== null;
+  const isBatch = !!rawBatchItems || isChangeSet;
   const batchItems = (rawBatchItems || []).slice(0, 51).map((item: any, index: number) => ({
     id: String(item?.id || `mk_${Date.now()}_${index}_${Math.random().toString(36).slice(2, 8)}`),
     absenceId: String(item?.absenceId || ""),
@@ -198,11 +201,17 @@ export async function POST(req: NextRequest) {
   };
   const items = isBatch ? batchItems : [singleItem];
 
-  if (!targetClassId || !targetSessionKey || !items.length) {
+  if (!targetClassId || !targetSessionKey || (!items.length && !cancelPlanIds.length)) {
     return NextResponse.json({ error: "Thiếu thông tin xếp học bù" }, { status: 400 });
   }
   if (items.length > 50) {
     return NextResponse.json({ error: "Chỉ được xác nhận tối đa 50 học sinh mỗi lần" }, { status: 400 });
+  }
+  if (cancelPlanIds.length > 50) {
+    return NextResponse.json({ error: "Chỉ được hủy tối đa 50 học sinh mỗi lần" }, { status: 400 });
+  }
+  if (new Set(cancelPlanIds).size !== cancelPlanIds.length) {
+    return NextResponse.json({ error: "Danh sách hủy có lịch học bù bị trùng" }, { status: 400 });
   }
   if (items.some((item: any) => !item.absenceId || !item.studentId || !item.sourceClassId)) {
     return NextResponse.json({ error: "Có học sinh thiếu thông tin xếp học bù" }, { status: 400 });
@@ -216,7 +225,7 @@ export async function POST(req: NextRequest) {
   if (new Set(items.map((item: any) => item.studentId)).size !== items.length) {
     return NextResponse.json({ error: "Một học sinh chỉ được xếp một lượt vắng vào cùng buổi" }, { status: 400 });
   }
-  if (!targetSessionCanReceiveMakeup(targetSessionKey)) {
+  if (items.length && !targetSessionCanReceiveMakeup(targetSessionKey)) {
     return NextResponse.json({ error: canManage(user) ? "Buổi đã điểm danh: hãy mở màn điểm danh để thêm học bù rồi lưu lại" : "Chỉ được xếp học bù trước giờ học" }, { status: 400 });
   }
 
@@ -251,6 +260,44 @@ export async function POST(req: NextRequest) {
 
   const capacity = Math.max(1, Number(settings.session_capacity || 15));
   const rpcStarted = performance.now();
+
+  if (isChangeSet) {
+    const rpc = await supabase.rpc("official_apply_makeup_plan_changes", {
+      p_add_items: items,
+      p_cancel_plan_ids: cancelPlanIds,
+      p_target_class_id: targetClassId,
+      p_target_session_key: targetSessionKey,
+      p_created_by: user.id,
+      p_capacity: capacity,
+    });
+
+    if (!rpc.error) {
+      const payload = {
+        ok: true,
+        plans: (rpc.data?.plans || []).map(mapPlan),
+        cancelledPlans: (rpc.data?.cancelledPlans || []).map(mapPlan),
+        absenceRecords: (rpc.data?.absenceRecords || []).map(mapAbsence),
+        counts: rpc.data?.counts || null,
+        mode: "rpc-changes",
+      };
+      const res = NextResponse.json(payload);
+      res.headers.set("Cache-Control", "private, no-store");
+      res.headers.set("Server-Timing", `rpc;dur=${(performance.now() - rpcStarted).toFixed(1)},total;dur=${(performance.now() - started).toFixed(1)}`);
+      return res;
+    }
+
+    if (!isMissingRpc(rpc.error, "official_apply_makeup_plan_changes")) {
+      return NextResponse.json({ error: rpc.error.message || "Không lưu được thay đổi học bù" }, { status: rpcStatus(rpc.error) });
+    }
+
+    if (cancelPlanIds.length) {
+      return NextResponse.json(
+        { error: "Chưa cài migration 016 để lưu thêm và hủy học bù trong cùng một lần" },
+        { status: 503 },
+      );
+    }
+    // Không có lượt hủy: tiếp tục dùng RPC batch cũ để tương thích trong lúc triển khai migration 016.
+  }
 
   if (isBatch) {
     const rpc = await supabase.rpc("official_schedule_makeup_plans_batch", {

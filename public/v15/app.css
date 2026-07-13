@@ -2050,6 +2050,12 @@ body{
 .makeupDraftRow td{
   border-color:#fde7a8!important;
 }
+.makeupCancelDraftRow{
+  background:#fff1f2;
+}
+.makeupCancelDraftRow td{
+  border-color:#fecdd3!important;
+}
 .compactEmpty{
   min-height:0!important;
   padding:10px!important;
