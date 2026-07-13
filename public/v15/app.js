@@ -286,13 +286,22 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
         return [r.id,st.id,st.name,r.className,r.status,r.amount,r.currentAmount,r.previousDebt,r.materialFee,r.materialNote,r.plannedSessions,r.unitPrice,r.tuitionAmount,r.creditAmount,r.paid?1:0,r.sent?1:0].filter(v=>v!==undefined&&v!==null).join(':');
       }).join(',')}`;
     }
+    function dayKeyFromDateText(dateText){
+      // Date inputs/session keys are Vietnam calendar dates (YYYY-MM-DD).
+      // Use UTC calendar math to avoid browser/server timezone shifting the weekday.
+      const m=String(dateText||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if(!m) return '';
+      const d=new Date(Date.UTC(Number(m[1]),Number(m[2])-1,Number(m[3])));
+      return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getUTCDay()]||'';
+    }
+    function scheduleDisplayDayKey(s){return dayKeyFromDateText(s?.date)||s?.day||'Mon'}
     function v18eScheduleCellMap(sessions){
-      const key=v18FastKey()+'|scheduleCellMap|'+(sessions||[]).map(s=>`${s.classId}:${s.day}:${s.slot}:${s.type}:${s.date}`).join(',');
+      const key=v18FastKey()+'|scheduleCellMap|'+(sessions||[]).map(s=>`${s.classId}:${scheduleDisplayDayKey(s)}:${s.slot}:${s.type}:${s.date}`).join(',');
       v18Memo.scheduleCellMap ||= {};
       if(v18Memo.scheduleCellMap.key===key) return v18Memo.scheduleCellMap.map;
       const map=new Map();
       (sessions||[]).forEach(s=>{
-        const cellKey=`${s.slot}|${s.day}`;
+        const cellKey=`${s.slot}|${scheduleDisplayDayKey(s)}`;
         if(!map.has(cellKey)) map.set(cellKey,[]);
         map.get(cellKey).push(s);
       });
@@ -300,13 +309,14 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       return map;
     }
     function v18eScheduleDayMap(sessions){
-      const key=v18FastKey()+'|scheduleDayMap|'+(sessions||[]).map(s=>`${s.classId}:${s.day}:${s.start}:${s.type}:${s.date}`).join(',');
+      const key=v18FastKey()+'|scheduleDayMap|'+(sessions||[]).map(s=>`${s.classId}:${scheduleDisplayDayKey(s)}:${s.start}:${s.type}:${s.date}`).join(',');
       v18Memo.scheduleDayMap ||= {};
       if(v18Memo.scheduleDayMap.key===key) return v18Memo.scheduleDayMap.map;
       const map=new Map();
       (sessions||[]).forEach(s=>{
-        if(!map.has(s.day)) map.set(s.day,[]);
-        map.get(s.day).push(s);
+        const day=scheduleDisplayDayKey(s);
+        if(!map.has(day)) map.set(day,[]);
+        map.get(day).push(s);
       });
       map.forEach(rows=>rows.sort((a,b)=>a.start.localeCompare(b.start)));
       v18Memo.scheduleDayMap={key,map};
@@ -2587,7 +2597,8 @@ Ms.Giang English`;
       const parts=String(key).split('|');
       let classId,date,day,slot;
       if(parts.length>=4){[classId,date,day,slot]=parts}else{[classId,day,slot]=parts; date=isoDate(dayDateFor(day))}
-      return `${dayNameFromKey(day)||day} ${date?formatVNDate(parseISODate(date)):''} • ${(slot||'').replace('-', ' - ')}`;
+      const displayDay=dayKeyFromDateText(date)||day;
+      return `${dayNameFromKey(displayDay)||displayDay} ${date?formatVNDate(parseISODate(date)):''} • ${(slot||'').replace('-', ' - ')}`;
     }
 
     function classSessionKeyAtWeek(classId,sessionIndex,weekStart){
@@ -2844,16 +2855,47 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
         .sort((a,b)=>String(a.student.name||'').localeCompare(String(b.student.name||''),'vi') || String(a.sourceClass.name||'').localeCompare(String(b.sourceClass.name||''),'vi',{numeric:true}));
     }
 
+    function removeMakeupPlanFromLocalState(planId){
+      const id=String(planId||'');
+      db.makeupPlans=(db.makeupPlans||[]).filter(p=>String(p?.id||'')!==id);
+      if(db.makeupTabState?.makeupPlans){
+        db.makeupTabState.makeupPlans=(db.makeupTabState.makeupPlans||[]).filter(p=>String(p?.id||'')!==id);
+        db.makeupTabState.updatedAt=0;
+      }
+    }
+
+    function restoreAbsencePendingAfterMakeupCancel(plan){
+      if(!plan?.absenceId) return;
+      const setPending=(arr=[])=>arr.forEach(a=>{ if(String(a?.id||'')===String(plan.absenceId)) a.status='pending'; });
+      setPending(db.absenceRecords||[]);
+      setPending(db.makeupTabState?.absenceRecords||[]);
+    }
+
     async function cancelMakeupPlan(planId,targetClassId,targetSessionKey){
-      const p=(db.makeupPlans||[]).find(x=>x.id===planId);
+      const p=(db.makeupPlans||[]).find(x=>String(x?.id||'')===String(planId))
+        || (db.makeupTabState?.makeupPlans||[]).find(x=>String(x?.id||'')===String(planId));
       if(!p){toast('Không tìm thấy lịch học bù');return}
+      const studentName=safeStudentName(p.studentId);
+      const targetLabel=p.targetSessionKey?safeSessionLabel(p.targetSessionKey):'buổi học bù này';
+      if(!confirm(`Hủy lịch học bù của ${studentName} ở ${targetLabel}?\n\nHọc sinh sẽ quay lại danh sách Chờ xếp.`)) return;
       try{
         await officialFetch(`/api/makeup/plans/${encodeURIComponent(planId)}`,{method:'DELETE'});
-        p.status='cancelled'; p.cancelledAt=new Date().toLocaleString('vi-VN');
-        const rec=(db.absenceRecords||[]).find(a=>a.id===p.absenceId); if(rec) rec.status='pending';
+        restoreAbsencePendingAfterMakeupCancel(p);
+        removeMakeupPlanFromLocalState(planId);
         v20bAfterMutation(['schedule','attendance','makeup']);
         v20b13InvalidateScheduleAfterMutation();
-        save(); toast('Đã hủy học bù, học sinh quay lại danh sách chờ xếp'); openScheduleMakeup(targetClassId,targetSessionKey);
+        if(route==='makeup') lazyRouteState.makeup={loaded:true,loading:false,loadedAt:Date.now(),mutated:true};
+        if(route==='schedule') lazyRouteState.schedule={loaded:true,loading:false,loadedAt:Date.now(),mutated:true};
+        saveLocalOnly();
+        toast('Đã hủy học bù. Học sinh đã quay lại Chờ xếp.');
+        if(route==='makeup'){
+          renderApp();
+        }else{
+          const btn=document.querySelector(`[data-cancel-makeup-id="${String(planId).replace(/"/g,'\\"')}"]`);
+          const row=btn?.closest('tr');
+          if(row){ row.remove(); }
+          renderApp();
+        }
       }catch(e){toast(e.message||'Không hủy được học bù')}
     }
 
@@ -4421,7 +4463,7 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
     }
     function scheduledMakeupTable(plans,targetClassId,targetSessionKey){
       if(!plans.length) return '';
-      return `<h3>Đã xếp trong buổi này</h3><div class="modalTableWrap makeupAssignTableWrap"><table class="modalTable makeupAssignTable"><thead><tr><th>STT</th><th>Học sinh</th><th>Lớp gốc</th><th>Buổi học bù</th><th>Trạng thái</th><th></th></tr></thead><tbody>${plans.map((p,i)=>`<tr><td>${i+1}</td><td><b>${safeStudentName(p.studentId)}</b></td><td>${safeClassName(p.sourceClassId)}</td><td>${safeSessionLabel(p.targetSessionKey)}</td><td>${makeupPlanStatusBadge(p)}</td><td><button class="btn ghost smallBtn" onclick="cancelMakeupPlan('${p.id}','${targetClassId}','${targetSessionKey}')">Hủy</button></td></tr>`).join('')}</tbody></table></div>`;
+      return `<h3>Đã xếp trong buổi này</h3><div class="modalTableWrap makeupAssignTableWrap"><table class="modalTable makeupAssignTable"><thead><tr><th>STT</th><th>Học sinh</th><th>Lớp gốc</th><th>Buổi học bù</th><th>Trạng thái</th><th></th></tr></thead><tbody>${plans.map((p,i)=>`<tr><td>${i+1}</td><td><b>${safeStudentName(p.studentId)}</b></td><td>${safeClassName(p.sourceClassId)}</td><td>${safeSessionLabel(p.targetSessionKey)}</td><td>${makeupPlanStatusBadge(p)}</td><td><button class="btn ghost smallBtn" data-cancel-makeup-id="${p.id}" onclick="cancelMakeupPlan('${p.id}','${targetClassId}','${targetSessionKey}')">Hủy</button></td></tr>`).join('')}</tbody></table></div>`;
     }
 
     let scheduleMakeupMonthLoadingKey='';
@@ -5019,7 +5061,7 @@ function canManageLibrary(){return isAdmin()||isManager()||isTeachingUser()}
       const completedRows=makeupMonthDeleted(monthKey)?[]:makeupTabCompletedRows(tabState,monthKey);
       const monthAbsenceCount=makeupMonthDeleted(monthKey)?0:(tabState.absenceRecords||[]).filter(a=>absenceRecordMonth(a)===monthKey).length;
       const monthControls=`<div class="inline2"><label>Tháng hiển thị<select class="input" onchange="setMakeupMonth(this.value)">${makeupMonthOptions(monthKey)}</select></label>${isAdmin()||isManager()?`<button class="btn ghost" onclick="openDeleteMakeupMonthModal()">Xóa dữ liệu vắng</button>`:''}</div>`;
-      const activeTable=activeRows.length?activeRows.map((x,i)=>`<tr><td>${i+1}</td><td><b>${safeStudentName(x.plan.studentId)}</b></td><td>${safeClassName(x.plan.sourceClassId)}${x.plan.sourceSessionKey?`<div class="mini">${safeSessionLabel(x.plan.sourceSessionKey)}</div>`:''}</td><td>${safeClassName(x.plan.targetClassId)}</td><td>${x.plan.targetSessionKey?`<span class="sessionTag">${safeSessionLabel(x.plan.targetSessionKey)}</span>`:'-'}</td><td><span class="pill blue">${h(x.plan.status||'scheduled')}</span><div class="mini">${h(makeupTargetStatusText(x.plan))}</div></td><td><button class="btn ghost" onclick="cancelMakeupPlan('${x.plan.id}','${x.plan.targetClassId}','${x.plan.targetSessionKey}')">Hủy</button></td></tr>`).join(''):'<tr><td colspan="7">Chưa có lịch học bù đã xếp.</td></tr>';
+      const activeTable=activeRows.length?activeRows.map((x,i)=>`<tr><td>${i+1}</td><td><b>${safeStudentName(x.plan.studentId)}</b></td><td>${safeClassName(x.plan.sourceClassId)}${x.plan.sourceSessionKey?`<div class="mini">${safeSessionLabel(x.plan.sourceSessionKey)}</div>`:''}</td><td>${safeClassName(x.plan.targetClassId)}</td><td>${x.plan.targetSessionKey?`<span class="sessionTag">${safeSessionLabel(x.plan.targetSessionKey)}</span>`:'-'}</td><td><span class="pill blue">${h(x.plan.status||'scheduled')}</span><div class="mini">${h(makeupTargetStatusText(x.plan))}</div></td><td><button class="btn ghost" data-cancel-makeup-id="${x.plan.id}" onclick="cancelMakeupPlan('${x.plan.id}','${x.plan.targetClassId}','${x.plan.targetSessionKey}')">Hủy</button></td></tr>`).join(''):'<tr><td colspan="7">Chưa có lịch học bù đã xếp.</td></tr>';
       const pendingTable=pendingRows.length?pendingRows.map((x,i)=>`<tr><td>${i+1}</td><td><b>${h(x.student.name)}</b><div class="mini">${h(classGradeLabel(x.sourceClass.name))}</div></td><td>${h(x.sourceClass.name)}</td><td>${h(x.record.sourceSessionLabel||safeSessionLabel(x.record.sourceSessionKey))}</td><td>${h(x.record.reason||'Vắng')}</td><td><span class="pill yellow">Chờ xếp</span></td></tr>`).join(''):'<tr><td colspan="6">Chưa có học sinh chờ học bù trong tháng này.</td></tr>';
       const completedTable=completedRows.length?completedRows.map((x,i)=>`<tr><td>${i+1}</td><td><b>${safeStudentName(x.plan.studentId)}</b><div class="mini">${h(x.student?.contact||'')}</div></td><td>${safeClassName(x.plan.sourceClassId)}</td><td>${x.plan.sourceSessionKey?`<span class="sessionTag">${safeSessionLabel(x.plan.sourceSessionKey)}</span>`:'-'}</td><td>${safeClassName(x.plan.targetClassId)}</td><td>${x.plan.targetSessionKey?`<span class="sessionTag">${safeSessionLabel(x.plan.targetSessionKey)}</span>`:'-'}</td><td><span class="pill green">Đã học bù</span></td></tr>`).join(''):'<tr><td colspan="7">Chưa có học sinh đã hoàn tất học bù.</td></tr>';
       return `<div class="screenTitle"><div><h1>Học bù</h1><p>Đang xem <b>${formatMonthKeyVN(monthKey)}</b></p></div><button class="btn primary" onclick="go('schedule')">Sang lịch dạy để xếp</button></div>
