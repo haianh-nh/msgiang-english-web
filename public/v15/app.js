@@ -2621,7 +2621,7 @@ Ms.Giang English`;
       const makeups=roster.filter(x=>x.type!=='official');
       const rec=ensureAttendanceSessions()[attendanceKey(sessionKey)];
       const absentRows=roster.filter(x=>rosterRowCountsAsAbsent(x,rec?.rows?.[`${x.type}_${x.student.id}`]));
-      const st=sessionStatus(s);
+      const st=scheduleDisplayStatus(s);
       const title=`${s.className} • ${sessionLabelFromKey(sessionKey)}`;
       modal(`<div class="modalHead"><h2>Danh sách buổi học</h2><button class="close" onclick="closeModal()">×</button></div>
         <div class="modalInfoGrid">
@@ -3450,6 +3450,23 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
       if(now < start) return {key:'todo',label:'Chưa dạy'};
       if(now >= start && now <= end) return {key:'live',label:'Đang dạy'};
       return {key:'done',label:'Đã dạy'};
+    }
+
+    function sessionEndedInVietnam(s){
+      const dateKey=String(s?.date||isoDate(dayDateFor(s?.day||'Mon')));
+      const endTime=String(s?.end||'00:00').slice(0,5);
+      const endAt=Date.parse(`${dateKey}T${endTime}:00+07:00`);
+      return Number.isFinite(endAt) ? Date.now()>endAt : sessionStatus(s).key==='done';
+    }
+
+    function scheduleDisplayStatus(s){
+      const base=sessionStatus(s);
+      if(base.key==='cancelled') return base;
+      const key=sessionKeyFor(s);
+      if(sessionEndedInVietnam(s) && !attendanceSavedForScheduleSession(key)){
+        return {key:'unattended',label:'Chưa điểm danh'};
+      }
+      return base;
     }
 
     function sameDate(a,b){return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate()}

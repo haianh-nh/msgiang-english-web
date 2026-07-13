@@ -32,7 +32,8 @@ function schedulePage(){
 
     function lessonCard(s,i){
       const key=sessionKeyFor(s);
-      const st=sessionStatus(s);
+      const baseSt=sessionStatus(s);
+      const st=scheduleDisplayStatus(s);
       const activePlans=makeupCountForSession(key);
       const plans=makeupDisplayCountForSession(key);
       const absent=absentCountForSession(key);
@@ -41,19 +42,22 @@ function schedulePage(){
       const statusPill=`<span class="statusDot ${st.key}">${st.label}</span>`;
       let bodyAction='';
       let extraClass=isMakeup?'classMakeupCard':'';
-      if(st.key==='cancelled'){
+      if(baseSt.key==='cancelled'){
         extraClass='cancelledCard';
         const rec=sessionCancelRecord(key)||{};
         const cm=classMakeupForSourceSession(key);
         const makeupText=cm?`<span class="classMakeupBadge">Dạy bù: ${classMakeupLabel(cm)}</span>`:'';
         bodyAction=`<div class="strictStateLine"><span class="pill gray">${rec.reason||'Nghỉ buổi học'}</span>${makeupText}</div>`;
+      }else if(st.key==='unattended'){
+        extraClass+=' strictUnattended';
+        bodyAction=`<div class="strictStateLine"><span class="statusDot unattended">Chưa điểm danh</span></div>`;
       }else if(isMakeup){
         extraClass+=' strictTodo';
         bodyAction=`<div class="strictStateLine"><span class="classMakeupBadge">${s.sessionKind==='tutoring'?'Học kèm':'Dạy bù cả lớp'}</span></div>`;
-      }else if(st.key==='done'){
+      }else if(baseSt.key==='done'){
         extraClass+=' strictDone';
         bodyAction=`<div class="strictStateLine">${scheduleAbsenceBadgeMarkup(key)}</div>`;
-      }else if(st.key==='live'){
+      }else if(baseSt.key==='live'){
         extraClass+=' strictLive';
         bodyAction=`<div class="strictStateLine"><span class="statusDot live">${st.label}</span>${hasAttendance?` ${scheduleAbsenceBadgeMarkup(key)}`:''}</div>`;
       }else{
@@ -68,5 +72,5 @@ function schedulePage(){
     function mobileScheduleList(sessions){
       const dayMap=v18eScheduleDayMap(sessions);
       const byDay=WEEK_DAYS.map((d,i)=>({day:d, sessions:dayMap.get(d.key)||[], i}));
-      return `<div class="mobileScheduleList">${byDay.map(({day,sessions,i})=>`<div class="dayBlock ${isTodayDayKey(day.key)?'todayColumn':''}" style="--i:${i}"><h3>${day.label} <span class="mini">${formatVNDate(dayDateFor(day.key))}${isTodayDayKey(day.key)?' • Hôm nay':''}</span></h3>${sessions.length?sessions.map(s=>{const st=sessionStatus(s); const key=sessionKeyFor(s); const activePlans=makeupCountForSession(key); const plans=makeupDisplayCountForSession(key); const absent=absentCountForSession(key); const hasAttendance=scheduleAbsenceCountVisible(key); const isMakeup=s.type==='class_makeup'; let action=''; if(st.key==='cancelled'){const cm=classMakeupForSourceSession(key); action=`${cm?`<span class="classMakeupBadge">Dạy bù: ${classMakeupLabel(cm)}</span>`:'<span class="pill gray">Nghỉ buổi học</span>'}`} else if(isMakeup){action=`<span class="classMakeupBadge">${s.sessionKind==='tutoring'?'Học kèm':'Dạy bù cả lớp'}</span>`} else if(st.key==='done'){action=scheduleAbsenceBadgeMarkup(key)} else if(st.key==='live'){action=`<span class="statusDot live">${st.label}</span>${hasAttendance?` ${scheduleAbsenceBadgeMarkup(key)}`:''}`} else {action=`${hasAttendance?scheduleAbsenceBadgeMarkup(key):(activePlans?`<span class="makeupBadge">${plans} học bù</span>`:'<span class="pill gray">Chưa dạy</span>')}`} return `<div class="dayLesson"><b>${s.start} - ${s.end} • ${s.className}</b> <span class="statusDot ${st.key}">${st.label}</span>${isMakeup?` <span class="classMakeupBadge">${s.sessionKind==='tutoring'?'Học kèm':'Dạy bù'}</span>`:''}<div class="mini">${s.teacher||'-'} • Tổng ${isMakeup?Number(s.students||0)+plans:totalRosterDisplayCountForSession(s.classId,key)}/${db.settings.capacity||15}</div><div class="lessonActions">${action}</div></div>`}).join(''):'<div class="emptySlot">Không có lớp</div>'}</div>`).join('')}</div>`;
+      return `<div class="mobileScheduleList">${byDay.map(({day,sessions,i})=>`<div class="dayBlock ${isTodayDayKey(day.key)?'todayColumn':''}" style="--i:${i}"><h3>${day.label} <span class="mini">${formatVNDate(dayDateFor(day.key))}${isTodayDayKey(day.key)?' • Hôm nay':''}</span></h3>${sessions.length?sessions.map(s=>{const baseSt=sessionStatus(s); const st=scheduleDisplayStatus(s); const key=sessionKeyFor(s); const activePlans=makeupCountForSession(key); const plans=makeupDisplayCountForSession(key); const absent=absentCountForSession(key); const hasAttendance=scheduleAbsenceCountVisible(key); const isMakeup=s.type==='class_makeup'; let action=''; if(baseSt.key==='cancelled'){const cm=classMakeupForSourceSession(key); action=`${cm?`<span class="classMakeupBadge">Dạy bù: ${classMakeupLabel(cm)}</span>`:'<span class="pill gray">Nghỉ buổi học</span>'}`} else if(st.key==='unattended'){action='<span class="statusDot unattended">Chưa điểm danh</span>'} else if(isMakeup){action=`<span class="classMakeupBadge">${s.sessionKind==='tutoring'?'Học kèm':'Dạy bù cả lớp'}</span>`} else if(baseSt.key==='done'){action=scheduleAbsenceBadgeMarkup(key)} else if(baseSt.key==='live'){action=`<span class="statusDot live">${baseSt.label}</span>${hasAttendance?` ${scheduleAbsenceBadgeMarkup(key)}`:''}`} else {action=`${hasAttendance?scheduleAbsenceBadgeMarkup(key):(activePlans?`<span class="makeupBadge">${plans} học bù</span>`:'<span class="pill gray">Chưa dạy</span>')}`} return `<div class="dayLesson"><b>${s.start} - ${s.end} • ${s.className}</b> <span class="statusDot ${st.key}">${st.label}</span>${isMakeup?` <span class="classMakeupBadge">${s.sessionKind==='tutoring'?'Học kèm':'Dạy bù'}</span>`:''}<div class="mini">${s.teacher||'-'} • Tổng ${isMakeup?Number(s.students||0)+plans:totalRosterDisplayCountForSession(s.classId,key)}/${db.settings.capacity||15}</div><div class="lessonActions">${action}</div></div>`}).join(''):'<div class="emptySlot">Không có lớp</div>'}</div>`).join('')}</div>`;
     }
