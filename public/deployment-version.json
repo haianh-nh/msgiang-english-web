@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "build": "20phase7tuition",
-  "phase": "6-realtime-redeploy-v2",
+  "build": "20phase7fix1",
+  "phase": "7-midmonth-tuition-fix1",
   "realtimeFrontend": true
 }

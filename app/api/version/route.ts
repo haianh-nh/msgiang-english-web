@@ -5,14 +5,14 @@ export async function GET() {
   return Response.json(
     {
       ok: true,
-      build: "20phase7tuition",
-      phase: "7-midmonth-tuition",
+      build: "20phase7fix1",
+      phase: "7-midmonth-tuition-fix1",
       realtimeFrontend: true,
     },
     {
       headers: {
         "Cache-Control": "no-store, max-age=0",
-        "X-Msgiang-Build": "20phase7tuition",
+        "X-Msgiang-Build": "20phase7fix1",
       },
     },
   );
