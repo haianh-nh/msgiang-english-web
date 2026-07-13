@@ -89,7 +89,7 @@ function attendancePage(){
       rec.saved=false;
       rec.editable=true;
       v18Memo.rosterKey='';
-      v20bAfterMutation(['schedule','attendance','makeup']);
+      v20bAfterMutation(['schedule','attendance','makeup'],{targetSessionKey:sessionKey,month:sessionKeyMonth(sessionKey),force:true});
       save();
       toast('Đã thêm học sinh học bù. Kiểm tra trạng thái rồi bấm Lưu điểm danh.');
       openAttendance(targetClassId,sessionKey,true);

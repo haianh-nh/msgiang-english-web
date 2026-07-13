@@ -376,55 +376,142 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
     function v20bMarkLoaded(key){
       lazyRouteState[key]={loaded:true,loading:false,loadedAt:Date.now(),mutated:true};
     }
+    function v21MutationMonths(options={}){
+      const months=new Set();
+      const addMonth=v=>{const m=String(v||'').trim(); if(/^\d{4}-\d{2}$/.test(m)) months.add(m);};
+      const addSession=v=>{const m=sessionKeyMonth(String(v||'')); if(m) months.add(m);};
+      addMonth(options.month);
+      (options.months||[]).forEach(addMonth);
+      addSession(options.sessionKey);
+      addSession(options.targetSessionKey);
+      addSession(options.sourceSessionKey);
+      if(options.plan){addSession(options.plan.targetSessionKey);addSession(options.plan.sourceSessionKey)}
+      if(options.record){addSession(options.record.sourceSessionKey)}
+      addMonth(makeupSelectedMonthKey());
+      return Array.from(months);
+    }
+    function v21NormalizeMutationModules(keys=[]){
+      return Array.from(new Set((Array.isArray(keys)?keys:[keys]).filter(Boolean).map(v20bNormalizeMutationKey)));
+    }
+    function v21InvalidateMutationCaches(keys=[],options={}){
+      const modules=v21NormalizeMutationModules(keys);
+      const weekKey=isoDate(weekStartDate());
+      const months=v21MutationMonths(options);
+      v18gClearNetworkCache();
+      modules.forEach(key=>{
+        if(key==='core'){
+          moduleCacheRemove('classes:latest');
+          lazyRouteState.core={};
+        }else if(key==='teachers'){
+          moduleCacheRemove('teachers:latest');
+          lazyRouteState.teachers={};
+        }else if(key==='schedule'){
+          moduleCacheRemove(`schedule:${weekKey}`);
+          lazyRouteState.schedule={};
+          v18Memo.weekKey='';
+          v18Memo.weekSessions=null;
+        }else if(key==='attendance'){
+          moduleCacheRemove(`attendance:${weekKey}`);
+          lazyRouteState.attendance={};
+          v18Memo.attendancePageKey='';
+          v18Memo.attendancePageSessions=null;
+          v18Memo.rosterKey='';
+          v18Memo.rosterRows=null;
+        }else if(key==='makeup'){
+          months.forEach(m=>moduleCacheRemove(`makeup:${m}`));
+          lazyRouteState.makeup={};
+        }else if(key==='tuition'){
+          moduleCacheRemove(`tuition:${tuitionMonthKey()}`);
+          lazyRouteState.tuition={};
+        }else if(key==='library'){
+          moduleCacheRemove('library:latest');
+          lazyRouteState.library={};
+        }else if(key==='evaluation'){
+          moduleCacheRemove(`evaluation:${evaluationMonthKey()}`);
+          lazyRouteState.evaluation={};
+        }
+      });
+    }
     function v20bUpdateCacheForKey(key){
-      key=v20bNormalizeMutationKey(key);
-      if(key==='core'){
-        moduleCacheSet('classes:latest',{classes:db.classes||[],teachers:db.teachers||[]});
-        v20bMarkLoaded('core');
-        return;
-      }
-      if(key==='teachers'){
-        moduleCacheSet('teachers:latest',{teachers:db.teachers||[]});
-        v20bMarkLoaded('teachers');
-        return;
-      }
-      if(key==='schedule'){
-        v18fUpdateScheduleModuleCache();
-        v20bMarkLoaded('schedule');
-        return;
-      }
-      if(key==='attendance'){
-        v18fUpdateAttendanceModuleCache();
-        v20bMarkLoaded('attendance');
-        return;
-      }
-      if(key==='makeup'){
-        // Không ghi cache Học bù từ dữ liệu tạm của Lịch dạy/Điểm danh.
-        // Các tab đó chỉ tải subset theo tuần; nếu cache nhầm vào makeup sẽ làm bảng Học bù hiển thị thiếu/sai.
-        moduleCacheRemove(`makeup:${makeupCurrentMonthKey()}`);
-        lazyRouteState.makeup={};
-        return;
-      }
-      if(key==='tuition'){
-        v18fUpdateTuitionModuleCache();
-        v20bMarkLoaded('tuition');
-        return;
-      }
-      if(key==='library'){
-        v18fUpdateLibraryModuleCache();
-        v20bMarkLoaded('library');
-        return;
-      }
-      if(key==='evaluation'){
-        v18fUpdateEvaluationModuleCache();
-        v20bMarkLoaded('evaluation');
+      // Sau mutation, cache cũ dễ làm Lịch dạy/Học bù/Điểm danh hiển thị lệch.
+      // Không ghi cache từ state tạm; chỉ invalidate đúng phạm vi để refresh manager tải lại dữ liệu thật.
+      v21InvalidateMutationCaches([key]);
+    }
+
+    const v21MutationRefreshState={timer:null,pending:null,running:false};
+    function v21MergeMutationContext(base={},next={}){
+      const merged={...(base||{})};
+      merged.modules=v21NormalizeMutationModules([...(merged.modules||[]),...(next.modules||[])]);
+      merged.months=Array.from(new Set([...(merged.months||[]),...v21MutationMonths(next)]));
+      ['sessionKey','targetSessionKey','sourceSessionKey'].forEach(k=>{if(next[k]) merged[k]=next[k]});
+      merged.force=!!(merged.force||next.force);
+      merged.applyMakeupGlobal=!!(merged.applyMakeupGlobal||next.applyMakeupGlobal);
+      return merged;
+    }
+    function v21ScheduleMutationRefresh(keys=[],options={}){
+      if(!currentUser || options.noRefresh) return Promise.resolve(false);
+      const ctx=v21MergeMutationContext(v21MutationRefreshState.pending||{}, {...options, modules:v21NormalizeMutationModules(keys)});
+      v21MutationRefreshState.pending=ctx;
+      clearTimeout(v21MutationRefreshState.timer);
+      return new Promise(resolve=>{
+        v21MutationRefreshState.timer=setTimeout(()=>{
+          v21RunMutationRefresh().then(resolve).catch(e=>{console.warn('Mutation refresh failed',e);resolve(false)});
+        }, Number(options.delayMs||140));
+      });
+    }
+    async function v21RunMutationRefresh(){
+      if(v21MutationRefreshState.running) return false;
+      const ctx=v21MutationRefreshState.pending;
+      v21MutationRefreshState.pending=null;
+      if(!ctx || !currentUser) return false;
+      v21MutationRefreshState.running=true;
+      const modules=new Set(v21NormalizeMutationModules(ctx.modules||[]));
+      const activeKey=routeDataKey(route);
+      let changed=false;
+      try{
+        await runRefreshWithoutRepeatedSaves(async()=>{
+          if(modules.has('core') && routeNeedsCoreData(route)) changed=(await refreshOfficialClasses({skipSave:true}))||changed;
+          if(modules.has('teachers') && ['teachers','settings'].includes(route)) changed=(await refreshOfficialTeachers({skipSave:true}))||changed;
+          if((modules.has('makeup')||modules.has('schedule')||modules.has('attendance')) && activeKey==='makeup'){
+            const months=ctx.months&&ctx.months.length?ctx.months:[makeupSelectedMonthKey()];
+            const selected=makeupSelectedMonthKey();
+            const ordered=[selected,...months.filter(m=>m!==selected)];
+            for(const month of ordered){
+              changed=(await refreshOfficialMakeupState({month,applyGlobal:month===selected,skipSave:true}))||changed;
+            }
+          }
+          if((modules.has('attendance')||modules.has('makeup')||modules.has('schedule')) && activeKey==='attendance'){
+            changed=(await refreshOfficialAttendanceState({skipSave:true}))||changed;
+          }
+          if((modules.has('schedule')||modules.has('makeup')||modules.has('attendance')||modules.has('core')) && activeKey==='schedule'){
+            changed=(await refreshOfficialScheduleState({skipSave:true}))||changed;
+          }
+          if(modules.has('tuition') && activeKey==='tuition') changed=(await refreshOfficialTuitionState({skipSave:true}))||changed;
+          if(modules.has('library') && activeKey==='library') changed=(await refreshOfficialLibrary({skipSave:true}))||changed;
+          if(modules.has('evaluation') && activeKey==='evaluation') changed=(await refreshOfficialEvaluations({skipSave:true}))||changed;
+        });
+        saveLocalOnly();
+        const activeAffected=(activeKey==='schedule'&&(modules.has('schedule')||modules.has('makeup')||modules.has('attendance')||modules.has('core'))) ||
+          (activeKey==='attendance'&&(modules.has('attendance')||modules.has('makeup')||modules.has('schedule'))) ||
+          (activeKey==='makeup'&&(modules.has('makeup')||modules.has('schedule')||modules.has('attendance'))) ||
+          (activeKey==='tuition'&&modules.has('tuition')) ||
+          (activeKey==='library'&&modules.has('library')) ||
+          (activeKey==='evaluation'&&modules.has('evaluation')) ||
+          (activeKey==='core'&&modules.has('core'));
+        if(changed || ctx.force || activeAffected){
+          try{renderApp()}catch(e){console.warn('Render after mutation refresh failed',e)}
+        }
+        return changed;
+      }finally{
+        v21MutationRefreshState.running=false;
+        if(v21MutationRefreshState.pending) v21ScheduleMutationRefresh([], {delayMs:80});
       }
     }
-    function v20bAfterMutation(keys=[]){
-      const list=Array.isArray(keys)?keys:[keys];
-      v18gClearNetworkCache();
-      Array.from(new Set(list.map(v20bNormalizeMutationKey))).forEach(k=>v20bUpdateCacheForKey(k));
+    function v20bAfterMutation(keys=[],options={}){
+      const modules=v21NormalizeMutationModules(keys);
+      v21InvalidateMutationCaches(modules,options);
       v18Touch();
+      v21ScheduleMutationRefresh(modules,options);
     }
     function v20b13InvalidateScheduleAfterMutation(){
       lazyRouteState.schedule={};
@@ -2882,7 +2969,7 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
         await officialFetch(`/api/makeup/plans/${encodeURIComponent(planId)}`,{method:'DELETE'});
         restoreAbsencePendingAfterMakeupCancel(p);
         removeMakeupPlanFromLocalState(planId);
-        v20bAfterMutation(['schedule','attendance','makeup']);
+        v20bAfterMutation(['schedule','attendance','makeup'],{targetSessionKey:p.targetSessionKey,sourceSessionKey:p.sourceSessionKey,month:makeupPlanMonth(p),force:true});
         v20b13InvalidateScheduleAfterMutation();
         if(route==='makeup') lazyRouteState.makeup={loaded:true,loading:false,loadedAt:Date.now(),mutated:true};
         if(route==='schedule') lazyRouteState.schedule={loaded:true,loading:false,loadedAt:Date.now(),mutated:true};
@@ -3134,7 +3221,7 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
         v20l4InvalidateScheduleAfterAttendanceSave(sessionKey);
         await refreshOfficialTuitionState();
         v18fUpdateTuitionModuleCache();
-        v20bAfterMutation(['attendance','schedule','makeup','tuition']);
+        v20bAfterMutation(['attendance','schedule','makeup','tuition'],{sessionKey,targetSessionKey:sessionKey,month:sessionKeyMonth(sessionKey),force:true});
         save(); toast('Đã lưu điểm danh và cập nhật lịch dạy/học bù'); openAttendance(sessionObjectFromKey(sessionKey).classId,sessionKey,false);
       }catch(e){toast(e.message||'Không lưu được điểm danh')}
     }
@@ -4383,7 +4470,7 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
           db.makeupTabState.makeupPlans=[...(db.makeupTabState.makeupPlans||[]).filter(p=>!(data.makeupPlans||[]).some(np=>String(np.id)===String(p.id))),...(data.makeupPlans||[])];
           (db.makeupTabState.absenceRecords||[]).forEach(a=>{if(ids.has(String(a.id))) a.status='scheduled'});
         }
-        v20bAfterMutation(['schedule','makeup','attendance']);
+        v20bAfterMutation(['schedule','makeup','attendance'],{targetSessionKey:data.targetSessionKey||data.classMakeup?.sourceSessionKey,month:date.slice(0,7),force:true});
         v20b13InvalidateScheduleAfterMutation();
         save(); toast('Đã tạo lớp học kèm'); closeModal(); if(route==='schedule') renderApp();
       }catch(e){toast(e.message||'Không tạo được lớp học kèm')}
@@ -4520,7 +4607,7 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
         const data=await officialFetch('/api/makeup/plans',{method:'POST',body:JSON.stringify({id:'mk_'+Date.now(),absenceId:absenceIdValue,studentId,sourceClassId,sourceSessionKey:sourceSessionKey||null,targetClassId,targetSessionKey})});
         db.makeupPlans.push(data.plan);
         rec.status='scheduled';
-        v20bAfterMutation(['schedule','attendance','makeup']);
+        v20bAfterMutation(['schedule','attendance','makeup'],{targetSessionKey,sourceSessionKey,month:sessionKeyMonth(sourceSessionKey)||sessionKeyMonth(targetSessionKey),force:true});
         v20b13InvalidateScheduleAfterMutation();
         save(); toast('Đã xếp học bù vào đúng buổi đã chọn'); openScheduleMakeup(targetClassId,targetSessionKey);
       }catch(e){toast(e.message||'Không xếp được học bù')}
@@ -5036,7 +5123,7 @@ function canManageLibrary(){return isAdmin()||isManager()||isTeachingUser()}
         const next=(db.makeupAvailableMonths||[])[0] || makeupCurrentMonthKey();
         db.settings ||= {}; db.settings.makeupFilter ||= {}; db.settings.makeupFilter.month=next; db.makeupMonth=next;
         moduleCacheSet(`makeup:${month}`,{makeupMonth:month,makeupPlans:[],absenceRecords:[],attendanceSessions:{},supportClasses:[],deletedMonths:db.deletedMakeupMonths,availableMonths:db.makeupAvailableMonths});
-        v20bAfterMutation(['makeup']);
+        v20bAfterMutation(['makeup','schedule','attendance'],{month,force:true});
         save(); toast('Đã xóa dữ liệu vắng của '+formatMonthKeyVN(month));
         await refreshOfficialMakeupState({month:next,applyGlobal:true,skipSave:true});
         renderApp();
