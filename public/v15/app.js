@@ -325,49 +325,53 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
     function v18fUpdateScheduleModuleCache(){
       db.classMakeupSessions=v20bMergeClassMakeupSessions([],db.classMakeupSessions||[]);
       v20b7MergeClassSnapshotsFromMakeups(db.classMakeupSessions);
-      moduleCacheSet(`schedule:${isoDate(weekStartDate())}`, {
-        classCancellations: db.classCancellations || {},
-        classMakeupSessions: db.classMakeupSessions || [],
-        makeupPlans: db.makeupPlans || [],
-        attendanceBundled: true,
-        attendanceSessions: db.attendanceSessions || {},
-        absenceRecords: db.absenceRecords || []
-      });
+      const week=isoDate(weekStartDate());
+      const bundle=v26WeekBundleFromDb(week,{keepExistingAttendance:true,source:'local-schedule'});
+      moduleCacheSet(`schedule:${week}`,bundle.schedule);
+      v26StoreSet(v26WeekStoreKey(week),bundle,{source:'local-schedule'});
     }
     function v18fUpdateAttendanceModuleCache(){
-      moduleCacheSet(`attendance:${isoDate(weekStartDate())}`, {
-        attendanceSessions: db.attendanceSessions || {},
-        absenceRecords: db.absenceRecords || []
-      });
+      const week=isoDate(weekStartDate());
+      const bundle=v26WeekBundleFromDb(week,{keepExistingAttendance:false,source:'local-attendance'});
+      moduleCacheSet(`attendance:${week}`,bundle.attendance);
+      v26StoreSet(v26WeekStoreKey(week),bundle,{source:'local-attendance'});
     }
     function v18fUpdateMakeupModuleCache(){
       const month=makeupSelectedMonthKey();
       const st=(db.makeupTabState && db.makeupTabState.month===month) ? db.makeupTabState : null;
-      moduleCacheSet(`makeup:${month}`, {
+      const payload={
         makeupMonth: month,
         makeupPlans: st?.makeupPlans || db.makeupPlans || [],
         absenceRecords: st?.absenceRecords || db.absenceRecords || [],
         attendanceSessions: st?.attendanceSessions || db.attendanceSessions || {},
+        supportClasses: st?.supportClasses || [],
         deletedMonths: db.deletedMakeupMonths || [],
         availableMonths: db.makeupAvailableMonths || []
-      });
+      };
+      moduleCacheSet(`makeup:${month}`, payload);
+      v26StoreSet(v26MakeupStoreKey(month),payload,{source:'local-makeup'});
     }
     function v18fUpdateTuitionModuleCache(){
-      moduleCacheSet(`tuition:${tuitionMonthKey()}`, {
+      const payload={
         tuitionRollup: db.tuitionRollup || {},
         tuitionRollupMonth: db.tuitionRollupMonth || tuitionMonthKey(),
         payments: db.payments || {},
         tuitionMessages: db.tuitionMessages || {},
         unitPrice: db.settings?.unitPrice || 70000
-      });
+      };
+      moduleCacheSet(`tuition:${tuitionMonthKey()}`, payload);
+      v26StoreSet(v26TuitionStoreKey(),payload,{source:'local-tuition'});
     }
     function v18fUpdateLibraryModuleCache(){
-      moduleCacheSet('library:latest', { exerciseLibrary: db.exerciseLibrary || [] });
+      const payload={exerciseLibrary:db.exerciseLibrary||[]};
+      moduleCacheSet('library:latest',payload);
+      v26StoreSet(v26StoreKey('library','latest'),payload,{source:'local-library'});
     }
     function v18fUpdateEvaluationModuleCache(){
       const currentMonth=evaluationMonthKey();
-      const items=(db.evaluations||[]).filter(e=>normalizeEvaluationMonthValue(e.monthKey||e.month)===currentMonth);
-      moduleCacheSet(`evaluation:${currentMonth}`, { evaluations: items });
+      const payload={evaluations:(db.evaluations||[]).filter(e=>normalizeEvaluationMonthValue(e.monthKey||e.month)===currentMonth)};
+      moduleCacheSet(`evaluation:${currentMonth}`,payload);
+      v26StoreSet(v26EvaluationStoreKey(currentMonth),payload,{source:'local-evaluation'});
     }
 
     function v20bNormalizeMutationKey(key){
@@ -388,6 +392,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       addSession(options.sessionKey);
       addSession(options.targetSessionKey);
       addSession(options.sourceSessionKey);
+      (options.sessionKeys||[]).forEach(addSession);
       if(options.plan){addSession(options.plan.targetSessionKey);addSession(options.plan.sourceSessionKey)}
       if(options.record){addSession(options.record.sourceSessionKey)}
       addMonth(makeupSelectedMonthKey());
@@ -398,6 +403,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
     }
     function v21InvalidateMutationCaches(keys=[],options={}){
       const modules=v21NormalizeMutationModules(keys);
+      v26InvalidateSharedStoreForModules(modules,options);
       const weekKey=isoDate(weekStartDate());
       const months=v21MutationMonths(options);
       v18gClearNetworkCache();
@@ -450,6 +456,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       merged.modules=v21NormalizeMutationModules([...(merged.modules||[]),...(next.modules||[])]);
       merged.months=Array.from(new Set([...(merged.months||[]),...v21MutationMonths(next)]));
       ['sessionKey','targetSessionKey','sourceSessionKey'].forEach(k=>{if(next[k]) merged[k]=next[k]});
+      merged.sessionKeys=Array.from(new Set([...(merged.sessionKeys||[]),...(next.sessionKeys||[]),next.sessionKey,next.targetSessionKey,next.sourceSessionKey].filter(Boolean)));
       merged.force=!!(merged.force||next.force);
       merged.applyMakeupGlobal=!!(merged.applyMakeupGlobal||next.applyMakeupGlobal);
       merged.preserveCache=!!(merged.preserveCache||next.preserveCache);
@@ -494,25 +501,25 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       let changed=false;
       try{
         await runRefreshWithoutRepeatedSaves(async()=>{
-          if(modules.has('core') && routeNeedsCoreData(route)) changed=(await refreshOfficialClasses({skipSave:true}))||changed;
-          if(modules.has('teachers') && ['teachers','settings'].includes(route)) changed=(await refreshOfficialTeachers({skipSave:true}))||changed;
+          if(modules.has('core') && routeNeedsCoreData(route)) changed=(await refreshOfficialClasses({skipSave:true,forceNetwork:true}))||changed;
+          if(modules.has('teachers') && ['teachers','settings'].includes(route)) changed=(await refreshOfficialTeachers({skipSave:true,forceNetwork:true}))||changed;
           if((modules.has('makeup')||modules.has('schedule')||modules.has('attendance')) && activeKey==='makeup'){
             const months=ctx.months&&ctx.months.length?ctx.months:[makeupSelectedMonthKey()];
             const selected=makeupSelectedMonthKey();
             const ordered=[selected,...months.filter(m=>m!==selected)];
             for(const month of ordered){
-              changed=(await refreshOfficialMakeupState({month,applyGlobal:month===selected,skipSave:true}))||changed;
+              changed=(await refreshOfficialMakeupState({month,applyGlobal:month===selected,skipSave:true,forceNetwork:true}))||changed;
             }
           }
           if((modules.has('attendance')||modules.has('makeup')||modules.has('schedule')) && activeKey==='attendance'){
-            changed=(await refreshOfficialAttendanceState({skipSave:true}))||changed;
+            changed=(await refreshOfficialAttendanceState({skipSave:true,forceNetwork:true}))||changed;
           }
           if((modules.has('schedule')||modules.has('makeup')||modules.has('attendance')||modules.has('core')) && activeKey==='schedule'){
-            changed=(await refreshOfficialScheduleState({skipSave:true}))||changed;
+            changed=(await refreshOfficialScheduleState({skipSave:true,forceNetwork:true}))||changed;
           }
-          if(modules.has('tuition') && activeKey==='tuition') changed=(await refreshOfficialTuitionState({skipSave:true}))||changed;
-          if(modules.has('library') && activeKey==='library') changed=(await refreshOfficialLibrary({skipSave:true}))||changed;
-          if(modules.has('evaluation') && activeKey==='evaluation') changed=(await refreshOfficialEvaluations({skipSave:true}))||changed;
+          if(modules.has('tuition') && activeKey==='tuition') changed=(await refreshOfficialTuitionState({skipSave:true,forceNetwork:true}))||changed;
+          if(modules.has('library') && activeKey==='library') changed=(await refreshOfficialLibrary({skipSave:true,forceNetwork:true}))||changed;
+          if(modules.has('evaluation') && activeKey==='evaluation') changed=(await refreshOfficialEvaluations({skipSave:true,forceNetwork:true}))||changed;
         });
         saveLocalOnly();
         const activeAffected=(activeKey==='schedule'&&(modules.has('schedule')||modules.has('makeup')||modules.has('attendance')||modules.has('core'))) ||
@@ -574,6 +581,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
           lazyRouteState[key]={...(lazyRouteState[key]||{}),loaded:true,loading:false,loadedAt:Date.now(),mutated:true};
         }
       });
+      v26PatchSharedStoreForModules(modules,options);
     }
     function v20bAfterMutation(keys=[],options={}){
       const modules=v21NormalizeMutationModules(keys);
@@ -599,17 +607,18 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
     function v18fRenderCacheFirst(r){
       const key=routeDataKey(r);
       if(key) lazyRouteState[key]={};
-      // Nếu có cache sẵn thì hydrate trước để đổi tuần/tháng mượt hơn.
-      hydrateRouteCache(r);
+      // Phase 5: hydrate the shared memory snapshot first. A fresh snapshot does
+      // not need another request; stale/disk snapshots are revalidated in background.
+      const hydrated=hydrateRouteCache(r);
+      const sharedFresh=!!lazyRouteState[key]?.sharedFresh;
       saveLocalOnly();
       render();
-      // V20B.18: đổi tuần trong Lịch dạy cũng phải cào lại /api/classes.
-      // Nếu giáo viên vừa được thêm/gỡ lớp, chỉ refresh schedule/state là chưa đủ.
-      if(['schedule','attendance','makeup'].includes(r)) ensurePageData(r,{force:true});
-      else ensureRouteData(r,{force:true});
+      const forceNetwork=!hydrated||!sharedFresh;
+      if(['schedule','attendance','makeup'].includes(r)) ensurePageData(r,{force:forceNetwork});
+      else ensureRouteData(r,{force:forceNetwork});
     }
     const V18G_GET_TTL_MS=1800;
-    const V20B13_SCHEDULE_STALE_MS=5000; // V20B.18: lịch giáo viên cần refresh gần realtime hơn.
+    const V20B13_SCHEDULE_STALE_MS=15000; // Phase 5: week store is shared for 15s; mutations still patch immediately.
     const V20C_PREFETCH_DELAY_MS=750;
     const V20C_PREFETCH_GAP_MS=650;
     const V20C_PREFETCH_RECENT_MS=60000;
@@ -688,6 +697,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       v22MakeupMonthMemoryCache.clear();
       v22MakeupMonthInflight.clear();
       v22MakeupMonthGeneration.clear();
+      v26StoreReset();
       v20aLastCoreLoadError='';
     }
     function v20b4ResetSessionMemo(){
@@ -910,7 +920,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       }
       if(key==='schedule'){
         db.classCancellations=payload.classCancellations||{};
-        db.classMakeupSessions=v20bMergeClassMakeupSessions(db.classMakeupSessions||[],payload.classMakeupSessions||[]);
+        db.classMakeupSessions=(payload.classMakeupSessions||[]).filter(m=>m?.status!=='cancelled');
         v20b7MergeClassSnapshotsFromMakeups(db.classMakeupSessions);
         db.makeupPlans=payload.makeupPlans||[];
         // Phase 4B: schedule cache can carry the attendance state required by the Schedule screen.
@@ -976,10 +986,337 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       }
       return false;
     }
+    // Phase 5: shared in-memory store used by all front-end modules.
+    // It keeps one snapshot per logical scope (core, week, month), deduplicates
+    // concurrent loaders and protects optimistic mutations from stale responses.
+    const V26_SHARED_STORE_TTL={
+      core:5*60*1000,
+      week:15*1000,
+      makeup:60*1000,
+      tuition:60*1000,
+      library:5*60*1000,
+      evaluation:2*60*1000,
+      teachers:5*60*1000,
+      settings:5*60*1000
+    };
+    const V26_SHARED_STORE_RETENTION_MS=15*60*1000;
+    const v26SharedStore={
+      entries:new Map(),
+      inflight:new Map(),
+      generations:new Map(),
+      listeners:new Set(),
+      stats:{hits:0,misses:0,inflightHits:0,loads:0,invalidations:0,updates:0}
+    };
+    function v26StoreKey(type,scope=''){
+      return scope?`${type}:${scope}`:String(type||'');
+    }
+    function v26WeekStoreKey(start=isoDate(weekStartDate())){return v26StoreKey('week',start)}
+    function v26MakeupStoreKey(month=makeupSelectedMonthKey()){return v26StoreKey('makeup',month)}
+    function v26TuitionStoreKey(month=tuitionMonthKey()){return v26StoreKey('tuition',month)}
+    function v26EvaluationStoreKey(month=evaluationMonthKey()){return v26StoreKey('evaluation',month)}
+    function v26StoreTtl(key){
+      const type=String(key||'').split(':')[0];
+      return Number(V26_SHARED_STORE_TTL[type]||60*1000);
+    }
+    function v26StoreGeneration(key){return Number(v26SharedStore.generations.get(key)||0)}
+    function v26StoreBumpGeneration(key){
+      const next=v26StoreGeneration(key)+1;
+      v26SharedStore.generations.set(key,next);
+      return next;
+    }
+    function v26StoreNotify(event){
+      v26SharedStore.listeners.forEach(fn=>{try{fn(event)}catch(e){console.warn('Shared store listener failed',e)}});
+    }
+    function v26StoreGet(key,options={}){
+      const entry=v26SharedStore.entries.get(String(key||''));
+      if(!entry){v26SharedStore.stats.misses++;return null}
+      const age=Date.now()-Number(entry.ts||0);
+      if(age>V26_SHARED_STORE_RETENTION_MS){
+        v26SharedStore.entries.delete(key);
+        v26SharedStore.stats.misses++;
+        return null;
+      }
+      const fresh=age<=Number(entry.ttl||v26StoreTtl(key));
+      if(!fresh && !options.allowStale){v26SharedStore.stats.misses++;return null}
+      v26SharedStore.stats.hits++;
+      return {payload:v18gCloneJson(entry.payload),fresh,ts:entry.ts,age,source:entry.source||'memory'};
+    }
+    function v26StoreSet(key,payload,options={}){
+      if(!key || payload==null) return payload;
+      const generation=v26StoreBumpGeneration(key);
+      const ttl=Number(options.ttl||v26StoreTtl(key));
+      const entry={
+        payload:v18gCloneJson(payload),
+        ts:options.stale?(Date.now()-ttl-1):Date.now(),
+        ttl,
+        generation,
+        source:options.source||'memory'
+      };
+      v26SharedStore.entries.set(key,entry);
+      v26SharedStore.stats.updates++;
+      v26StoreNotify({type:'set',key,payload:v18gCloneJson(payload),source:entry.source});
+      return payload;
+    }
+    function v26StoreInvalidate(key,options={}){
+      const normalized=String(key||'');
+      if(!normalized) return;
+      v26StoreBumpGeneration(normalized);
+      if(options.markStale){
+        const entry=v26SharedStore.entries.get(normalized);
+        if(entry) v26SharedStore.entries.set(normalized,{...entry,ts:Date.now()-Number(entry.ttl||v26StoreTtl(normalized))-1});
+      }else{
+        v26SharedStore.entries.delete(normalized);
+      }
+      v26SharedStore.inflight.delete(normalized);
+      v26SharedStore.stats.invalidations++;
+      v26StoreNotify({type:'invalidate',key:normalized});
+    }
+    function v26StoreInvalidatePrefix(prefix){
+      const value=String(prefix||'');
+      if(!value) return;
+      const keys=new Set([
+        ...Array.from(v26SharedStore.entries.keys()).filter(k=>String(k).startsWith(value)),
+        ...Array.from(v26SharedStore.inflight.keys()).filter(k=>String(k).startsWith(value))
+      ]);
+      keys.forEach(k=>v26StoreInvalidate(k));
+    }
+    function v26StoreReset(){
+      v26SharedStore.entries.clear();
+      v26SharedStore.inflight.clear();
+      v26SharedStore.generations.clear();
+      Object.keys(v26SharedStore.stats).forEach(k=>v26SharedStore.stats[k]=0);
+      v26StoreNotify({type:'reset'});
+    }
+    async function v26StoreLoad(key,loader,options={}){
+      const normalized=String(key||'');
+      const cached=!options.force?v26StoreGet(normalized):null;
+      if(cached) return {...cached,fromStore:true};
+      const existing=v26SharedStore.inflight.get(normalized);
+      if(existing){
+        v26SharedStore.stats.inflightHits++;
+        return v18gCloneJson(await existing);
+      }
+      const startedGeneration=v26StoreGeneration(normalized);
+      v26SharedStore.stats.loads++;
+      const promise=(async()=>{
+        const payload=await loader();
+        if(v26StoreGeneration(normalized)!==startedGeneration){
+          const latest=v26StoreGet(normalized,{allowStale:true});
+          if(latest) return {...latest,fromStore:true,superseded:true};
+          return {payload:null,fresh:false,source:'superseded',fromStore:false,superseded:true};
+        }
+        v26StoreSet(normalized,payload,{ttl:options.ttl,source:options.source||'network'});
+        const saved=v26StoreGet(normalized,{allowStale:true});
+        return {...saved,fromStore:false,source:options.source||'network'};
+      })();
+      v26SharedStore.inflight.set(normalized,promise);
+      try{return v18gCloneJson(await promise)}
+      finally{if(v26SharedStore.inflight.get(normalized)===promise) v26SharedStore.inflight.delete(normalized)}
+    }
+    function v26SessionKeyDateValue(sessionKey){
+      const parts=String(sessionKey||'').split('|');
+      const date=parts.length>=4?parts[1]:'';
+      return /^\d{4}-\d{2}-\d{2}$/.test(date)?date:'';
+    }
+    function v26DateWithinWeek(date,start){
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(String(date||''))) return false;
+      const end=isoDate(addDays(parseISODate(start),7));
+      return String(date)>=String(start)&&String(date)<end;
+    }
+    function v26WeekBundleFromDb(start=isoDate(weekStartDate()),options={}){
+      const key=v26WeekStoreKey(start);
+      const existing=v26StoreGet(key,{allowStale:true})?.payload||{};
+      const currentPlans=(db.makeupPlans||[]).filter(plan=>v26DateWithinWeek(v26SessionKeyDateValue(plan?.targetSessionKey),start));
+      const planAbsenceIds=new Set(currentPlans.map(p=>String(p?.absenceId||'')).filter(Boolean));
+      const currentWeekAbsences=(db.absenceRecords||[]).filter(a=>v26DateWithinWeek(v26SessionKeyDateValue(a?.sourceSessionKey),start));
+      const currentSourceAbsences=(db.absenceRecords||[]).filter(a=>planAbsenceIds.has(String(a?.id||'')));
+      const existingAttendance=existing.attendance||{};
+      const useExistingAttendance=!!options.keepExistingAttendance&&!!existing.attendance;
+      const attendance={
+        attendanceSessions:useExistingAttendance?(existingAttendance.attendanceSessions||{}):(db.attendanceSessions||{}),
+        absenceRecords:useExistingAttendance?(existingAttendance.absenceRecords||[]):currentWeekAbsences
+      };
+      const sourceMap=new Map();
+      [...(existing.schedule?.sourceAbsenceRecords||[]),...currentSourceAbsences].forEach(a=>{if(a?.id)sourceMap.set(String(a.id),a)});
+      const cancellations=Object.fromEntries(Object.entries(db.classCancellations||{}).filter(([sessionKey])=>{
+        const date=v26SessionKeyDateValue(sessionKey);
+        return !date||v26DateWithinWeek(date,start);
+      }));
+      const classMakeups=(db.classMakeupSessions||[]).filter(m=>{
+        const date=String(m?.date||v26SessionKeyDateValue(m?.sourceSessionKey)||'');
+        return v26DateWithinWeek(date,start)&&m?.status!=='cancelled';
+      });
+      return {
+        start,
+        end:isoDate(addDays(parseISODate(start),7)),
+        schedule:{
+          classCancellations:cancellations,
+          classMakeupSessions:classMakeups,
+          makeupPlans:currentPlans,
+          sourceAbsenceRecords:Array.from(sourceMap.values()),
+          attendanceBundled:true,
+          attendanceSessions:attendance.attendanceSessions,
+          absenceRecords:attendance.absenceRecords
+        },
+        attendance,
+        attendanceBundled:true,
+        source:options.source||'local'
+      };
+    }
+    function v26StoreDescriptorForRoute(r){
+      const key=routeDataKey(r);
+      if(key==='core') return {storeKey:v26StoreKey('core'),kind:'core'};
+      if(key==='schedule'||key==='attendance') return {storeKey:v26WeekStoreKey(),kind:'week'};
+      if(key==='makeup') return {storeKey:v26MakeupStoreKey(),kind:'makeup'};
+      if(key==='tuition') return {storeKey:v26TuitionStoreKey(),kind:'tuition'};
+      if(key==='library') return {storeKey:v26StoreKey('library','latest'),kind:'library'};
+      if(key==='evaluation') return {storeKey:v26EvaluationStoreKey(),kind:'evaluation'};
+      if(key==='teachers') return {storeKey:v26StoreKey('teachers','latest'),kind:'teachers'};
+      return null;
+    }
+    function v26ApplySharedStoreRoute(r,entry){
+      if(!entry?.payload) return false;
+      const key=routeDataKey(r);
+      if(key==='schedule'||key==='attendance'){
+        const bundle=entry.payload||{};
+        let ok=false;
+        // Apply attendance first, then schedule so source absence records bundled
+        // for makeup placement are merged last instead of being overwritten.
+        if(bundle.attendance) ok=applyCachedPayload('attendance',bundle.attendance)||ok;
+        if(bundle.schedule) ok=applyCachedPayload('schedule',bundle.schedule)||ok;
+        return ok;
+      }
+      return applyCachedPayload(key,entry.payload);
+    }
+    function v26HydrateRouteFromSharedStore(r){
+      const descriptor=v26StoreDescriptorForRoute(r);
+      if(!descriptor) return {ok:false,fresh:false};
+      const entry=v26StoreGet(descriptor.storeKey,{allowStale:true});
+      if(!entry) return {ok:false,fresh:false};
+      const ok=v26ApplySharedStoreRoute(r,entry);
+      return {ok,fresh:entry.fresh,ts:entry.ts,source:entry.source,storeKey:descriptor.storeKey};
+    }
+    function v26CaptureRouteToSharedStore(r,options={}){
+      const descriptor=v26StoreDescriptorForRoute(r);
+      if(!descriptor) return;
+      let payload=null;
+      if(descriptor.kind==='core') payload={classes:db.classes||[],teachers:db.teachers||[]};
+      if(descriptor.kind==='week') payload=v26WeekBundleFromDb(undefined,{keepExistingAttendance:false,source:options.source||'local'});
+      if(descriptor.kind==='makeup'){
+        const month=makeupSelectedMonthKey();
+        const st=(db.makeupTabState&&db.makeupTabState.month===month)?db.makeupTabState:null;
+        payload={
+          makeupMonth:month,
+          makeupPlans:st?.makeupPlans||db.makeupPlans||[],
+          absenceRecords:st?.absenceRecords||db.absenceRecords||[],
+          attendanceSessions:st?.attendanceSessions||db.attendanceSessions||{},
+          supportClasses:st?.supportClasses||[],
+          deletedMonths:db.deletedMakeupMonths||[],
+          availableMonths:db.makeupAvailableMonths||[]
+        };
+      }
+      if(descriptor.kind==='tuition') payload={tuitionRollup:db.tuitionRollup||{},tuitionRollupMonth:db.tuitionRollupMonth||tuitionMonthKey(),payments:db.payments||{},tuitionMessages:db.tuitionMessages||{},unitPrice:db.settings?.unitPrice||70000};
+      if(descriptor.kind==='library') payload={exerciseLibrary:db.exerciseLibrary||[]};
+      if(descriptor.kind==='evaluation') payload={evaluations:(db.evaluations||[]).filter(e=>normalizeEvaluationMonthValue(e.monthKey||e.month)===evaluationMonthKey())};
+      if(descriptor.kind==='teachers') payload={teachers:db.teachers||[]};
+      if(payload) v26StoreSet(descriptor.storeKey,payload,{stale:!!options.stale,source:options.source||'local'});
+    }
+    function v26SessionWeekStart(sessionKey){
+      const parts=String(sessionKey||'').split('|');
+      const date=parts.length>=4?parts[1]:'';
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(date)) return '';
+      return isoDate(mondayOf(parseISODate(date)));
+    }
+    function v26MutationWeekStarts(options={}){
+      const weeks=new Set([isoDate(weekStartDate())]);
+      const add=value=>{const week=v26SessionWeekStart(value);if(week) weeks.add(week)};
+      [options.sessionKey,options.targetSessionKey,options.sourceSessionKey].forEach(add);
+      (options.sessionKeys||[]).forEach(add);
+      if(options.plan){add(options.plan.targetSessionKey);add(options.plan.sourceSessionKey)}
+      if(options.record) add(options.record.sourceSessionKey);
+      return Array.from(weeks);
+    }
+    function v26InvalidateSharedStoreForModules(keys=[],options={}){
+      const modules=new Set(v21NormalizeMutationModules(keys));
+      if(modules.has('core')) v26StoreInvalidate(v26StoreKey('core'));
+      if(modules.has('schedule')||modules.has('attendance')) v26MutationWeekStarts(options).forEach(week=>v26StoreInvalidate(v26WeekStoreKey(week)));
+      if(modules.has('makeup')){
+        const months=v21MutationMonths(options);
+        if(months.length) months.forEach(m=>v26StoreInvalidate(v26MakeupStoreKey(m)));
+        else v26StoreInvalidatePrefix('makeup:');
+      }
+      if(modules.has('tuition')) v26StoreInvalidate(v26TuitionStoreKey());
+      if(modules.has('library')) v26StoreInvalidate(v26StoreKey('library','latest'));
+      if(modules.has('evaluation')) v26StoreInvalidate(v26EvaluationStoreKey());
+      if(modules.has('teachers')) v26StoreInvalidate(v26StoreKey('teachers','latest'));
+    }
+    function v26PatchSharedStoreForModules(keys=[],options={}){
+      const modules=new Set(v21NormalizeMutationModules(keys));
+      if(modules.has('core')) v26CaptureRouteToSharedStore('overview',{source:'mutation'});
+      if(modules.has('schedule')||modules.has('attendance')){
+        const currentWeek=isoDate(weekStartDate());
+        v26MutationWeekStarts(options).forEach(week=>{
+          if(week===currentWeek) v26StoreSet(v26WeekStoreKey(week),v26WeekBundleFromDb(week,{keepExistingAttendance:!modules.has('attendance'),source:'mutation'}),{source:'mutation'});
+          else v26StoreInvalidate(v26WeekStoreKey(week));
+        });
+      }
+      if(modules.has('makeup')){
+        const months=v21MutationMonths(options);
+        months.forEach(month=>{
+          const st=(db.makeupTabState&&db.makeupTabState.month===month)?db.makeupTabState:null;
+          const old=v26StoreGet(v26MakeupStoreKey(month),{allowStale:true})?.payload||{};
+          v26StoreSet(v26MakeupStoreKey(month),{
+            makeupMonth:month,
+            makeupPlans:st?.makeupPlans||old.makeupPlans||db.makeupPlans||[],
+            absenceRecords:st?.absenceRecords||old.absenceRecords||db.absenceRecords||[],
+            attendanceSessions:st?.attendanceSessions||old.attendanceSessions||db.attendanceSessions||{},
+            supportClasses:st?.supportClasses||old.supportClasses||[],
+            deletedMonths:db.deletedMakeupMonths||old.deletedMonths||[],
+            availableMonths:db.makeupAvailableMonths||old.availableMonths||[]
+          },{source:'mutation'});
+        });
+      }
+      if(modules.has('tuition')) v26CaptureRouteToSharedStore('tuition',{source:'mutation'});
+      if(modules.has('library')) v26CaptureRouteToSharedStore('homework',{source:'mutation'});
+      if(modules.has('evaluation')) v26CaptureRouteToSharedStore('evaluation',{source:'mutation'});
+      if(modules.has('teachers')) v26CaptureRouteToSharedStore('teachers',{source:'mutation'});
+    }
+    function v26SharedStoreSubscribe(fn){
+      if(typeof fn!=='function') return ()=>{};
+      v26SharedStore.listeners.add(fn);
+      return ()=>v26SharedStore.listeners.delete(fn);
+    }
+    if(typeof window!=='undefined'){
+      window.msgiangSharedStore={
+        stats:()=>({...v26SharedStore.stats,entries:v26SharedStore.entries.size,inflight:v26SharedStore.inflight.size}),
+        keys:()=>Array.from(v26SharedStore.entries.keys()),
+        subscribe:v26SharedStoreSubscribe
+      };
+    }
+
     function hydrateRouteCache(r){
       if(!currentUser) return false;
       const key=routeDataKey(r);
       if(key!=='core' && !routeNeedsLazyData(r)) return false;
+
+      // Phase 5: memory store is the first source. Schedule and Attendance share
+      // the same week bundle, so switching between them is immediate and does not
+      // start another request while the snapshot is still fresh.
+      const shared=v26HydrateRouteFromSharedStore(r);
+      if(shared.ok){
+        lazyRouteState[key]={
+          loaded:true,
+          loading:false,
+          loadedAt:Number(shared.ts||Date.now()),
+          fromCache:!shared.fresh,
+          fromSharedStore:true,
+          sharedFresh:!!shared.fresh,
+          storeKey:shared.storeKey
+        };
+        saveLocalOnly();
+        return true;
+      }
+
       const mainPayload=moduleCacheGet(moduleCacheKeyForRoute(r));
       let ok=false;
       if(mainPayload) ok=applyCachedPayload(key,mainPayload);
@@ -995,7 +1332,10 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
         // Học bù có API/cache riêng theo tháng, không cần hydrate từ lịch tuần/điểm danh tuần nữa.
       }
       if(ok){
-        lazyRouteState[key]={loaded:true,loading:false,loadedAt:Date.now(),fromCache:true};
+        // Disk cache only paints the screen quickly. Seed it into the shared store
+        // as stale so every module can reuse it, then revalidate in the background.
+        v26CaptureRouteToSharedStore(r,{stale:true,source:'disk-cache'});
+        lazyRouteState[key]={loaded:true,loading:false,loadedAt:Date.now(),fromCache:true,fromSharedStore:false,sharedFresh:false};
         saveLocalOnly();
       }
       return ok;
@@ -1004,14 +1344,17 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
     async function ensureCoreData(options={}){
       if(!currentUser) return false;
       const key='core';
-      if(!options.force && !lazyRouteState[key]?.loaded && hydrateRouteCache('overview')) return false;
+      if(!options.force && !lazyRouteState[key]?.loaded && hydrateRouteCache('overview')){
+        if(!lazyRouteState[key]?.sharedFresh) ensureCoreData({force:true,cacheRefresh:true,prefetch:!!options.prefetch});
+        return false;
+      }
       if(lazyRouteState[key]?.loaded && !options.force) return false;
       if(lazyRouteState[key]?.loading) return false;
       const wasLoadedBefore=!!lazyRouteState[key]?.loaded;
       lazyRouteState[key]={...(lazyRouteState[key]||{}),loading:true};
       const startedRoute=route;
       try{
-        const changed=await refreshOfficialClasses({skipSave:true});
+        const changed=await refreshOfficialClasses({skipSave:true,forceNetwork:!!options.force});
         if(v20aLastCoreLoadError){
           lazyRouteState[key]={loaded:false,loading:false,error:v20aLastCoreLoadError};
           return false;
@@ -1036,7 +1379,9 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       // Trường hợp Admin vừa gán dạy bù cho giáo viên, cache cũ của giáo viên có thể vẫn rỗng.
       // Nếu dừng ở cache, giáo viên sẽ thấy "Chưa có dữ liệu lịch học" cho tới khi refresh/đổi tuần.
       if(!options.force && !lazyRouteState[key]?.loaded && hydrateRouteCache(r)){
-        ensureRouteData(r,{force:true,cacheRefresh:true,prefetch:!!options.prefetch});
+        if(!lazyRouteState[key]?.sharedFresh){
+          ensureRouteData(r,{force:true,cacheRefresh:true,prefetch:!!options.prefetch});
+        }
         return;
       }
       if(lazyRouteState[key]?.loaded && !options.force){
@@ -1066,26 +1411,26 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
           // ensurePageData Phase 4A tải core và route song song. Khi core đang tải,
           // route không tự khởi tạo thêm một request /api/classes trùng lặp.
           const shouldRefreshClasses=(!coreState.loaded && !coreState.loading) || (coreState.loaded && coreAge>V22_CORE_ROUTE_REFRESH_TTL_MS);
-          const classJob=()=>refreshOfficialClasses({skipSave:true}).then(changed=>{
+          const classJob=()=>refreshOfficialClasses({skipSave:true,forceNetwork:!!options.force}).then(changed=>{
             lazyRouteState.core={...(lazyRouteState.core||{}),loaded:true,loading:false,loadedAt:Date.now(),unchanged:!changed};
             return changed;
           });
           if(key==='schedule'){
             if(shouldRefreshClasses) jobs.push(classJob());
-            jobs.push(v25RefreshScheduleAndAttendance({skipSave:true}));
+            jobs.push(v25RefreshScheduleAndAttendance({skipSave:true,forceNetwork:!!options.force}));
           }
           if(key==='makeup'){
             if(shouldRefreshClasses) jobs.push(classJob());
-            jobs.push(refreshOfficialMakeupState({skipSave:true}));
+            jobs.push(refreshOfficialMakeupState({skipSave:true,forceNetwork:!!options.force}));
           }
           if(key==='attendance'){
             if(shouldRefreshClasses) jobs.push(classJob());
-            jobs.push(v25RefreshScheduleAndAttendance({skipSave:true}));
+            jobs.push(v25RefreshScheduleAndAttendance({skipSave:true,forceNetwork:!!options.force}));
           }
-          if(key==='tuition') jobs.push(refreshOfficialTuitionState({skipSave:true}));
-          if(key==='library') jobs.push(refreshOfficialLibrary({skipSave:true}));
-          if(key==='evaluation') jobs.push(refreshOfficialEvaluations({skipSave:true}));
-          if(key==='teachers') jobs.push(refreshOfficialTeachers({skipSave:true}));
+          if(key==='tuition') jobs.push(refreshOfficialTuitionState({skipSave:true,forceNetwork:!!options.force}));
+          if(key==='library') jobs.push(refreshOfficialLibrary({skipSave:true,forceNetwork:!!options.force}));
+          if(key==='evaluation') jobs.push(refreshOfficialEvaluations({skipSave:true,forceNetwork:!!options.force}));
+          if(key==='teachers') jobs.push(refreshOfficialTeachers({skipSave:true,forceNetwork:!!options.force}));
           const results=await Promise.allSettled(jobs);
           anyChanged=v18iAnyChanged(results);
         });
@@ -1255,6 +1600,9 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       db.settings ||= {};
       db.settings.unitPrice=Number(settings.tuition_per_session||settings.unitPrice||70000);
       db.settings.capacity=Number(settings.session_capacity||settings.capacity||15);
+      if(typeof v26StoreSet==='function'){
+        v26StoreSet(v26StoreKey('settings','latest'),{settings:{unitPrice:db.settings.unitPrice,capacity:db.settings.capacity}},{ttl:V26_SHARED_STORE_TTL.settings,source:'settings-api'});
+      }
     }
     function applyBootstrapSnapshot(snapshot){
       if(!snapshot || typeof snapshot!=='object') return;
@@ -1275,6 +1623,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
         if(currentUser){
           v20b4ResetRouteLoadState();
           v20b4ResetSessionMemo();
+          v26StoreSet(v26StoreKey('settings','latest'),{settings:{unitPrice:db.settings?.unitPrice||70000,capacity:db.settings?.capacity||15}},{ttl:V26_SHARED_STORE_TTL.settings,source:'bootstrap'});
           v18gClearNetworkCache();
           v18hCleanupLegacyStorage();
           clearVolatileOfficialState();
@@ -1361,8 +1710,12 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       if(!currentUser) return false;
       try{
         v20aLastCoreLoadError='';
-        const data=await officialFetch('/api/classes');
-        const payload={classes:data.classes||[],teachers:Array.isArray(data.teachers)?data.teachers:[]};
+        const loaded=await v26StoreLoad(v26StoreKey('core'),async()=>{
+          const data=await officialFetch('/api/classes');
+          return {classes:data.classes||[],teachers:Array.isArray(data.teachers)?data.teachers:[]};
+        },{ttl:V26_SHARED_STORE_TTL.core,force:!!options.forceNetwork,source:'classes-api'});
+        if(!loaded?.payload) return false;
+        const payload=loaded.payload;
         const changed=v18iHashPayload('classes:latest',payload);
         const localMissingClassTime=(payload.classes||[]).some(pc=>{
           const lc=(db.classes||[]).find(c=>String(c.id)===String(pc.id));
@@ -1386,8 +1739,12 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
     async function refreshOfficialTeachers(options={}){
       if(!currentUser || !(currentUser.roles||[]).some(r=>r==='admin'||r==='manager')) return false;
       try{
-        const data=await officialFetch('/api/teachers');
-        const payload={teachers:data.teachers||[]};
+        const loaded=await v26StoreLoad(v26StoreKey('teachers','latest'),async()=>{
+          const data=await officialFetch('/api/teachers');
+          return {teachers:data.teachers||[]};
+        },{ttl:V26_SHARED_STORE_TTL.teachers,force:!!options.forceNetwork,source:'teachers-api'});
+        if(!loaded?.payload) return false;
+        const payload=loaded.payload;
         const changed=v18iHashPayload('teachers:latest',payload);
         if(changed){
           db.teachers=payload.teachers;
@@ -1405,93 +1762,107 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       return false;
     }
 
-    async function refreshOfficialScheduleState(options={}){
-      if(!currentUser) return options.returnMeta?{changed:false,attendanceBundled:false}:false;
+    async function v26FetchWeekBundle(start,end){
+      const scheduleData=await officialFetch(`/api/schedule/state?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`);
+      const bundled=scheduleData.attendanceBundled===true;
+      let attendanceData=null;
+      if(!bundled){
+        attendanceData=await officialFetch(`/api/attendance/state?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`);
+      }
+      const attendanceSessions=bundled?(scheduleData.attendanceSessions||{}):(attendanceData?.attendanceSessions||{});
+      const absenceRecords=bundled?(scheduleData.absenceRecords||[]):(attendanceData?.absenceRecords||[]);
+      const schedulePayload={
+        classCancellations:scheduleData.classCancellations||{},
+        classMakeupSessions:scheduleData.classMakeupSessions||[],
+        makeupPlans:scheduleData.makeupPlans||[],
+        sourceAbsenceRecords:scheduleData.sourceAbsenceRecords||[],
+        attendanceBundled:true,
+        attendanceSessions,
+        absenceRecords
+      };
+      return {
+        start,
+        end,
+        schedule:schedulePayload,
+        attendance:{attendanceSessions,absenceRecords},
+        attendanceBundled:true,
+        serverBundled:bundled,
+        mode:scheduleData.mode||'legacy'
+      };
+    }
+    function v26ApplyWeekBundle(bundle,options={}){
+      const start=bundle?.start||isoDate(weekStartDate());
+      const schedulePayload=bundle?.schedule||{};
+      const attendancePayload=bundle?.attendance||{attendanceSessions:{},absenceRecords:[]};
+      const scheduleChanged=v18iHashPayload(`schedule:${start}`,schedulePayload);
+      const attendanceChanged=v18iHashPayload(`attendance:${start}`,attendancePayload);
+      const localNeedsScheduleApply=
+        (!Object.keys(db.classCancellations||{}).length && Object.keys(schedulePayload.classCancellations||{}).length>0) ||
+        (!(db.classMakeupSessions||[]).length && (schedulePayload.classMakeupSessions||[]).length>0) ||
+        (schedulePayload.classMakeupSessions||[]).some(m=>!(db.classMakeupSessions||[]).some(x=>String(x.id||x.sourceSessionKey)===String(m.id||m.sourceSessionKey) && String(x.teacherId||'')===String(m.teacherId||''))) ||
+        (!(db.makeupPlans||[]).length && (schedulePayload.makeupPlans||[]).length>0) ||
+        (schedulePayload.sourceAbsenceRecords||[]).some(a=>!(db.absenceRecords||[]).some(x=>String(x.id)===String(a.id) && String(x.status||'')===String(a.status||'') && String(x.updatedAt||'')===String(a.updatedAt||'')));
+      const localNeedsAttendanceApply=
+        (!Object.keys(db.attendanceSessions||{}).length && Object.keys(attendancePayload.attendanceSessions||{}).length>0) ||
+        (!(db.absenceRecords||[]).length && (attendancePayload.absenceRecords||[]).length>0);
+      if(scheduleChanged || attendanceChanged || localNeedsScheduleApply || localNeedsAttendanceApply || options.forceApply){
+        db.classCancellations=schedulePayload.classCancellations||{};
+        // The week bundle is the single source for Schedule and Attendance.
+        // Apply both together so one module can never keep an older week snapshot.
+        db.classMakeupSessions=schedulePayload.classMakeupSessions||[];
+        v20b7MergeClassSnapshotsFromMakeups(db.classMakeupSessions);
+        db.makeupPlans=schedulePayload.makeupPlans||[];
+        db.attendanceSessions=attendancePayload.attendanceSessions||{};
+        db.absenceRecords=[...(attendancePayload.absenceRecords||[])];
+        if(schedulePayload.sourceAbsenceRecords?.length) mergeAbsenceRecords(schedulePayload.sourceAbsenceRecords);
+        v18Touch();
+        if(!options.skipSave) save();
+      }
+      const scheduleCache={
+        classCancellations:db.classCancellations||{},
+        classMakeupSessions:db.classMakeupSessions||[],
+        makeupPlans:db.makeupPlans||[],
+        sourceAbsenceRecords:schedulePayload.sourceAbsenceRecords||[],
+        attendanceBundled:true,
+        attendanceSessions:db.attendanceSessions||{},
+        absenceRecords:attendancePayload.absenceRecords||[]
+      };
+      const attendanceCache={attendanceSessions:db.attendanceSessions||{},absenceRecords:attendancePayload.absenceRecords||[]};
+      moduleCacheSet(`schedule:${start}`,scheduleCache);
+      moduleCacheSet(`attendance:${start}`,attendanceCache);
+      return scheduleChanged||attendanceChanged||localNeedsScheduleApply||localNeedsAttendanceApply||!!options.forceApply;
+    }
+    async function v26RefreshWeekState(options={}){
+      if(!currentUser) return {changed:false,attendanceBundled:false};
       try{
         const start=isoDate(weekStartDate());
         const end=isoDate(addDays(weekStartDate(),7));
-        const data=await officialFetch(`/api/schedule/state?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`);
-        const attendanceBundled=data.attendanceBundled===true;
-        const payload={
-          classCancellations:data.classCancellations||{},
-          classMakeupSessions:data.classMakeupSessions||[],
-          makeupPlans:data.makeupPlans||[],
-          sourceAbsenceRecords:data.sourceAbsenceRecords||[],
-          attendanceBundled,
-          attendanceSessions:attendanceBundled?(data.attendanceSessions||{}):undefined,
-          absenceRecords:attendanceBundled?(data.absenceRecords||[]):undefined
-        };
-        const changed=v18iHashPayload(`schedule:${isoDate(weekStartDate())}`,payload);
-        const localNeedsApply=
-          (!Object.keys(db.classCancellations||{}).length && Object.keys(payload.classCancellations||{}).length>0) ||
-          (!(db.classMakeupSessions||[]).length && (payload.classMakeupSessions||[]).length>0) ||
-          (payload.classMakeupSessions||[]).some(m=>!(db.classMakeupSessions||[]).some(x=>String(x.id||x.sourceSessionKey)===String(m.id||m.sourceSessionKey) && String(x.teacherId||'')===String(m.teacherId||''))) ||
-          (!(db.makeupPlans||[]).length && (payload.makeupPlans||[]).length>0) ||
-          (attendanceBundled && !Object.keys(db.attendanceSessions||{}).length && Object.keys(payload.attendanceSessions||{}).length>0) ||
-          (payload.sourceAbsenceRecords||[]).some(a=>!(db.absenceRecords||[]).some(x=>String(x.id)===String(a.id) && String(x.status||'')===String(a.status||'') && String(x.updatedAt||'')===String(a.updatedAt||'')));
-        if(changed || localNeedsApply){
-          db.classCancellations=payload.classCancellations;
-          // schedule/state là nguồn dữ liệu mới nhất theo user hiện tại.
-          // Không merge lịch dạy bù cũ vì các lịch đã hủy/gỡ giáo viên sẽ bị giữ lại.
-          db.classMakeupSessions=payload.classMakeupSessions||[];
-          v20b7MergeClassSnapshotsFromMakeups(db.classMakeupSessions);
-          db.makeupPlans=payload.makeupPlans;
-          if(attendanceBundled){
-            db.attendanceSessions=payload.attendanceSessions||{};
-            db.absenceRecords=[...(payload.absenceRecords||[])];
-          }
-          if(payload.sourceAbsenceRecords?.length) mergeAbsenceRecords(payload.sourceAbsenceRecords);
-          v18Touch();
-          if(!options.skipSave) save();
-        }
-        moduleCacheSet(`schedule:${isoDate(weekStartDate())}`, {
-          classCancellations: db.classCancellations || {},
-          classMakeupSessions: db.classMakeupSessions || [],
-          makeupPlans: db.makeupPlans || [],
-          sourceAbsenceRecords: payload.sourceAbsenceRecords || [],
-          attendanceBundled,
-          attendanceSessions: attendanceBundled ? (db.attendanceSessions||{}) : undefined,
-          absenceRecords: attendanceBundled ? (payload.absenceRecords||[]) : undefined
+        const storeKey=v26WeekStoreKey(start);
+        const loaded=await v26StoreLoad(storeKey,()=>v26FetchWeekBundle(start,end),{
+          ttl:V26_SHARED_STORE_TTL.week,
+          force:!!options.forceNetwork,
+          source:'schedule-week-api'
         });
-        if(attendanceBundled){
-          moduleCacheSet(`attendance:${isoDate(weekStartDate())}`, {
-            attendanceSessions: db.attendanceSessions||{},
-            absenceRecords: payload.absenceRecords||[]
-          });
-        }
-        const resultChanged=changed||localNeedsApply;
-        return options.returnMeta?{changed:resultChanged,attendanceBundled}:resultChanged;
+        const bundle=loaded?.payload||null;
+        if(!bundle) return {changed:false,attendanceBundled:false};
+        const changed=v26ApplyWeekBundle(bundle,options);
+        return {changed,attendanceBundled:true,serverBundled:bundle.serverBundled!==false,fromStore:!!loaded.fromStore,mode:bundle.mode||''};
       }catch(e){
-        console.warn('Không tải được dữ liệu lịch/học bù',e);
-        return options.returnMeta?{changed:false,attendanceBundled:false}:false;
+        console.warn('Không tải được dữ liệu lịch/điểm danh',e);
+        return {changed:false,attendanceBundled:false};
       }
     }
+    async function refreshOfficialScheduleState(options={}){
+      const result=await v26RefreshWeekState(options);
+      return options.returnMeta?result:!!result.changed;
+    }
     async function refreshOfficialAttendanceState(options={}){
-      if(!currentUser) return false;
-      try{
-        const start=isoDate(weekStartDate());
-        const end=isoDate(addDays(weekStartDate(),7));
-        const data=await officialFetch(`/api/attendance/state?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`);
-        const payload={attendanceSessions:data.attendanceSessions||{},absenceRecords:data.absenceRecords||[]};
-        const changed=v18iHashPayload(`attendance:${isoDate(weekStartDate())}`,payload);
-        if(changed){
-          db.attendanceSessions=payload.attendanceSessions;
-          db.absenceRecords=payload.absenceRecords;
-          v18Touch();
-          if(!options.skipSave) save();
-        }
-        moduleCacheSet(`attendance:${isoDate(weekStartDate())}`, payload);
-        return changed;
-      }catch(e){console.warn('Không tải được dữ liệu điểm danh',e); return false}
+      const result=await v26RefreshWeekState(options);
+      return !!result.changed;
     }
     async function v25RefreshScheduleAndAttendance(options={}){
-      const result=await refreshOfficialScheduleState({...options,returnMeta:true});
-      const scheduleChanged=!!result?.changed;
-      // Migration 017 bundles attendance into schedule/state. Before it is installed,
-      // the legacy response safely falls back to the existing attendance endpoint.
-      if(result?.attendanceBundled) return scheduleChanged;
-      const attendanceChanged=await refreshOfficialAttendanceState(options);
-      return attendanceChanged||scheduleChanged;
+      const result=await v26RefreshWeekState(options);
+      return !!result.changed;
     }
 
     function v22MakeupPayload(month,data={}){
@@ -1514,15 +1885,19 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       v22MakeupMonthGeneration.set(key,v22MakeupMonthGenerationValue(key)+1);
       v22MakeupMonthMemoryCache.delete(key);
       v22MakeupMonthInflight.delete(key);
+      v26StoreInvalidate(v26MakeupStoreKey(key));
     }
     function v22RememberMakeupMonthPayload(month,payload){
       if(!/^\d{4}-\d{2}$/.test(String(month||'')) || !payload) return payload;
       const copy=v18gCloneJson(payload);
       v22MakeupMonthMemoryCache.set(month,{ts:Date.now(),payload:copy});
+      v26StoreSet(v26MakeupStoreKey(month),copy,{ttl:V26_SHARED_STORE_TTL.makeup,source:'makeup-memory'});
       moduleCacheSet(`makeup:${month}`,copy);
       return payload;
     }
     function v22FreshMakeupMonthPayload(month){
+      const shared=v26StoreGet(v26MakeupStoreKey(month));
+      if(shared?.payload) return v18gCloneJson(shared.payload);
       const mem=v22MakeupMonthMemoryCache.get(String(month||''));
       if(mem && Date.now()-mem.ts<V22_MAKEUP_PREFETCH_TTL_MS) return v18gCloneJson(mem.payload);
       return null;
@@ -1593,8 +1968,8 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       if(!currentUser) return false;
       try{
         const month=options.month || makeupSelectedMonthKey();
-        const data=await officialFetch(`/api/makeup/state?month=${encodeURIComponent(month)}`);
-        const payload=v22RememberMakeupMonthPayload(month,v22MakeupPayload(month,data));
+        const payload=await v22PreloadMakeupMonth(month,{force:!!options.forceNetwork});
+        if(!payload) return false;
         const changed=v18iHashPayload(`makeup:${month}`,payload);
         const currentState=(db.makeupTabState && db.makeupTabState.month===month) ? db.makeupTabState : {};
         const currentMakeupComparable={
@@ -1681,8 +2056,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       db.tuitionMessages={};
       v20o2InvalidateTuitionRows();
       lazyRouteState.tuition={};
-      const cached=moduleCacheGet(`tuition:${f.month}`);
-      if(cached) applyCachedPayload('tuition',cached);
+      hydrateRouteCache('tuition');
       saveLocalOnly();
       renderApp();
       toast('Đang tải học phí '+formatTuitionMonth(f.month));
@@ -1694,38 +2068,46 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
     async function refreshOfficialTuitionState(options={}){
       if(!currentUser || !(currentUser.roles||[]).some(r=>r==='admin'||r==='manager')) return false;
       try{
-        const data=await officialFetch(`/api/tuition/state?month=${encodeURIComponent(tuitionMonthKey())}`);
-        const payload={
-          tuitionRollup:data.rollups||{},
-          tuitionRollupMonth:data.monthKey||tuitionMonthKey(),
-          payments:data.payments||{},
-          tuitionMessages:data.tuitionMessages||{},
-          unitPrice:data.unitPrice?Number(data.unitPrice):(db.settings?.unitPrice||70000)
-        };
-        const changed=v18iHashPayload(`tuition:${tuitionMonthKey()}`,payload);
+        const month=tuitionMonthKey();
+        const loaded=await v26StoreLoad(v26TuitionStoreKey(month),async()=>{
+          const data=await officialFetch(`/api/tuition/state?month=${encodeURIComponent(month)}`);
+          return {
+            tuitionRollup:data.rollups||{},
+            tuitionRollupMonth:data.monthKey||month,
+            payments:data.payments||{},
+            tuitionMessages:data.tuitionMessages||{},
+            unitPrice:data.unitPrice?Number(data.unitPrice):(db.settings?.unitPrice||70000)
+          };
+        },{ttl:V26_SHARED_STORE_TTL.tuition,force:!!options.forceNetwork,source:'tuition-api'});
+        if(!loaded?.payload) return false;
+        const payload=loaded.payload;
+        const changed=v18iHashPayload(`tuition:${month}`,payload);
         if(changed){
-          db.tuitionRollup=payload.tuitionRollup;
-          db.tuitionRollupMonth=payload.tuitionRollupMonth;
-          db.payments=payload.payments;
-          db.tuitionMessages=payload.tuitionMessages;
-          db.settings.unitPrice=payload.unitPrice;
+          db.tuitionRollup=payload.tuitionRollup||{};
+          db.tuitionRollupMonth=payload.tuitionRollupMonth||month;
+          db.payments=payload.payments||{};
+          db.tuitionMessages=payload.tuitionMessages||{};
+          db.settings.unitPrice=Number(payload.unitPrice||db.settings?.unitPrice||70000);
           v18Touch();
           if(!options.skipSave) save();
         }
-        moduleCacheSet(`tuition:${tuitionMonthKey()}`, payload);
+        moduleCacheSet(`tuition:${month}`, payload);
         return changed;
       }catch(e){console.warn('Không tải được dữ liệu học phí',e); return false}
     }
 
-    
     async function refreshOfficialLibrary(options={}){
       if(!currentUser || !(currentUser.roles||[]).some(r=>['admin','manager','teacher','ta'].includes(r))) return false;
       try{
-        const data=await officialFetch('/api/library');
-        const payload={exerciseLibrary:data.items||[]};
+        const loaded=await v26StoreLoad(v26StoreKey('library','latest'),async()=>{
+          const data=await officialFetch('/api/library');
+          return {exerciseLibrary:data.items||[]};
+        },{ttl:V26_SHARED_STORE_TTL.library,force:!!options.forceNetwork,source:'library-api'});
+        if(!loaded?.payload) return false;
+        const payload=loaded.payload;
         const changed=v18iHashPayload('library:latest',payload);
         if(changed){
-          db.exerciseLibrary=payload.exerciseLibrary;
+          db.exerciseLibrary=payload.exerciseLibrary||[];
           v18Touch();
           if(!options.skipSave) save();
         }
@@ -1734,7 +2116,6 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       }catch(e){console.warn('Không tải được thư viện bài tập',e); return false}
     }
 
-    
     function evaluationMonthKey(){
       db.settings ||= {};
       db.settings.evaluationFilter ||= {};
@@ -1772,17 +2153,21 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
     async function refreshOfficialEvaluations(options={}){
       if(!currentUser || !(currentUser.roles||[]).some(r=>['admin','manager','teacher','ta'].includes(r))) return false;
       try{
-        const data=await officialFetch(`/api/evaluations?month=${encodeURIComponent(evaluationMonthKey())}`);
         const currentMonth=evaluationMonthKey();
-        const payload={evaluations:data.items||[]};
-        const changed=v18iHashPayload(`evaluation:${evaluationMonthKey()}`,payload);
+        const loaded=await v26StoreLoad(v26EvaluationStoreKey(currentMonth),async()=>{
+          const data=await officialFetch(`/api/evaluations?month=${encodeURIComponent(currentMonth)}`);
+          return {evaluations:data.items||[]};
+        },{ttl:V26_SHARED_STORE_TTL.evaluation,force:!!options.forceNetwork,source:'evaluation-api'});
+        if(!loaded?.payload) return false;
+        const payload=loaded.payload;
+        const changed=v18iHashPayload(`evaluation:${currentMonth}`,payload);
         if(changed){
           const other=(db.evaluations||[]).filter(e=>normalizeEvaluationMonthValue(e.monthKey||e.month)!==currentMonth);
-          db.evaluations=[...other,...payload.evaluations];
+          db.evaluations=[...other,...(payload.evaluations||[])];
           v18Touch();
           if(!options.skipSave) save();
         }
-        moduleCacheSet(`evaluation:${evaluationMonthKey()}`, payload);
+        moduleCacheSet(`evaluation:${currentMonth}`, payload);
         return changed;
       }catch(e){console.warn('Không tải được đánh giá thật',e); return false}
     }
@@ -3826,11 +4211,12 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
       // Mỗi lần mở Lịch dạy đều quay về đúng tuần hiện tại; đổi tuần thủ công vẫn hoạt động
       // cho tới khi người dùng rời tab và mở Lịch dạy lại.
       if(r==='schedule') resetScheduleWeekToCurrent();
-      route=r; notifOpen=false; saveUser(); animateRoute(); render();
-      // Schedule dùng cache đúng tuần để hiện ngay rồi tự đối chiếu nền khi stale.
-      // Attendance/Makeup vẫn force vì đó là màn hình thao tác dữ liệu trực tiếp.
-      const forceFresh=['attendance','makeup'].includes(r);
-      Promise.resolve(ensurePageData(r,{force:forceFresh})).finally(()=>v20cSchedulePrefetch(r));
+      route=r; notifOpen=false; saveUser(); animateRoute();
+      // Phase 5: apply the route snapshot before painting. Schedule, Attendance
+      // and Makeup now reuse the shared store and only revalidate when stale.
+      hydrateRouteCache(r);
+      render();
+      Promise.resolve(ensurePageData(r)).finally(()=>v20cSchedulePrefetch(r));
       closeDrawer()
     }
 
@@ -5133,6 +5519,11 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
         v20bAfterMutation(['schedule','makeup'],{
           targetSessionKey,
           sourceSessionKey:items[0]?.sourceSessionKey||firstChangedPlan?.sourceSessionKey||'',
+          sessionKeys:[
+            targetSessionKey,
+            ...items.map(x=>x.sourceSessionKey),
+            ...merged.cancelledPlans.flatMap(x=>[x?.targetSessionKey,x?.sourceSessionKey])
+          ].filter(Boolean),
           month:mutationMonth,
           preserveCache:true,
           renderOnRevalidate:false,
