@@ -66,15 +66,42 @@ export async function POST(req: NextRequest) {
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   // V20O: tạo credit tháng sau cho từng học sinh chính thức đang active tại thời điểm cho nghỉ.
-  const { data: students, error: studentError } = await supabase
-    .from("official_students")
-    .select("id,name,status")
-    .eq("class_id", classId)
-    .or("status.is.null,status.neq.inactive");
+  const [{ data: students, error: studentError }, { data: adjustmentRows, error: adjustmentError }] = await Promise.all([
+    supabase
+      .from("official_students")
+      .select("id,name,status,enrollment_start_date,tuition_regular_start_month")
+      .eq("class_id", classId)
+      .or("status.is.null,status.neq.inactive"),
+    supabase
+      .from("official_tuition_adjustments")
+      .select("student_id,source_month,status,session_dates")
+      .eq("class_id", classId)
+      .eq("source_month", sourceMonth)
+      .in("status", ["pending", "included"]),
+  ]);
 
   if (studentError) return NextResponse.json({ error: studentError.message }, { status: 500 });
+  const adjustmentMissingText = `${adjustmentError?.code || ""} ${adjustmentError?.message || ""}`.toLowerCase();
+  const adjustmentTableMissing = adjustmentMissingText.includes("pgrst205") || adjustmentMissingText.includes("could not find the table") || adjustmentMissingText.includes("schema cache") || adjustmentMissingText.includes("does not exist");
+  if (adjustmentError && !adjustmentTableMissing) return NextResponse.json({ error: adjustmentError.message }, { status: 500 });
 
-  const creditRows = (students || []).map((s: any) => ({
+  const chargedByAdjustment = new Set<string>();
+  for (const adjustment of adjustmentRows || []) {
+    const sessions = Array.isArray(adjustment.session_dates) ? adjustment.session_dates : [];
+    if (sessions.some((item: any) => String(item?.sessionKey || item || "") === sessionKey)) {
+      chargedByAdjustment.add(String(adjustment.student_id));
+    }
+  }
+
+  const creditStudents = (students || []).filter((s: any) => {
+    const enrollmentDate = String(s.enrollment_start_date || "");
+    if (enrollmentDate && sessionDate && sessionDate < enrollmentDate) return false;
+    const regularStartMonth = String(s.tuition_regular_start_month || "");
+    if (!regularStartMonth || regularStartMonth <= sourceMonth) return true;
+    return chargedByAdjustment.has(String(s.id));
+  });
+
+  const creditRows = creditStudents.map((s: any) => ({
     id: creditId(String(s.id), sessionKey),
     student_id: String(s.id),
     class_id: classId,

@@ -1,6 +1,6 @@
 (function bootstrapMsgiangRealtime(global) {
   'use strict';
-  var BUILD_VERSION = '20phase6rt2';
+  var BUILD_VERSION = '20phase7tuition';
   global.MSGIANG_BUILD_VERSION = BUILD_VERSION;
   global.__msgiangRealtimeBootstrapLoaded = true;
 

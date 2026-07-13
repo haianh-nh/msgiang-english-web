@@ -13,6 +13,8 @@ const TABLES = [
   "official_attendance_rows",
   "official_makeup_plans",
   "official_tuition_status",
+  "official_tuition_credits",
+  "official_tuition_adjustments",
   "official_exercise_library",
   "official_evaluations",
   "official_import_batches",

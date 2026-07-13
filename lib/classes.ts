@@ -48,6 +48,8 @@ export function toV48Class(c: any) {
     parentName: s.parent_name || "",
     parentPhone: s.parent_phone || "",
     note: s.note || "",
+    enrollmentStartDate: s.enrollment_start_date || "",
+    tuitionRegularStartMonth: s.tuition_regular_start_month || "",
   }));
 
   const teacher = c.official_teachers || c.teacher || null;
@@ -139,7 +141,7 @@ const CLASS_SELECT_V48 = `
   created_at,
   official_teachers:teacher_id(id,name),
   official_assistant_teacher:assistant_teacher_id(id,name),
-  official_students(id,name,parent_name,parent_phone,note),
+  official_students(*),
   official_class_schedules(id,day_of_week,start_time,end_time,sort_order)
 `;
 

@@ -90,5 +90,39 @@ export async function POST(req: NextRequest) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  return NextResponse.json({ ok: true, items: data || [] });
+  let adjustmentWarning = "";
+  const adjustmentMonths = monthKeys;
+  try {
+    if (["paid", "sent"].includes(action)) {
+      const { error: adjustmentError } = await supabaseAdmin()
+        .from("official_tuition_adjustments")
+        .update({ status: "included", included_at: now, included_by: user.id, updated_at: now })
+        .eq("student_id", studentId)
+        .in("target_month", adjustmentMonths)
+        .eq("status", "pending");
+      if (adjustmentError) adjustmentWarning = adjustmentError.message;
+    } else if (["unpaid", "unsent"].includes(action)) {
+      const { data: current } = await supabaseAdmin()
+        .from("official_tuition_status")
+        .select("month_key,paid,message_sent")
+        .eq("student_id", studentId)
+        .in("month_key", adjustmentMonths);
+      const unlockedMonths = (current || [])
+        .filter((row: any) => !row.paid && !row.message_sent)
+        .map((row: any) => String(row.month_key));
+      if (unlockedMonths.length) {
+        const { error: adjustmentError } = await supabaseAdmin()
+          .from("official_tuition_adjustments")
+          .update({ status: "pending", included_at: null, included_by: null, updated_at: now })
+          .eq("student_id", studentId)
+          .in("target_month", unlockedMonths)
+          .eq("status", "included");
+        if (adjustmentError) adjustmentWarning = adjustmentError.message;
+      }
+    }
+  } catch (adjustmentError: any) {
+    adjustmentWarning = adjustmentError?.message || "Không cập nhật được trạng thái khoản phát sinh";
+  }
+
+  return NextResponse.json({ ok: true, items: data || [], adjustmentWarning: adjustmentWarning || undefined });
 }

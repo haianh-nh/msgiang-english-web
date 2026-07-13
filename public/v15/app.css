@@ -2074,3 +2074,26 @@ body{
     max-height:38vh;
   }
 }
+
+/* Phase 7 — mid-month enrollment tuition adjustment */
+.enrollmentTuitionBlock{margin-top:16px;padding:16px;border:1px solid #ffd0da;border-radius:20px;background:linear-gradient(135deg,#fff8fa,#fff)}
+.enrollmentTuitionBlock .checkLine{display:flex;gap:12px;align-items:flex-start;cursor:pointer;font-weight:700;color:#344054}
+.enrollmentTuitionBlock .checkLine input{width:18px;height:18px;margin-top:2px;accent-color:#d91633}
+.enrollmentTuitionBlock .checkLine span{display:flex;flex-direction:column;gap:3px}
+.enrollmentTuitionBlock .checkLine small{font-weight:500;color:#667085;line-height:1.4}
+.enrollmentTuitionPreview{margin-top:12px;padding:14px;border:1px dashed #f7a8b7;border-radius:16px;background:#fff;min-height:58px}
+.enrollmentTuitionPreviewGrid,.adjustmentInfoGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:12px}
+.enrollmentTuitionPreviewGrid>div,.adjustmentInfoGrid>div{padding:10px;border-radius:13px;background:#fff6f8;border:1px solid #ffe0e6;display:flex;flex-direction:column;gap:4px}
+.enrollmentTuitionPreviewGrid span,.adjustmentInfoGrid span{font-size:12px;color:#667085;font-weight:700}
+.enrollmentTuitionPreviewGrid b,.adjustmentInfoGrid b{color:#9f1239}
+.enrollmentTuitionTotal{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:14px;background:#fff1f3;margin-bottom:9px;color:#9f1239;font-weight:800}
+.enrollmentTuitionTotal strong{font-size:22px;color:#d91633}
+.compactDanger{margin:0;padding:12px 14px}
+.adjustmentCell{min-width:150px;max-width:230px}
+.adjustmentAmount{color:#b42318;margin-bottom:4px}
+.adjustmentDetailText{line-height:1.35;margin:3px 0 7px;color:#667085}
+.adjustmentEditBtn{margin-top:5px}
+@media(max-width:760px){
+  .enrollmentTuitionPreviewGrid,.adjustmentInfoGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .enrollmentTuitionBlock{padding:13px}
+}
