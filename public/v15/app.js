@@ -585,6 +585,9 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
     }
     function v20bAfterMutation(keys=[],options={}){
       const modules=v21NormalizeMutationModules(keys);
+      // Phase 6: remember this tab's own writes so the matching database
+      // broadcast does not cause an immediate duplicate refresh on the sender.
+      v27RecordLocalMutation(modules);
       if(options.preserveCache){
         v22PersistMutationCaches(modules,options);
         v22ClearNetworkCacheMatching(v22MutationNetworkPrefixes(modules,options));
@@ -1595,6 +1598,259 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
 
       return run();
     }
+    // Phase 6: cross-device synchronization through Supabase Realtime Broadcast.
+    // Only cache scopes are broadcast by the database; business rows and student
+    // information are always reloaded through the authenticated application APIs.
+    const V27_REALTIME_VENDOR_SRC='/v15/vendor/supabase.js?v=2.110.2';
+    const V27_REALTIME_ALLOWED_MODULES=new Set(['core','teachers','schedule','attendance','makeup','tuition','library','evaluation']);
+    const V27_REALTIME_LOCAL_SUPPRESS_MS=5000;
+    const V27_REALTIME_DEBOUNCE_MS=850;
+    const v27Realtime={
+      client:null,
+      channel:null,
+      startPromise:null,
+      reconnectTimer:null,
+      flushTimer:null,
+      generation:0,
+      status:'idle',
+      reason:'',
+      pendingModules:new Set(),
+      pendingTables:new Set(),
+      localMutationAt:new Map(),
+      stats:{received:0,merged:0,localEchoes:0,refreshes:0,reconnects:0,lastEventAt:0,lastSubscribedAt:0}
+    };
+    function v27RecordLocalMutation(keys=[]){
+      const now=Date.now();
+      v21NormalizeMutationModules(keys).forEach(key=>v27Realtime.localMutationAt.set(key,now));
+    }
+    function v27StoreMarkPrefixStale(prefix){
+      const value=String(prefix||'');
+      if(!value) return;
+      Array.from(v26SharedStore.entries.keys()).filter(key=>String(key).startsWith(value)).forEach(key=>v26StoreInvalidate(key,{markStale:true}));
+    }
+    function v27MarkLazyStateStale(key){
+      const state=lazyRouteState[key];
+      if(state?.loaded) lazyRouteState[key]={...state,loaded:true,loading:false,sharedFresh:false,realtimeStale:true,loadedAt:0};
+    }
+    function v27MarkRealtimeCachesStale(keys=[]){
+      const modules=new Set(v21NormalizeMutationModules(keys));
+      v18gClearNetworkCache();
+      if(modules.has('core')){
+        v26StoreInvalidate(v26StoreKey('core'),{markStale:true});
+        v27MarkLazyStateStale('core');
+      }
+      if(modules.has('teachers')){
+        v26StoreInvalidate(v26StoreKey('teachers','latest'),{markStale:true});
+        v27MarkLazyStateStale('teachers');
+      }
+      if(modules.has('schedule')||modules.has('attendance')){
+        v27StoreMarkPrefixStale('week:');
+        v27MarkLazyStateStale('schedule');
+        v27MarkLazyStateStale('attendance');
+        v18Memo.weekKey='';
+        v18Memo.weekSessions=null;
+        v18Memo.attendancePageKey='';
+        v18Memo.attendancePageSessions=null;
+      }
+      if(modules.has('makeup')){
+        v27StoreMarkPrefixStale('makeup:');
+        for(const month of Array.from(v22MakeupMonthMemoryCache.keys())) v22InvalidateMakeupMonthMemory(month);
+        v27MarkLazyStateStale('makeup');
+      }
+      if(modules.has('tuition')){
+        v27StoreMarkPrefixStale('tuition:');
+        v27MarkLazyStateStale('tuition');
+      }
+      if(modules.has('library')){
+        v26StoreInvalidate(v26StoreKey('library','latest'),{markStale:true});
+        v27MarkLazyStateStale('library');
+      }
+      if(modules.has('evaluation')){
+        v27StoreMarkPrefixStale('evaluation:');
+        v27MarkLazyStateStale('evaluation');
+      }
+    }
+    function v27ActiveRouteAffected(keys=[]){
+      const modules=new Set(v21NormalizeMutationModules(keys));
+      const active=routeDataKey(route);
+      if(active==='schedule') return modules.has('schedule')||modules.has('attendance')||modules.has('makeup')||modules.has('core');
+      if(active==='attendance') return modules.has('attendance')||modules.has('schedule')||modules.has('makeup')||modules.has('core');
+      if(active==='makeup') return modules.has('makeup')||modules.has('schedule')||modules.has('attendance')||modules.has('core');
+      if(active==='tuition') return modules.has('tuition')||modules.has('core');
+      if(active==='library') return modules.has('library');
+      if(active==='evaluation') return modules.has('evaluation')||modules.has('core');
+      if(active==='teachers') return modules.has('teachers')||modules.has('core');
+      return active==='core'&&modules.has('core');
+    }
+    function v27ModalBlocksRefresh(){
+      return !!modalBackdrop?.classList?.contains('show');
+    }
+    function v27ArmRealtimeFlush(delay=V27_REALTIME_DEBOUNCE_MS){
+      clearTimeout(v27Realtime.flushTimer);
+      v27Realtime.flushTimer=setTimeout(()=>{
+        v27Realtime.flushTimer=null;
+        v27FlushRealtimeEvents().catch(error=>console.warn('Realtime refresh failed',error));
+      },Math.max(0,Number(delay)||0));
+    }
+    async function v27FlushRealtimeEvents(){
+      if(!currentUser || !v27Realtime.pendingModules.size) return false;
+      if(v27ModalBlocksRefresh()){
+        v27ArmRealtimeFlush(1200);
+        return false;
+      }
+      const modules=Array.from(v27Realtime.pendingModules);
+      v27Realtime.pendingModules.clear();
+      v27Realtime.pendingTables.clear();
+      const now=Date.now();
+      const isLikelyLocalEcho=modules.some(key=>now-Number(v27Realtime.localMutationAt.get(key)||0)<V27_REALTIME_LOCAL_SUPPRESS_MS);
+      if(isLikelyLocalEcho) v27Realtime.stats.localEchoes++;
+      if(!v27ActiveRouteAffected(modules)) return true;
+      v27Realtime.stats.refreshes++;
+      await v21ScheduleMutationRefresh(modules,{
+        delayMs:isLikelyLocalEcho?3600:120,
+        force:true,
+        renderOnRevalidate:true
+      });
+      return true;
+    }
+    function v27HandleRealtimePayload(payload={}){
+      if(!currentUser || Number(payload?.v)!==1) return;
+      const modules=v21NormalizeMutationModules(Array.isArray(payload?.modules)?payload.modules:[])
+        .filter(key=>V27_REALTIME_ALLOWED_MODULES.has(key));
+      if(!modules.length) return;
+      v27Realtime.stats.received++;
+      v27Realtime.stats.lastEventAt=Date.now();
+      modules.forEach(key=>{
+        if(v27Realtime.pendingModules.has(key)) v27Realtime.stats.merged++;
+        v27Realtime.pendingModules.add(key);
+      });
+      if(payload?.table) v27Realtime.pendingTables.add(String(payload.table));
+      // Keep the current UI visible, but mark all affected shared snapshots stale.
+      // The active screen is revalidated after a short debounce; inactive screens
+      // reuse their stale snapshot immediately and refresh when opened.
+      v27MarkRealtimeCachesStale(modules);
+      v27ArmRealtimeFlush();
+    }
+    function v27LoadRealtimeVendor(){
+      if(window.supabase?.createClient) return Promise.resolve(window.supabase);
+      const existing=document.querySelector('script[data-msgiang-realtime-vendor]');
+      if(existing){
+        return new Promise((resolve,reject)=>{
+          if(window.supabase?.createClient) return resolve(window.supabase);
+          existing.addEventListener('load',()=>resolve(window.supabase),{once:true});
+          existing.addEventListener('error',()=>reject(new Error('Không tải được Supabase Realtime client')),{once:true});
+        });
+      }
+      return new Promise((resolve,reject)=>{
+        const script=document.createElement('script');
+        script.src=V27_REALTIME_VENDOR_SRC;
+        script.async=true;
+        script.dataset.msgiangRealtimeVendor='1';
+        script.onload=()=>window.supabase?.createClient?resolve(window.supabase):reject(new Error('Supabase Realtime client không hợp lệ'));
+        script.onerror=()=>reject(new Error('Không tải được Supabase Realtime client'));
+        document.head.appendChild(script);
+      });
+    }
+    function v27ScheduleReconnect(delay=5000){
+      if(!currentUser || currentUser.mustChangePassword) return;
+      clearTimeout(v27Realtime.reconnectTimer);
+      v27Realtime.reconnectTimer=setTimeout(()=>{
+        v27Realtime.reconnectTimer=null;
+        if(document.visibilityState==='hidden') return v27ScheduleReconnect(5000);
+        v27Realtime.stats.reconnects++;
+        v27StopRealtime({preservePending:true});
+        v27StartRealtime();
+      },Math.max(1500,Number(delay)||5000));
+    }
+    async function v27StartRealtime(){
+      if(!currentUser || currentUser.mustChangePassword) return false;
+      if(v27Realtime.status==='subscribed') return true;
+      if(v27Realtime.startPromise) return v27Realtime.startPromise;
+      const generation=++v27Realtime.generation;
+      v27Realtime.status='connecting';
+      v27Realtime.reason='';
+      v27Realtime.startPromise=(async()=>{
+        try{
+          const config=await officialFetch('/api/realtime/config',{noDedupe:true,preserveGetCache:true});
+          if(generation!==v27Realtime.generation) return false;
+          if(!config?.enabled){
+            v27Realtime.status='disabled';
+            v27Realtime.reason=String(config?.reason||'disabled');
+            return false;
+          }
+          await v27LoadRealtimeVendor();
+          if(generation!==v27Realtime.generation) return false;
+          const client=window.supabase.createClient(config.url,config.key,{
+            auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false},
+            realtime:{params:{eventsPerSecond:20}}
+          });
+          const channel=client.channel(config.topic,{
+            config:{private:false,broadcast:{self:false,ack:false}}
+          });
+          channel.on('broadcast',{event:'db-change'},message=>v27HandleRealtimePayload(message?.payload||{}));
+          v27Realtime.client=client;
+          v27Realtime.channel=channel;
+          channel.subscribe((status,error)=>{
+            if(generation!==v27Realtime.generation) return;
+            v27Realtime.status=String(status||'unknown').toLowerCase();
+            if(status==='SUBSCRIBED'){
+              v27Realtime.status='subscribed';
+              v27Realtime.reason='';
+              v27Realtime.stats.lastSubscribedAt=Date.now();
+              clearTimeout(v27Realtime.reconnectTimer);
+            }else if(status==='CHANNEL_ERROR'||status==='TIMED_OUT'||status==='CLOSED'){
+              v27Realtime.reason=String(error?.message||status||'connection_error');
+              v27ScheduleReconnect(status==='CLOSED'?3500:5000);
+            }
+          });
+          return true;
+        }catch(error){
+          if(generation!==v27Realtime.generation) return false;
+          v27Realtime.status='error';
+          v27Realtime.reason=String(error?.message||error||'connection_error');
+          console.warn('Realtime disabled temporarily',error);
+          v27ScheduleReconnect(6000);
+          return false;
+        }finally{
+          if(generation===v27Realtime.generation) v27Realtime.startPromise=null;
+        }
+      })();
+      return v27Realtime.startPromise;
+    }
+    function v27StopRealtime(options={}){
+      v27Realtime.generation++;
+      clearTimeout(v27Realtime.reconnectTimer);
+      v27Realtime.reconnectTimer=null;
+      clearTimeout(v27Realtime.flushTimer);
+      v27Realtime.flushTimer=null;
+      const client=v27Realtime.client;
+      const channel=v27Realtime.channel;
+      v27Realtime.client=null;
+      v27Realtime.channel=null;
+      v27Realtime.startPromise=null;
+      v27Realtime.status='idle';
+      v27Realtime.reason='';
+      if(!options.preservePending){
+        v27Realtime.pendingModules.clear();
+        v27Realtime.pendingTables.clear();
+        v27Realtime.localMutationAt.clear();
+      }
+      try{if(client&&channel) client.removeChannel(channel)}catch(e){}
+      try{client?.realtime?.disconnect?.()}catch(e){}
+    }
+    if(typeof window!=='undefined'){
+      window.msgiangRealtime={
+        status:()=>({
+          status:v27Realtime.status,
+          reason:v27Realtime.reason,
+          pendingModules:Array.from(v27Realtime.pendingModules),
+          ...v27Realtime.stats
+        }),
+        reconnect:()=>{v27StopRealtime({preservePending:true});return v27StartRealtime()},
+        disconnect:()=>v27StopRealtime()
+      };
+    }
+
     function applyOfficialSettings(settings){
       if(!settings) return;
       db.settings ||= {};
@@ -1645,6 +1901,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
         currentUser=null;
       }
       if(!renderedEarly) render();
+      if(currentUser && !currentUser.mustChangePassword) v27StartRealtime();
     }
     function queueOfficialSave(){
       if(!currentUser) return;
@@ -2827,7 +3084,7 @@ Ms.Giang English`;
         await officialFetch('/api/auth/change-password',{method:'POST',body:JSON.stringify({password:p1})});
         currentUser.mustChangePassword=false;
         v18dShellKey='';
-        route='overview'; saveUser(); render(); toast('Đã đổi mật khẩu');
+        route='overview'; saveUser(); render(); v27StartRealtime(); toast('Đã đổi mật khẩu');
       }catch(e){toast(e.message||'Không đổi được mật khẩu')}
     }
 
@@ -4302,6 +4559,7 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
 
         render();
         toast(currentUser?.mustChangePassword?'Cần đổi mật khẩu trước khi sử dụng':'Đăng nhập thành công');
+        if(!currentUser?.mustChangePassword) v27StartRealtime();
         Promise.resolve(ensurePageData(route)).finally(()=>v20cSchedulePrefetch(route));
       }catch(e){
         toast(e.message||'Sai thông tin đăng nhập');
@@ -4309,6 +4567,7 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
     }
 
     async function logout(){
+      v27StopRealtime();
       try{await officialFetch('/api/auth/logout',{method:'POST',body:'{}'});}catch(e){}
       v20b4ResetRouteLoadState();
       v20b4ResetSessionMemo();
@@ -6347,6 +6606,7 @@ function settingsPage(){
       }
       if(isScheduleMakeupModal) scheduleMakeupDraft=null;
       modalBackdrop.classList.remove('show');
+      if(v27Realtime.pendingModules.size) v27ArmRealtimeFlush(80);
       if(v20l4ScheduleRenderAfterModal && route==='schedule'){
         v20l4ScheduleRenderAfterModal=false;
         try{renderApp()}catch(e){console.warn('Không cập nhật lại lịch sau khi đóng popup',e)}
@@ -6438,7 +6698,10 @@ function settingsPage(){
     }
     window.addEventListener('pagehide', v20eFlushAllLocalCaches);
     window.addEventListener('beforeunload', v20eFlushAllLocalCaches);
-    document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden') v20eFlushAllLocalCaches()});
+    document.addEventListener('visibilitychange',()=>{
+      if(document.visibilityState==='hidden') v20eFlushAllLocalCaches();
+      else if(currentUser && !currentUser.mustChangePassword && v27Realtime.status!=='subscribed') v27StartRealtime();
+    });
     ensureLifecycle();
     bootstrapOfficial();
     setInterval(()=>{ if(currentUser && route==='schedule' && !document.getElementById('modalBackdrop')?.classList.contains('show')) renderApp(); }, 30000);
