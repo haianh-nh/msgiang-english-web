@@ -418,7 +418,10 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
           v18Memo.rosterKey='';
           v18Memo.rosterRows=null;
         }else if(key==='makeup'){
-          months.forEach(m=>moduleCacheRemove(`makeup:${m}`));
+          months.forEach(m=>{
+            moduleCacheRemove(`makeup:${m}`);
+            v22InvalidateMakeupMonthMemory(m);
+          });
           lazyRouteState.makeup={};
         }else if(key==='tuition'){
           moduleCacheRemove(`tuition:${tuitionMonthKey()}`);
@@ -446,6 +449,9 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       ['sessionKey','targetSessionKey','sourceSessionKey'].forEach(k=>{if(next[k]) merged[k]=next[k]});
       merged.force=!!(merged.force||next.force);
       merged.applyMakeupGlobal=!!(merged.applyMakeupGlobal||next.applyMakeupGlobal);
+      merged.preserveCache=!!(merged.preserveCache||next.preserveCache);
+      if(next.renderOnRevalidate===false) merged.renderOnRevalidate=false;
+      else if(merged.renderOnRevalidate===undefined) merged.renderOnRevalidate=true;
       return merged;
     }
     function v21ScheduleMutationRefresh(keys=[],options={}){
@@ -498,7 +504,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
           (activeKey==='library'&&modules.has('library')) ||
           (activeKey==='evaluation'&&modules.has('evaluation')) ||
           (activeKey==='core'&&modules.has('core'));
-        if(changed || ctx.force || activeAffected){
+        if(ctx.renderOnRevalidate!==false && (changed || ctx.force || activeAffected)){
           try{renderApp()}catch(e){console.warn('Render after mutation refresh failed',e)}
         }
         return changed;
@@ -507,9 +513,56 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
         if(v21MutationRefreshState.pending) v21ScheduleMutationRefresh([], {delayMs:80});
       }
     }
+    function v22MutationNetworkPrefixes(keys=[],options={}){
+      const modules=new Set(v21NormalizeMutationModules(keys));
+      const prefixes=[];
+      if(modules.has('core')) prefixes.push('/api/classes');
+      if(modules.has('schedule')) prefixes.push('/api/schedule/state');
+      if(modules.has('attendance')) prefixes.push('/api/attendance/state');
+      if(modules.has('makeup')){
+        const months=v21MutationMonths(options);
+        if(months.length) months.forEach(m=>prefixes.push(`/api/makeup/state?month=${encodeURIComponent(m)}`));
+        else prefixes.push('/api/makeup/state');
+        prefixes.push('/api/makeup/months');
+      }
+      return prefixes;
+    }
+    function v22PersistMakeupMonthCache(month){
+      if(!/^\d{4}-\d{2}$/.test(String(month||''))) return;
+      const st=(db.makeupTabState && db.makeupTabState.month===month)?db.makeupTabState:null;
+      const old=moduleCacheGet(`makeup:${month}`)||{};
+      const payload={
+        makeupMonth:month,
+        makeupPlans:st?.makeupPlans||old.makeupPlans||db.makeupPlans||[],
+        absenceRecords:st?.absenceRecords||old.absenceRecords||db.absenceRecords||[],
+        attendanceSessions:st?.attendanceSessions||old.attendanceSessions||{},
+        supportClasses:st?.supportClasses||old.supportClasses||[],
+        deletedMonths:db.deletedMakeupMonths||old.deletedMonths||[],
+        availableMonths:db.makeupAvailableMonths||old.availableMonths||[]
+      };
+      moduleCacheSet(`makeup:${month}`,payload);
+      v22InvalidateMakeupMonthMemory(month);
+      v22MakeupMonthMemoryCache.set(month,{ts:Date.now(),payload:v18gCloneJson(payload)});
+    }
+    function v22PersistMutationCaches(keys=[],options={}){
+      const modules=new Set(v21NormalizeMutationModules(keys));
+      if(modules.has('schedule')) v18fUpdateScheduleModuleCache();
+      if(modules.has('attendance')) v18fUpdateAttendanceModuleCache();
+      if(modules.has('makeup')) v21MutationMonths(options).forEach(v22PersistMakeupMonthCache);
+      modules.forEach(key=>{
+        if(['schedule','attendance','makeup'].includes(key)){
+          lazyRouteState[key]={...(lazyRouteState[key]||{}),loaded:true,loading:false,loadedAt:Date.now(),mutated:true};
+        }
+      });
+    }
     function v20bAfterMutation(keys=[],options={}){
       const modules=v21NormalizeMutationModules(keys);
-      v21InvalidateMutationCaches(modules,options);
+      if(options.preserveCache){
+        v22PersistMutationCaches(modules,options);
+        v22ClearNetworkCacheMatching(v22MutationNetworkPrefixes(modules,options));
+      }else{
+        v21InvalidateMutationCaches(modules,options);
+      }
       v18Touch();
       v21ScheduleMutationRefresh(modules,options);
     }
@@ -540,6 +593,13 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
     const V20C_PREFETCH_DELAY_MS=750;
     const V20C_PREFETCH_GAP_MS=650;
     const V20C_PREFETCH_RECENT_MS=60000;
+    // V22 Phase 3: dữ liệu học bù dùng cho popup được preload nền và giữ ngắn hạn trong RAM.
+    // Lịch dạy không còn phải chờ /api/makeup/state mới render xong.
+    const V22_MAKEUP_PREFETCH_TTL_MS=60000;
+    const V22_CORE_ROUTE_REFRESH_TTL_MS=20000;
+    const v22MakeupMonthMemoryCache=new Map();
+    const v22MakeupMonthInflight=new Map();
+    const v22MakeupMonthGeneration=new Map();
     const v18gInflightGet=new Map();
     const v18gShortGetCache=new Map();
     function v18gCloneJson(data){
@@ -557,6 +617,13 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
     }
     function v18gClearNetworkCache(){
       v18gShortGetCache.clear();
+    }
+    function v22ClearNetworkCacheMatching(prefixes=[]){
+      const list=(Array.isArray(prefixes)?prefixes:[prefixes]).map(String).filter(Boolean);
+      if(!list.length) return;
+      for(const key of Array.from(v18gShortGetCache.keys())){
+        if(list.some(prefix=>String(key).startsWith(prefix))) v18gShortGetCache.delete(key);
+      }
     }
     const v18iRefreshHashes={};
     function v18iStableStringify(value){
@@ -594,6 +661,9 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
     function v20b4ResetRouteLoadState(){
       Object.keys(lazyRouteState).forEach(k=>delete lazyRouteState[k]);
       Object.keys(v18iRefreshHashes).forEach(k=>delete v18iRefreshHashes[k]);
+      v22MakeupMonthMemoryCache.clear();
+      v22MakeupMonthInflight.clear();
+      v22MakeupMonthGeneration.clear();
       v20aLastCoreLoadError='';
     }
     function v20b4ResetSessionMemo(){
@@ -958,10 +1028,27 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       try{
         await runRefreshWithoutRepeatedSaves(async()=>{
           const jobs=[];
-          // V20L.4: schedule page also needs attendance/absence data so lesson cards can show "Vắng: x".
-          if(key==='schedule') jobs.push(refreshOfficialClasses({skipSave:true}), refreshOfficialScheduleState({skipSave:true}), refreshOfficialAttendanceState({skipSave:true}), refreshOfficialMakeupState({skipSave:true,applyGlobal:true}));
-          if(key==='makeup') jobs.push(refreshOfficialClasses({skipSave:true}), refreshOfficialMakeupState({skipSave:true}));
-          if(key==='attendance') jobs.push(refreshOfficialClasses({skipSave:true}), refreshOfficialScheduleState({skipSave:true}), refreshOfficialAttendanceState({skipSave:true}));
+          // V22 Phase 3:
+          // - Core/classes đã được ensureCoreData tải trước, nên không gọi lại /api/classes nếu vẫn còn mới.
+          // - Lịch dạy render bằng schedule + attendance trước; makeup tháng được preload nền cho popup.
+          const coreAge=Date.now()-(lazyRouteState.core?.loadedAt||0);
+          const shouldRefreshClasses=!lazyRouteState.core?.loaded || coreAge>V22_CORE_ROUTE_REFRESH_TTL_MS;
+          const classJob=()=>refreshOfficialClasses({skipSave:true}).then(changed=>{
+            lazyRouteState.core={...(lazyRouteState.core||{}),loaded:true,loading:false,loadedAt:Date.now(),unchanged:!changed};
+            return changed;
+          });
+          if(key==='schedule'){
+            if(shouldRefreshClasses) jobs.push(classJob());
+            jobs.push(refreshOfficialScheduleState({skipSave:true}), refreshOfficialAttendanceState({skipSave:true}));
+          }
+          if(key==='makeup'){
+            if(shouldRefreshClasses) jobs.push(classJob());
+            jobs.push(refreshOfficialMakeupState({skipSave:true}));
+          }
+          if(key==='attendance'){
+            if(shouldRefreshClasses) jobs.push(classJob());
+            jobs.push(refreshOfficialScheduleState({skipSave:true}), refreshOfficialAttendanceState({skipSave:true}));
+          }
           if(key==='tuition') jobs.push(refreshOfficialTuitionState({skipSave:true}));
           if(key==='library') jobs.push(refreshOfficialLibrary({skipSave:true}));
           if(key==='evaluation') jobs.push(refreshOfficialEvaluations({skipSave:true}));
@@ -972,6 +1059,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
         if(key==='makeup') v18fUpdateMakeupModuleCache();
         lazyRouteState[key]={loaded:true,loading:false,loadedAt:Date.now(),unchanged:!anyChanged,fromCache:false,refreshingAfterCache:false};
         saveLocalOnly();
+        if(key==='schedule') v22PreloadVisibleMakeupMonths();
       }catch(e){
         console.warn('Lazy route refresh failed',r,e);
         lazyRouteState[key]={loaded:false,loading:false,error:e?.message||String(e)};
@@ -1089,11 +1177,12 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       return {id:u.id,name:u.name,phone:u.phone,password:'',roles:u.roles||[],mustChangePassword:!!u.mustChangePassword,status:u.status||'active'};
     }
     async function officialFetch(path,options={}){
-      const headers={...(options.headers||{})};
-      if(!(options.body instanceof FormData) && !headers['Content-Type']) headers['Content-Type']='application/json';
+      const {preserveGetCache=false,invalidatePaths=null,noDedupe=false,...requestOptions}=options||{};
+      const headers={...(requestOptions.headers||{})};
+      if(!(requestOptions.body instanceof FormData) && !headers['Content-Type']) headers['Content-Type']='application/json';
 
-      const canDedupe=v18gCanDedupeFetch(path,options);
-      const cacheKey=canDedupe?v18gGetCacheKey(path,options):'';
+      const canDedupe=v18gCanDedupeFetch(path,{...requestOptions,noDedupe});
+      const cacheKey=canDedupe?v18gGetCacheKey(path,requestOptions):'';
 
       if(canDedupe){
         const cached=v18gShortGetCache.get(cacheKey);
@@ -1104,11 +1193,12 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       }
 
       const run=async()=>{
-        const res=await fetch(path,{credentials:'include',...options,headers});
+        const res=await fetch(path,{credentials:'include',...requestOptions,headers});
         const json=await res.json().catch(()=>({}));
         if(!res.ok) throw new Error(json.error||'Lỗi hệ thống');
         if(canDedupe) v18gShortGetCache.set(cacheKey,{ts:Date.now(),data:json});
-        else v18gClearNetworkCache();
+        else if(Array.isArray(invalidatePaths) && invalidatePaths.length) v22ClearNetworkCacheMatching(invalidatePaths);
+        else if(!preserveGetCache) v18gClearNetworkCache();
         return json;
       };
 
@@ -1331,20 +1421,107 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       }catch(e){console.warn('Không tải được dữ liệu điểm danh',e); return false}
     }
 
+    function v22MakeupPayload(month,data={}){
+      return {
+        makeupMonth:data.month||data.makeupMonth||month,
+        makeupPlans:data.makeupPlans||[],
+        absenceRecords:data.absenceRecords||[],
+        attendanceSessions:data.attendanceSessions||{},
+        supportClasses:data.supportClasses||[],
+        deletedMonths:data.deletedMonths||[],
+        availableMonths:data.availableMonths||data.months||[]
+      };
+    }
+    function v22MakeupMonthGenerationValue(month){
+      return Number(v22MakeupMonthGeneration.get(String(month||''))||0);
+    }
+    function v22InvalidateMakeupMonthMemory(month){
+      const key=String(month||'');
+      if(!key) return;
+      v22MakeupMonthGeneration.set(key,v22MakeupMonthGenerationValue(key)+1);
+      v22MakeupMonthMemoryCache.delete(key);
+      v22MakeupMonthInflight.delete(key);
+    }
+    function v22RememberMakeupMonthPayload(month,payload){
+      if(!/^\d{4}-\d{2}$/.test(String(month||'')) || !payload) return payload;
+      const copy=v18gCloneJson(payload);
+      v22MakeupMonthMemoryCache.set(month,{ts:Date.now(),payload:copy});
+      moduleCacheSet(`makeup:${month}`,copy);
+      return payload;
+    }
+    function v22FreshMakeupMonthPayload(month){
+      const mem=v22MakeupMonthMemoryCache.get(String(month||''));
+      if(mem && Date.now()-mem.ts<V22_MAKEUP_PREFETCH_TTL_MS) return v18gCloneJson(mem.payload);
+      return null;
+    }
+    function v22CurrentMakeupStateFresh(month){
+      return !!(db.makeupTabState && db.makeupTabState.month===month && Date.now()-(db.makeupTabState.updatedAt||0)<V22_MAKEUP_PREFETCH_TTL_MS);
+    }
+    function v22ApplyMakeupPayloadForPopup(month,payload){
+      if(!payload) return false;
+      applyCachedPayload('makeup',{...payload,makeupMonth:month});
+      if(db.makeupTabState) db.makeupTabState.updatedAt=Date.now();
+      v22RememberMakeupMonthPayload(month,{...payload,makeupMonth:month});
+      v18Touch();
+      saveLocalOnly();
+      return true;
+    }
+    async function v22PreloadMakeupMonth(month,options={}){
+      const key=String(month||'');
+      if(!/^\d{4}-\d{2}$/.test(key) || !currentUser) return null;
+      if(!options.force){
+        const cached=v22FreshMakeupMonthPayload(key);
+        if(cached) return cached;
+        if(v22CurrentMakeupStateFresh(key)){
+          return v22MakeupPayload(key,{
+            month:key,
+            makeupPlans:db.makeupTabState.makeupPlans||[],
+            absenceRecords:db.makeupTabState.absenceRecords||[],
+            attendanceSessions:db.makeupTabState.attendanceSessions||{},
+            supportClasses:db.makeupTabState.supportClasses||[],
+            deletedMonths:db.deletedMakeupMonths||[],
+            availableMonths:db.makeupAvailableMonths||[]
+          });
+        }
+      }
+      if(v22MakeupMonthInflight.has(key)) return v18gCloneJson(await v22MakeupMonthInflight.get(key));
+      const generation=v22MakeupMonthGenerationValue(key);
+      const promise=officialFetch(`/api/makeup/state?month=${encodeURIComponent(key)}`).then(async data=>{
+        const payload=v22MakeupPayload(key,data);
+        if(generation!==v22MakeupMonthGenerationValue(key)){
+          const fresh=v22FreshMakeupMonthPayload(key);
+          return fresh || v22PreloadMakeupMonth(key,{force:true});
+        }
+        return v22RememberMakeupMonthPayload(key,payload);
+      });
+      v22MakeupMonthInflight.set(key,promise);
+      try{return v18gCloneJson(await promise)}
+      finally{if(v22MakeupMonthInflight.get(key)===promise) v22MakeupMonthInflight.delete(key)}
+    }
+    function v22VisibleWeekMonthKeys(){
+      const start=weekStartDate();
+      const months=new Set();
+      for(let i=0;i<7;i++) months.add(isoDate(addDays(start,i)).slice(0,7));
+      return Array.from(months).filter(m=>/^\d{4}-\d{2}$/.test(m));
+    }
+    function v22PreloadVisibleMakeupMonths(){
+      if(!currentUser || !canScheduleMakeup()) return;
+      const months=v22VisibleWeekMonthKeys();
+      months.forEach((month,index)=>{
+        setTimeout(()=>v22PreloadMakeupMonth(month).catch(e=>console.warn('Makeup month preload failed',month,e)),index*120);
+      });
+    }
+    function preloadScheduleMakeupForSession(sessionKey){
+      const month=sessionKeyMonth(String(sessionKey||''))||makeupCurrentMonthKey();
+      v22PreloadMakeupMonth(month).catch(()=>{});
+    }
+
     async function refreshOfficialMakeupState(options={}){
       if(!currentUser) return false;
       try{
         const month=options.month || makeupSelectedMonthKey();
         const data=await officialFetch(`/api/makeup/state?month=${encodeURIComponent(month)}`);
-        const payload={
-          makeupMonth:data.month||month,
-          makeupPlans:data.makeupPlans||[],
-          absenceRecords:data.absenceRecords||[],
-          attendanceSessions:data.attendanceSessions||{},
-          supportClasses:data.supportClasses||[],
-          deletedMonths:data.deletedMonths||[],
-          availableMonths:data.availableMonths||data.months||[]
-        };
+        const payload=v22RememberMakeupMonthPayload(month,v22MakeupPayload(month,data));
         const changed=v18iHashPayload(`makeup:${month}`,payload);
         const currentState=(db.makeupTabState && db.makeupTabState.month===month) ? db.makeupTabState : {};
         const currentMakeupComparable={
@@ -2967,11 +3144,22 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
       const targetLabel=p.targetSessionKey?safeSessionLabel(p.targetSessionKey):'buổi học bù này';
       if(!confirm(`Hủy lịch học bù của ${studentName} ở ${targetLabel}?\n\nHọc sinh sẽ quay lại danh sách Chờ xếp.`)) return;
       try{
-        await officialFetch(`/api/makeup/plans/${encodeURIComponent(planId)}`,{method:'DELETE'});
-        restoreAbsencePendingAfterMakeupCancel(p);
+        const data=await officialFetch(`/api/makeup/plans/${encodeURIComponent(planId)}`,{method:'DELETE',preserveGetCache:true});
+        const cancelledPlan=data?.plan||p;
+        const updatedAbsence=data?.absenceRecord||null;
+        if(updatedAbsence){
+          const mergeOne=(arr=[])=>{
+            const i=arr.findIndex(a=>String(a?.id||'')===String(updatedAbsence.id||''));
+            if(i>=0) arr[i]={...arr[i],...updatedAbsence}; else arr.push(updatedAbsence);
+          };
+          db.absenceRecords ||= [];
+          mergeOne(db.absenceRecords);
+          if(db.makeupTabState){db.makeupTabState.absenceRecords ||= []; mergeOne(db.makeupTabState.absenceRecords);db.makeupTabState.updatedAt=Date.now();}
+        }else restoreAbsencePendingAfterMakeupCancel(cancelledPlan);
         removeMakeupPlanFromLocalState(planId);
-        v20bAfterMutation(['schedule','attendance','makeup'],{targetSessionKey:p.targetSessionKey,sourceSessionKey:p.sourceSessionKey,month:makeupPlanMonth(p),force:true});
-        v20b13InvalidateScheduleAfterMutation();
+        if(db.makeupTabState) db.makeupTabState.updatedAt=Date.now();
+        v20bAfterMutation(['schedule','makeup'],{targetSessionKey:cancelledPlan.targetSessionKey,sourceSessionKey:cancelledPlan.sourceSessionKey,month:makeupPlanMonth(cancelledPlan),preserveCache:true,renderOnRevalidate:false,delayMs:650});
+        v22RefreshScheduleBehindMakeupModal();
         if(route==='makeup') lazyRouteState.makeup={loaded:true,loading:false,loadedAt:Date.now(),mutated:true};
         if(route==='schedule') lazyRouteState.schedule={loaded:true,loading:false,loadedAt:Date.now(),mutated:true};
         saveLocalOnly();
@@ -4696,11 +4884,15 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
     function openScheduleMakeup(targetClassId,targetSessionKey=null){
       normalizeMakeupPlans(); ensureAbsenceRecords();
       const targetMonth=targetSessionKey?(sessionKeyMonth(targetSessionKey)||makeupCurrentMonthKey()):makeupCurrentMonthKey();
-      const monthStateOk=!!(db.makeupTabState && db.makeupTabState.month===targetMonth && Date.now()-(db.makeupTabState.updatedAt||0)<15000);
+      let monthStateOk=v22CurrentMakeupStateFresh(targetMonth);
+      if(!monthStateOk){
+        const prefetched=v22FreshMakeupMonthPayload(targetMonth);
+        if(prefetched) monthStateOk=v22ApplyMakeupPayloadForPopup(targetMonth,prefetched);
+      }
       if(targetSessionKey && !monthStateOk && scheduleMakeupMonthLoadingKey!==targetSessionKey){
         scheduleMakeupMonthLoadingKey=targetSessionKey;
         modal(`<div data-schedule-makeup-modal data-disable-modal-autofocus><div class="modalHead"><h2>Xếp học bù</h2><button class="close" onclick="closeModal()">×</button></div><div class="empty">Đang tải dữ liệu học bù tháng này...</div></div>`);
-        refreshOfficialMakeupState({skipSave:true,month:targetMonth,applyGlobal:true}).catch(e=>toast(e.message||'Không tải được dữ liệu học bù')).finally(()=>{
+        v22PreloadMakeupMonth(targetMonth,{force:true}).then(payload=>v22ApplyMakeupPayloadForPopup(targetMonth,payload)).catch(e=>toast(e.message||'Không tải được dữ liệu học bù')).finally(()=>{
           scheduleMakeupMonthLoadingKey='';
           openScheduleMakeup(targetClassId,targetSessionKey);
         });
@@ -4763,6 +4955,18 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
       }
       return plans;
     }
+    function v22RefreshScheduleBehindMakeupModal(){
+      if(v18Memo.scheduleCellMap) v18Memo.scheduleCellMap.key='';
+      if(v18Memo.scheduleDayMap) v18Memo.scheduleDayMap.key='';
+      v18Memo.weekKey='';
+      v18Memo.weekSessions=null;
+      lazyRouteState.schedule={...(lazyRouteState.schedule||{}),loaded:true,loading:false,loadedAt:Date.now(),mutated:true};
+      if(route==='schedule'){
+        v20l4ScheduleRenderAfterModal=true;
+        try{renderApp()}catch(e){console.warn('Không cập nhật được lịch sau khi xếp học bù',e)}
+      }
+    }
+
     async function confirmScheduleMakeupBatch(targetClassId,targetSessionKey){
       rememberScheduleMakeupSearch();
       const draft=scheduleMakeupDraftState(targetClassId,targetSessionKey);
@@ -4775,18 +4979,21 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
       const btn=document.getElementById('confirmMakeupBatchBtn');
       if(btn){btn.disabled=true;btn.textContent='Đang xác nhận...'}
       try{
-        const data=await officialFetch('/api/makeup/plans',{method:'POST',body:JSON.stringify({targetClassId,targetSessionKey,items})});
+        const data=await officialFetch('/api/makeup/plans',{method:'POST',body:JSON.stringify({targetClassId,targetSessionKey,items}),preserveGetCache:true});
         const plans=mergeConfirmedMakeupBatch(data);
         draft.items=[];
         draft.scrollTop=0;
-        v20bAfterMutation(['schedule','attendance','makeup'],{
+        const mutationMonth=sessionKeyMonth(items[0]?.sourceSessionKey)||sessionKeyMonth(targetSessionKey);
+        v20bAfterMutation(['schedule','makeup'],{
           targetSessionKey,
           sourceSessionKey:items[0]?.sourceSessionKey||'',
-          month:sessionKeyMonth(items[0]?.sourceSessionKey)||sessionKeyMonth(targetSessionKey),
-          force:true
+          month:mutationMonth,
+          preserveCache:true,
+          renderOnRevalidate:false,
+          delayMs:650
         });
-        v20b13InvalidateScheduleAfterMutation();
-        save();
+        saveLocalOnly();
+        v22RefreshScheduleBehindMakeupModal();
         toast(`Đã xếp ${plans.length||items.length} học sinh vào buổi này`);
         refreshScheduleMakeupDraftDom(targetClassId,targetSessionKey);
       }catch(e){
