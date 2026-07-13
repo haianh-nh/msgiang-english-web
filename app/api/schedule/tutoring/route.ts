@@ -15,9 +15,18 @@ function validTime(v: any) {
   return /^\d{2}:\d{2}$/.test(s) ? s : "";
 }
 
+function parseYmdUtc(date: string) {
+  const [y, m, d] = String(date || "").split("-").map(Number);
+  if (!y || !m || !d) return null;
+  return new Date(Date.UTC(y, m - 1, d));
+}
+
 function dayKeyFromDate(date: string) {
-  const d = new Date(`${date}T00:00:00+07:00`);
-  return DAY_BY_DATE[d.getDay()] || "Mon";
+  // IMPORTANT: the selected date is a Vietnam calendar date, not an instant.
+  // Do not parse it with +07 and then call getDay(), because Vercel runs in UTC
+  // and dates around midnight can shift to the previous day.
+  const d = parseYmdUtc(date);
+  return d ? (DAY_BY_DATE[d.getUTCDay()] || "Mon") : "Mon";
 }
 
 function monthFromSessionKey(key: any) {

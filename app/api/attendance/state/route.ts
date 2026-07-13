@@ -11,17 +11,23 @@ function validDate(v: string | null) {
   return /^\d{4}-\d{2}-\d{2}$/.test(s) ? s : "";
 }
 
+function parseYmdUtc(date: string) {
+  const [y, m, d] = String(date || "").split("-").map(Number);
+  if (!y || !m || !d) return null;
+  return new Date(Date.UTC(y, m - 1, d));
+}
+
 function monthsInDateRange(start: string, end: string) {
   if (!start || !end) return [];
   const out: string[] = [];
-  const d = new Date(`${start}T00:00:00+07:00`);
-  const endDate = new Date(`${end}T00:00:00+07:00`);
-  if (!Number.isFinite(d.getTime()) || !Number.isFinite(endDate.getTime())) return [];
+  const d = parseYmdUtc(start);
+  const endDate = parseYmdUtc(end);
+  if (!d || !endDate || !Number.isFinite(d.getTime()) || !Number.isFinite(endDate.getTime())) return [];
   // end is exclusive; include every month touched by [start, end).
   while (d.getTime() < endDate.getTime()) {
-    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    const key = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
     if (!out.includes(key)) out.push(key);
-    d.setDate(d.getDate() + 1);
+    d.setUTCDate(d.getUTCDate() + 1);
   }
   return out;
 }
