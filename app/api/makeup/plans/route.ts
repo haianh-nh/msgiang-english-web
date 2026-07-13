@@ -179,14 +179,42 @@ export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}));
   const targetClassId = String(body.targetClassId || "");
   const targetSessionKey = String(body.targetSessionKey || "");
-  const sourceClassId = String(body.sourceClassId || "");
-  const studentId = String(body.studentId || "");
-  const absenceId = String(body.absenceId || "");
-  if (!targetClassId || !targetSessionKey || !sourceClassId || !studentId || !absenceId) {
+  const rawBatchItems = Array.isArray(body.items) ? body.items : null;
+  const isBatch = !!rawBatchItems;
+  const batchItems = (rawBatchItems || []).slice(0, 51).map((item: any, index: number) => ({
+    id: String(item?.id || `mk_${Date.now()}_${index}_${Math.random().toString(36).slice(2, 8)}`),
+    absenceId: String(item?.absenceId || ""),
+    studentId: String(item?.studentId || ""),
+    sourceClassId: String(item?.sourceClassId || ""),
+    sourceSessionKey: String(item?.sourceSessionKey || ""),
+  }));
+
+  const singleItem = {
+    id: String(body.id || `mk_${Date.now()}`),
+    absenceId: String(body.absenceId || ""),
+    studentId: String(body.studentId || ""),
+    sourceClassId: String(body.sourceClassId || ""),
+    sourceSessionKey: String(body.sourceSessionKey || ""),
+  };
+  const items = isBatch ? batchItems : [singleItem];
+
+  if (!targetClassId || !targetSessionKey || !items.length) {
     return NextResponse.json({ error: "Thiếu thông tin xếp học bù" }, { status: 400 });
   }
-  if (targetClassId === sourceClassId) {
+  if (items.length > 50) {
+    return NextResponse.json({ error: "Chỉ được xác nhận tối đa 50 học sinh mỗi lần" }, { status: 400 });
+  }
+  if (items.some((item: any) => !item.absenceId || !item.studentId || !item.sourceClassId)) {
+    return NextResponse.json({ error: "Có học sinh thiếu thông tin xếp học bù" }, { status: 400 });
+  }
+  if (items.some((item: any) => item.sourceClassId === targetClassId)) {
     return NextResponse.json({ error: "Học sinh đã thuộc lớp này, không cần xếp học bù vào chính lớp gốc" }, { status: 400 });
+  }
+  if (new Set(items.map((item: any) => item.absenceId)).size !== items.length) {
+    return NextResponse.json({ error: "Danh sách xác nhận có lượt vắng bị trùng" }, { status: 400 });
+  }
+  if (new Set(items.map((item: any) => item.studentId)).size !== items.length) {
+    return NextResponse.json({ error: "Một học sinh chỉ được xếp một lượt vắng vào cùng buổi" }, { status: 400 });
   }
   if (!targetSessionCanReceiveMakeup(targetSessionKey)) {
     return NextResponse.json({ error: canManage(user) ? "Buổi đã điểm danh: hãy mở màn điểm danh để thêm học bù rồi lưu lại" : "Chỉ được xếp học bù trước giờ học" }, { status: 400 });
@@ -194,20 +222,25 @@ export async function POST(req: NextRequest) {
 
   const supabase = supabaseAdmin();
   const teacherPromise = canManage(user) ? Promise.resolve(null) : teacherForUser(user);
+  const classIds = [...new Set([targetClassId, ...items.map((item: any) => item.sourceClassId)])];
   const [classesRes, settings, teacher] = await Promise.all([
     supabase
       .from("official_classes")
       .select("id,name,status,teacher_id,assistant_teacher_id")
-      .in("id", [targetClassId, sourceClassId]),
+      .in("id", classIds),
     getSettings(),
     teacherPromise,
   ]);
 
   if (classesRes.error) return NextResponse.json({ error: classesRes.error.message }, { status: 500 });
-  const targetClass = (classesRes.data || []).find((c: any) => String(c.id) === targetClassId);
-  const sourceClass = (classesRes.data || []).find((c: any) => String(c.id) === sourceClassId);
-  if (!targetClass || !sourceClass) return NextResponse.json({ error: "Không tìm thấy lớp" }, { status: 404 });
-  if (inactiveClassStatus(targetClass.status)) return NextResponse.json({ error: "Không thể xếp học bù vào lớp đã kết thúc hoặc đã hủy" }, { status: 400 });
+  const classes = classesRes.data || [];
+  const targetClass = classes.find((c: any) => String(c.id) === targetClassId);
+  if (!targetClass || items.some((item: any) => !classes.some((c: any) => String(c.id) === item.sourceClassId))) {
+    return NextResponse.json({ error: "Không tìm thấy lớp" }, { status: 404 });
+  }
+  if (inactiveClassStatus(targetClass.status)) {
+    return NextResponse.json({ error: "Không thể xếp học bù vào lớp đã kết thúc hoặc đã hủy" }, { status: 400 });
+  }
 
   if (!canManage(user)) {
     const me = String(teacher?.id || "");
@@ -217,14 +250,72 @@ export async function POST(req: NextRequest) {
   }
 
   const capacity = Math.max(1, Number(settings.session_capacity || 15));
-  const id = String(body.id || `mk_${Date.now()}`);
   const rpcStarted = performance.now();
+
+  if (isBatch) {
+    const rpc = await supabase.rpc("official_schedule_makeup_plans_batch", {
+      p_items: items,
+      p_target_class_id: targetClassId,
+      p_target_session_key: targetSessionKey,
+      p_created_by: user.id,
+      p_capacity: capacity,
+    });
+
+    let payload: any;
+    if (!rpc.error) {
+      payload = {
+        ok: true,
+        plans: (rpc.data?.plans || []).map(mapPlan),
+        absenceRecords: (rpc.data?.absenceRecords || []).map(mapAbsence),
+        counts: rpc.data?.counts || null,
+        mode: "rpc-batch",
+      };
+    } else if (isMissingRpc(rpc.error, "official_schedule_makeup_plans_batch")) {
+      if (items.length !== 1) {
+        return NextResponse.json(
+          { error: "Chưa cài migration 015 để xác nhận nhiều học sinh cùng lúc" },
+          { status: 503 },
+        );
+      }
+      const item = items[0];
+      const singleRpc = await supabase.rpc("official_schedule_makeup_plan", {
+        p_id: item.id,
+        p_absence_id: item.absenceId,
+        p_student_id: item.studentId,
+        p_source_class_id: item.sourceClassId,
+        p_source_session_key: item.sourceSessionKey,
+        p_target_class_id: targetClassId,
+        p_target_session_key: targetSessionKey,
+        p_created_by: user.id,
+        p_capacity: capacity,
+      });
+      if (singleRpc.error) {
+        return NextResponse.json({ error: singleRpc.error.message || "Không xếp được học bù" }, { status: rpcStatus(singleRpc.error) });
+      }
+      payload = {
+        ok: true,
+        plans: [mapPlan(singleRpc.data?.plan)],
+        absenceRecords: [mapAbsence(singleRpc.data?.absenceRecord)].filter(Boolean),
+        counts: singleRpc.data?.counts || null,
+        mode: "rpc-single-fallback",
+      };
+    } else {
+      return NextResponse.json({ error: rpc.error.message || "Không xếp được học bù" }, { status: rpcStatus(rpc.error) });
+    }
+
+    const res = NextResponse.json(payload);
+    res.headers.set("Cache-Control", "private, no-store");
+    res.headers.set("Server-Timing", `rpc;dur=${(performance.now() - rpcStarted).toFixed(1)},total;dur=${(performance.now() - started).toFixed(1)}`);
+    return res;
+  }
+
+  const item = items[0];
   const rpc = await supabase.rpc("official_schedule_makeup_plan", {
-    p_id: id,
-    p_absence_id: absenceId,
-    p_student_id: studentId,
-    p_source_class_id: sourceClassId,
-    p_source_session_key: String(body.sourceSessionKey || ""),
+    p_id: item.id,
+    p_absence_id: item.absenceId,
+    p_student_id: item.studentId,
+    p_source_class_id: item.sourceClassId,
+    p_source_session_key: item.sourceSessionKey,
     p_target_class_id: targetClassId,
     p_target_session_key: targetSessionKey,
     p_created_by: user.id,
@@ -242,7 +333,17 @@ export async function POST(req: NextRequest) {
     };
   } else if (isMissingRpc(rpc.error, "official_schedule_makeup_plan")) {
     try {
-      payload = await legacySchedule({ supabase, body, user, targetClassId, targetSessionKey, sourceClassId, studentId, absenceId, capacity });
+      payload = await legacySchedule({
+        supabase,
+        body: { ...body, ...item },
+        user,
+        targetClassId,
+        targetSessionKey,
+        sourceClassId: item.sourceClassId,
+        studentId: item.studentId,
+        absenceId: item.absenceId,
+        capacity,
+      });
       if (payload?.error) return NextResponse.json({ error: payload.error }, { status: payload.status || 400 });
     } catch (e: any) {
       return NextResponse.json({ error: e.message || "Không xếp được học bù" }, { status: 500 });

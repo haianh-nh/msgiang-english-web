@@ -2007,3 +2007,62 @@ body{
     max-height:55vh;
   }
 }
+
+/* V20BATCH1 — confirm one or many makeup students in a single popup action */
+.makeupAssignedSection{
+  margin:16px 0 18px;
+  padding:14px;
+  border:1px solid #f5cbd4;
+  border-radius:18px;
+  background:#fffafb;
+}
+.makeupAssignedHead{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  margin:0 0 10px;
+}
+.makeupAssignedHead h3{
+  margin:0;
+  color:#111827;
+  font-size:18px;
+  letter-spacing:-.01em;
+}
+.makeupAssignedHead .btn{
+  flex:0 0 auto;
+  min-width:150px;
+}
+.makeupAssignedHead .btn:disabled{
+  opacity:.48;
+  cursor:not-allowed;
+  box-shadow:none;
+}
+.makeupAssignedTableWrap{
+  max-height:30vh;
+  margin-bottom:0;
+}
+.makeupDraftRow{
+  background:#fffbeb;
+}
+.makeupDraftRow td{
+  border-color:#fde7a8!important;
+}
+.compactEmpty{
+  min-height:0!important;
+  padding:10px!important;
+  border:0!important;
+  background:transparent!important;
+}
+@media(max-width:760px){
+  .makeupAssignedHead{
+    align-items:stretch;
+    flex-direction:column;
+  }
+  .makeupAssignedHead .btn{
+    width:100%;
+  }
+  .makeupAssignedTableWrap{
+    max-height:38vh;
+  }
+}
