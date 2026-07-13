@@ -328,7 +328,10 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       moduleCacheSet(`schedule:${isoDate(weekStartDate())}`, {
         classCancellations: db.classCancellations || {},
         classMakeupSessions: db.classMakeupSessions || [],
-        makeupPlans: db.makeupPlans || []
+        makeupPlans: db.makeupPlans || [],
+        attendanceBundled: true,
+        attendanceSessions: db.attendanceSessions || {},
+        absenceRecords: db.absenceRecords || []
       });
     }
     function v18fUpdateAttendanceModuleCache(){
@@ -910,6 +913,12 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
         db.classMakeupSessions=v20bMergeClassMakeupSessions(db.classMakeupSessions||[],payload.classMakeupSessions||[]);
         v20b7MergeClassSnapshotsFromMakeups(db.classMakeupSessions);
         db.makeupPlans=payload.makeupPlans||[];
+        // Phase 4B: schedule cache can carry the attendance state required by the Schedule screen.
+        // Older cache entries remain compatible because this branch only applies when bundled=true.
+        if(payload.attendanceBundled===true){
+          db.attendanceSessions=payload.attendanceSessions||{};
+          db.absenceRecords=[...(payload.absenceRecords||[])];
+        }
         if(payload.sourceAbsenceRecords?.length) mergeAbsenceRecords(payload.sourceAbsenceRecords);
         return true;
       }
@@ -1063,7 +1072,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
           });
           if(key==='schedule'){
             if(shouldRefreshClasses) jobs.push(classJob());
-            jobs.push(refreshOfficialScheduleState({skipSave:true}), refreshOfficialAttendanceState({skipSave:true}));
+            jobs.push(v25RefreshScheduleAndAttendance({skipSave:true}));
           }
           if(key==='makeup'){
             if(shouldRefreshClasses) jobs.push(classJob());
@@ -1071,7 +1080,7 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
           }
           if(key==='attendance'){
             if(shouldRefreshClasses) jobs.push(classJob());
-            jobs.push(refreshOfficialScheduleState({skipSave:true}), refreshOfficialAttendanceState({skipSave:true}));
+            jobs.push(v25RefreshScheduleAndAttendance({skipSave:true}));
           }
           if(key==='tuition') jobs.push(refreshOfficialTuitionState({skipSave:true}));
           if(key==='library') jobs.push(refreshOfficialLibrary({skipSave:true}));
@@ -1260,6 +1269,8 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
         const data=await officialFetch('/api/bootstrap');
         applyBootstrapSnapshot(data.snapshot);
         applyOfficialSettings(data.settings);
+        // Khi tải lại trang trong tab Lịch dạy, luôn bắt đầu ở tuần hiện tại.
+        if(route==='schedule') resetScheduleWeekToCurrent();
         currentUser=mapBackendUser(data.user);
         if(currentUser){
           v20b4ResetRouteLoadState();
@@ -1395,27 +1406,40 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
     }
 
     async function refreshOfficialScheduleState(options={}){
-      if(!currentUser) return false;
+      if(!currentUser) return options.returnMeta?{changed:false,attendanceBundled:false}:false;
       try{
         const start=isoDate(weekStartDate());
         const end=isoDate(addDays(weekStartDate(),7));
         const data=await officialFetch(`/api/schedule/state?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`);
-        const payload={classCancellations:data.classCancellations||{},classMakeupSessions:data.classMakeupSessions||[],makeupPlans:data.makeupPlans||[],sourceAbsenceRecords:data.sourceAbsenceRecords||[]};
+        const attendanceBundled=data.attendanceBundled===true;
+        const payload={
+          classCancellations:data.classCancellations||{},
+          classMakeupSessions:data.classMakeupSessions||[],
+          makeupPlans:data.makeupPlans||[],
+          sourceAbsenceRecords:data.sourceAbsenceRecords||[],
+          attendanceBundled,
+          attendanceSessions:attendanceBundled?(data.attendanceSessions||{}):undefined,
+          absenceRecords:attendanceBundled?(data.absenceRecords||[]):undefined
+        };
         const changed=v18iHashPayload(`schedule:${isoDate(weekStartDate())}`,payload);
         const localNeedsApply=
           (!Object.keys(db.classCancellations||{}).length && Object.keys(payload.classCancellations||{}).length>0) ||
           (!(db.classMakeupSessions||[]).length && (payload.classMakeupSessions||[]).length>0) ||
           (payload.classMakeupSessions||[]).some(m=>!(db.classMakeupSessions||[]).some(x=>String(x.id||x.sourceSessionKey)===String(m.id||m.sourceSessionKey) && String(x.teacherId||'')===String(m.teacherId||''))) ||
           (!(db.makeupPlans||[]).length && (payload.makeupPlans||[]).length>0) ||
+          (attendanceBundled && !Object.keys(db.attendanceSessions||{}).length && Object.keys(payload.attendanceSessions||{}).length>0) ||
           (payload.sourceAbsenceRecords||[]).some(a=>!(db.absenceRecords||[]).some(x=>String(x.id)===String(a.id) && String(x.status||'')===String(a.status||'') && String(x.updatedAt||'')===String(a.updatedAt||'')));
         if(changed || localNeedsApply){
           db.classCancellations=payload.classCancellations;
-          // V20B.18:
           // schedule/state là nguồn dữ liệu mới nhất theo user hiện tại.
-          // Không merge với local cũ vì các lịch dạy bù đã hủy/gỡ giáo viên sẽ bị giữ lại.
+          // Không merge lịch dạy bù cũ vì các lịch đã hủy/gỡ giáo viên sẽ bị giữ lại.
           db.classMakeupSessions=payload.classMakeupSessions||[];
           v20b7MergeClassSnapshotsFromMakeups(db.classMakeupSessions);
           db.makeupPlans=payload.makeupPlans;
+          if(attendanceBundled){
+            db.attendanceSessions=payload.attendanceSessions||{};
+            db.absenceRecords=[...(payload.absenceRecords||[])];
+          }
           if(payload.sourceAbsenceRecords?.length) mergeAbsenceRecords(payload.sourceAbsenceRecords);
           v18Touch();
           if(!options.skipSave) save();
@@ -1424,12 +1448,22 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
           classCancellations: db.classCancellations || {},
           classMakeupSessions: db.classMakeupSessions || [],
           makeupPlans: db.makeupPlans || [],
-          sourceAbsenceRecords: payload.sourceAbsenceRecords || []
+          sourceAbsenceRecords: payload.sourceAbsenceRecords || [],
+          attendanceBundled,
+          attendanceSessions: attendanceBundled ? (db.attendanceSessions||{}) : undefined,
+          absenceRecords: attendanceBundled ? (payload.absenceRecords||[]) : undefined
         });
-        return changed || localNeedsApply;
+        if(attendanceBundled){
+          moduleCacheSet(`attendance:${isoDate(weekStartDate())}`, {
+            attendanceSessions: db.attendanceSessions||{},
+            absenceRecords: payload.absenceRecords||[]
+          });
+        }
+        const resultChanged=changed||localNeedsApply;
+        return options.returnMeta?{changed:resultChanged,attendanceBundled}:resultChanged;
       }catch(e){
         console.warn('Không tải được dữ liệu lịch/học bù',e);
-        return false;
+        return options.returnMeta?{changed:false,attendanceBundled:false}:false;
       }
     }
     async function refreshOfficialAttendanceState(options={}){
@@ -1449,6 +1483,15 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
         moduleCacheSet(`attendance:${isoDate(weekStartDate())}`, payload);
         return changed;
       }catch(e){console.warn('Không tải được dữ liệu điểm danh',e); return false}
+    }
+    async function v25RefreshScheduleAndAttendance(options={}){
+      const result=await refreshOfficialScheduleState({...options,returnMeta:true});
+      const scheduleChanged=!!result?.changed;
+      // Migration 017 bundles attendance into schedule/state. Before it is installed,
+      // the legacy response safely falls back to the existing attendance endpoint.
+      if(result?.attendanceBundled) return scheduleChanged;
+      const attendanceChanged=await refreshOfficialAttendanceState(options);
+      return attendanceChanged||scheduleChanged;
     }
 
     function v22MakeupPayload(month,data={}){
@@ -3642,7 +3685,31 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
     function parseISODate(v){const [y,m,d]=String(v).split('-').map(Number);return new Date(y,m-1,d)}
     function mondayOf(d){const x=new Date(d); const day=x.getDay()||7; x.setDate(x.getDate()-day+1); x.setHours(0,0,0,0); return x}
     function addDays(d,n){const x=new Date(d); x.setDate(x.getDate()+n); return x}
-    function weekStartDate(){db.settings.weekStart ||= isoDate(mondayOf(new Date())); return parseISODate(db.settings.weekStart)}
+    function currentWeekStartISO(){
+      // Tính thứ Hai theo lịch Việt Nam, không phụ thuộc múi giờ của máy hoặc Vercel.
+      const vn=new Date(Date.now()+7*60*60*1000);
+      const day=vn.getUTCDay()||7;
+      const monday=new Date(Date.UTC(vn.getUTCFullYear(),vn.getUTCMonth(),vn.getUTCDate()));
+      monday.setUTCDate(monday.getUTCDate()-day+1);
+      return `${monday.getUTCFullYear()}-${String(monday.getUTCMonth()+1).padStart(2,'0')}-${String(monday.getUTCDate()).padStart(2,'0')}`;
+    }
+    function resetScheduleWeekToCurrent(options={}){
+      db.settings ||= {};
+      const current=currentWeekStartISO();
+      const changed=String(db.settings.weekStart||'')!==current;
+      db.settings.weekStart=current;
+      if(changed){
+        lazyRouteState.schedule={};
+        lazyRouteState.attendance={};
+        v18Memo.weekKey='';
+        v18Memo.weekSessions=null;
+        v18Memo.attendancePageKey='';
+        v18Memo.attendancePageSessions=null;
+        if(options.persist!==false) saveLocalOnly();
+      }
+      return changed;
+    }
+    function weekStartDate(){db.settings.weekStart ||= currentWeekStartISO(); return parseISODate(db.settings.weekStart)}
     function setWeekStart(v){
       db.settings.weekStart=isoDate(mondayOf(parseISODate(v)));
       lazyRouteState.schedule={}; lazyRouteState.attendance={};
@@ -3756,10 +3823,13 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
     function animateRoute(){const p=document.getElementById('topProgress'); p.classList.remove('go'); void p.offsetWidth; p.classList.add('go'); setTimeout(()=>p.classList.remove('go'),520)}
     function go(r){
       if(r==='notifications') r='overview';
+      // Mỗi lần mở Lịch dạy đều quay về đúng tuần hiện tại; đổi tuần thủ công vẫn hoạt động
+      // cho tới khi người dùng rời tab và mở Lịch dạy lại.
+      if(r==='schedule') resetScheduleWeekToCurrent();
       route=r; notifOpen=false; saveUser(); animateRoute(); render();
-      // V20B.18: lịch giáo viên phải lấy dữ liệu mới khi mở tab.
-      // Render cache trước để mượt, sau đó refresh nền cả /api/classes và /api/schedule/state.
-      const forceFresh=['schedule','attendance','makeup'].includes(r);
+      // Schedule dùng cache đúng tuần để hiện ngay rồi tự đối chiếu nền khi stale.
+      // Attendance/Makeup vẫn force vì đó là màn hình thao tác dữ liệu trực tiếp.
+      const forceFresh=['attendance','makeup'].includes(r);
       Promise.resolve(ensurePageData(r,{force:forceFresh})).finally(()=>v20cSchedulePrefetch(r));
       closeDrawer()
     }

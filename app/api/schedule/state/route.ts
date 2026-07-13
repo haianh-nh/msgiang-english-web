@@ -91,7 +91,7 @@ function buildClassSnapshots(classes: any[] = [], teachers: any[] = [], students
 }
 
 // V20B.13: schedule/state is the single source for cancellations, assigned class makeup, and student makeup plans.
-export async function GET(req: NextRequest) {
+async function legacyGET(req: NextRequest) {
   const started = performance.now();
   const { user, response } = await requireUser();
   if (response) return response;
@@ -295,3 +295,139 @@ export async function GET(req: NextRequest) {
   res.headers.set("Server-Timing", `total;dur=${(performance.now() - started).toFixed(1)}`);
   return res;
 }
+
+function isMissingRpc(error: any, name: string) {
+  const msg = String(error?.message || error?.details || "").toLowerCase();
+  return error?.code === "PGRST202" || error?.code === "42883" ||
+    (msg.includes(name.toLowerCase()) && (msg.includes("not found") || msg.includes("does not exist")));
+}
+
+function vietnamCurrentWeekRange() {
+  // Work with Vietnam calendar fields independently from the Vercel server timezone.
+  const vn = new Date(Date.now() + 7 * 60 * 60 * 1000);
+  const day = vn.getUTCDay() || 7;
+  const monday = new Date(Date.UTC(vn.getUTCFullYear(), vn.getUTCMonth(), vn.getUTCDate()));
+  monday.setUTCDate(monday.getUTCDate() - day + 1);
+  const end = new Date(monday);
+  end.setUTCDate(end.getUTCDate() + 7);
+  return { start: formatYmdUtc(monday), end: formatYmdUtc(end) };
+}
+
+function resolveWeekRange(req: NextRequest) {
+  const url = new URL(req.url);
+  const requestedStart = validDate(url.searchParams.get("start"));
+  const requestedEnd = validDate(url.searchParams.get("end"));
+  const startDate = parseYmdUtc(requestedStart);
+  const endDate = parseYmdUtc(requestedEnd);
+  const spanDays = startDate && endDate
+    ? Math.round((endDate.getTime() - startDate.getTime()) / 86_400_000)
+    : 0;
+
+  if (requestedStart && requestedEnd && spanDays > 0 && spanDays <= 14) {
+    return { start: requestedStart, end: requestedEnd };
+  }
+  return vietnamCurrentWeekRange();
+}
+
+type ScheduleRpcResult = { data: any; error: any };
+const scheduleWeekInflight = new Map<string, Promise<ScheduleRpcResult>>();
+
+function scheduleWeekRpc(
+  supabase: ReturnType<typeof supabaseAdmin>,
+  key: string,
+  args: Record<string, any>,
+) {
+  const existing = scheduleWeekInflight.get(key);
+  if (existing) return { promise: existing, coalesced: true };
+
+  const promise = Promise.resolve(
+    supabase.rpc("official_get_schedule_week_state", args),
+  ).then((result: any) => ({ data: result.data, error: result.error }))
+    .finally(() => scheduleWeekInflight.delete(key));
+
+  scheduleWeekInflight.set(key, promise);
+  return { promise, coalesced: false };
+}
+
+// Phase 4B: one database round trip for the weekly Schedule screen.
+// The RPC also bundles attendance data, so the frontend can skip /api/attendance/state
+// while still falling back safely before migration 017 is installed.
+export async function GET(req: NextRequest) {
+  const started = performance.now();
+  const { user, response } = await requireUser();
+  const authFinished = performance.now();
+  if (response) return response;
+
+  const { start, end } = resolveWeekRange(req);
+  const manage = canManage(user);
+  const supabase = supabaseAdmin();
+  const inflightKey = [
+    String(user?.id || user?.phone || "anonymous"),
+    manage ? "manage" : "teaching",
+    start,
+    end,
+  ].join("|");
+
+  const rpcStarted = performance.now();
+  const rpcCall = scheduleWeekRpc(supabase, inflightKey, {
+    p_start: start,
+    p_end: end,
+    p_user_id: user?.id || null,
+    p_user_phone: user?.phone || null,
+    p_can_manage: manage,
+  });
+  const rpc = await rpcCall.promise;
+  const rpcFinished = performance.now();
+
+  if (rpc.error) {
+    if (isMissingRpc(rpc.error, "official_get_schedule_week_state")) {
+      const fallback = await legacyGET(req);
+      fallback.headers.set("X-Schedule-Mode", "legacy");
+      fallback.headers.set(
+        "Server-Timing",
+        `auth;dur=${(authFinished - started).toFixed(1)},fallback;dur=${(performance.now() - rpcFinished).toFixed(1)},total;dur=${(performance.now() - started).toFixed(1)}`,
+      );
+      return fallback;
+    }
+    return NextResponse.json(
+      { error: rpc.error.message || "Không tải được lịch tuần" },
+      { status: 500 },
+    );
+  }
+
+  const transformStarted = performance.now();
+  const data = rpc.data && typeof rpc.data === "object" ? rpc.data : {};
+  const payload = {
+    ok: true,
+    start,
+    end,
+    currentTeacherId: data.currentTeacherId || null,
+    classCancellations: data.classCancellations || {},
+    classMakeupSessions: data.classMakeupSessions || [],
+    makeupPlans: data.makeupPlans || [],
+    sourceAbsenceRecords: data.sourceAbsenceRecords || [],
+    attendanceSessions: data.attendanceSessions || {},
+    absenceRecords: data.absenceRecords || [],
+    attendanceBundled: true,
+    mode: "rpc-week",
+    meta: data.meta || {},
+  };
+  const transformFinished = performance.now();
+
+  const res = NextResponse.json(payload);
+  res.headers.set("Cache-Control", "private, no-store");
+  res.headers.set("Vary", "Cookie");
+  res.headers.set("X-Schedule-Mode", "rpc-week");
+  res.headers.set("X-Schedule-Coalesced", rpcCall.coalesced ? "1" : "0");
+  res.headers.set(
+    "Server-Timing",
+    [
+      `auth;dur=${(authFinished - started).toFixed(1)}`,
+      `rpc;dur=${(rpcFinished - rpcStarted).toFixed(1)}`,
+      `transform;dur=${(transformFinished - transformStarted).toFixed(1)}`,
+      `total;dur=${(performance.now() - started).toFixed(1)}`,
+    ].join(","),
+  );
+  return res;
+}
+
