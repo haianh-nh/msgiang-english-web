@@ -22,16 +22,21 @@ function isMissingDeletedMonthsTable(error: any) {
   return error?.code === "42P01" || msg.includes("official_makeup_deleted_months") || msg.includes("does not exist");
 }
 
-async function monthState(supabase: any) {
-  const [absRes, planRes] = await Promise.all([
+function isMissingRpc(error: any, name: string) {
+  const msg = String(error?.message || error?.details || "").toLowerCase();
+  return error?.code === "PGRST202" || error?.code === "42883" || (msg.includes(name.toLowerCase()) && (msg.includes("not found") || msg.includes("does not exist")));
+}
+
+async function monthStateLegacy(supabase: any) {
+  const [absRes, planRes, deletedRes] = await Promise.all([
     supabase.from("official_absence_records").select("source_session_key,created_at"),
     supabase.from("official_makeup_plans").select("source_session_key,target_session_key,created_at"),
+    supabase.from("official_makeup_deleted_months").select("month_key,reason,deleted_at").order("month_key", { ascending: false }),
   ]);
   if (absRes.error) throw absRes.error;
   if (planRes.error) throw planRes.error;
 
   let deletedRows: any[] = [];
-  const deletedRes = await supabase.from("official_makeup_deleted_months").select("month_key,reason,deleted_at").order("month_key", { ascending: false });
   if (deletedRes.error) {
     if (!isMissingDeletedMonthsTable(deletedRes.error)) throw deletedRes.error;
   } else {
@@ -51,17 +56,27 @@ async function monthState(supabase: any) {
     if (validMonth(m)) allMonths.add(m);
   }
 
-  const months = Array.from(allMonths).filter((m) => !deletedSet.has(m)).sort().reverse();
-  return { months, deletedMonths, deletedRows };
+  return { months: Array.from(allMonths).filter((m) => !deletedSet.has(m)).sort().reverse(), deletedMonths, deletedRows };
+}
+
+async function monthState(supabase: any) {
+  const rpc = await supabase.rpc("official_get_makeup_months");
+  if (!rpc.error) return { ...(rpc.data || {}), mode: "rpc" };
+  if (!isMissingRpc(rpc.error, "official_get_makeup_months")) throw rpc.error;
+  return { ...(await monthStateLegacy(supabase)), mode: "legacy" };
 }
 
 export async function GET() {
+  const started = performance.now();
   const { response } = await requireUser();
   if (response) return response;
 
   try {
     const data = await monthState(supabaseAdmin());
-    return NextResponse.json({ ok: true, ...data });
+    const res = NextResponse.json({ ok: true, ...data });
+    res.headers.set("Cache-Control", "private, no-store");
+    res.headers.set("Server-Timing", `total;dur=${(performance.now() - started).toFixed(1)}`);
+    return res;
   } catch (e: any) {
     return NextResponse.json({ error: e.message || "Không tải được danh sách tháng học bù" }, { status: 500 });
   }

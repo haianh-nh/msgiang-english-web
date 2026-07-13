@@ -92,6 +92,7 @@ function buildClassSnapshots(classes: any[] = [], teachers: any[] = [], students
 
 // V20B.13: schedule/state is the single source for cancellations, assigned class makeup, and student makeup plans.
 export async function GET(req: NextRequest) {
+  const started = performance.now();
   const { user, response } = await requireUser();
   if (response) return response;
 
@@ -146,25 +147,34 @@ export async function GET(req: NextRequest) {
 
   const allMakeupRows = makeupRes.data || [];
   const allMakeupClassIds = uniq(allMakeupRows.map((r:any)=>r.class_id));
+  const sourceAbsenceIds = uniq((mRes.data || []).map((r: any) => r.absence_id));
 
-  const classRes = allMakeupClassIds.length
-    ? await supabase
-        .from("official_classes")
-        .select("id,name,grade,note,teacher_id,assistant_teacher_id,assistant_name,start_date,end_date,status,created_at")
-        .in("id", allMakeupClassIds)
-    : ({ data: [], error: null } as any);
+  // These reads are independent. Running them together removes one full Supabase round trip
+  // from the schedule screen, which matters when the Vercel function and database are far apart.
+  const [classRes, currentTeacher, sourceAbsenceRes] = await Promise.all([
+    allMakeupClassIds.length
+      ? supabase
+          .from("official_classes")
+          .select("id,name,grade,note,teacher_id,assistant_teacher_id,assistant_name,start_date,end_date,status,created_at")
+          .in("id", allMakeupClassIds)
+      : Promise.resolve({ data: [], error: null } as any),
+    !canManage(user) && (hasRole(user, "teacher") || hasRole(user, "ta"))
+      ? teacherForUser(user)
+      : Promise.resolve(null),
+    sourceAbsenceIds.length
+      ? supabase
+          .from("official_absence_records")
+          .select("id,student_id,source_class_id,source_session_key,source_session_label,reason,generated_from_attendance,status,created_at,updated_at")
+          .in("id", sourceAbsenceIds)
+      : Promise.resolve({ data: [], error: null } as any),
+  ]);
 
   if (classRes.error) return NextResponse.json({ error: classRes.error.message }, { status: 500 });
+  if (sourceAbsenceRes.error) return NextResponse.json({ error: sourceAbsenceRes.error.message }, { status: 500 });
 
   const classRows = classRes.data || [];
-  const classTeacherIds = uniq([...classRows.map((c:any)=>c.teacher_id), ...classRows.map((c:any)=>c.assistant_teacher_id)]);
   const classById = new Map<string, any>(classRows.map((c:any)=>[String(c.id), c]));
-
-  let currentTeacherId = "";
-  if (!canManage(user) && (hasRole(user, "teacher") || hasRole(user, "ta"))) {
-    const teacher = await teacherForUser(user);
-    currentTeacherId = String(teacher?.id || "");
-  }
+  const currentTeacherId = String(currentTeacher?.id || "");
 
   const visibleMakeupRows = canManage(user)
     ? allMakeupRows
@@ -244,16 +254,6 @@ export async function GET(req: NextRequest) {
     })
     .sort((a: any, b: any) => String(a.date || "").localeCompare(String(b.date || "")));
 
-  const sourceAbsenceIds = uniq((mRes.data || []).map((r: any) => r.absence_id));
-  const sourceAbsenceRes = sourceAbsenceIds.length
-    ? await supabase
-        .from("official_absence_records")
-        .select("id, student_id, source_class_id, source_session_key, source_session_label, reason, generated_from_attendance, status, created_at, updated_at")
-        .in("id", sourceAbsenceIds)
-    : ({ data: [], error: null } as any);
-
-  if (sourceAbsenceRes.error) return NextResponse.json({ error: sourceAbsenceRes.error.message }, { status: 500 });
-
   const sourceAbsenceRecords = (sourceAbsenceRes.data || []).map((a: any) => ({
     id: a.id,
     studentId: a.student_id,
@@ -281,7 +281,7 @@ export async function GET(req: NextRequest) {
     cancelledAt: r.cancelled_at,
   }));
 
-  return NextResponse.json({
+  const res = NextResponse.json({
     ok: true,
     start: start || null,
     end: end || null,
@@ -291,4 +291,7 @@ export async function GET(req: NextRequest) {
     makeupPlans,
     sourceAbsenceRecords,
   });
+  res.headers.set("Cache-Control", "private, no-store");
+  res.headers.set("Server-Timing", `total;dur=${(performance.now() - started).toFixed(1)}`);
+  return res;
 }
