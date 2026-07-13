@@ -4,6 +4,29 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { teacherForUser } from "@/lib/classes";
 
 
+function isMissingAttendanceFastRpc(error: any) {
+  const message = String(error?.message || error?.details || error?.hint || "").toLowerCase();
+  return error?.code === "PGRST202"
+    || error?.code === "42883"
+    || (message.includes("official_save_attendance_fast")
+      && (message.includes("schema cache") || message.includes("does not exist") || message.includes("could not find")));
+}
+
+function attendanceResponse(payload: any, status = 200, timings: Record<string, number> = {}, mode = "legacy") {
+  const serverTiming = Object.entries(timings)
+    .filter(([, value]) => Number.isFinite(value))
+    .map(([key, value]) => `${key};dur=${Math.max(0, value).toFixed(1)}`)
+    .join(",");
+  return NextResponse.json(payload, {
+    status,
+    headers: {
+      "Cache-Control": "private, no-store",
+      "X-Attendance-Mode": mode,
+      ...(serverTiming ? { "Server-Timing": serverTiming } : {}),
+    },
+  });
+}
+
 function monthFromSessionKey(key: any) {
   const parts = String(key || "").split("|");
   const date = parts.length >= 2 ? parts[1] : "";
@@ -371,7 +394,9 @@ async function userCanSaveAttendance(user: any, classId: string, body: any) {
 
 
 export async function POST(req: NextRequest) {
+  const startedAt = performance.now();
   const { user, response } = await requireUser();
+  const authFinishedAt = performance.now();
   if (response) return response;
 
   const body = await req.json().catch(() => ({}));
@@ -400,8 +425,87 @@ export async function POST(req: NextRequest) {
     }, { status: 403 });
   }
 
+  const permissionFinishedAt = performance.now();
   const normalizedRows = normalizeRows(rows).map((r: any) => ({ ...r, session_key: sessionKey }));
   const officialRows = normalizedRows.filter((r: any) => r.row_type === "official");
+  const canManageAttendance = canManage(user);
+  const normalizedPendingMakeupPlans = pendingMakeupPlans
+    .map((raw: any) => ({
+      id: String(raw?.id || ""),
+      absence_id: String(raw?.absenceId || ""),
+      student_id: String(raw?.studentId || ""),
+      source_class_id: String(raw?.sourceClassId || ""),
+      source_session_key: String(raw?.sourceSessionKey || ""),
+      target_class_id: String(raw?.targetClassId || classId),
+      target_session_key: String(raw?.targetSessionKey || sessionKey),
+    }))
+    .filter((item: any) => item.absence_id && item.student_id);
+
+  // Phase 5B: one RPC keeps the full save atomic and removes the many sequential
+  // Supabase round trips used by the legacy implementation. The legacy path remains
+  // available only when migration 018 has not been installed yet.
+  const rpcStartedAt = performance.now();
+  const { data: fastResult, error: fastError } = await supabase.rpc("official_save_attendance_fast", {
+    p_session_key: sessionKey,
+    p_class_id: classId,
+    p_session_date: body.date,
+    p_day_key: body.day || null,
+    p_start_time: validTime(body.start) || null,
+    p_end_time: validTime(body.end) || null,
+    p_session_type: body.type === "class_makeup" ? "class_makeup" : "regular",
+    p_manual_makeups: manualMakeups,
+    p_rows: normalizedRows.map(({ session_key, updated_at, ...row }: any) => row),
+    p_pending_makeup_plans: normalizedPendingMakeupPlans,
+    p_updated_by: user.id,
+    p_can_manage: canManageAttendance,
+    p_session_label: body.sessionLabel || sessionLabelFromBody(body),
+    p_capacity: Math.max(1, Number(body.capacity || 15)),
+  });
+  const rpcFinishedAt = performance.now();
+
+  if (!fastError) {
+    const result = fastResult || {};
+    const finishedAt = performance.now();
+    return attendanceResponse({
+      ok: true,
+      mode: "rpc-fast",
+      session: {
+        sessionKey,
+        saved: true,
+        editable: false,
+        rows,
+        manualMakeups,
+        updatedAt: result.updatedAt || new Date().toISOString(),
+      },
+      absenceRecords: result.absenceRecords || [],
+      makeupPlansCreated: result.makeupPlansCreated || [],
+      makeupPlanUpdates: result.makeupPlanUpdates || [],
+      makeupAbsenceRecords: result.makeupAbsenceRecords || [],
+      makeupResolvedAbsenceIds: result.makeupResolvedAbsenceIds || [],
+    }, 200, {
+      auth: authFinishedAt - startedAt,
+      permission: permissionFinishedAt - authFinishedAt,
+      rpc: rpcFinishedAt - rpcStartedAt,
+      total: finishedAt - startedAt,
+    }, "rpc-fast");
+  }
+
+  if (!isMissingAttendanceFastRpc(fastError)) {
+    const message = fastError.message || "Không lưu được điểm danh";
+    const status = /chỉ admin\/quản lí/i.test(message)
+      ? 403
+      : /đã được xếp học bù|vượt quá sĩ số|bị trùng|không hợp lệ|không còn ở trạng thái|tải lại danh sách/i.test(message)
+        ? 409
+        : 500;
+    return attendanceResponse({ error: message, mode: "rpc-fast" }, status, {
+      auth: authFinishedAt - startedAt,
+      permission: permissionFinishedAt - authFinishedAt,
+      rpc: rpcFinishedAt - rpcStartedAt,
+      total: performance.now() - startedAt,
+    }, "rpc-fast");
+  }
+
+  const legacyStartedAt = performance.now();
   const rowStatusByAbsenceId = new Map(officialRows.map((r: any) => [absenceId(r.student_id, sessionKey), r.status]));
 
   const { data: existingAbsences, error: existingAbsError } = await supabase
@@ -412,7 +516,6 @@ export async function POST(req: NextRequest) {
 
   if (existingAbsError) return NextResponse.json({ error: existingAbsError.message }, { status: 500 });
 
-  const canManageAttendance = canManage(user);
   const correctedAbsenceIds = (existingAbsences || [])
     .filter((a: any) => {
       const nextStatus = rowStatusByAbsenceId.get(String(a.id));
@@ -549,8 +652,10 @@ export async function POST(req: NextRequest) {
     .select("*")
     .eq("source_session_key", sessionKey);
 
-  return NextResponse.json({
+  const finishedAt = performance.now();
+  return attendanceResponse({
     ok: true,
+    mode: "legacy",
     session: {
       sessionKey,
       saved: true,
@@ -564,5 +669,11 @@ export async function POST(req: NextRequest) {
     makeupPlanUpdates: [...correctionSync.makeupPlanUpdates, ...makeupSync.makeupPlanUpdates],
     makeupAbsenceRecords: makeupSync.makeupAbsenceRecords,
     makeupResolvedAbsenceIds: makeupSync.makeupResolvedAbsenceIds,
-  });
+  }, 200, {
+    auth: authFinishedAt - startedAt,
+    permission: permissionFinishedAt - authFinishedAt,
+    rpcLookup: rpcFinishedAt - rpcStartedAt,
+    legacy: finishedAt - legacyStartedAt,
+    total: finishedAt - startedAt,
+  }, "legacy");
 }

@@ -3764,7 +3764,9 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
       const rec=attendanceRecord(sessionKey); const rowKey=`${type}_${studentId}`;
       rec.rows[rowKey] ||= {studentId,type,status:'present',note:''};
       rec.rows[rowKey].status=status; rec.saved=false;
-      save();
+      // Attendance drafts stay local until the explicit Save button is pressed.
+      // Avoid queueing /api/v48-state after every status click.
+      saveLocalOnly();
       if(!v18bUpdateAttendanceStatusUI(sessionKey,studentId,type,status)){
         openAttendance(sessionObjectFromKey(sessionKey).classId,sessionKey,true);
       }
@@ -3826,16 +3828,23 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
     }
 
     async function saveAttendance(sessionKey){
+      const busyKey=`attendance:${sessionKey}`;
+      if(v20o2IsBusy(busyKey)) return;
       const rec=attendanceRecord(sessionKey);
       const s=sessionObjectFromKey(sessionKey);
       if(!s){toast('Không tìm thấy buổi học');return}
       if(!attendanceCanEditSession(sessionKey,true)){toast('Điểm danh chỉ mở từ giờ bắt đầu buổi học. Admin/Quản lí không được điểm danh trước giờ học.');return}
-      // V20L.2: khi lưu, tự tạo dòng Có mặt mặc định cho toàn bộ roster.
-      // Trước đây học sinh không bấm trạng thái có thể không được gửi lên backend, làm sai học phí/vắng/học bù.
+      // Khi lưu, tự tạo dòng Có mặt mặc định cho toàn bộ roster.
       rosterForAttendance(s.classId,sessionKey).forEach(x=>{
         const rowKey=`${x.type}_${x.student.id}`;
         rec.rows[rowKey] ||= {studentId:x.student.id,type:x.type,status:'present',note:''};
       });
+
+      // A draft status click used to queue /api/v48-state after 650 ms. Cancel that
+      // snapshot write so it cannot compete with the canonical attendance request.
+      clearTimeout(officialSaveTimer);
+      officialSaveTimer=null;
+      v20o2SetBusy(busyKey,true);
       try{
         const data=await officialFetch('/api/attendance/save',{method:'POST',body:JSON.stringify({
           sessionKey,
@@ -3848,20 +3857,35 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
           sessionLabel:sessionLabelFromKey(sessionKey),
           rows:rec.rows,
           manualMakeups:rec.manualMakeups||[],
-          pendingMakeupPlans:rec.pendingMakeupPlans||[]
+          pendingMakeupPlans:rec.pendingMakeupPlans||[],
+          capacity:Number(db.settings?.capacity||15)
         })});
-        rec.saved=true; rec.editable=false; rec.rows=data.session?.rows || rec.rows; rec.manualMakeups=data.session?.manualMakeups || rec.manualMakeups || []; rec.pendingMakeupPlans=[];
+
+        const affectedMakeupMonths=new Set([sessionKeyMonth(sessionKey)].filter(Boolean));
+        const collectMakeupMonth=value=>{const month=sessionKeyMonth(String(value||''));if(month)affectedMakeupMonths.add(month)};
+
+        rec.saved=true;
+        rec.editable=false;
+        rec.rows=data.session?.rows || rec.rows;
+        rec.manualMakeups=data.session?.manualMakeups || rec.manualMakeups || [];
+        rec.pendingMakeupPlans=[];
         rec.updatedAt=data.session?.updatedAt || new Date().toLocaleString('vi-VN');
+
         (data.makeupPlansCreated||[]).forEach(plan=>{
+          collectMakeupMonth(plan.sourceSessionKey);
+          collectMakeupMonth(plan.targetSessionKey);
           db.makeupPlans ||= [];
           db.makeupPlans = db.makeupPlans.filter(p=>String(p.id)!==String(plan.id));
           db.makeupPlans.push(plan);
         });
         db.absenceRecords = (db.absenceRecords||[]).filter(a=>a.sourceSessionKey!==sessionKey);
+        (data.absenceRecords||[]).forEach(a=>collectMakeupMonth(a.sourceSessionKey));
         db.absenceRecords.push(...(data.absenceRecords||[]));
         (data.makeupPlanUpdates||[]).forEach(u=>{
           const p=(db.makeupPlans||[]).find(x=>String(x.id)===String(u.id));
           if(p){
+            collectMakeupMonth(p.sourceSessionKey);
+            collectMakeupMonth(p.targetSessionKey);
             p.status=u.status;
             if(Object.prototype.hasOwnProperty.call(u,'cancelledAt')) p.cancelledAt=u.cancelledAt;
           }
@@ -3871,24 +3895,53 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
           db.absenceRecords = (db.absenceRecords||[]).filter(a=>!resolvedAbsenceIds.has(String(a.id)));
         }
         (data.makeupAbsenceRecords||[]).forEach(a=>{
+          collectMakeupMonth(a.sourceSessionKey);
           db.absenceRecords = (db.absenceRecords||[]).filter(x=>String(x.id)!==String(a.id));
           if(String(a.status||'pending')==='pending') db.absenceRecords.push(a);
         });
+
+        // Patch the shared week/month snapshots immediately. No tuition request and
+        // no full attendance/schedule reload is allowed to block the success state.
         v18fUpdateScheduleModuleCache();
         v18fUpdateAttendanceModuleCache();
         v20l4InvalidateScheduleAfterAttendanceSave(sessionKey);
-        await refreshOfficialTuitionState();
-        v18fUpdateTuitionModuleCache();
-        v20bAfterMutation(['attendance','schedule','makeup','tuition'],{sessionKey,targetSessionKey:sessionKey,month:sessionKeyMonth(sessionKey),force:true});
-        save(); toast('Đã lưu điểm danh và cập nhật lịch dạy/học bù'); openAttendance(sessionObjectFromKey(sessionKey).classId,sessionKey,false);
-      }catch(e){toast(e.message||'Không lưu được điểm danh')}
+        if(route==='attendance'){
+          v18Memo.attendancePageKey='';
+          v18Memo.attendancePageSessions=null;
+          try{renderApp()}catch(e){console.warn('Không cập nhật được trang điểm danh',e)}
+        }
+        v20bAfterMutation(['attendance','schedule'],{
+          sessionKey,
+          targetSessionKey:sessionKey,
+          preserveCache:true,
+          delayMs:6500,
+          renderOnRevalidate:false
+        });
+        // Makeup state can span the target month and older source-absence months.
+        // Invalidate those exact month snapshots so the next Makeup-tab visit fetches
+        // canonical data instead of persisting an incomplete local monthly bundle.
+        v20bAfterMutation(['makeup'],{
+          months:Array.from(affectedMakeupMonths),
+          noRefresh:true
+        });
+        saveLocalOnly();
+
+        // Clear busy before rebuilding the modal, otherwise the new button stays disabled.
+        v20o2SetBusy(busyKey,false);
+        toast('Đã lưu điểm danh');
+        openAttendance(s.classId,sessionKey,false);
+      }catch(e){
+        toast(e.message||'Không lưu được điểm danh');
+      }finally{
+        v20o2SetBusy(busyKey,false);
+      }
     }
 
     function editAttendance(sessionKey){
       const w=attendanceWindowInfo(sessionKey);
       if(w.isEarly){toast('Điểm danh chưa mở. Tất cả tài khoản chỉ được lưu/sửa sau giờ bắt đầu buổi học.');return}
       if(!w.open && !attendanceCanOverride()){toast('Chỉ Admin/Quản lí được sửa điểm danh ngoài giờ hoặc đã đóng');return}
-      const rec=attendanceRecord(sessionKey); rec.editable=true; save(); openAttendance(sessionObjectFromKey(sessionKey).classId,sessionKey,true)
+      const rec=attendanceRecord(sessionKey); rec.editable=true; saveLocalOnly(); openAttendance(sessionObjectFromKey(sessionKey).classId,sessionKey,true)
     }
     function classStudentsForManualMakeup(targetClassId){
       // V20L: thêm học bù thủ công cũng bỏ điều kiện cùng khối.
