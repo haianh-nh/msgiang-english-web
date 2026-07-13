@@ -2977,7 +2977,7 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
         saveLocalOnly();
         toast('Đã hủy học bù. Học sinh đã quay lại Chờ xếp.');
         if(schedulePopupOpen && targetClassId && targetSessionKey){
-          openScheduleMakeup(targetClassId,targetSessionKey);
+          refreshScheduleMakeupDraftDom(targetClassId,targetSessionKey);
         }else if(route==='makeup'){
           renderApp();
         }else{
@@ -4583,20 +4583,20 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
         sourceClassId:String(sourceClassId),
         sourceSessionKey:String(sourceSessionKey||rec.sourceSessionKey||'')
       });
-      openScheduleMakeup(targetClassId,targetSessionKey);
+      refreshScheduleMakeupDraftDom(targetClassId,targetSessionKey);
     }
     function removeQueuedMakeup(absenceIdValue,targetClassId,targetSessionKey){
       rememberScheduleMakeupSearch();
       const draft=scheduleMakeupDraftState(targetClassId,targetSessionKey);
       draft.items=draft.items.filter(x=>String(x.absenceId)!==String(absenceIdValue));
-      openScheduleMakeup(targetClassId,targetSessionKey);
+      refreshScheduleMakeupDraftDom(targetClassId,targetSessionKey);
     }
     function makeupCandidateTableRows(rows,targetClassId,targetSessionKey){
       return rows.map((x,i)=>{
         const label=x.record.sourceSessionLabel||sessionLabelFromKey(x.record.sourceSessionKey);
         const reason=x.record.reason||'Vắng';
         const search=makeupCandidateSearchIndex(x,label,reason);
-        return `<tr data-makeup-candidate data-search="${h(search)}"><td>${i+1}</td><td><b>${h(x.student.name)}</b><div class="mini">${h(classGradeLabel(x.sourceClass.name))}</div></td><td><span class="pill blue">${h(x.sourceClass.name)}</span></td><td>${h(label)}</td><td>${h(reason)}</td><td><button class="btn primary smallBtn" onclick="queueMakeupCandidate('${x.record.id}','${x.student.id}','${x.sourceClass.id}','${x.record.sourceSessionKey}','${targetClassId}','${targetSessionKey}')">Chọn</button></td></tr>`;
+        return `<tr data-makeup-candidate data-absence-id="${h(x.record.id)}" data-student-id="${h(x.student.id)}" data-search="${h(search)}"><td>${i+1}</td><td><b>${h(x.student.name)}</b><div class="mini">${h(classGradeLabel(x.sourceClass.name))}</div></td><td><span class="pill blue">${h(x.sourceClass.name)}</span></td><td>${h(label)}</td><td>${h(reason)}</td><td><button class="btn primary smallBtn" onclick="queueMakeupCandidate('${x.record.id}','${x.student.id}','${x.sourceClass.id}','${x.record.sourceSessionKey}','${targetClassId}','${targetSessionKey}')">Chọn</button></td></tr>`;
       }).join('');
     }
     function groupedMakeupCandidateTables(candidates,targetClassId,targetSessionKey){
@@ -4623,7 +4623,56 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
         ...plans.map((p,i)=>`<tr><td>${i+1}</td><td><b>${safeStudentName(p.studentId)}</b></td><td>${safeClassName(p.sourceClassId)}</td><td>${safeSessionLabel(p.targetSessionKey)}</td><td>${makeupPlanStatusBadge(p)}</td><td><button class="btn ghost smallBtn" data-cancel-makeup-id="${p.id}" onclick="cancelMakeupPlan('${p.id}','${targetClassId}','${targetSessionKey}')">Hủy</button></td></tr>`),
         ...draftRows.map((x,i)=>`<tr class="makeupDraftRow"><td>${plans.length+i+1}</td><td><b>${h(x.student.name)}</b><div class="mini">Chưa lưu vào hệ thống</div></td><td>${h(x.sourceClass.name)}</td><td>${safeSessionLabel(targetSessionKey)}</td><td><span class="pill yellow">Chưa xác nhận</span></td><td><button class="btn ghost smallBtn" onclick="removeQueuedMakeup('${x.item.absenceId}','${targetClassId}','${targetSessionKey}')">Bỏ chọn</button></td></tr>`)
       ];
-      return `<section class="makeupAssignedSection"><div class="makeupAssignedHead"><div><h3>Đã xếp trong buổi này (${totalRows})</h3><div class="mini">${plans.length} đã lưu${draftRows.length?` • ${draftRows.length} đang chờ xác nhận`:''}</div></div><button id="confirmMakeupBatchBtn" class="btn primary" ${draftRows.length?'':'disabled'} onclick="confirmScheduleMakeupBatch('${targetClassId}','${targetSessionKey}')">${draftRows.length?confirmLabel:'Xác nhận'}</button></div><div class="modalTableWrap makeupAssignTableWrap makeupAssignedTableWrap"><table class="modalTable makeupAssignTable"><thead><tr><th>STT</th><th>Học sinh</th><th>Lớp gốc</th><th>Buổi học bù</th><th>Trạng thái</th><th></th></tr></thead><tbody>${rows.length?rows.join(''):'<tr><td colspan="6"><div class="empty compactEmpty">Chưa có học sinh được xếp vào buổi này.</div></td></tr>'}</tbody></table></div></section>`;
+      return `<section id="makeupAssignedSection" class="makeupAssignedSection"><div class="makeupAssignedHead"><div><h3>Đã xếp trong buổi này (${totalRows})</h3><div class="mini">${plans.length} đã lưu${draftRows.length?` • ${draftRows.length} đang chờ xác nhận`:''}</div></div><button id="confirmMakeupBatchBtn" class="btn primary" ${draftRows.length?'':'disabled'} onclick="confirmScheduleMakeupBatch('${targetClassId}','${targetSessionKey}')">${draftRows.length?confirmLabel:'Xác nhận'}</button></div><div class="modalTableWrap makeupAssignTableWrap makeupAssignedTableWrap"><table class="modalTable makeupAssignTable"><thead><tr><th>STT</th><th>Học sinh</th><th>Lớp gốc</th><th>Buổi học bù</th><th>Trạng thái</th><th></th></tr></thead><tbody>${rows.length?rows.join(''):'<tr><td colspan="6"><div class="empty compactEmpty">Chưa có học sinh được xếp vào buổi này.</div></td></tr>'}</tbody></table></div></section>`;
+    }
+
+    function scheduleMakeupCandidatesRegionHtml(candidates,targetClassId,targetSessionKey,emptyReason,draft){
+      const candidateTables=groupedMakeupCandidateTables(candidates,targetClassId,targetSessionKey);
+      return `<div id="makeupCandidatesRegion"><div class="makeupSearchBox"><label>Tìm học sinh chờ học bù<input id="makeupCandidateSearch" class="input" value="${h(draft.searchQuery||'')}" placeholder="Gõ tên, viết tắt, lớp, buổi vắng..." oninput="scheduleMakeupDraft.searchQuery=this.value;filterMakeupCandidates(this.value)"></label><span class="pill gray" id="makeupSearchCount">Hiện ${candidates.length}/${candidates.length} lượt chờ</span></div><h3 id="makeupPendingHeading">Chờ xếp (${candidates.length})</h3>${candidates.length?candidateTables:`<div class="empty">${h(emptyReason)}</div>`}</div>`;
+    }
+    function refreshScheduleMakeupDraftDom(targetClassId,targetSessionKey){
+      const root=modalBackdrop?.querySelector?.('[data-schedule-makeup-modal]');
+      if(!root){
+        openScheduleMakeup(targetClassId,targetSessionKey);
+        return;
+      }
+      rememberScheduleMakeupSearch();
+      const modalEl=modalBackdrop?.querySelector?.('.modal');
+      const scrollTop=modalEl?.scrollTop||0;
+      const activeId=document.activeElement?.id||'';
+      const selectionStart=activeId==='makeupCandidateSearch'?document.activeElement?.selectionStart:null;
+      const draft=scheduleMakeupDraftState(targetClassId,targetSessionKey);
+      const targetMonth=sessionKeyMonth(targetSessionKey)||makeupCurrentMonthKey();
+      const plans=plannedMakeupsForSession(targetSessionKey);
+      const draftRows=scheduleMakeupDraftRows(targetClassId,targetSessionKey);
+      const savedTotal=totalRosterCountForSession(targetClassId,targetSessionKey);
+      const projectedTotal=savedTotal+draftRows.length;
+      const capacity=db.settings.capacity||15;
+      const allPending=pendingMakeupRows(targetMonth);
+      const draftAbsenceIds=new Set(draft.items.map(x=>String(x.absenceId)));
+      const draftStudentIds=new Set(draft.items.map(x=>String(x.studentId)));
+      const canPlace=canOpenScheduleMakeupPopup(targetSessionKey) && projectedTotal<capacity;
+      const allCandidates=absentCandidatesForTargetSession(targetClassId,targetSessionKey);
+      const candidates=canPlace?allCandidates.filter(x=>!draftAbsenceIds.has(String(x.record.id)) && !draftStudentIds.has(String(x.student.id))):[];
+      const sessionPlacementReason=makeupSessionPlacementReason(targetSessionKey);
+      const emptyReason=sessionPlacementReason || (projectedTotal>=capacity?`Buổi này đã đủ ${capacity} học sinh.`:allPending.length?'Không có lượt vắng phù hợp cho buổi này.':'Chưa có học sinh chờ học bù. Hãy lưu điểm danh với trạng thái Vắng trước.');
+      const assignedEl=root.querySelector('#makeupAssignedSection');
+      if(assignedEl) assignedEl.outerHTML=scheduledMakeupTable(plans,draftRows,targetClassId,targetSessionKey);
+      const summaryEl=root.querySelector('#makeupScheduleSummary');
+      if(summaryEl){
+        summaryEl.innerHTML=`<span class="capacityBadge ${projectedTotal>=capacity?'full':''}">Tổng dự kiến ${projectedTotal}/${capacity}</span> <span class="pill blue">${plans.length} đã lưu</span>${draftRows.length?` <span class="pill yellow">${draftRows.length} chưa xác nhận</span>`:''} <span class="pill gray">${allPending.length} lượt đang chờ</span>`;
+      }
+      const candidatesEl=root.querySelector('#makeupCandidatesRegion');
+      if(candidatesEl) candidatesEl.outerHTML=scheduleMakeupCandidatesRegionHtml(candidates,targetClassId,targetSessionKey,emptyReason,draft);
+      if(draft.searchQuery) filterMakeupCandidates(draft.searchQuery);
+      if(modalEl) modalEl.scrollTop=scrollTop;
+      if(activeId==='makeupCandidateSearch'){
+        const input=document.getElementById('makeupCandidateSearch');
+        if(input){
+          input.focus({preventScroll:true});
+          if(Number.isInteger(selectionStart)) input.setSelectionRange(selectionStart,selectionStart);
+        }
+      }
     }
 
     let scheduleMakeupMonthLoadingKey='';
@@ -4654,17 +4703,13 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
       const draftStudentIds=new Set(draft.items.map(x=>String(x.studentId)));
       const allCandidates=targetSessionKey?absentCandidatesForTargetSession(targetClassId,targetSessionKey):[];
       const candidates=canPlace?allCandidates.filter(x=>!draftAbsenceIds.has(String(x.record.id)) && !draftStudentIds.has(String(x.student.id))):[];
-      const candidateTables=groupedMakeupCandidateTables(candidates,targetClassId,targetSessionKey);
       const assignedTable=scheduledMakeupTable(plans,draftRows,targetClassId,targetSessionKey);
       const sessionPlacementReason=targetSessionKey?makeupSessionPlacementReason(targetSessionKey):'Chọn một buổi trong thời khóa biểu.';
       const emptyReason=!targetSessionKey?'Chọn một buổi trong thời khóa biểu.':sessionPlacementReason || (projectedTotal>=capacity?`Buổi này đã đủ ${capacity} học sinh.`:allPending.length?'Không có lượt vắng phù hợp cho buổi này.':'Chưa có học sinh chờ học bù. Hãy lưu điểm danh với trạng thái Vắng trước.');
       modal(`<div data-schedule-makeup-modal data-disable-modal-autofocus><div class="modalHead"><h2>Xếp học bù - ${h(target.name||'Lớp')}</h2><button class="close" onclick="closeModal()">×</button></div>
-      <div class="rulesBox compactRules"><b>${targetSessionKey?sessionLabelFromKey(targetSessionKey):'Chưa chọn buổi'}</b><div style="margin-top:8px"><span class="capacityBadge ${projectedTotal>=capacity?'full':''}">Tổng dự kiến ${projectedTotal}/${capacity}</span> <span class="pill blue">${plans.length} đã lưu</span>${draftRows.length?` <span class="pill yellow">${draftRows.length} chưa xác nhận</span>`:''} <span class="pill gray">${allPending.length} lượt đang chờ</span></div></div>
+      <div class="rulesBox compactRules"><b>${targetSessionKey?sessionLabelFromKey(targetSessionKey):'Chưa chọn buổi'}</b><div id="makeupScheduleSummary" style="margin-top:8px"><span class="capacityBadge ${projectedTotal>=capacity?'full':''}">Tổng dự kiến ${projectedTotal}/${capacity}</span> <span class="pill blue">${plans.length} đã lưu</span>${draftRows.length?` <span class="pill yellow">${draftRows.length} chưa xác nhận</span>`:''} <span class="pill gray">${allPending.length} lượt đang chờ</span></div></div>
       ${assignedTable}
-      ${!targetSessionKey?`<div class="empty">${h(emptyReason)}</div>`:`
-      <div class="makeupSearchBox"><label>Tìm học sinh chờ học bù<input id="makeupCandidateSearch" class="input" value="${h(draft.searchQuery||'')}" placeholder="Gõ tên, viết tắt, lớp, buổi vắng..." oninput="scheduleMakeupDraft.searchQuery=this.value;filterMakeupCandidates(this.value)"></label><span class="pill gray" id="makeupSearchCount">Hiện ${candidates.length}/${candidates.length} lượt chờ</span></div>
-      <h3>Chờ xếp (${candidates.length})</h3>
-      ${candidates.length?candidateTables:`<div class="empty">${h(emptyReason)}</div>`}`}
+      ${!targetSessionKey?`<div class="empty">${h(emptyReason)}</div>`:scheduleMakeupCandidatesRegionHtml(candidates,targetClassId,targetSessionKey,emptyReason,draft)}
       </div>`);
       setTimeout(()=>{
         if(draft.searchQuery) filterMakeupCandidates(draft.searchQuery);
@@ -4726,10 +4771,10 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
         v20b13InvalidateScheduleAfterMutation();
         save();
         toast(`Đã xếp ${plans.length||items.length} học sinh vào buổi này`);
-        openScheduleMakeup(targetClassId,targetSessionKey);
+        refreshScheduleMakeupDraftDom(targetClassId,targetSessionKey);
       }catch(e){
         toast(e.message||'Không xác nhận được danh sách học bù');
-        openScheduleMakeup(targetClassId,targetSessionKey);
+        refreshScheduleMakeupDraftDom(targetClassId,targetSessionKey);
       }
     }
 
