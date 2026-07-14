@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "build": "20phase7fix1",
-  "phase": "7-midmonth-tuition-fix1",
+  "build": "20phase7bclassui",
+  "phase": "7b-class-ui-response",
   "realtimeFrontend": true
 }

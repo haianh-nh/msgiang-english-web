@@ -2097,3 +2097,11 @@ body{
   .enrollmentTuitionPreviewGrid,.adjustmentInfoGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .enrollmentTuitionBlock{padding:13px}
 }
+
+/* Phase 7B: stable button feedback for class-management mutations. */
+.btn.isSaving,
+.dangerAction.isSaving{
+  cursor: progress;
+  opacity: .82;
+  pointer-events: none;
+}

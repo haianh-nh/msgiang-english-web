@@ -9,7 +9,7 @@ function classGroupsMarkup(rows){
       v18Memo.classGroupsMarkup ||= {};
       if(v18Memo.classGroupsMarkup.key===key) return v18Memo.classGroupsMarkup.html;
       const groups=groupClassesByGrade(rows);
-      const html=groups.length?groups.map((g,gi)=>`<section class="gradeGroup" style="--i:${gi}"><div class="gradeHeader"><h2>${g.grade}</h2><span class="pill blue">${g.items.length} lớp</span></div><div class="gradeClassGrid">${g.items.map((c,i)=>`<div onclick="openClassDetail('${c.id}')">${classCard(c,i)}</div>`).join('')}</div></section>`).join(''):'<div class="empty">Không tìm thấy lớp.</div>';
+      const html=groups.length?groups.map((g,gi)=>`<section class="gradeGroup" data-class-grade="${h(g.grade)}" style="--i:${gi}"><div class="gradeHeader"><h2>${g.grade}</h2><span class="pill blue">${g.items.length} lớp</span></div><div class="gradeClassGrid">${g.items.map((c,i)=>`<div data-class-item="${h(c.id)}" onclick="openClassDetail('${c.id}')">${classCard(c,i)}</div>`).join('')}</div></section>`).join(''):'<div class="empty">Không tìm thấy lớp.</div>';
       v18Memo.classGroupsMarkup={key,html};
       return html;
     }
@@ -26,7 +26,7 @@ function classGroupsMarkup(rows){
 
 function classCard(c,i){
       const active=c.status!=='ended';
-      return `<div class="classCard" style="--i:${i}"><h3>${c.name}</h3><div class="classMeta">GV: <b>${c.teacher||'-'}</b>${c.ta?`<br>TA: ${c.ta}`:''}</div><div class="classCount">${c.students.length} học sinh</div><div class="classStatusLine"><span class="pill red">${c.time||'Chưa có lịch'}</span><span class="pill ${active?'green':'gray'}">${active?'Đang học':'Đã kết thúc'}</span></div></div>`
+      return `<div class="classCard" data-class-card="${h(c.id)}" style="--i:${i}"><h3 data-class-name>${c.name}</h3><div class="classMeta" data-class-meta>GV: <b>${c.teacher||'-'}</b>${c.ta?`<br>TA: ${c.ta}`:''}</div><div class="classCount" data-class-count>${c.students.length} học sinh</div><div class="classStatusLine"><span class="pill red" data-class-time>${c.time||'Chưa có lịch'}</span><span class="pill ${active?'green':'gray'}" data-class-status>${active?'Đang học':'Đã kết thúc'}</span></div></div>`
     }
 
 
@@ -37,7 +37,7 @@ function classCard(c,i){
       const active=cls.filter(c=>c.status!=='ended'), ended=cls.filter(c=>c.status==='ended');
       return `<div class="screenTitle"><div><h1>Danh sách lớp học</h1><p>Chia theo lớp đang học và lớp đã học.</p></div>${isAdmin()||isManager()?'<div class="actions"><button class="btn ghost" onclick="openImportClassesModal()">Import file</button><button class="btn primary" onclick="openClassModal()">+ Thêm lớp</button></div>':''}</div>
       ${managerScopeControl('managerClassScope','Hiển thị lớp học')}
-      <div class="toolbar"><input id="classSearch" class="input" placeholder="Tìm lớp, giáo viên..." oninput="filterClasses()"><span class="pill green">${active.length} đang học</span><span class="pill gray">${ended.length} đã học</span><span class="pill purple">${cls.reduce((s,c)=>s+c.students.length,0)} học sinh</span></div><div id="classList">${classSectionsMarkup(cls)}</div>`
+      <div class="toolbar"><input id="classSearch" class="input" placeholder="Tìm lớp, giáo viên..." oninput="filterClasses()"><span id="classActiveCount" class="pill green">${active.length} đang học</span><span id="classEndedCount" class="pill gray">${ended.length} đã học</span><span id="classStudentCount" class="pill purple">${cls.reduce((s,c)=>s+c.students.length,0)} học sinh</span></div><div id="classList">${classSectionsMarkup(cls)}</div>`
     }
 
 
