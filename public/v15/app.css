@@ -319,7 +319,7 @@
     .teacherClassRow{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #fde2e8}
     .teacherClassRow:last-child{border-bottom:0}
     .teacherAssignBox{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end;margin-top:14px}
-    .teacherRoleLegend{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:10px 0 18px}
+    .teacherRoleLegend{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin:10px 0 18px}
     .teacherRoleLegend .miniRole{border:1px solid #fde2e8;background:#fff;border-radius:18px;padding:12px;font-size:13px;color:#667085}
     .teacherRoleLegend b{display:block;color:#101828;margin-bottom:4px}.toolbar.compactFilters{display:grid;grid-template-columns:minmax(340px,1.2fr) minmax(260px,1.5fr) minmax(160px,.8fr) auto;align-items:end;gap:14px}
     .tuitionFilters{margin:14px 0 18px;padding:14px;border:1px solid #ffd3dc;border-radius:22px;background:linear-gradient(135deg,#fff7f9,#fff);box-shadow:0 10px 26px rgba(217,22,51,.06)}
@@ -2105,3 +2105,14 @@ body{
   opacity: .82;
   pointer-events: none;
 }
+
+
+/* Phase 7D — Receptionist role on Teachers & Staff page */
+.screenTitleActions{display:flex;gap:10px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
+.staffStats{grid-template-columns:repeat(auto-fit,minmax(205px,1fr))}
+.staffSectionTitle{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin:22px 0 12px}
+.staffSectionTitle h2{margin:0;font-size:20px}
+.staffSectionTitle p{margin:4px 0 0;color:var(--muted);font-size:13px}
+.receptionistCard{border-color:#ffe2a8;background:linear-gradient(145deg,#fffdf7,#fff)}
+.receptionistAvatar{background:linear-gradient(135deg,#ffc247,#ff9700)!important}
+@media(max-width:720px){.screenTitleActions{width:100%;justify-content:stretch}.screenTitleActions .btn{flex:1}.staffSectionTitle{align-items:flex-start}}
