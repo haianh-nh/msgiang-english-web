@@ -1,7 +1,7 @@
 (function bootstrapMsgiangRouteModules(global) {
   'use strict';
 
-  var BUILD_VERSION = '20phase7l-frontend-bundle-assets';
+  var BUILD_VERSION = '20phase7l1-smart-warmup-fast-tabs';
   var ROUTE_MODULES = Object.freeze({
     classes: { file: 'classes.js', ready: 'classesPage' },
     schedule: { file: 'schedule.js', ready: 'schedulePage' },

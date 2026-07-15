@@ -1,6 +1,6 @@
 (function bootstrapMsgiangRealtime(global) {
   'use strict';
-  var BUILD_VERSION = '20phase7l-frontend-bundle-assets';
+  var BUILD_VERSION = '20phase7l1-smart-warmup-fast-tabs';
   global.MSGIANG_BUILD_VERSION = BUILD_VERSION;
   global.__msgiangRealtimeBootstrapLoaded = true;
 

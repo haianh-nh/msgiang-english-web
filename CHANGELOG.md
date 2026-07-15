@@ -45,3 +45,8 @@
 - Lazy-load sáu module chức năng theo route.
 - Tối ưu logo WebP và favicon.
 - Thêm audit ngăn module nặng quay lại tải ở lần mở đầu.
+
+## Phase 7L.1 — Smart Warm-up & Fast Heavy Tabs
+- Warm-up thông minh cho Giáo viên, Thư viện, Đánh giá và Học phí theo quyền.
+- Gộp API nhân sự, chống request trùng và tránh skeleton bị kẹt.
+- Hoãn ghi cache local tới thời gian rảnh của trình duyệt.
