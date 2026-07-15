@@ -1,6 +1,6 @@
 (function bootstrapMsgiangRealtime(global) {
   'use strict';
-  var BUILD_VERSION = '20phase7g-tuition-evaluation-api-fast';
+  var BUILD_VERSION = '20phase7h-staff-ui-popup-response';
   global.MSGIANG_BUILD_VERSION = BUILD_VERSION;
   global.__msgiangRealtimeBootstrapLoaded = true;
 
