@@ -1,16 +1,9 @@
 /*
- * V19C Attendance Module
- * Tách riêng phần render trang Điểm danh và modal điểm danh.
+ * Phase 8.0 Attendance Modal Module
+ * Chỉ giữ popup điểm danh được mở từ Lịch dạy; trang Điểm danh độc lập đã được loại bỏ.
  * Không đổi UI/UX, wording, màu sắc, nút trạng thái hoặc logic lưu điểm danh.
  * Các hàm mutation/save vẫn nằm ở app core để giảm rủi ro.
  */
-
-function attendancePage(){
-      const sessions=sessionsForAttendancePage().sort((a,b)=>dateTimeForSession(a,'start')-dateTimeForSession(b,'start'));
-      return `<div class="screenTitle"><div><h1>Điểm danh</h1><p>Theo buổi học trong tuần. Điểm danh chỉ mở từ giờ bắt đầu buổi học; Admin/Quản lí/Lễ tân có thể sửa ngoài giờ sau khi buổi học đã bắt đầu.</p></div></div>
-      ${managerScopeControl('managerAttendanceScope','Hiển thị điểm danh')}
-      <div class="grid3">${sessions.map((s,i)=>{const key=sessionKeyFor(s); const w=attendanceWindowInfo(key); const rec=ensureAttendanceSessions()[attendanceKey(key)]; const mk=makeupDisplayCountForSession(key); const total=totalRosterDisplayCountForSession(s.classId,key); const capacity=db.settings.capacity||15; const canClosedEdit=attendanceCanOverride() && rec?.saved && !w.open && !w.isEarly; return `<div class="classCard" style="--i:${i}"><h3>${s.className}</h3><div class="classMeta">${dayNameFromKey(typeof scheduleDisplayDayKey==='function'?scheduleDisplayDayKey(s):s.day)} • ${s.start}-${s.end}<br>${s.teacher||''}</div><div class="classCount"><b>${s.students} chính thức • ${mk} học bù</b></div><div style="margin:8px 0"><span class="capacityBadge ${total>=capacity?'full':''}">Tổng ${total}/${capacity}</span></div>${attendanceCardStatusMarkup(key)}<div class="attendanceActionRow"><button class="btn primary" onclick="openAttendance('${s.classId}','${key}')">${attendancePrimaryActionLabel(key)}</button>${canClosedEdit?`<button class="tinyEditBtn" onclick="editAttendance('${key}')">Sửa</button>`:''}</div></div>`}).join('')||'<div class="empty">Không có lớp phù hợp với bộ lọc hiện tại.</div>'}</div>`
-    }
 
     function attendanceStatusButtons(sessionKey,studentId,type,current,editable){
       const id='attBtns_'+v18bSafeId(`${sessionKey}_${type}_${studentId}`);

@@ -9,6 +9,7 @@ const TABLES = [
   "official_classes",
   "official_class_schedules",
   "official_students",
+  "official_student_enrollments",
   "official_attendance_sessions",
   "official_attendance_rows",
   "official_makeup_plans",

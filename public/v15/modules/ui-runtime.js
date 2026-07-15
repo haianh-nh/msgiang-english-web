@@ -20,7 +20,7 @@
     if (modalEl) {
       modalEl.dataset.saving = '1';
       modalEl.setAttribute('aria-busy', 'true');
-      if (modalEl.querySelector('[data-staff-modal]')) {
+      if (modalEl.querySelector('[data-staff-modal], [data-student-transfer-modal]')) {
         modalEl.querySelectorAll('input,select,textarea,button').forEach((el) => {
           if (el === button) return;
           controls.push({ el, disabled: !!el.disabled });

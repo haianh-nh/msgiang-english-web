@@ -9,6 +9,7 @@ const REQUIRED_TABLES = [
   "official_classes",
   "official_class_schedules",
   "official_students",
+  "official_student_enrollments",
   "official_v48_state",
   "official_settings",
   "official_attendance_sessions",

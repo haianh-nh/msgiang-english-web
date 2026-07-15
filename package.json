@@ -1,5 +1,5 @@
 {
-  "name": "msgiang-english-official-backend-phase7l1-smart-warmup-fast-tabs",
+  "name": "msgiang-english-official-backend-phase8-student-transfer-schedule-attendance",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -8,7 +8,7 @@
     "start": "next start",
     "seed:admin": "node --env-file=.env.local scripts/seed-admin.mjs",
     "check": "next build",
-    "audit": "node scripts/audit-phase7l1.mjs",
+    "audit": "node scripts/audit-phase8.mjs",
     "verify": "npm run audit && npm run build"
   },
   "dependencies": {

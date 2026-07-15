@@ -50,3 +50,9 @@
 - Warm-up thông minh cho Giáo viên, Thư viện, Đánh giá và Học phí theo quyền.
 - Gộp API nhân sự, chống request trùng và tránh skeleton bị kẹt.
 - Hoãn ghi cache local tới thời gian rảnh của trình duyệt.
+
+## Phase 8.0
+- Chuyển lớp học sinh giữ nguyên hồ sơ và dữ liệu lịch sử.
+- Thêm lịch sử lớp, transaction RPC và chống request trùng.
+- Xóa tab Điểm danh độc lập; điểm danh chỉ mở từ Lịch dạy.
+- Giữ fix badge Lịch dạy và quyền Lễ tân không có Học phí.

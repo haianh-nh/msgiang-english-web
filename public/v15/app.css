@@ -2282,3 +2282,17 @@ body{
   .teacherAssignBox{grid-template-columns:1fr}
   .staffModalFooter>div{display:grid;grid-template-columns:1fr}
 }
+
+
+/* Phase 8.0: student transfer UI */
+.studentRowActions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:220px}
+.studentActionBtn.transfer{background:#eef5ff;color:#1d4ed8;border-color:#bfdbfe}
+.studentActionBtn.history{background:#f8fafc;color:#475569;border-color:#cbd5e1}
+.studentActionBtn.danger{background:#fff1f2;color:#be123c;border-color:#fecdd3}
+.transferStudentSummary{display:grid;grid-template-columns:minmax(0,1fr) minmax(180px,.7fr);gap:12px;align-items:center;padding:14px;border:1px solid #f2d7dd;border-radius:18px;background:#fff8fa;margin-bottom:14px}
+.transferStudentSummary h3{margin:3px 0 0;font-size:18px}
+.studentHistoryPanel{margin-top:16px;padding:14px;border:1px solid #e4e7ec;border-radius:18px;background:#fff}
+.studentHistoryList{display:grid;gap:8px}
+.studentHistoryItem{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 12px;border:1px solid #edf0f4;border-radius:14px;background:#fafbfc}
+.errorText{color:#b42318}
+@media(max-width:700px){.studentRowActions{min-width:0}.transferStudentSummary{grid-template-columns:1fr}.studentHistoryItem{align-items:flex-start}}

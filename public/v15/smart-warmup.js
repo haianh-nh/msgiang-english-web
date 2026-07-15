@@ -1,7 +1,7 @@
 (function bootstrapSmartWarmup(global) {
   'use strict';
 
-  var BUILD_VERSION = '20phase7l1-smart-warmup-fast-tabs';
+  var BUILD_VERSION = '20phase8-student-transfer-schedule-attendance';
   var backgroundTimer = null;
   var generation = 0;
   var inflight = new Map();
