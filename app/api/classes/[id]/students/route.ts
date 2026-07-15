@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireUser, canManage } from "@/lib/auth";
+import { requireUser, canManage, canTuition } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 import { addMonthsToMonth, buildEnrollmentTuitionPreview, monthKeyFromDate, normalizeMonthKey, validDateText } from "@/lib/tuition-enrollment";
 
@@ -8,17 +8,20 @@ function isMissingRpc(error: any) {
   return text.includes("pgrst202") || text.includes("could not find the function") || text.includes("does not exist");
 }
 
-function studentPayload(data: any) {
-  return {
+function studentPayload(data: any, includeTuition: boolean) {
+  const student: any = {
     id: data.id,
     name: data.name,
     contact: [data.parent_phone, data.note].filter(Boolean).join(" • ") || "Chưa có",
     parentName: data.parent_name || "",
     parentPhone: data.parent_phone || "",
     note: data.note || "",
-    enrollmentStartDate: data.enrollment_start_date || "",
-    tuitionRegularStartMonth: data.tuition_regular_start_month || "",
   };
+  if (includeTuition) {
+    student.enrollmentStartDate = data.enrollment_start_date || "";
+    student.tuitionRegularStartMonth = data.tuition_regular_start_month || "";
+  }
+  return student;
 }
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -32,10 +35,11 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const name = String(body.name || "").trim();
   if (!name) return NextResponse.json({ error: "Thiếu tên học sinh" }, { status: 400 });
 
-  const tuitionEnrollment = body.tuitionEnrollment && typeof body.tuitionEnrollment === "object"
+  const tuitionAllowed = canTuition(user);
+  const tuitionEnrollment = tuitionAllowed && body.tuitionEnrollment && typeof body.tuitionEnrollment === "object"
     ? body.tuitionEnrollment
     : null;
-  const tuitionEnabled = !!tuitionEnrollment?.enabled;
+  const tuitionEnabled = tuitionAllowed && !!tuitionEnrollment?.enabled;
 
   let preview: any = null;
   if (tuitionEnabled) {
@@ -92,9 +96,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       {
         ok: true,
         mode: "rpc-enrollment",
-        student: studentPayload(rpcData.student),
-        tuitionAdjustment: rpcData.adjustment || null,
-        tuitionPreview: preview,
+        student: studentPayload(rpcData.student, tuitionAllowed),
+        tuitionAdjustment: tuitionAllowed ? (rpcData.adjustment || null) : null,
+        tuitionPreview: tuitionAllowed ? preview : null,
       },
       {
         headers: {
@@ -130,7 +134,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   return NextResponse.json(
-    { ok: true, mode: "legacy", student: studentPayload(data), tuitionAdjustment: null },
+    { ok: true, mode: "legacy", student: studentPayload(data, tuitionAllowed), tuitionAdjustment: null },
     { headers: { "Server-Timing": `total;dur=${(performance.now() - started).toFixed(1)}` } },
   );
 }

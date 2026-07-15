@@ -5,7 +5,7 @@ import { supabaseAdmin } from "@/lib/supabase";
 export async function DELETE(_: Request, { params }: { params: Promise<{ id: string }> }) {
   const { user, response } = await requireUser();
   if (response) return response;
-  if (!canManage(user)) return NextResponse.json({ error: "Chỉ Admin/Quản lí được xóa tài liệu" }, { status: 403 });
+  if (!canManage(user)) return NextResponse.json({ error: "Chỉ Admin/Quản lí/Lễ tân được xóa tài liệu" }, { status: 403 });
 
   const { id } = await params;
   const supabase = supabaseAdmin();

@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSettings, setSetting } from "@/lib/settings";
-import { requireAdmin, requireUser } from "@/lib/auth";
+import { requireAdmin, requireUser, sanitizeSettingsForUser } from "@/lib/auth";
 
 export async function GET() {
-  const { response } = await requireUser();
+  const { user, response } = await requireUser();
   if (response) return response;
-  return NextResponse.json({ ok: true, settings: await getSettings() });
+  return NextResponse.json({ ok: true, settings: sanitizeSettingsForUser(await getSettings(), user) });
 }
 
 export async function POST(req: NextRequest) {

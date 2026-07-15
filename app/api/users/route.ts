@@ -3,7 +3,7 @@ import { requireAdmin, sanitizeUser } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 import { hashPassword } from "@/lib/password";
 
-const ALLOWED_ROLES = new Set(["admin", "manager", "teacher", "ta"]);
+const ALLOWED_ROLES = new Set(["admin", "manager", "receptionist", "teacher", "ta"]);
 
 function normalizeRoles(value: any) {
   const roles = Array.isArray(value) ? value : [value].filter(Boolean);

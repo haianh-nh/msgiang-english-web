@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireUser, canManage } from "@/lib/auth";
+import { requireUser, canTuition } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 
 function currentMonthKey() {
@@ -30,7 +30,7 @@ function sanitizeText(v: any, max = 500) {
 export async function POST(req: NextRequest) {
   const { user, response } = await requireUser();
   if (response) return response;
-  if (!canManage(user)) return NextResponse.json({ error: "Không có quyền cập nhật học phí" }, { status: 403 });
+  if (!canTuition(user)) return NextResponse.json({ error: "Không có quyền cập nhật học phí" }, { status: 403 });
 
   const body = await req.json().catch(() => ({}));
   const studentId = String(body.studentId || "");

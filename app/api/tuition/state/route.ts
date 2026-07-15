@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireUser, canManage } from "@/lib/auth";
+import { requireUser, canTuition } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 import { getSettings } from "@/lib/settings";
 
@@ -142,7 +142,7 @@ export async function GET(req: NextRequest) {
   const started = performance.now();
   const { user, response } = await requireUser();
   if (response) return response;
-  if (!canManage(user)) return NextResponse.json({ error: "Không có quyền xem học phí" }, { status: 403 });
+  if (!canTuition(user)) return NextResponse.json({ error: "Không có quyền xem học phí" }, { status: 403 });
 
   const monthKey = normalizeMonth(new URL(req.url).searchParams.get("month"));
   const supabase = supabaseAdmin();

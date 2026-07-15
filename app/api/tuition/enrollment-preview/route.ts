@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireUser, canManage } from "@/lib/auth";
+import { requireUser, canTuition } from "@/lib/auth";
 import { buildEnrollmentTuitionPreview } from "@/lib/tuition-enrollment";
 
 export const dynamic = "force-dynamic";
@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   const started = performance.now();
   const { user, response } = await requireUser();
   if (response) return response;
-  if (!canManage(user)) return NextResponse.json({ error: "Không có quyền tính học phí phát sinh" }, { status: 403 });
+  if (!canTuition(user)) return NextResponse.json({ error: "Không có quyền tính học phí phát sinh" }, { status: 403 });
 
   const url = new URL(req.url);
   try {

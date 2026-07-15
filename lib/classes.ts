@@ -40,17 +40,23 @@ export function scheduleText(schedules: any[] = []) {
     .join("; ");
 }
 
-export function toV48Class(c: any) {
-  const students = (c.official_students || c.students || []).map((s:any) => ({
-    id: s.id,
-    name: s.name,
-    contact: [s.parent_phone, s.note].filter(Boolean).join(" • ") || "Chưa có",
-    parentName: s.parent_name || "",
-    parentPhone: s.parent_phone || "",
-    note: s.note || "",
-    enrollmentStartDate: s.enrollment_start_date || "",
-    tuitionRegularStartMonth: s.tuition_regular_start_month || "",
-  }));
+export function toV48Class(c: any, options: { includeTuition?: boolean } = {}) {
+  const includeTuition = options.includeTuition !== false;
+  const students = (c.official_students || c.students || []).map((s:any) => {
+    const student: any = {
+      id: s.id,
+      name: s.name,
+      contact: [s.parent_phone, s.note].filter(Boolean).join(" • ") || "Chưa có",
+      parentName: s.parent_name || "",
+      parentPhone: s.parent_phone || "",
+      note: s.note || "",
+    };
+    if (includeTuition) {
+      student.enrollmentStartDate = s.enrollment_start_date || "";
+      student.tuitionRegularStartMonth = s.tuition_regular_start_month || "";
+    }
+    return student;
+  });
 
   const teacher = c.official_teachers || c.teacher || null;
   const assistant = c.assistant_teacher || c.official_assistant_teacher || null;
@@ -99,7 +105,7 @@ function userRoles(user: any) {
 
 function canManageClasses(user: any) {
   const roles = userRoles(user);
-  return roles.includes("admin") || roles.includes("manager");
+  return roles.includes("admin") || roles.includes("manager") || roles.includes("receptionist");
 }
 
 export async function teacherForUser(user: any) {
@@ -191,7 +197,7 @@ export async function fetchClassesV48(user?: any) {
       makeupClasses = data || [];
     }
 
-    return [...mainClasses, ...makeupClasses].map(toV48Class);
+    return [...mainClasses, ...makeupClasses].map((c:any)=>toV48Class(c, { includeTuition: false }));
   }
 
   const { data: classes, error } = await supabase
@@ -201,7 +207,8 @@ export async function fetchClassesV48(user?: any) {
     .order("name", { ascending: true });
 
   if (error) throw error;
-  return (classes || []).map(toV48Class);
+  const includeTuition = !user || userRoles(user).some((role)=>role === "admin" || role === "manager");
+  return (classes || []).map((c:any)=>toV48Class(c, { includeTuition }));
 }
 
 export async function fetchTeachersV48() {

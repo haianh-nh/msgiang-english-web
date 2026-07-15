@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireUser, canManage } from "@/lib/auth";
+import { requireUser, canTuition } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 import { normalizeMonthKey } from "@/lib/tuition-enrollment";
 
@@ -22,7 +22,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const started = performance.now();
   const { user, response } = await requireUser();
   if (response) return response;
-  if (!canManage(user)) return NextResponse.json({ error: "Không có quyền sửa khoản phát sinh" }, { status: 403 });
+  if (!canTuition(user)) return NextResponse.json({ error: "Không có quyền sửa khoản phát sinh" }, { status: 403 });
 
   const { id } = await params;
   const body = await req.json().catch(() => ({}));

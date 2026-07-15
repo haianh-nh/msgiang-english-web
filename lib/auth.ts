@@ -4,7 +4,7 @@ import crypto from "crypto";
 import { supabaseAdmin } from "./supabase";
 
 export const SESSION_COOKIE = "msg_official_session";
-export type OfficialRole = "admin" | "manager" | "teacher" | "ta";
+export type OfficialRole = "admin" | "manager" | "receptionist" | "teacher" | "ta";
 
 export function sanitizeUser(user: any) {
   if (!user) return null;
@@ -30,13 +30,71 @@ export function canAdmin(user: any) {
 }
 
 export function canManage(user: any) {
+  return hasRole(user, "admin") || hasRole(user, "manager") || hasRole(user, "receptionist");
+}
+
+// Tuition is intentionally stricter than general operations.
+// Receptionists can manage center operations but must never access billing data.
+export function canTuition(user: any) {
   return hasRole(user, "admin") || hasRole(user, "manager");
 }
 
-// Backward-compatible alias for older tuition files that may still exist in a local repo.
-// The current official app uses canManage() for tuition permissions.
-export function canTuition(user: any) {
-  return canManage(user);
+export function sanitizeSettingsForUser(settings: any, user: any) {
+  if (!settings || typeof settings !== "object") return settings;
+  if (canTuition(user)) return settings;
+  const {
+    tuition_per_session: _hiddenTuition,
+    unitPrice: _hiddenUnitPrice,
+    tuitionFilter: _hiddenTuitionFilter,
+    ...safeSettings
+  } = settings;
+  return safeSettings;
+}
+
+// Removes billing-only data from saved UI snapshots before it reaches a
+// non-billing account. This protects against stale snapshots created before a
+// user was changed to the receptionist role.
+const BILLING_STATE_KEYS = new Set([
+  "tuitionRollup",
+  "tuitionRollupMonth",
+  "tuitionMessages",
+  "tuitionMode",
+  "tuitionState",
+  "tuitionEnrollment",
+  "tuitionPreview",
+  "tuitionAdjustment",
+  "tuitionRegularStartMonth",
+  "enrollmentStartDate",
+  "payments",
+  "billing",
+  "billingRows",
+  "invoices",
+  "unitPrice",
+  "tuitionFilter",
+  "tuition_per_session",
+  "materialFee",
+  "tuitionAmount",
+  "baseTuition",
+  "currentAmount",
+  "creditAmount",
+  "adjustmentAmount",
+  "paid",
+  "paidAt",
+  "paidBy",
+  "messageSent",
+]);
+
+export function sanitizeStateForUser(payload: any, user: any): any {
+  if (payload == null || canTuition(user)) return payload;
+  if (Array.isArray(payload)) return payload.map((item) => sanitizeStateForUser(item, user));
+  if (typeof payload !== "object") return payload;
+
+  const safe: Record<string, any> = {};
+  for (const [key, value] of Object.entries(payload)) {
+    if (BILLING_STATE_KEYS.has(key)) continue;
+    safe[key] = sanitizeStateForUser(value, user);
+  }
+  return safe;
 }
 
 export async function currentUser() {

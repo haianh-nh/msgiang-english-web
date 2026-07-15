@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireUser, canManage } from "@/lib/auth";
+import { requireUser, canManage, canTuition } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 import { ensureTeacherByName, fetchClassesV48, fetchTeachersV48, gradeOf, normalizeScheduleInput, toV48Class } from "@/lib/classes";
 
@@ -94,5 +94,5 @@ export async function POST(req: NextRequest) {
     .single();
 
   if (fe) return NextResponse.json({ error: fe.message }, { status: 500 });
-  return NextResponse.json({ ok: true, class: toV48Class(full) });
+  return NextResponse.json({ ok: true, class: toV48Class(full, { includeTuition: canTuition(user) }) });
 }

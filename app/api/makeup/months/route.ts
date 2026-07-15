@@ -85,7 +85,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   const { user, response } = await requireUser();
   if (response) return response;
-  if (!canManage(user)) return NextResponse.json({ error: "Chỉ Admin/Quản lí được xóa dữ liệu vắng theo tháng" }, { status: 403 });
+  if (!canManage(user)) return NextResponse.json({ error: "Chỉ Admin/Quản lí/Lễ tân được xóa dữ liệu vắng theo tháng" }, { status: 403 });
 
   const body = await req.json().catch(() => ({}));
   const month = validMonth(body.month);

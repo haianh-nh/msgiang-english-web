@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
-import { currentUser, sanitizeUser } from "@/lib/auth";
+import { currentUser, sanitizeSettingsForUser, sanitizeStateForUser, sanitizeUser } from "@/lib/auth";
 import { getSettings } from "@/lib/settings";
 import { supabaseAdmin } from "@/lib/supabase";
 
-function sanitizeBootstrapSnapshot(payload: any) {
+function sanitizeBootstrapSnapshot(payload: any, user: any) {
   if (!payload || typeof payload !== "object") return null;
   return {
-    settings: payload.settings || {},
+    settings: sanitizeSettingsForUser(payload.settings || {}, user),
     managerClassScope: payload.managerClassScope || "all",
     managerAttendanceScope: payload.managerAttendanceScope || "all",
     libraryTab: payload.libraryTab || "word",
@@ -28,14 +28,14 @@ export async function GET() {
       .select("payload")
       .eq("user_id", user.id)
       .maybeSingle();
-    snapshot = sanitizeBootstrapSnapshot(data?.payload || null);
+    snapshot = sanitizeBootstrapSnapshot(sanitizeStateForUser(data?.payload || null, user), user);
   }
 
   return NextResponse.json({
     ok: true,
     authenticated: !!user,
     user: sanitizeUser(user),
-    settings,
+    settings: sanitizeSettingsForUser(settings, user),
     snapshot,
   });
 }

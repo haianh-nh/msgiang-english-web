@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { currentUser, sanitizeUser } from "@/lib/auth";
+import { currentUser, sanitizeSettingsForUser, sanitizeUser } from "@/lib/auth";
 import { getSettings } from "@/lib/settings";
 
 export async function GET() {
@@ -8,6 +8,6 @@ export async function GET() {
   return NextResponse.json({
     authenticated: true,
     user: sanitizeUser(user),
-    settings: await getSettings(),
+    settings: sanitizeSettingsForUser(await getSettings(), user),
   });
 }

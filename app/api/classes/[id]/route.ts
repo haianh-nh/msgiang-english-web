@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireUser, canManage } from "@/lib/auth";
+import { requireUser, canManage, canTuition } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 import { ensureTeacherByName, gradeOf, normalizeScheduleInput, toV48Class } from "@/lib/classes";
 
@@ -167,7 +167,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     .delete()
     .neq("user_id", "00000000-0000-0000-0000-000000000000");
 
-  return NextResponse.json({ ok: true, class: toV48Class(full) });
+  return NextResponse.json({ ok: true, class: toV48Class(full, { includeTuition: canTuition(user) }) });
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -233,7 +233,11 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     .neq("user_id", "00000000-0000-0000-0000-000000000000");
 
   if (cleanupErrors.length) {
-    return NextResponse.json({ ok: true, warning: "Đã xóa lớp nhưng có một số mục phụ cần kiểm tra", cleanupErrors });
+    return NextResponse.json({
+      ok: true,
+      warning: "Đã xóa lớp nhưng có một số mục phụ cần kiểm tra",
+      ...(canTuition(user) ? { cleanupErrors } : {}),
+    });
   }
 
   return NextResponse.json({ ok: true, deletedClassId: id, deletedStudentIds: studentIds });

@@ -35,7 +35,7 @@ function classCard(c,i){
     function classesPage(){
       const cls=sortClassesByGrade(classesForClassPage());
       const active=cls.filter(c=>c.status!=='ended'), ended=cls.filter(c=>c.status==='ended');
-      return `<div class="screenTitle"><div><h1>Danh sách lớp học</h1><p>Chia theo lớp đang học và lớp đã học.</p></div>${isAdmin()||isManager()?'<div class="actions"><button class="btn ghost" onclick="openImportClassesModal()">Import file</button><button class="btn primary" onclick="openClassModal()">+ Thêm lớp</button></div>':''}</div>
+      return `<div class="screenTitle"><div><h1>Danh sách lớp học</h1><p>Chia theo lớp đang học và lớp đã học.</p></div>${canManageOperations()?'<div class="actions"><button class="btn ghost" onclick="openImportClassesModal()">Import file</button><button class="btn primary" onclick="openClassModal()">+ Thêm lớp</button></div>':''}</div>
       ${managerScopeControl('managerClassScope','Hiển thị lớp học')}
       <div class="toolbar"><input id="classSearch" class="input" placeholder="Tìm lớp, giáo viên..." oninput="filterClasses()"><span id="classActiveCount" class="pill green">${active.length} đang học</span><span id="classEndedCount" class="pill gray">${ended.length} đã học</span><span id="classStudentCount" class="pill purple">${cls.reduce((s,c)=>s+c.students.length,0)} học sinh</span></div><div id="classList">${classSectionsMarkup(cls)}</div>`
     }

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireUser, canManage } from "@/lib/auth";
+import { requireUser, canManage, canTuition } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 import { ensureTeacherByName, gradeOf, normalizeScheduleInput, toV48Class } from "@/lib/classes";
 
@@ -195,8 +195,8 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({
     ok: true,
-    oldClass: toV48Class(endedFull),
-    newClass: toV48Class(newFull),
+    oldClass: toV48Class(endedFull, { includeTuition: canTuition(user) }),
+    newClass: toV48Class(newFull, { includeTuition: canTuition(user) }),
     transferredStudents: (insertedStudents || []).map(mapStudentForClient),
   });
 }

@@ -122,7 +122,7 @@ async function cancelMakeupPlansForCorrectedAbsences(supabase: any, absenceIds: 
   const ids = [...new Set((absenceIds || []).map(String).filter(Boolean))];
   if (!ids.length) return { makeupPlanUpdates: [] as any[] };
 
-  // Khi Admin/Quản lí sửa điểm danh gốc từ Vắng -> Có mặt/Muộn,
+  // Khi Admin/Quản lí/Lễ tân sửa điểm danh gốc từ Vắng -> Có mặt/Muộn,
   // các lịch học bù phát sinh từ lượt vắng sai phải bị hủy theo lỗi nguồn.
   // Không đưa học sinh về Chờ xếp, vì lượt vắng gốc sẽ bị xóa ở bước sau.
   const { data, error } = await supabase
@@ -147,7 +147,7 @@ async function cancelMakeupPlansForCorrectedAbsences(supabase: any, absenceIds: 
 async function createPendingMakeupPlansFromAttendance(supabase: any, user: any, body: any, pendingMakeupPlans: any[]) {
   const items = Array.isArray(pendingMakeupPlans) ? pendingMakeupPlans : [];
   if (!items.length) return { makeupPlansCreated: [] as any[] };
-  if (!canManage(user)) throw new Error("Chỉ Admin/Quản lí được thêm học bù trong màn điểm danh đã đóng");
+  if (!canManage(user)) throw new Error("Chỉ Admin/Quản lí/Lễ tân được thêm học bù trong màn điểm danh đã đóng");
 
   const sessionKey = String(body.sessionKey || "");
   const classId = String(body.classId || "");
@@ -353,7 +353,7 @@ async function syncMakeupPlansFromAttendance(supabase: any, sessionKey: string, 
 
 async function userCanSaveAttendance(user: any, classId: string, body: any) {
   // Không cho bất kỳ vai trò nào lưu điểm danh trước giờ bắt đầu buổi học.
-  // Admin/Quản lí vẫn được sửa ngoài giờ sau khi buổi học đã bắt đầu.
+  // Admin/Quản lí/Lễ tân vẫn được sửa ngoài giờ sau khi buổi học đã bắt đầu.
   if (!attendanceStarted(body)) return false;
   if (canManage(user)) return true;
   if (!attendanceWindowOpen(body)) return false;
@@ -421,7 +421,7 @@ export async function POST(req: NextRequest) {
 
   if (!allowed) {
     return NextResponse.json({
-      error: "Điểm danh chỉ mở từ giờ bắt đầu buổi học. Admin/Quản lí không được điểm danh trước giờ học, nhưng vẫn có thể sửa ngoài giờ sau khi buổi học đã bắt đầu.",
+      error: "Điểm danh chỉ mở từ giờ bắt đầu buổi học. Admin/Quản lí/Lễ tân không được điểm danh trước giờ học, nhưng vẫn có thể sửa ngoài giờ sau khi buổi học đã bắt đầu.",
     }, { status: 403 });
   }
 
@@ -534,10 +534,10 @@ export async function POST(req: NextRequest) {
   }
 
   // Giáo viên thường có thể sửa nhầm khi lượt vắng chưa được xếp học bù.
-  // Nếu đã từng có makeupPlan liên quan, chỉ Admin/Quản lí được sửa để hệ thống hủy lịch học bù đúng cách.
+  // Nếu đã từng có makeupPlan liên quan, chỉ Admin/Quản lí/Lễ tân được sửa để hệ thống hủy lịch học bù đúng cách.
   if (correctedPlanRows.length && !canManageAttendance) {
     return NextResponse.json({
-      error: "Lượt vắng này đã được xếp học bù. Hãy báo Admin/Quản lí sửa điểm danh gốc để hệ thống hủy lịch học bù đúng cách.",
+      error: "Lượt vắng này đã được xếp học bù. Hãy báo Admin/Quản lí/Lễ tân sửa điểm danh gốc để hệ thống hủy lịch học bù đúng cách.",
     }, { status: 409 });
   }
 
@@ -606,7 +606,7 @@ export async function POST(req: NextRequest) {
       if (nextStatus === "absent") return false;
       const currentStatus = String(a.status || "");
       // Giáo viên thường vẫn không được xóa lượt vắng đã xếp học bù.
-      // Admin/Quản lí sửa điểm danh gốc thì được xóa cả lượt đang scheduled,
+      // Admin/Quản lí/Lễ tân sửa điểm danh gốc thì được xóa cả lượt đang scheduled,
       // vì các makeupPlan liên quan đã bị hủy ở trên.
       if (currentStatus === "scheduled" && !correctedAbsenceIdSet.has(String(a.id))) return false;
       return true;

@@ -9,7 +9,7 @@ function rolesOf(user: any) {
 
 function canUseLibrary(user: any) {
   const roles = rolesOf(user);
-  return roles.includes("admin") || roles.includes("manager") || roles.includes("teacher") || roles.includes("ta");
+  return roles.includes("admin") || roles.includes("manager") || roles.includes("receptionist") || roles.includes("teacher") || roles.includes("ta");
 }
 
 function isDocx(name = "", mime = "") {

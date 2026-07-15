@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { verifyPassword } from "@/lib/password";
-import { createSessionResponse, sanitizeUser } from "@/lib/auth";
+import { createSessionResponse, sanitizeSettingsForUser, sanitizeUser } from "@/lib/auth";
 import { getSettings } from "@/lib/settings";
 
 function normalizePhone(v: string) {
@@ -32,6 +32,6 @@ export async function POST(req: NextRequest) {
   return createSessionResponse(user.id, {
     ok: true,
     user: sanitizeUser(user),
-    settings,
+    settings: sanitizeSettingsForUser(settings, user),
   });
 }

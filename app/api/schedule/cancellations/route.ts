@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireUser, canManage } from "@/lib/auth";
+import { requireUser, canManage, canTuition } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 import { getSettings } from "@/lib/settings";
 
@@ -32,8 +32,8 @@ function makeupAttendanceSessionKey(row: any) {
 export async function POST(req: NextRequest) {
   const { user, response } = await requireUser();
   if (response) return response;
-  // V20O: Cho nghỉ lớp ảnh hưởng học phí tháng sau, chỉ Admin/Quản lí được thao tác.
-  if (!canManage(user)) return NextResponse.json({ error: "Chỉ Admin/Quản lí được cho nghỉ lớp" }, { status: 403 });
+  // V20O: Cho nghỉ lớp ảnh hưởng học phí tháng sau, chỉ Admin/Quản lí/Lễ tân được thao tác.
+  if (!canManage(user)) return NextResponse.json({ error: "Chỉ Admin/Quản lí/Lễ tân được cho nghỉ lớp" }, { status: 403 });
 
   const body = await req.json().catch(() => ({}));
   const sessionKey = String(body.sessionKey || "");
@@ -122,31 +122,38 @@ export async function POST(req: NextRequest) {
       .from("official_tuition_credits")
       .upsert(creditRows, { onConflict: "student_id,source_session_key" });
 
-    if (creditError) return NextResponse.json({ error: creditError.message || "Không tạo được khấu trừ học phí tháng sau" }, { status: 500 });
+    if (creditError) {
+      return NextResponse.json({
+        error: canTuition(user)
+          ? creditError.message || "Không tạo được khấu trừ học phí tháng sau"
+          : "Không thể hoàn tất cập nhật buổi nghỉ",
+      }, { status: 500 });
+    }
   }
 
-  return NextResponse.json({
-    ok: true,
-    cancellation: {
-      sessionKey: data.session_key,
-      classId: data.class_id,
-      date: data.session_date,
-      day: data.day_key,
-      start: String(data.start_time || "").slice(0, 5),
-      end: String(data.end_time || "").slice(0, 5),
-      reason: data.reason,
-      createdAt: data.created_at,
-      creditTargetMonth: targetMonth,
-      creditsCreated: creditRows.length,
-      creditAmountPerStudent: unitPrice,
-    },
-  });
+  const cancellation: any = {
+    sessionKey: data.session_key,
+    classId: data.class_id,
+    date: data.session_date,
+    day: data.day_key,
+    start: String(data.start_time || "").slice(0, 5),
+    end: String(data.end_time || "").slice(0, 5),
+    reason: data.reason,
+    createdAt: data.created_at,
+  };
+  if (canTuition(user)) {
+    cancellation.creditTargetMonth = targetMonth;
+    cancellation.creditsCreated = creditRows.length;
+    cancellation.creditAmountPerStudent = unitPrice;
+  }
+
+  return NextResponse.json({ ok: true, cancellation });
 }
 
 export async function DELETE(req: NextRequest) {
   const { user, response } = await requireUser();
   if (response) return response;
-  if (!canManage(user)) return NextResponse.json({ error: "Chỉ Admin/Quản lí được mở lại buổi học" }, { status: 403 });
+  if (!canManage(user)) return NextResponse.json({ error: "Chỉ Admin/Quản lí/Lễ tân được mở lại buổi học" }, { status: 403 });
 
   const url = new URL(req.url);
   const sessionKey = url.searchParams.get("sessionKey") || "";
@@ -206,7 +213,13 @@ export async function DELETE(req: NextRequest) {
     .eq("source_session_key", sessionKey)
     .eq("status", "active");
 
-  if (creditCancelError) return NextResponse.json({ error: creditCancelError.message || "Không hủy được khấu trừ học phí" }, { status: 500 });
+  if (creditCancelError) {
+    return NextResponse.json({
+      error: canTuition(user)
+        ? creditCancelError.message || "Không hủy được khấu trừ học phí"
+        : "Không thể hoàn tất việc mở lại buổi học",
+    }, { status: 500 });
+  }
 
   return NextResponse.json({
     ok: true,
