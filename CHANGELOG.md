@@ -40,3 +40,8 @@
 ## Phase 7C–7D
 
 - Thêm role Lễ tân, chặn hoàn toàn Học phí và bổ sung giao diện quản lý.
+
+## Phase 7L — Frontend Bundle & Asset Performance
+- Lazy-load sáu module chức năng theo route.
+- Tối ưu logo WebP và favicon.
+- Thêm audit ngăn module nặng quay lại tải ở lần mở đầu.

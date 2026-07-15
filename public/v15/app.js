@@ -4993,6 +4993,9 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
         }
 
         render();
+        if(!currentUser?.mustChangePassword){
+          window.MsRouteModules?.preload(isTeachingUser()&&!isManager()?['schedule','attendance']:['classes','schedule']);
+        }
         toast(currentUser?.mustChangePassword?'Cần đổi mật khẩu trước khi sử dụng':'Đăng nhập thành công');
         if(!currentUser?.mustChangePassword) v27StartRealtime();
         Promise.resolve(ensurePageData(route)).finally(()=>v20cSchedulePrefetch(route));
@@ -5024,7 +5027,7 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
         root.innerHTML=`<div class="app"><main class="main" style="padding:32px"><div class="blockedBox"><h2>⚠️ Lỗi giao diện</h2><p>${h(e.message||'Có lỗi khi mở trang này')}</p><button class="btn primary" onclick="route='overview';saveUser();render()">Về tổng quan</button></div></main></div>`;
       }
     }
-    function renderLogin(){root.innerHTML=`<div class="login"><div class="loginHero"><div><img src="/v15/assets/asset-aa296a04fdb9.png" alt="Ms.Giang English"><h1>Quản lý trung tâm tiếng Anh mượt hơn, rõ hơn.</h1><p>Hệ thống quản lý lớp học, lịch dạy, điểm danh, học bù, học phí, đánh giá và thư viện tài liệu cho Ms.Giang English Center.</p></div><div class="pill red">✨ Ms.Giang English Center</div></div><div class="loginCard"><h2>Đăng nhập</h2><label>Số điện thoại / tài khoản<input id="lgPhone" class="input" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Nhập tài khoản"></label><label>Mật khẩu<input id="lgPw" class="input" type="password" autocomplete="off" placeholder="Nhập mật khẩu"></label><button id="loginBtn" class="btn primary" style="width:100%" onclick="login(document.getElementById('lgPhone').value,document.getElementById('lgPw').value)">Đăng nhập</button></div></div>`}
+    function renderLogin(){root.innerHTML=`<div class="login"><div class="loginHero"><div><img src="/v15/assets/logo-msgiang.webp" width="640" height="307" decoding="async" fetchpriority="high" alt="Ms.Giang English"><h1>Quản lý trung tâm tiếng Anh mượt hơn, rõ hơn.</h1><p>Hệ thống quản lý lớp học, lịch dạy, điểm danh, học bù, học phí, đánh giá và thư viện tài liệu cho Ms.Giang English Center.</p></div><div class="pill red">✨ Ms.Giang English Center</div></div><div class="loginCard"><h2>Đăng nhập</h2><label>Số điện thoại / tài khoản<input id="lgPhone" class="input" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Nhập tài khoản"></label><label>Mật khẩu<input id="lgPw" class="input" type="password" autocomplete="off" placeholder="Nhập mật khẩu"></label><button id="loginBtn" class="btn primary" style="width:100%" onclick="login(document.getElementById('lgPhone').value,document.getElementById('lgPw').value)">Đăng nhập</button></div></div>`}
     function quick(phone){toast('Chức năng đăng nhập nhanh đã tắt trên bản production')}
     function renderApp(){
       if(currentUser?.mustChangePassword) return renderForceChangePassword();
@@ -5038,7 +5041,7 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
 
       v18dShellKey=shellKey;
       const initialPage=page();
-      root.innerHTML=`<div class="drawerOverlay" id="drawerOverlay" onclick="closeDrawer()"></div><div class="app"><aside class="sidebar" id="sidebar"><div class="logoBox"><img src="/v15/assets/asset-aa296a04fdb9.png" alt="logo"></div><div class="roleChip">${roleLabel()}</div><nav class="nav">${v18dNavMarkup(nav)}</nav></aside><main class="main"><header class="topbar"><div class="topbarLeft"><button class="hamb" onclick="openDrawer()">☰</button><span class="mobileBrand">Ms.Giang</span></div><div class="userpill"><div class="avatar">${isParent()?'👪':isAdmin()?'👑':isManager()?'🧭':isReceptionist()?'🛎️':'👩‍🏫'}</div><div class="userText"><b>${currentUser.name}</b><div class="mini">${roleLabel()}</div></div><button class="logout" onclick="logout()">Thoát</button></div></header><section class="content"><div class="page v20dPageReady" id="appPage">${initialPage}</div></section><nav class="bottomNav">${v18dBottomNavMarkup(nav)}</nav></main></div>`;
+      root.innerHTML=`<div class="drawerOverlay" id="drawerOverlay" onclick="closeDrawer()"></div><div class="app"><aside class="sidebar" id="sidebar"><div class="logoBox"><img src="/v15/assets/logo-msgiang.webp" width="640" height="307" decoding="async" alt="logo"></div><div class="roleChip">${roleLabel()}</div><nav class="nav">${v18dNavMarkup(nav)}</nav></aside><main class="main"><header class="topbar"><div class="topbarLeft"><button class="hamb" onclick="openDrawer()">☰</button><span class="mobileBrand">Ms.Giang</span></div><div class="userpill"><div class="avatar">${isParent()?'👪':isAdmin()?'👑':isManager()?'🧭':isReceptionist()?'🛎️':'👩‍🏫'}</div><div class="userText"><b>${currentUser.name}</b><div class="mini">${roleLabel()}</div></div><button class="logout" onclick="logout()">Thoát</button></div></header><section class="content"><div class="page v20dPageReady" id="appPage">${initialPage}</div></section><nav class="bottomNav">${v18dBottomNavMarkup(nav)}</nav></main></div>`;
       const pageEl=document.getElementById('appPage');
       if(pageEl) pageEl.__v20dLastHtml=initialPage;
     }
@@ -5052,7 +5055,22 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
           const names={overview:'tổng quan',classes:'lớp học',schedule:'lịch dạy',makeup:'học bù',attendance:'điểm danh',homework:'thư viện bài tập',evaluation:'đánh giá học sinh',tuition:'học phí',teachers:'giáo viên',settings:'cài đặt'};
           return routeLoadingMarkup(`Đang tải ${names[route]||'dữ liệu'}...`);
         }
-        return ({overview,classes:classesPage,schedule:schedulePage,attendance:attendancePage,homework:homeworkPage,evaluation:evaluationPage,tuition:tuitionPage,makeup:makeupPage,teachers:teachersPage,settings:settingsPage}[route]||overview)()
+        const lazyRendererNames={classes:'classesPage',schedule:'schedulePage',attendance:'attendancePage',homework:'homeworkPage',evaluation:'evaluationPage',tuition:'tuitionPage'};
+        const lazyRendererName=lazyRendererNames[route];
+        if(lazyRendererName && typeof window[lazyRendererName]!=='function'){
+          const waitingRoute=route;
+          window.MsRouteModules?.ensure(waitingRoute).then(()=>{
+            if(currentUser && route===waitingRoute) render();
+          }).catch(error=>{
+            console.error('Route module load error',waitingRoute,error);
+            if(currentUser && route===waitingRoute) toast(error.message||'Không tải được chức năng');
+          });
+          const names={classes:'lớp học',schedule:'lịch dạy',attendance:'điểm danh',homework:'thư viện bài tập',evaluation:'đánh giá học sinh',tuition:'học phí'};
+          return routeLoadingMarkup(`Đang mở ${names[waitingRoute]||'chức năng'}...`);
+        }
+        const renderers={overview,makeup:makeupPage,teachers:teachersPage,settings:settingsPage};
+        const renderer=lazyRendererName?window[lazyRendererName]:(renderers[route]||overview);
+        return renderer();
       }catch(e){
         console.error('Page render error',route,e);
         return `<div class="blockedBox"><h2>⚠️ Không mở được trang</h2><p>${h(e.message||'Có lỗi khi tải trang này')}</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" onclick="route='overview';saveUser();render()">Về tổng quan</button><button class="btn ghost" onclick="runHealthCheck()">Kiểm tra hệ thống</button></div></div>`

@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "build": "20phase7k-database-query-performance",
-  "phase": "7k-database-query-performance",
+  "build": "20phase7l-frontend-bundle-assets",
+  "phase": "7l-frontend-bundle-assets",
   "realtimeFrontend": true
 }

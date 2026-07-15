@@ -1,5 +1,5 @@
 {
-  "name": "msgiang-english-official-backend-phase7k-database-query-performance",
+  "name": "msgiang-english-official-backend-phase7l-frontend-bundle-assets",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -8,7 +8,7 @@
     "start": "next start",
     "seed:admin": "node --env-file=.env.local scripts/seed-admin.mjs",
     "check": "next build",
-    "audit": "node scripts/audit-phase7k.mjs",
+    "audit": "node scripts/audit-phase7l.mjs",
     "verify": "npm run audit && npm run build"
   },
   "dependencies": {
