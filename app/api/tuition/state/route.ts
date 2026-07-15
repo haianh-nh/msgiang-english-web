@@ -150,10 +150,10 @@ export async function GET(req: NextRequest) {
   const unitPrice = Number(settings.tuition_per_session || 70000);
 
   const queryStarted = performance.now();
-  const [classResult, statusResult, creditResult, priorResult, adjustmentResult] = await Promise.all([
+  const [classResult, statusResult, creditResult, adjustmentResult] = await Promise.all([
     supabase
       .from("official_classes")
-      .select("id,name,status,start_date,end_date, official_students(*), official_class_schedules(id,day_of_week,start_time,end_time,sort_order)")
+      .select("id,name,status,start_date,end_date, official_students(id,status,tuition_regular_start_month), official_class_schedules(id,day_of_week,start_time,end_time,sort_order)")
       .order("name", { ascending: true }),
     supabase
       .from("official_tuition_status")
@@ -165,11 +165,6 @@ export async function GET(req: NextRequest) {
       .eq("target_month", monthKey)
       .eq("status", "active"),
     supabase
-      .from("official_tuition_status")
-      .select("student_id, month_key, paid, message_sent, material_fee, material_note, snapshot")
-      .lt("month_key", monthKey)
-      .neq("paid", true),
-    supabase
       .from("official_tuition_adjustments")
       .select("id,student_id,class_id,adjustment_type,source_month,target_month,enrollment_start_date,first_session_key,session_dates,session_count,unit_price,amount,note,status,created_at,updated_at")
       .eq("target_month", monthKey)
@@ -180,7 +175,6 @@ export async function GET(req: NextRequest) {
   if (classResult.error) return NextResponse.json({ error: classResult.error.message }, { status: 500 });
   if (statusResult.error) return NextResponse.json({ error: statusResult.error.message }, { status: 500 });
   if (creditResult.error) return NextResponse.json({ error: creditResult.error.message || "Không tải được khấu trừ học phí" }, { status: 500 });
-  if (priorResult.error) return NextResponse.json({ error: priorResult.error.message }, { status: 500 });
   if (adjustmentResult.error) {
     const missingText = `${adjustmentResult.error.code || ""} ${adjustmentResult.error.message || ""}`.toLowerCase();
     const missing = missingText.includes("pgrst205") || missingText.includes("does not exist") || missingText.includes("could not find the table") || missingText.includes("schema cache");
@@ -191,8 +185,33 @@ export async function GET(req: NextRequest) {
   const monthClasses = classes.filter((c: any) => isClassInMonth(c, monthKey));
   const statuses = statusResult.data || [];
   const credits = creditResult.data || [];
-  const priorStatuses = priorResult.data || [];
   const adjustments = adjustmentResult.error ? [] : adjustmentResult.data || [];
+
+  // Phase 7G: load historical unpaid rows only for students that are actually
+  // present in the selected month's classes. The previous query scanned every
+  // historical unpaid tuition row in the center.
+  const scopedStudentIds = Array.from(new Set(
+    monthClasses.flatMap((klass: any) =>
+      (klass.official_students || [])
+        .filter((student: any) => String(student.status || "active") !== "inactive")
+        .map((student: any) => String(student.id)),
+    ),
+  ));
+  const priorStatuses: any[] = [];
+  const priorQueryStarted = performance.now();
+  for (let i = 0; i < scopedStudentIds.length; i += 250) {
+    const studentIds = scopedStudentIds.slice(i, i + 250);
+    const priorResult = await supabase
+      .from("official_tuition_status")
+      .select("student_id,month_key,message_sent,material_fee,material_note,snapshot")
+      .lt("month_key", monthKey)
+      .neq("paid", true)
+      .in("student_id", studentIds)
+      .or("message_sent.eq.true,material_fee.gt.0,snapshot.not.is.null");
+    if (priorResult.error) return NextResponse.json({ error: priorResult.error.message }, { status: 500 });
+    priorStatuses.push(...(priorResult.data || []));
+  }
+  const priorQueryDuration = performance.now() - priorQueryStarted;
 
   const payments: Record<string, any> = {};
   const tuitionMessages: Record<string, any> = {};
@@ -325,7 +344,7 @@ export async function GET(req: NextRequest) {
     {
       headers: {
         "Cache-Control": "private, no-store, max-age=0",
-        "Server-Timing": `queries;dur=${queryDuration.toFixed(1)},total;dur=${(performance.now() - started).toFixed(1)}`,
+        "Server-Timing": `queries;dur=${queryDuration.toFixed(1)},arrears;dur=${priorQueryDuration.toFixed(1)},total;dur=${(performance.now() - started).toFixed(1)}`,
       },
     },
   );

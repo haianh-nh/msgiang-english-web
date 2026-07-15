@@ -27,6 +27,31 @@ function sanitizeText(v: any, max = 500) {
   return String(v || "").trim().slice(0, max);
 }
 
+function compactSnapshot(value: any) {
+  if (!value || typeof value !== "object") return null;
+  const allowed = [
+    "amount",
+    "total",
+    "totalDue",
+    "currentAmount",
+    "tuitionAmount",
+    "baseTuition",
+    "adjustmentAmount",
+    "materialFee",
+    "creditAmount",
+    "plannedSessions",
+    "unitPrice",
+  ];
+  const snapshot: Record<string, any> = {};
+  for (const key of allowed) {
+    const raw = value[key];
+    if (raw === undefined || raw === null || raw === "") continue;
+    const n = Number(raw);
+    snapshot[key] = Number.isFinite(n) ? Math.round(n) : raw;
+  }
+  return Object.keys(snapshot).length ? snapshot : null;
+}
+
 export async function POST(req: NextRequest) {
   const { user, response } = await requireUser();
   if (response) return response;
@@ -36,7 +61,7 @@ export async function POST(req: NextRequest) {
   const studentId = String(body.studentId || "");
   const monthKey = normalizeMonth(body.monthKey || body.month);
   const action = String(body.action || "");
-  const snapshot = body.snapshot || null;
+  const snapshot = compactSnapshot(body.snapshot);
 
   if (!studentId) return NextResponse.json({ error: "Thiếu học sinh" }, { status: 400 });
 
@@ -86,7 +111,7 @@ export async function POST(req: NextRequest) {
   const { data, error } = await supabaseAdmin()
     .from("official_tuition_status")
     .upsert(rows, { onConflict: "month_key,student_id" })
-    .select("*");
+    .select("month_key,student_id,paid,paid_at,paid_by,message_sent,message_sent_at,message_sent_by,material_fee,material_note,material_updated_at,material_updated_by,updated_at");
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 

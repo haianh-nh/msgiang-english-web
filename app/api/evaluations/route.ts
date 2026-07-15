@@ -51,6 +51,21 @@ function toClientRow(row: any) {
   };
 }
 
+
+async function canAccessClass(user: any, classId: string) {
+  if (canManage(user)) return true;
+  const teacher = await teacherForUser(user);
+  if (!teacher?.id) return false;
+  const { data, error } = await supabaseAdmin()
+    .from("official_classes")
+    .select("id")
+    .eq("id", classId)
+    .or(`teacher_id.eq.${teacher.id},assistant_teacher_id.eq.${teacher.id}`)
+    .maybeSingle();
+  if (error) throw error;
+  return !!data?.id;
+}
+
 async function accessibleClassIds(user: any) {
   const supabase = supabaseAdmin();
 
@@ -114,19 +129,20 @@ export async function POST(req: NextRequest) {
 
   const supabase = supabaseAdmin();
 
+  // Phase 7G: fetch the student and the current-month evaluation metadata in
+  // one request. This removes the extra "does an evaluation already exist?"
+  // round trip before every save/publish action.
   const { data: student, error: studentError } = await supabase
     .from("official_students")
-    .select("id, class_id, name")
+    .select("id,class_id,name,official_evaluations(id,created_by,month_key)")
     .eq("id", studentId)
+    .eq("official_evaluations.month_key", monthKey)
     .single();
 
   if (studentError || !student) return NextResponse.json({ error: "Không tìm thấy học sinh" }, { status: 404 });
 
-  if (!canManage(user)) {
-    const classIds = await accessibleClassIds(user);
-    if (!classIds.includes(student.class_id)) {
-      return NextResponse.json({ error: "Không có quyền đánh giá học sinh này" }, { status: 403 });
-    }
+  if (!(await canAccessClass(user, String(student.class_id)))) {
+    return NextResponse.json({ error: "Không có quyền đánh giá học sinh này" }, { status: 403 });
   }
 
   const now = new Date().toISOString();
@@ -146,13 +162,10 @@ export async function POST(req: NextRequest) {
 
   if (status === "published") patch.published_at = now;
 
-  const { data: existing } = await supabase
-    .from("official_evaluations")
-    .select("id, created_by")
-    .eq("student_id", student.id)
-    .eq("month_key", monthKey)
-    .maybeSingle();
-
+  const existingRows = Array.isArray((student as any).official_evaluations)
+    ? (student as any).official_evaluations
+    : [(student as any).official_evaluations].filter(Boolean);
+  const existing = existingRows.find((row: any) => String(row?.month_key || "") === monthKey);
   if (!existing?.id) patch.created_by = user.id;
 
   const { data, error } = await supabase
