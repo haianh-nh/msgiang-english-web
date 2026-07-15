@@ -2213,9 +2213,9 @@ body{
 .staffIdentity h3{margin:0 0 4px;font-size:16px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .staffContact{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .teacherMeta.compact{align-items:center;gap:6px;color:#667085;font-size:12px;min-height:20px}
-.statusDot{display:inline-block;width:8px;height:8px;border-radius:50%;flex:0 0 auto}
-.statusDot.active{background:#22a06b;box-shadow:0 0 0 3px rgba(34,160,107,.12)}
-.statusDot.inactive{background:#98a2b3;box-shadow:0 0 0 3px rgba(152,162,179,.13)}
+.staffStatusDot{display:inline-block;width:8px;height:8px;border-radius:50%;flex:0 0 auto}
+.staffStatusDot.active{background:#22a06b;box-shadow:0 0 0 3px rgba(34,160,107,.12)}
+.staffStatusDot.inactive{background:#98a2b3;box-shadow:0 0 0 3px rgba(152,162,179,.13)}
 .metaDivider{color:#d0d5dd}
 .teacherClassList.compact{min-height:0;gap:5px;overflow:hidden}
 .teacherClassList.compact .sessionTag{max-width:115px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:5px 8px;font-size:11px}
@@ -2283,3 +2283,60 @@ body{
   .teacherAssignBox{grid-template-columns:1fr}
   .staffModalFooter>div{display:grid;grid-template-columns:1fr}
 }
+
+
+/* PHASE 7I SCHEDULE BADGE FIX */
+.lessonCard .statusDot,
+.lessonCard .classMakeupBadge,
+.lessonCard .createdBadge,
+.lessonCard .makeupBadge,
+.dayLesson .statusDot,
+.dayLesson .classMakeupBadge,
+.dayLesson .createdBadge,
+.dayLesson .makeupBadge{
+  display:inline-flex;
+  align-items:center;
+  width:auto;
+  height:auto;
+  white-space:nowrap;
+  line-height:1;
+  flex:0 0 auto;
+  vertical-align:middle;
+}
+
+.lessonCard .statusDot:before,
+.dayLesson .statusDot:before{
+  flex:0 0 auto;
+}
+
+.strictStateLine{
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:8px;
+  margin-top:8px;
+  flex-wrap:wrap;
+}
+
+.strictStateLine > *{
+  flex:0 0 auto;
+  white-space:nowrap;
+}
+
+.classMakeupBadge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  width:auto;
+  height:auto;
+  border-radius:999px;
+  background:#dbeafe;
+  color:#1d4ed8;
+  border:1px solid #bfdbfe;
+  padding:5px 9px;
+  font-size:11px;
+  font-weight:1000;
+  line-height:1;
+  white-space:nowrap;
+}
+
