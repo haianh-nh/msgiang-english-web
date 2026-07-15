@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    cpus: 2
+  },
   async headers() {
     return [
       {
@@ -12,14 +15,14 @@ const nextConfig = {
         source: "/index-v15.html",
         headers: [
           { key: "Cache-Control", value: "no-store, max-age=0" },
-          { key: "X-Msgiang-Build", value: "20phase7i-runtime-realtime-stability" }
+          { key: "X-Msgiang-Build", value: "20phase7k-database-query-performance" }
         ]
       },
       {
         source: "/deployment-version.json",
         headers: [
           { key: "Cache-Control", value: "no-store, max-age=0" },
-          { key: "X-Msgiang-Build", value: "20phase7i-runtime-realtime-stability" }
+          { key: "X-Msgiang-Build", value: "20phase7k-database-query-performance" }
         ]
       }
     ];

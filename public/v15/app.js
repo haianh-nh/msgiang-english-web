@@ -298,46 +298,10 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       return true;
     }
     function v28BeginModalAction(button,savingText='Đang lưu...'){
-      if(!button) return {button:null,modal:null,controls:[]};
-      if(button.dataset.saving==='1') return null;
-      const modalEl=button.closest('.modal');
-      button.dataset.saving='1';
-      button.dataset.idleText=button.textContent||'';
-      button.style.minWidth=`${Math.ceil(button.getBoundingClientRect().width)}px`;
-      button.disabled=true;
-      button.classList.add('isSaving');
-      button.setAttribute('aria-busy','true');
-      button.textContent=savingText;
-      const controls=[];
-      if(modalEl){
-        modalEl.dataset.saving='1';
-        modalEl.setAttribute('aria-busy','true');
-        // Phase 7H: modal nhân sự khóa đúng form trong lúc request đang chạy.
-        // Các modal khác giữ nguyên hành vi cũ để tránh ảnh hưởng luồng nghiệp vụ.
-        if(modalEl.querySelector('[data-staff-modal]')){
-          modalEl.querySelectorAll('input,select,textarea,button').forEach(el=>{
-            if(el===button) return;
-            controls.push({el,disabled:!!el.disabled});
-            el.disabled=true;
-          });
-        }
-      }
-      return {button,modal:modalEl,controls};
+      return window.MsUiAction.beginModalAction(button,savingText);
     }
     function v28EndModalAction(action){
-      const button=action?.button;
-      const modalEl=action?.modal;
-      if(button){
-        button.disabled=false;
-        button.textContent=button.dataset.idleText||button.textContent||'';
-        delete button.dataset.saving;
-        delete button.dataset.idleText;
-        button.style.minWidth='';
-        button.classList.remove('isSaving');
-        button.removeAttribute('aria-busy');
-      }
-      (action?.controls||[]).forEach(({el,disabled})=>{if(el?.isConnected) el.disabled=disabled});
-      if(modalEl){delete modalEl.dataset.saving;modalEl.removeAttribute('aria-busy')}
+      window.MsUiAction.endModalAction(action);
     }
     function v28AfterClassMutation(invalidateModules=[],options={}){
       const delayMs=Math.max(800,Number(options.delayMs||V28_CLASS_REVALIDATE_DELAY_MS));
@@ -5129,33 +5093,17 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
       return document.querySelector(`input[name="${name}"]:checked`)?.value || def;
     }
 
-    function teacherRoleLegend(){
-      return `<div class="teacherRoleLegend">
-        <div class="miniRole"><b>👩‍🏫 Giáo viên</b>Chỉ thấy lớp được gán. Không thấy học phí và không quản lý tài khoản.</div>
-        <div class="miniRole"><b>🧑‍🏫 TA</b>Điểm danh, xếp học bù, đánh giá và sửa đánh giá ở lớp được gán làm TA.</div>
-        <div class="miniRole"><b>🛡️ Quản lí</b>Thấy toàn bộ dữ liệu vận hành, học phí, lịch, điểm danh và giáo viên.</div>
-        <div class="miniRole"><b>🛎️ Lễ tân</b>Quản lý vận hành như Quản lí nhưng không có menu, dữ liệu hoặc API Học phí.</div>
-        <div class="miniRole"><b>👑 Admin</b>Toàn quyền, bao gồm cài đặt hệ thống và phân quyền cấp cao.</div>
-      </div>`
-    }
 
-    // Phase 7H: UI nhân sự gọn hơn, lọc cục bộ và khóa thao tác theo từng action.
-    const v7hStaffActionLocks=new Set();
+    // UI nhân sự: lọc cục bộ và khóa thao tác theo từng action qua utility dùng chung.
     const v7hStaffFilters={q:'',role:'all',status:'all'};
     let v7hStaffFilterTimer=null;
     let v7hConfirmResolver=null;
 
     function v7hBeginStaffAction(key,button,text){
-      const lockKey=String(key||'staff-action');
-      if(v7hStaffActionLocks.has(lockKey)) return null;
-      v7hStaffActionLocks.add(lockKey);
-      const modalAction=v28BeginModalAction(button,text);
-      if(!modalAction){v7hStaffActionLocks.delete(lockKey);return null}
-      return {...modalAction,lockKey};
+      return window.MsUiAction.beginLockedAction(key,button,text);
     }
     function v7hEndStaffAction(action){
-      if(action?.lockKey) v7hStaffActionLocks.delete(action.lockKey);
-      v28EndModalAction(action);
+      window.MsUiAction.endLockedAction(action);
     }
     function v7hStaffSearchText(value){
       return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('vi').trim();

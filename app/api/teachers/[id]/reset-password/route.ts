@@ -10,12 +10,12 @@ export async function POST(_: Request, { params }: { params: Promise<{ id: strin
 
   const { id } = await params;
   const supabase = supabaseAdmin();
-  const { data: teacher, error: te } = await supabase.from("official_teachers").select("*").eq("id", id).single();
+  const { data: teacher, error: te } = await supabase.from("official_teachers").select("id,user_id,name,phone").eq("id", id).single();
   if (te || !teacher) return NextResponse.json({ error: "Không tìm thấy giáo viên" }, { status: 404 });
 
   let userId = teacher.user_id;
   if (!userId) {
-    const { data: appUser } = await supabase.from("official_users").select("*").eq("phone", teacher.phone).maybeSingle();
+    const { data: appUser } = await supabase.from("official_users").select("id").eq("phone", teacher.phone).maybeSingle();
     if (appUser) {
       userId = appUser.id;
       await supabase.from("official_teachers").update({ user_id: userId }).eq("id", id);

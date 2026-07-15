@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireUser, canManage, canTuition } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 import { ensureTeacherByName, fetchClassesV48, fetchTeachersV48, gradeOf, normalizeScheduleInput, toV48Class } from "@/lib/classes";
+import { CLASS_WITH_RELATIONS_SELECT } from "@/lib/db-selects";
 
-async function teacherRefFromIdOrName(id: any, name: any) {
+async function teacherRefFromIdOrName(id: any, name: any): Promise<any> {
   const supabase = supabaseAdmin();
   const cleanId = String(id || "").trim();
   if (cleanId) {
@@ -75,7 +76,7 @@ export async function POST(req: NextRequest) {
       status: "active",
       note: body.note || null,
     })
-    .select("*")
+    .select("id")
     .single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
@@ -89,7 +90,7 @@ export async function POST(req: NextRequest) {
 
   const { data: full, error: fe } = await supabase
     .from("official_classes")
-    .select("*, official_teachers:teacher_id(*), official_assistant_teacher:assistant_teacher_id(*), official_students(*), official_class_schedules(*)")
+    .select(CLASS_WITH_RELATIONS_SELECT)
     .eq("id", klass.id)
     .single();
 

@@ -94,8 +94,8 @@
     /* UX v48 class creation + week status */
     .weekPicker{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
     .weekRange{font-weight:1000;color:#be123c;background:#fff0f3;border:1px solid #ffc2ca;border-radius:999px;padding:9px 13px}
-    .statusDot{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:1000;border:1px solid transparent}
-    .statusDot:before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 0 3px rgba(255,255,255,.85)}
+    .statusDot{display:inline-flex;align-items:center;gap:6px;width:auto;height:auto;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:1000;border:1px solid transparent;white-space:nowrap;line-height:1;flex:0 0 auto;vertical-align:middle}
+    .statusDot:before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 0 3px rgba(255,255,255,.85);flex:0 0 auto}
     .statusDot.done{background:#eaf9ef;color:#11833b;border-color:#bfecc9}
     .statusDot.live{background:#fff4d7;color:#b77700;border-color:#ffe0a3;animation:pulseLive 1.4s ease-in-out infinite}
     .statusDot.todo{background:#eef5ff;color:#2365b4;border-color:#d4e6ff}
@@ -106,14 +106,14 @@
     .inline2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .slotPreview{margin-top:12px;border:1px dashed #ffc2ca;border-radius:16px;padding:12px;background:#fff8f9;color:#6b3440;font-weight:850}
     .newClassHint{font-size:12px;color:var(--muted);margin-top:8px}
-    .createdBadge{display:inline-flex;align-items:center;gap:6px;background:#eaf9ef;color:#11833b;border:1px solid #bfecc9;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:1000;margin-top:6px}
+    .createdBadge{display:inline-flex;align-items:center;gap:6px;background:#eaf9ef;color:#11833b;border:1px solid #bfecc9;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:1000;margin-top:6px;white-space:nowrap;line-height:1;flex:0 0 auto}
     @media(max-width:760px){.inline2{grid-template-columns:1fr}.weekPicker{width:100%}.weekPicker .input{width:100%}}
 
   
     /* UX v48 make-up students in roster */
     .makeupStudentRow{border:1px solid #cfe2ff;background:linear-gradient(135deg,#f6fbff,#fff);border-radius:16px;padding:12px;margin:8px 0;display:flex;align-items:center;justify-content:space-between;gap:10px;animation:groupReveal .45s var(--ease) both}
     .makeupStudentRow b{color:#195aa6}
-    .makeupBadge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;background:#eaf3ff;color:#2067b9;border:1px solid #cfe4ff;padding:5px 10px;font-size:12px;font-weight:1000}
+    .makeupBadge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;background:#eaf3ff;color:#2067b9;border:1px solid #cfe4ff;padding:5px 10px;font-size:12px;font-weight:1000;white-space:nowrap;line-height:1;flex:0 0 auto}
     .makeupBadge:before{content:"🔁"}
     .officialBadge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;background:#f3f4f6;color:#4b5563;border:1px solid #e5e7eb;padding:5px 10px;font-size:12px;font-weight:1000}
     .rosterSectionTitle{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:18px 0 10px}
@@ -172,7 +172,8 @@
     .lessonCard.strictDone .lessonActions .btn.ghost,
     .lessonCard.strictLive .lessonActions .btn.primary,
     .lessonCard.strictLive .lessonActions .btn.ghost{display:none!important}
-    .strictStateLine{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px;flex-wrap:wrap}
+    .strictStateLine{display:flex;align-items:center;justify-content:flex-start;gap:8px;margin-top:8px;flex-wrap:wrap}
+    .strictStateLine>*{flex:0 0 auto;white-space:nowrap}
     .strictDone{background:linear-gradient(135deg,#f8fafc,#fff)!important;border-color:#e2e8f0!important}
     .strictLive{background:linear-gradient(135deg,#fff7ed,#fff)!important;border-color:#fed7aa!important}
     .strictTodo{background:linear-gradient(135deg,#fff,#fff8f9)!important;border-color:#ffcbd4!important}
@@ -319,9 +320,7 @@
     .teacherClassRow{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #fde2e8}
     .teacherClassRow:last-child{border-bottom:0}
     .teacherAssignBox{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end;margin-top:14px}
-    .teacherRoleLegend{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin:10px 0 18px}
-    .teacherRoleLegend .miniRole{border:1px solid #fde2e8;background:#fff;border-radius:18px;padding:12px;font-size:13px;color:#667085}
-    .teacherRoleLegend b{display:block;color:#101828;margin-bottom:4px}.toolbar.compactFilters{display:grid;grid-template-columns:minmax(340px,1.2fr) minmax(260px,1.5fr) minmax(160px,.8fr) auto;align-items:end;gap:14px}
+.toolbar.compactFilters{display:grid;grid-template-columns:minmax(340px,1.2fr) minmax(260px,1.5fr) minmax(160px,.8fr) auto;align-items:end;gap:14px}
     .tuitionFilters{margin:14px 0 18px;padding:14px;border:1px solid #ffd3dc;border-radius:22px;background:linear-gradient(135deg,#fff7f9,#fff);box-shadow:0 10px 26px rgba(217,22,51,.06)}
     .tuitionFilters label{font-weight:900;color:#344054;display:flex;flex-direction:column;gap:7px;min-width:0}
     .tuitionFilters .input{width:100%;min-height:44px}
@@ -338,7 +337,7 @@
     .statusDot.cancelled{background:#f1f5f9;color:#475569;border:1px solid #cbd5e1}
     .cancelledCard{background:linear-gradient(135deg,#f8fafc,#fff)!important;border-color:#cbd5e1!important;opacity:.9}
     .classMakeupCard{border-color:#93c5fd!important;background:linear-gradient(135deg,#eff6ff,#fff)!important}
-    .classMakeupBadge{display:inline-flex;align-items:center;border-radius:999px;background:#dbeafe;color:#1d4ed8;border:1px solid #bfdbfe;padding:4px 8px;font-size:11px;font-weight:1000;margin:4px 0}
+    .classMakeupBadge{display:inline-flex;align-items:center;gap:6px;width:auto;height:auto;border-radius:999px;background:#dbeafe;color:#1d4ed8;border:1px solid #bfdbfe;padding:5px 9px;font-size:11px;font-weight:1000;line-height:1;white-space:nowrap;flex:0 0 auto;margin:4px 0}
     .classActionRow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
     .screenTitle p,.rulesBox p{line-height:1.35}
     .rulesBox{padding:10px 12px}
@@ -2283,60 +2282,3 @@ body{
   .teacherAssignBox{grid-template-columns:1fr}
   .staffModalFooter>div{display:grid;grid-template-columns:1fr}
 }
-
-
-/* PHASE 7I SCHEDULE BADGE FIX */
-.lessonCard .statusDot,
-.lessonCard .classMakeupBadge,
-.lessonCard .createdBadge,
-.lessonCard .makeupBadge,
-.dayLesson .statusDot,
-.dayLesson .classMakeupBadge,
-.dayLesson .createdBadge,
-.dayLesson .makeupBadge{
-  display:inline-flex;
-  align-items:center;
-  width:auto;
-  height:auto;
-  white-space:nowrap;
-  line-height:1;
-  flex:0 0 auto;
-  vertical-align:middle;
-}
-
-.lessonCard .statusDot:before,
-.dayLesson .statusDot:before{
-  flex:0 0 auto;
-}
-
-.strictStateLine{
-  display:flex;
-  align-items:center;
-  justify-content:flex-start;
-  gap:8px;
-  margin-top:8px;
-  flex-wrap:wrap;
-}
-
-.strictStateLine > *{
-  flex:0 0 auto;
-  white-space:nowrap;
-}
-
-.classMakeupBadge{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  width:auto;
-  height:auto;
-  border-radius:999px;
-  background:#dbeafe;
-  color:#1d4ed8;
-  border:1px solid #bfdbfe;
-  padding:5px 9px;
-  font-size:11px;
-  font-weight:1000;
-  line-height:1;
-  white-space:nowrap;
-}
-

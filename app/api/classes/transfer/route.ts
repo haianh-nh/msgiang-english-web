@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireUser, canManage, canTuition } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 import { ensureTeacherByName, gradeOf, normalizeScheduleInput, toV48Class } from "@/lib/classes";
+import { CLASS_WITH_RELATIONS_SELECT, STUDENT_CLIENT_SELECT } from "@/lib/db-selects";
 
 function validDate(v: any) {
   const s = String(v || "");
@@ -16,7 +17,7 @@ function previousDate(date: string) {
 }
 
 
-async function teacherRefFromIdOrName(id: any, name: any) {
+async function teacherRefFromIdOrName(id: any, name: any): Promise<any> {
   const supabase = supabaseAdmin();
   const cleanId = String(id || "").trim();
   if (cleanId) {
@@ -113,7 +114,7 @@ export async function POST(req: NextRequest) {
       status: "active",
       note: String(body.note || `Chuyển lên từ ${sourceClass.name}`).slice(0, 500),
     })
-    .select("*")
+    .select("id")
     .single();
 
   if (createError) return NextResponse.json({ error: createError.message }, { status: 500 });
@@ -138,7 +139,7 @@ export async function POST(req: NextRequest) {
   const { data: insertedStudents, error: insertStudentsError } = await supabase
     .from("official_students")
     .insert(rowsToInsert)
-    .select("*");
+    .select(STUDENT_CLIENT_SELECT);
 
   if (insertStudentsError) return NextResponse.json({ error: insertStudentsError.message }, { status: 500 });
 
@@ -155,7 +156,7 @@ export async function POST(req: NextRequest) {
 
   const { data: endedFull, error: endedFullError } = await supabase
     .from("official_classes")
-    .select("*, official_teachers:teacher_id(*), official_assistant_teacher:assistant_teacher_id(*), official_students(*), official_class_schedules(*)")
+    .select(CLASS_WITH_RELATIONS_SELECT)
     .eq("id", sourceClassId)
     .single();
 
@@ -163,7 +164,7 @@ export async function POST(req: NextRequest) {
 
   const { data: newFull, error: newFullError } = await supabase
     .from("official_classes")
-    .select("*, official_teachers:teacher_id(*), official_assistant_teacher:assistant_teacher_id(*), official_students(*), official_class_schedules(*)")
+    .select(CLASS_WITH_RELATIONS_SELECT)
     .eq("id", newClassRow.id)
     .single();
 

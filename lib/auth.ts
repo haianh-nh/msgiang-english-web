@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { supabaseAdmin } from "./supabase";
+import { AUTH_SESSION_USER_SELECT } from "./db-selects";
 
 export const SESSION_COOKIE = "msg_official_session";
 export type OfficialRole = "admin" | "manager" | "receptionist" | "teacher" | "ta";
@@ -104,12 +105,12 @@ export async function currentUser() {
   const supabase = supabaseAdmin();
   const { data: session } = await supabase
     .from("official_sessions")
-    .select("expires_at, official_users(*)")
+    .select(`expires_at, official_users(${AUTH_SESSION_USER_SELECT})`)
     .eq("token", token)
+    .gt("expires_at", new Date().toISOString())
     .maybeSingle();
 
   if (!session) return null;
-  if (new Date(session.expires_at).getTime() < Date.now()) return null;
 
   const user = Array.isArray(session.official_users)
     ? session.official_users[0]

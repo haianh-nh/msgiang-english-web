@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireUser, canManage, canTuition } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 import { ensureTeacherByName, gradeOf, normalizeScheduleInput, toV48Class } from "@/lib/classes";
+import { CLASS_WITH_RELATIONS_SELECT } from "@/lib/db-selects";
 
 function scheduleSignature(schedules: any[] = []) {
   return normalizeScheduleInput(schedules)
@@ -18,7 +19,7 @@ function futureMakeupTarget(targetSessionKey: any) {
   return date >= new Date().toISOString().slice(0, 10);
 }
 
-async function teacherRefFromIdOrName(id: any, name: any) {
+async function teacherRefFromIdOrName(id: any, name: any): Promise<any> {
   const supabase = supabaseAdmin();
   const cleanId = String(id || "").trim();
   if (cleanId) {
@@ -156,7 +157,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   const { data: full, error: fe } = await supabase
     .from("official_classes")
-    .select("*, official_teachers:teacher_id(*), official_assistant_teacher:assistant_teacher_id(*), official_students(*), official_class_schedules(*)")
+    .select(CLASS_WITH_RELATIONS_SELECT)
     .eq("id", id)
     .single();
 

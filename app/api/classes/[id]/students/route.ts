@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireUser, canManage, canTuition } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 import { addMonthsToMonth, buildEnrollmentTuitionPreview, monthKeyFromDate, normalizeMonthKey, validDateText } from "@/lib/tuition-enrollment";
+import { STUDENT_CLIENT_SELECT } from "@/lib/db-selects";
 
 function isMissingRpc(error: any) {
   const text = `${error?.code || ""} ${error?.message || ""}`.toLowerCase();
@@ -128,7 +129,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       note: body.note || null,
       status: "active",
     })
-    .select("*")
+    .select(STUDENT_CLIENT_SELECT)
     .single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });

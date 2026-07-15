@@ -1,4 +1,5 @@
 import { supabaseAdmin } from "./supabase";
+import { CLASS_WITH_RELATIONS_SELECT, TEACHER_BASE_SELECT } from "./db-selects";
 
 const DAY_KEY_TO_NUM: Record<string, number> = { Sun:0, Mon:1, Tue:2, Wed:3, Thu:4, Fri:5, Sat:6 };
 const NUM_TO_DAY_KEY: Record<number, string> = { 0:"Sun", 1:"Mon", 2:"Tue", 3:"Wed", 4:"Thu", 5:"Fri", 6:"Sat" };
@@ -79,19 +80,19 @@ export function toV48Class(c: any, options: { includeTuition?: boolean } = {}) {
   };
 }
 
-export async function ensureTeacherByName(name: string, phone?: string) {
+export async function ensureTeacherByName(name: string, phone?: string): Promise<any> {
   const supabase = supabaseAdmin();
   const clean = String(name || "").trim();
   if (!clean) return null;
 
-  let q = supabase.from("official_teachers").select("*").ilike("name", clean).limit(1);
+  let q = supabase.from("official_teachers").select(TEACHER_BASE_SELECT).ilike("name", clean).limit(1);
   const { data: found } = await q;
   if (found && found[0]) return found[0];
 
   const { data, error } = await supabase
     .from("official_teachers")
     .insert({ name: clean, phone: phone || null, status: "active" })
-    .select("*")
+    .select(TEACHER_BASE_SELECT)
     .single();
 
   if (error) throw error;
@@ -108,14 +109,14 @@ function canManageClasses(user: any) {
   return roles.includes("admin") || roles.includes("manager") || roles.includes("receptionist");
 }
 
-export async function teacherForUser(user: any) {
+export async function teacherForUser(user: any): Promise<any> {
   if (!user?.id && !user?.phone) return null;
   const supabase = supabaseAdmin();
 
   if (user?.id) {
     const { data } = await supabase
       .from("official_teachers")
-      .select("*")
+      .select("id")
       .eq("user_id", user.id)
       .maybeSingle();
     if (data) return data;
@@ -124,7 +125,7 @@ export async function teacherForUser(user: any) {
   if (user?.phone) {
     const { data } = await supabase
       .from("official_teachers")
-      .select("*")
+      .select("id")
       .eq("phone", user.phone)
       .maybeSingle();
     if (data) return data;
@@ -133,23 +134,7 @@ export async function teacherForUser(user: any) {
   return null;
 }
 
-const CLASS_SELECT_V48 = `
-  id,
-  name,
-  grade,
-  teacher_id,
-  assistant_teacher_id,
-  assistant_name,
-  start_date,
-  end_date,
-  status,
-  note,
-  created_at,
-  official_teachers:teacher_id(id,name),
-  official_assistant_teacher:assistant_teacher_id(id,name),
-  official_students(*),
-  official_class_schedules(id,day_of_week,start_time,end_time,sort_order)
-`;
+const CLASS_SELECT_V48 = CLASS_WITH_RELATIONS_SELECT;
 
 export async function fetchClassesV48(user?: any) {
   const supabase = supabaseAdmin();

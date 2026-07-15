@@ -3,6 +3,7 @@ import { requireUser, canManage, canAdmin, sanitizeUser } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 import { hashPassword } from "@/lib/password";
 import { fetchTeachersV48 } from "@/lib/classes";
+import { PUBLIC_USER_SELECT, TEACHER_BASE_SELECT } from "@/lib/db-selects";
 
 const ALLOWED_ROLES = new Set(["admin", "manager", "teacher", "ta"]);
 
@@ -32,22 +33,23 @@ function roleValueToRoles(role: any, actor: any) {
 async function fullTeacher(id: string) {
   const { data, error } = await supabaseAdmin()
     .from("official_teachers")
-    .select("*, official_users:user_id(*)")
+    .select(`${TEACHER_BASE_SELECT}, official_users:user_id(id,phone,email,roles,status,must_change_password)`)
     .eq("id", id)
     .single();
 
   if (error) throw error;
-  const user = Array.isArray(data.official_users) ? data.official_users[0] : data.official_users;
+  const row: any = data as any;
+  const user = Array.isArray(row.official_users) ? row.official_users[0] : row.official_users;
   return {
-    id: data.id,
-    userId: data.user_id || user?.id || "",
-    name: data.name,
-    phone: data.phone || user?.phone || "",
-    email: data.email || user?.email || "",
+    id: row.id,
+    userId: row.user_id || user?.id || "",
+    name: row.name,
+    phone: row.phone || user?.phone || "",
+    email: row.email || user?.email || "",
     roles: Array.isArray(user?.roles) ? user.roles : ["teacher"],
-    status: data.status || user?.status || "active",
+    status: row.status || user?.status || "active",
     mustChangePassword: !!user?.must_change_password,
-    note: data.note || "",
+    note: row.note || "",
   };
 }
 
@@ -82,14 +84,14 @@ export async function POST(req: NextRequest) {
   const password_hash = await hashPassword(tempPassword);
 
   let appUser: any = null;
-  const { data: existingUser } = await supabase.from("official_users").select("*").eq("phone", phone).maybeSingle();
+  const { data: existingUser } = await supabase.from("official_users").select(PUBLIC_USER_SELECT).eq("phone", phone).maybeSingle();
 
   if (existingUser) {
     const { data, error } = await supabase
       .from("official_users")
       .update({ name, email, roles, status: "active", password_hash, must_change_password: true, updated_at: new Date().toISOString() })
       .eq("id", existingUser.id)
-      .select("*")
+      .select(PUBLIC_USER_SELECT)
       .single();
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
     appUser = data;
@@ -97,13 +99,13 @@ export async function POST(req: NextRequest) {
     const { data, error } = await supabase
       .from("official_users")
       .insert({ name, phone, email, roles, password_hash, status: "active", must_change_password: true })
-      .select("*")
+      .select(PUBLIC_USER_SELECT)
       .single();
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
     appUser = data;
   }
 
-  const { data: existingTeacher } = await supabase.from("official_teachers").select("*").eq("phone", phone).maybeSingle();
+  const { data: existingTeacher } = await supabase.from("official_teachers").select(TEACHER_BASE_SELECT).eq("phone", phone).maybeSingle();
 
   let teacherId = "";
   if (existingTeacher) {
@@ -139,7 +141,7 @@ export async function PATCH(req: NextRequest) {
   if (!id) return NextResponse.json({ error: "Thiếu id giáo viên" }, { status: 400 });
 
   const supabase = supabaseAdmin();
-  const { data: teacher } = await supabase.from("official_teachers").select("*").eq("id", id).single();
+  const { data: teacher } = await supabase.from("official_teachers").select(TEACHER_BASE_SELECT).eq("id", id).single();
   if (!teacher) return NextResponse.json({ error: "Không tìm thấy giáo viên" }, { status: 404 });
 
   const name = String(body.name ?? teacher.name ?? "").trim();
@@ -152,14 +154,14 @@ export async function PATCH(req: NextRequest) {
 
   let userId = teacher.user_id;
   if (!userId) {
-    const { data: existingUser } = await supabase.from("official_users").select("*").eq("phone", phone).maybeSingle();
+    const { data: existingUser } = await supabase.from("official_users").select(PUBLIC_USER_SELECT).eq("phone", phone).maybeSingle();
     if (existingUser) userId = existingUser.id;
     else {
       const password_hash = await hashPassword(String(Math.floor(100000 + Math.random() * 900000)));
       const { data: newUser, error: ue } = await supabase
         .from("official_users")
         .insert({ name, phone, email, roles, status, password_hash, must_change_password: true })
-        .select("*")
+        .select(PUBLIC_USER_SELECT)
         .single();
       if (ue) return NextResponse.json({ error: ue.message }, { status: 500 });
       userId = newUser.id;
@@ -194,13 +196,14 @@ export async function DELETE(req: NextRequest) {
 
   const { data: teacher, error: te } = await supabase
     .from("official_teachers")
-    .select("*, official_users:user_id(*)")
+    .select(`${TEACHER_BASE_SELECT}, official_users:user_id(id,phone,email,roles,status,must_change_password)`)
     .eq("id", id)
     .single();
 
   if (te || !teacher) return NextResponse.json({ error: "Không tìm thấy giáo viên" }, { status: 404 });
 
-  const appUser = Array.isArray(teacher.official_users) ? teacher.official_users[0] : teacher.official_users;
+  const teacherRow: any = teacher as any;
+  const appUser = Array.isArray(teacherRow.official_users) ? teacherRow.official_users[0] : teacherRow.official_users;
   const roles = Array.isArray(appUser?.roles) ? appUser.roles : [];
 
   if (appUser?.id === user.id) {
@@ -238,7 +241,7 @@ export async function DELETE(req: NextRequest) {
     .eq("assistant_teacher_id", id)
     .neq("status", "ended");
 
-  const userId = teacher.user_id || appUser?.id || null;
+  const userId = teacherRow.user_id || appUser?.id || null;
 
   const { error: de } = await supabase.from("official_teachers").delete().eq("id", id);
   if (de) return NextResponse.json({ error: de.message }, { status: 500 });

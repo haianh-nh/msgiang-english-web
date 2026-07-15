@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin, sanitizeUser } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 import { hashPassword } from "@/lib/password";
+import { PUBLIC_USER_SELECT } from "@/lib/db-selects";
 
 const ALLOWED_ROLES = new Set(["admin", "manager", "receptionist", "teacher", "ta"]);
 
@@ -15,7 +16,7 @@ export async function GET() {
   const { response } = await requireAdmin();
   if (response) return response;
 
-  const { data, error } = await supabaseAdmin().from("official_users").select("*").order("created_at", { ascending: false });
+  const { data, error } = await supabaseAdmin().from("official_users").select(PUBLIC_USER_SELECT).order("created_at", { ascending: false });
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ ok: true, users: (data || []).map(sanitizeUser) });
 }
@@ -37,7 +38,7 @@ export async function POST(req: NextRequest) {
   const { data, error } = await supabaseAdmin()
     .from("official_users")
     .insert({ name, phone, email, roles, password_hash, must_change_password: true })
-    .select("*")
+    .select(PUBLIC_USER_SELECT)
     .single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
@@ -64,7 +65,7 @@ export async function PATCH(req: NextRequest) {
     .from("official_users")
     .update(update)
     .eq("id", id)
-    .select("*")
+    .select(PUBLIC_USER_SELECT)
     .single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });

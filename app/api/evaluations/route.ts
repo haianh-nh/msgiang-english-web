@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireUser, canManage } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 import { teacherForUser } from "@/lib/classes";
+import { EVALUATION_CLIENT_SELECT } from "@/lib/db-selects";
 
 const SCORE_KEYS = ["Listening", "Speaking", "Reading", "Writing", "Vocabulary", "Participation", "Homework"];
 
@@ -96,7 +97,7 @@ export async function GET(req: NextRequest) {
   try {
     let query = supabaseAdmin()
       .from("official_evaluations")
-      .select("id, student_id, class_id, month_key, scores, status, comment, strengths, improvements, suggestion, updated_at, published_at, created_by, updated_by")
+      .select(EVALUATION_CLIENT_SELECT)
       .order("updated_at", { ascending: false });
 
     if (monthKey) query = query.eq("month_key", monthKey);
@@ -171,7 +172,7 @@ export async function POST(req: NextRequest) {
   const { data, error } = await supabase
     .from("official_evaluations")
     .upsert(patch, { onConflict: "student_id,month_key" })
-    .select("*")
+    .select(EVALUATION_CLIENT_SELECT)
     .single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
