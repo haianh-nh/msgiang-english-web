@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "build": "20phase7d-receptionist-teachers-ui",
-  "phase": "7d-receptionist-teachers-ui",
+  "build": "20phase7e-staff-delete-fast-ui",
+  "phase": "7e-staff-delete-fast-ui",
   "realtimeFrontend": true
 }
