@@ -1,5 +1,5 @@
 {
-  "name": "msgiang-english-official-backend-phase8a-transfer-popup-ui-history-fix",
+  "name": "msgiang-english-official-backend-phase8b-interaction-ui-response",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -8,7 +8,7 @@
     "start": "next start",
     "seed:admin": "node --env-file=.env.local scripts/seed-admin.mjs",
     "check": "next build",
-    "audit": "node scripts/audit-phase8.mjs",
+    "audit": "node scripts/audit-phase8b.mjs",
     "verify": "npm run audit && npm run build"
   },
   "dependencies": {

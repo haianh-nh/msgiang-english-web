@@ -56,3 +56,10 @@
 - Thêm lịch sử lớp, transaction RPC và chống request trùng.
 - Xóa tab Điểm danh độc lập; điểm danh chỉ mở từ Lịch dạy.
 - Giữ fix badge Lịch dạy và quyền Lễ tân không có Học phí.
+
+## Phase 8B — Interaction & UI Response Performance
+
+- Patch cục bộ thẻ Lịch sau điểm danh/học bù.
+- Debounce nháp điểm danh và tối ưu popup giữ scroll.
+- Chống bấm lặp cho batch học bù, chống toast trùng.
+- Không có migration SQL mới.

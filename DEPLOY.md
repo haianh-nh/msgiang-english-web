@@ -1,7 +1,7 @@
-# Deploy Phase 8.0
+# Deploy Phase 8B
 
-1. Chạy `supabase/migrations/20260716_phase8_student_transfer_enrollments.sql` trong Supabase SQL Editor.
-2. Chạy `npm ci && npm run verify`.
-3. Commit và push GitHub; Vercel tự triển khai.
+- Không có migration SQL mới.
+- Migration Phase 8.0 `20260716_phase8_student_transfer_enrollments.sql` phải đã được chạy.
+- Chạy `npm ci && npm run verify` trước khi push.
 
-Build: `20phase8-student-transfer-schedule-attendance`
+Build: `20phase8b-interaction-ui-response`

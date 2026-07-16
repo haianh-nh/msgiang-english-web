@@ -456,6 +456,40 @@ const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi 
       v18Memo.scheduleDayMap={key,map};
       return map;
     }
+    function v8bScheduleElements(attribute,sessionKey){
+      return Array.from(document.querySelectorAll(`[${attribute}]`)).filter(el=>String(el.getAttribute(attribute)||'')===String(sessionKey||''));
+    }
+    function v8bUpdateScheduleLegend(){
+      if(route!=='schedule') return;
+      const counts=scheduleCounts();
+      const values={done:`Đã dạy: ${counts.done}`,live:`Đang dạy: ${counts.live}`,todo:`Chưa dạy: ${counts.todo}`,cancelled:`Nghỉ: ${counts.cancelled||0}`,classes:`${classesForUser().length} lớp`};
+      Object.entries(values).forEach(([key,value])=>{
+        const el=document.querySelector(`[data-schedule-count="${key}"]`);
+        if(el) el.textContent=value;
+      });
+    }
+    function v8bPatchScheduleSessions(sessionKeys=[]){
+      if(route!=='schedule' || typeof lessonCard!=='function') return false;
+      const keys=[...new Set((Array.isArray(sessionKeys)?sessionKeys:[sessionKeys]).filter(Boolean).map(String))];
+      let patched=0;
+      keys.forEach(key=>{
+        const session=sessionObjectFromKey(key);
+        if(!session) return;
+        v8bScheduleElements('data-schedule-session',key).forEach(el=>{
+          el.outerHTML=lessonCard(session,0,true);
+          patched++;
+        });
+        if(typeof mobileScheduleLesson==='function'){
+          v8bScheduleElements('data-mobile-schedule-session',key).forEach(el=>{
+            el.outerHTML=mobileScheduleLesson(session);
+            patched++;
+          });
+        }
+      });
+      if(patched) v8bUpdateScheduleLegend();
+      return patched>0;
+    }
+
     function v18fUpdateScheduleModuleCache(){
       db.classMakeupSessions=v20bMergeClassMakeupSessions([],db.classMakeupSessions||[]);
       v20b7MergeClassSnapshotsFromMakeups(db.classMakeupSessions);
@@ -4444,6 +4478,18 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
     }
 
     function statusLabel(v){return v==='present'?'Có mặt':v==='late'?'Muộn':v==='absent'?'Vắng':'Chưa chọn'}
+    let v8bAttendanceDraftTimer=null;
+    function v8bScheduleAttendanceDraftPersist(){
+      clearTimeout(v8bAttendanceDraftTimer);
+      v8bAttendanceDraftTimer=setTimeout(()=>{
+        v8bAttendanceDraftTimer=null;
+        window.MsUiAction.runWhenIdle(()=>saveLocalOnly(),500);
+      },280);
+    }
+    function v8bCancelAttendanceDraftPersist(){
+      clearTimeout(v8bAttendanceDraftTimer);
+      v8bAttendanceDraftTimer=null;
+    }
     function setAttendanceStatus(sessionKey,studentId,type,status){
       if(!attendanceCanEditSession(sessionKey,true)){toast('Bạn không có quyền sửa điểm danh buổi này');return}
       const rec=attendanceRecord(sessionKey); const rowKey=`${type}_${studentId}`;
@@ -4451,9 +4497,9 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
       rec.rows[rowKey].status=status; rec.saved=false;
       // Attendance drafts stay local until the explicit Save button is pressed.
       // Avoid queueing /api/v48-state after every status click.
-      saveLocalOnly();
+      v8bScheduleAttendanceDraftPersist();
       if(!v18bUpdateAttendanceStatusUI(sessionKey,studentId,type,status)){
-        openAttendance(sessionObjectFromKey(sessionKey).classId,sessionKey,true);
+        openAttendance(sessionObjectFromKey(sessionKey).classId,sessionKey,true,{preserveScroll:true});
       }
     }
     function setAttendanceNote(sessionKey,studentId,type,value){
@@ -4462,6 +4508,7 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
       rec.rows[rowKey] ||= {studentId,type,status:'present',note:''};
       rec.rows[rowKey].note=value;
       rec.saved=false;
+      v8bScheduleAttendanceDraftPersist();
     }
 
     function syncAbsenceRecordsForAttendance(sessionKey){
@@ -4495,9 +4542,8 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
       db.absenceRecords.push(...generated);
     }
 
-    let v20l4ScheduleRenderAfterModal=false;
     function v20l4InvalidateScheduleAfterAttendanceSave(sessionKey){
-      // V20L.4: after saving attendance from Schedule popup, update lesson cards behind the modal immediately.
+      // Phase 8B: patch đúng thẻ buổi học, không dựng lại sidebar/trang Lịch.
       if(v18Memo.scheduleCellMap) v18Memo.scheduleCellMap.key='';
       if(v18Memo.scheduleDayMap) v18Memo.scheduleDayMap.key='';
       v18Memo.weekKey='';
@@ -4506,10 +4552,7 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
       v18fUpdateAttendanceModuleCache();
       v18fUpdateScheduleModuleCache();
       lazyRouteState.schedule={...(lazyRouteState.schedule||{}),loaded:true,loadedAt:Date.now(),mutated:true};
-      if(route==='schedule'){
-        v20l4ScheduleRenderAfterModal=true;
-        try{renderApp()}catch(e){console.warn('Không cập nhật được lịch sau điểm danh',e)}
-      }
+      if(route==='schedule' && !v8bPatchScheduleSessions([sessionKey])) v18dRenderPageOnly(navItems());
     }
 
     async function saveAttendance(sessionKey){
@@ -4529,9 +4572,10 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
       // snapshot write so it cannot compete with the canonical attendance request.
       clearTimeout(officialSaveTimer);
       officialSaveTimer=null;
+      v8bCancelAttendanceDraftPersist();
       v20o2SetBusy(busyKey,true);
       try{
-        const data=await officialFetch('/api/attendance/save',{method:'POST',body:JSON.stringify({
+        const data=await window.MsUiAction.measureAsync('Lưu điểm danh',()=>officialFetch('/api/attendance/save',{method:'POST',body:JSON.stringify({
           sessionKey,
           classId:s.classId,
           date:s.date,
@@ -4544,7 +4588,7 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
           manualMakeups:rec.manualMakeups||[],
           pendingMakeupPlans:rec.pendingMakeupPlans||[],
           capacity:Number(db.settings?.capacity||15)
-        })});
+        })}),450);
 
         const affectedMakeupMonths=new Set([sessionKeyMonth(sessionKey)].filter(Boolean));
         const collectMakeupMonth=value=>{const month=sessionKeyMonth(String(value||''));if(month)affectedMakeupMonths.add(month)};
@@ -4609,8 +4653,9 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
         // Clear busy before rebuilding the modal, otherwise the new button stays disabled.
         v20o2SetBusy(busyKey,false);
         toast('Đã lưu điểm danh');
-        openAttendance(s.classId,sessionKey,false);
+        openAttendance(s.classId,sessionKey,false,{preserveScroll:true});
       }catch(e){
+        v8bScheduleAttendanceDraftPersist();
         toast(e.message||'Không lưu được điểm danh');
       }finally{
         v20o2SetBusy(busyKey,false);
@@ -4621,7 +4666,7 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
       const w=attendanceWindowInfo(sessionKey);
       if(w.isEarly){toast('Điểm danh chưa mở. Tất cả tài khoản chỉ được lưu/sửa sau giờ bắt đầu buổi học.');return}
       if(!w.open && !attendanceCanOverride()){toast('Chỉ Admin/Quản lí/Lễ tân được sửa điểm danh ngoài giờ hoặc đã đóng');return}
-      const rec=attendanceRecord(sessionKey); rec.editable=true; saveLocalOnly(); openAttendance(sessionObjectFromKey(sessionKey).classId,sessionKey,true)
+      const rec=attendanceRecord(sessionKey); rec.editable=true; saveLocalOnly(); openAttendance(sessionObjectFromKey(sessionKey).classId,sessionKey,true,{preserveScroll:true})
     }
     function classStudentsForManualMakeup(targetClassId){
       // V20L: thêm học bù thủ công cũng bỏ điều kiện cùng khối.
@@ -4644,7 +4689,7 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
       if(rec.manualMakeups.some(m=>m.student.id===studentId) || makeupStudentsForSession(sessionKey).some(x=>x.student.id===studentId)){toast('Học sinh đã có trong danh sách học bù buổi này');return}
       rec.manualMakeups.push({id:'manual_'+Date.now(),student:{...st,className:classById(st.classId).name},sourceClassId:st.classId,targetClassId,targetSessionKey:sessionKey,status:'manual'});
       rec.rows[`manual_makeup_${studentId}`]={studentId,type:'manual_makeup',status:'present',note:'Thêm học bù'};
-      save(); toast('Đã thêm học bù'); openAttendance(targetClassId,sessionKey,true);
+      v8bScheduleAttendanceDraftPersist(); toast('Đã thêm học bù'); openAttendance(targetClassId,sessionKey,true,{preserveScroll:true});
     }
 
     function rollupAttendanceFromSessions(studentId){
@@ -6141,10 +6186,10 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
 
       let data;
       try{
-        data=await officialFetch(`/api/students/${encodeURIComponent(studentId)}/transfer`,{
+        data=await window.MsUiAction.measureAsync('Chuyển lớp học sinh',()=>officialFetch(`/api/students/${encodeURIComponent(studentId)}/transfer`,{
           method:'POST',
           body:JSON.stringify({targetClassId,transferDate,reason,requestId})
-        });
+        }),450);
       }catch(e){
         window.MsUiAction.endLockedAction(action);
         v30StudentTransferFeedback(e.message||'Không chuyển lớp được. Dữ liệu đã nhập vẫn được giữ.');
@@ -6961,16 +7006,13 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
       }
       return {plans,cancelledPlans};
     }
-    function v22RefreshScheduleBehindMakeupModal(){
+    function v22RefreshScheduleBehindMakeupModal(sessionKeys=[]){
       if(v18Memo.scheduleCellMap) v18Memo.scheduleCellMap.key='';
       if(v18Memo.scheduleDayMap) v18Memo.scheduleDayMap.key='';
       v18Memo.weekKey='';
       v18Memo.weekSessions=null;
       lazyRouteState.schedule={...(lazyRouteState.schedule||{}),loaded:true,loading:false,loadedAt:Date.now(),mutated:true};
-      if(route==='schedule'){
-        v20l4ScheduleRenderAfterModal=true;
-        try{renderApp()}catch(e){console.warn('Không cập nhật được lịch sau khi xếp học bù',e)}
-      }
+      if(route==='schedule' && !v8bPatchScheduleSessions(sessionKeys)) v18dRenderPageOnly(navItems());
     }
 
     async function confirmScheduleMakeupBatch(targetClassId,targetSessionKey){
@@ -6986,9 +7028,10 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
       const validCancelCount=plannedMakeupsForSession(targetSessionKey).filter(p=>cancelPlanIds.some(id=>String(id)===String(p.id))).length;
       if(Math.max(0,totalRosterCountForSession(targetClassId,targetSessionKey)-validCancelCount)+items.length>capacity){toast(`Số học sinh vượt quá sĩ số tối đa ${capacity}`);return}
       const btn=document.getElementById('confirmMakeupBatchBtn');
-      if(btn){btn.disabled=true;btn.textContent='Đang lưu...'}
+      const action=window.MsUiAction.beginLockedAction(`makeup-batch:${targetSessionKey}`,btn,'Đang lưu...');
+      if(!action) return;
       try{
-        const data=await officialFetch('/api/makeup/plans',{method:'POST',body:JSON.stringify({targetClassId,targetSessionKey,items,cancelPlanIds}),preserveGetCache:true});
+        const data=await window.MsUiAction.measureAsync('Lưu xếp học bù',()=>officialFetch('/api/makeup/plans',{method:'POST',body:JSON.stringify({targetClassId,targetSessionKey,items,cancelPlanIds}),preserveGetCache:true}),450);
         const merged=mergeConfirmedMakeupBatch(data);
         draft.items=[];
         draft.cancelPlanIds=[];
@@ -7009,15 +7052,18 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
           delayMs:V24A_BATCH_REVALIDATE_IDLE_MS
         });
         saveLocalOnly();
-        v22RefreshScheduleBehindMakeupModal();
+        const changedSessionKeys=[targetSessionKey,...items.map(x=>x.sourceSessionKey),...merged.cancelledPlans.flatMap(x=>[x?.targetSessionKey,x?.sourceSessionKey])].filter(Boolean);
+        v22RefreshScheduleBehindMakeupModal(changedSessionKeys);
         const addedCount=merged.plans.length||items.length;
         const cancelledCount=merged.cancelledPlans.length||cancelPlanIds.length;
         const parts=[];
         if(addedCount) parts.push(`thêm ${addedCount}`);
         if(cancelledCount) parts.push(`hủy ${cancelledCount}`);
         toast(`Đã lưu thay đổi: ${parts.join(', ')} học sinh`);
+        window.MsUiAction.endLockedAction(action);
         refreshScheduleMakeupDraftDom(targetClassId,targetSessionKey);
       }catch(e){
+        window.MsUiAction.endLockedAction(action);
         toast(e.message||'Không xác nhận được danh sách học bù');
         refreshScheduleMakeupDraftDom(targetClassId,targetSessionKey);
       }
@@ -7897,15 +7943,28 @@ function settingsPage(){
       toast(`Đã tạo lớp ${name}.`);
     }
 
-    function modal(html){
-      modalBackdrop.innerHTML=`<div class="modal">${html}</div>`;
-      modalBackdrop.classList.add('show');
-      // V20B.19: focus nhẹ vào trường nhập đầu tiên để thao tác bàn phím nhanh hơn.
+    function modal(html,options={}){
+      const existing=modalBackdrop.querySelector('.modal');
+      const wasOpen=modalBackdrop.classList.contains('show') && !!existing;
+      const preserveScroll=!!options.preserveScroll;
+      const previousScroll=preserveScroll?Number(existing?.scrollTop||0):0;
+      if(wasOpen){
+        existing.innerHTML=html;
+        existing.removeAttribute('data-saving');
+        existing.removeAttribute('aria-busy');
+        existing.scrollTop=preserveScroll?previousScroll:0;
+      }else{
+        modalBackdrop.innerHTML=`<div class="modal">${html}</div>`;
+        modalBackdrop.classList.add('show');
+      }
+      // Phase 8B: thay nội dung trên cùng modal shell để tránh fade/nháy khi chuyển bước.
       setTimeout(()=>{
         v7hInitStaffModal();
+        const modalEl=modalBackdrop.querySelector('.modal');
+        if(preserveScroll && modalEl) modalEl.scrollTop=previousScroll;
         if(modalBackdrop.querySelector('[data-disable-modal-autofocus]')) return;
         const first=modalBackdrop.querySelector('.modal input:not([type="hidden"]):not([disabled]), .modal select:not([disabled]), .modal textarea:not([disabled])');
-        if(first && first.type!=='file') first.focus();
+        if(first && first.type!=='file' && !preserveScroll) first.focus({preventScroll:true});
       },0);
     }
     function closeModal(force=false){
@@ -7931,12 +7990,22 @@ function settingsPage(){
       if(isScheduleMakeupModal) scheduleMakeupDraft=null;
       modalBackdrop.classList.remove('show');
       if(v27Realtime.pendingModules.size) v27ArmRealtimeFlush(80);
-      if(v20l4ScheduleRenderAfterModal && route==='schedule'){
-        v20l4ScheduleRenderAfterModal=false;
-        try{renderApp()}catch(e){console.warn('Không cập nhật lại lịch sau khi đóng popup',e)}
-      }
     }
-    function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
+    let v8bToastTimer=null;
+    let v8bLastToast={message:'',at:0};
+    function toast(msg){
+      const message=String(msg||'').trim();
+      if(!message) return;
+      const now=Date.now();
+      if(v8bLastToast.message===message && now-v8bLastToast.at<700) return;
+      v8bLastToast={message,at:now};
+      const t=document.getElementById('toast');
+      if(!t) return;
+      clearTimeout(v8bToastTimer);
+      t.textContent=message;
+      t.classList.add('show');
+      v8bToastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+    }
 
     function v20b19IsModalOpen(){
       return !!modalBackdrop?.classList?.contains('show');

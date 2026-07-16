@@ -79,11 +79,31 @@
     return locks.has(String(key || 'ui-action'));
   }
 
+  function runWhenIdle(callback, timeout = 700) {
+    if (typeof callback !== 'function') return 0;
+    if ('requestIdleCallback' in window) {
+      return window.requestIdleCallback(callback, { timeout });
+    }
+    return window.setTimeout(callback, Math.min(timeout, 160));
+  }
+
+  async function measureAsync(label, task, warnAfterMs = 500) {
+    const started = performance.now();
+    try {
+      return await task();
+    } finally {
+      const duration = performance.now() - started;
+      if (duration >= warnAfterMs) console.info(`[MsGiang performance] ${label}: ${Math.round(duration)}ms`);
+    }
+  }
+
   window.MsUiAction = Object.freeze({
     beginModalAction,
     endModalAction,
     beginLockedAction,
     endLockedAction,
-    isLocked
+    isLocked,
+    runWhenIdle,
+    measureAsync
   });
 })();

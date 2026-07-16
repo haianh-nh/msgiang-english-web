@@ -82,14 +82,14 @@
       rec.saved=false;
       rec.editable=true;
       v18Memo.rosterKey='';
-      v20bAfterMutation(['schedule','attendance','makeup'],{targetSessionKey:sessionKey,month:sessionKeyMonth(sessionKey),force:true});
-      save();
+      // Chỉ là bản nháp trong popup; không refresh mạng trước khi bấm Lưu điểm danh.
+      v8bScheduleAttendanceDraftPersist();
       toast('Đã thêm học sinh học bù. Kiểm tra trạng thái rồi bấm Lưu điểm danh.');
-      openAttendance(targetClassId,sessionKey,true);
+      openAttendance(targetClassId,sessionKey,true,{preserveScroll:true});
     }
 
 
-    function openAttendance(id,sessionKey=null,forceEdit=false){
+    function openAttendance(id,sessionKey=null,forceEdit=false,modalOptions={}){
       normalizeMakeupPlans();
       if(!sessionKey) sessionKey=defaultSessionKeyForClass(id);
       const targetMonth=sessionKeyMonth(sessionKey)||makeupCurrentMonthKey();
@@ -99,7 +99,7 @@
         modal(`<div class="modalHead"><h2>Điểm danh</h2><button class="close" onclick="closeModal()">×</button></div><div class="empty">Đang tải dữ liệu học bù tháng này...</div>`);
         refreshOfficialMakeupState({skipSave:true,month:targetMonth,applyGlobal:true}).catch(e=>toast(e.message||'Không tải được dữ liệu học bù')).finally(()=>{
           attendanceMakeupMonthLoadingKey='';
-          openAttendance(id,sessionKey,forceEdit);
+          openAttendance(id,sessionKey,forceEdit,modalOptions);
         });
         return;
       }
@@ -118,12 +118,12 @@
       const manualOptions=classStudentsForManualMakeup(id).map(st=>`<option value="${st.id}">${st.name} • ${st.className}</option>`).join('');
       const linkedMakeupBox=attendanceLinkedMakeupBox(id,sessionKey,canEdit,activeTotal,capacity);
       const freeManualBox=manualCanPlace?`<div class="manualMakeupBox"><b>Thêm học bù</b><div class="mini">Thêm học sinh khác lớp vào buổi này.</div><div class="inline2" style="margin-top:8px"><label>Chọn học sinh khác lớp<select id="manualMakeupStudent" class="input" ${(!canEdit||activeTotal>=capacity)?'disabled':''}><option value="">-- Chọn học sinh --</option>${manualOptions}</select></label>${activeTotal>=capacity?`<button class="btn ghost" disabled>Đã đủ ${capacity} học sinh</button>`:`<button class="btn primary" ${canEdit?`onclick="addManualMakeupToAttendance('${id}','${sessionKey}')"`:'disabled'}>+ Thêm học bù</button>`}</div></div>`:'';
-      modal(`<div class="modalHead"><h2>Điểm danh ${c.name}</h2><button class="close" onclick="closeModal()">×</button></div>
+      modal(`<div data-attendance-modal data-attendance-session="${h(sessionKey)}"><div class="modalHead"><h2>Điểm danh ${c.name}</h2><button class="close" onclick="closeModal()">×</button></div>
       <div class="${attendanceModalBoxClass(sessionKey,canEdit)}"><b>${attendanceModalStatusTitle(sessionKey,canEdit)}</b><p>${sessionLabelFromKey(sessionKey)} • ${w.label}</p><div><span class="capacityBadge ${total>=capacity?'full':''}">Tổng ${total}/${capacity}</span> <span class="makeupBadge">${mk} học bù</span></div>${rec.saved?`<span class="attSavedTag">Đã lưu lúc ${rec.updatedAt||'-'}</span>`:''}</div>
       ${(!w.open && !canEdit)?`<div class="blockedBox"><h2>🔒 ${w.isEarly?'Điểm danh chưa mở':'Điểm danh đã khóa'}</h2><p>Điểm danh chỉ mở từ giờ bắt đầu buổi học. Admin/Quản lí/Lễ tân không được điểm danh trước giờ học, nhưng có thể sửa ngoài giờ sau khi buổi học đã bắt đầu.</p>${canOpenClosedEdit?`<div style="margin-top:12px"><button class="tinyEditBtn" onclick="editAttendance('${sessionKey}')">Sửa điểm danh</button></div>`:''}</div>`:`
       ${linkedMakeupBox}${freeManualBox}
       <div class="tableWrap"><table><thead><tr><th>Học sinh</th><th>Loại</th><th>Trạng thái</th><th>Ghi chú</th></tr></thead><tbody>
       ${roster.map(x=>{const rowKey=`${x.type}_${x.student.id}`; const row=rec.rows[rowKey]||{status:'present',note:''}; const label=x.type==='official'?'Chính thức':x.type==='makeup'?'🔁 Học bù':'🔁 Học bù'; return `<tr><td><b>${x.student.name}</b><div class="mini">${x.type==='official'?c.name:`Lớp chính: ${x.sourceClass.name||x.student.className||'-'}`}</div></td><td><span class="pill ${x.type==='official'?'gray':'blue'}">${label}</span></td><td>${attendanceStatusButtons(sessionKey,x.student.id,x.type,row.status,canEdit)}</td><td><input class="attNote" value="${String(row.note||'').replace(/"/g,'&quot;')}" ${canEdit?`oninput="setAttendanceNote('${sessionKey}','${x.student.id}','${x.type}',this.value)"`:'disabled'} placeholder="Ghi chú..."></td></tr>`}).join('')}
       </tbody></table></div>
-      <div style="text-align:right;margin-top:14px">${rec.saved&&!canEdit&&(w.open||(attendanceCanOverride()&&!w.isEarly))?`<button class="btn ghost" onclick="editAttendance('${sessionKey}')">Chỉnh sửa</button>`:''}${canEdit?`<button class="btn primary" ${v20o2BusyButtonAttrs(`attendance:${sessionKey}`,'Đang lưu...')} onclick="saveAttendance('${sessionKey}')">${rec.saved?'Lưu lại điểm danh':'Lưu điểm danh'}</button>`:''}</div>`}`)
+      <div style="text-align:right;margin-top:14px">${rec.saved&&!canEdit&&(w.open||(attendanceCanOverride()&&!w.isEarly))?`<button class="btn ghost" onclick="editAttendance('${sessionKey}')">Chỉnh sửa</button>`:''}${canEdit?`<button class="btn primary" ${v20o2BusyButtonAttrs(`attendance:${sessionKey}`,'Đang lưu...')} onclick="saveAttendance('${sessionKey}')">${rec.saved?'Lưu lại điểm danh':'Lưu điểm danh'}</button>`:''}</div>`}</div>`,modalOptions)
     }
