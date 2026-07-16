@@ -8,6 +8,12 @@ function validDate(value: unknown) {
   return /^\d{4}-\d{2}-\d{2}$/.test(text) ? text : "";
 }
 
+function isMissingEnrollmentHistoryTable(error: any) {
+  const code = String(error?.code || "");
+  const message = String(error?.message || "");
+  return code === "PGRST205" || /official_student_enrollments|schema cache|relation .* does not exist/i.test(message);
+}
+
 function mapStudent(row: any, includeTuition: boolean) {
   const student: any = {
     id: row.id,
@@ -57,6 +63,12 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
     const history = await readHistory(id);
     return NextResponse.json({ ok: true, history }, { headers: { "Cache-Control": "private, no-store, max-age=0" } });
   } catch (error: any) {
+    if (isMissingEnrollmentHistoryTable(error)) {
+      return NextResponse.json(
+        { ok: true, history: [], historyUnavailable: true },
+        { headers: { "Cache-Control": "private, no-store, max-age=0" } },
+      );
+    }
     return NextResponse.json({ error: error?.message || "Không tải được lịch sử lớp" }, { status: 500 });
   }
 }
@@ -86,8 +98,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   });
 
   if (transferError) {
-    const message = String(transferError.message || "Không chuyển lớp được");
-    const status = /không tìm thấy/i.test(message) ? 404 : /đang ở lớp|đã kết thúc/i.test(message) ? 409 : 500;
+    const rawMessage = String(transferError.message || "Không chuyển lớp được");
+    const migrationMissing = /official_transfer_student|official_student_enrollments|schema cache|function .* does not exist|PGRST202|PGRST205/i.test(rawMessage);
+    const message = migrationMissing
+      ? "Chức năng chuyển lớp chưa được kích hoạt trên Supabase. Hãy chạy migration Phase 8.0 rồi thử lại."
+      : rawMessage;
+    const status = migrationMissing ? 503 : /không tìm thấy/i.test(message) ? 404 : /đang ở lớp|đã kết thúc/i.test(message) ? 409 : 500;
     return NextResponse.json({ error: message }, { status });
   }
 

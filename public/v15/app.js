@@ -6055,7 +6055,7 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
       return sortClassesByGrade(operationalClasses().filter(c=>String(c.id)!==String(sourceClassId)&&!isClassEnded(c)));
     }
     function v30EnrollmentHistoryMarkup(rows=[]){
-      if(!rows.length) return '<div class="mini">Chưa có lịch sử lớp trước đó.</div>';
+      if(!rows.length) return '<div class="studentHistoryEmpty">Không có lịch sử chuyển lớp</div>';
       return `<div class="studentHistoryList">${rows.map(row=>`<div class="studentHistoryItem"><div><b>${h(row.className||'Lớp')}</b><div class="mini">${row.startDate?formatVNDate(parseISODate(row.startDate)):'-'} → ${row.endDate?formatVNDate(parseISODate(row.endDate)):'Hiện tại'}</div>${row.reason?`<div class="mini">Lý do: ${h(row.reason)}</div>`:''}</div><span class="pill ${row.status==='active'?'green':'gray'}">${row.status==='active'?'Đang học':'Đã chuyển'}</span></div>`).join('')}</div>`;
     }
     async function v30LoadStudentHistory(studentId,containerId='studentTransferHistory'){
@@ -6068,7 +6068,11 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
         if(current) current.innerHTML=v30EnrollmentHistoryMarkup(data.history||[]);
       }catch(e){
         const current=document.getElementById(containerId);
-        if(current) current.innerHTML=`<div class="mini errorText">${h(e.message||'Không tải được lịch sử lớp')}</div>`;
+        const message=String(e?.message||'');
+        const missingHistoryTable=/official_student_enrollments|schema cache|relation .* does not exist|PGRST205/i.test(message);
+        if(current) current.innerHTML=missingHistoryTable
+          ? '<div class="studentHistoryEmpty">Không có lịch sử chuyển lớp</div>'
+          : `<div class="mini errorText">${h(message||'Không tải được lịch sử lớp')}</div>`;
       }
     }
     function openStudentTransferModal(sourceClassId,studentId){
@@ -6079,7 +6083,7 @@ function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.
       const targets=v30ActiveTransferTargets(sourceClassId);
       if(!targets.length){toast('Chưa có lớp đang học khác để chuyển đến');return}
       const today=isoDate(new Date());
-      modal(`<div data-student-transfer-modal data-student-id="${h(studentId)}" class="staffModalContent"><div class="modalHead"><h2>Chuyển lớp học sinh</h2><button class="close" onclick="closeModal()">×</button></div><div class="staffModalScroll"><div class="transferStudentSummary"><div><span class="mini">Học sinh</span><h3>${h(student.name)}</h3></div><div><span class="mini">Lớp hiện tại</span><b>${h(source.name)}</b></div></div><div class="formGrid"><label>Lớp chuyển đến<select id="studentTransferTarget" class="input">${targets.map(c=>`<option value="${h(c.id)}">${h(c.name)} • ${c.students?.length||0} học sinh</option>`).join('')}</select></label><label>Ngày bắt đầu lớp mới<input id="studentTransferDate" class="input" type="date" value="${today}"></label><label class="full">Lý do chuyển lớp<input id="studentTransferReason" class="input" maxlength="500" placeholder="VD: Điều chỉnh trình độ / thay đổi lịch học"></label></div><div id="studentTransferFeedback" class="staffModalFeedback" hidden></div><div class="studentHistoryPanel"><b>Lịch sử lớp</b><div id="studentTransferHistory" style="margin-top:8px"><div class="mini">Đang tải lịch sử lớp...</div></div></div></div><div class="staffModalFooter"><div></div><div><button class="btn ghost" onclick="openClassDetail('${sourceClassId}')">Hủy</button><button id="confirmStudentTransferBtn" class="btn primary" onclick="confirmStudentTransfer('${sourceClassId}','${studentId}')">Xác nhận chuyển lớp</button></div></div></div>`);
+      modal(`<div data-student-transfer-modal data-student-id="${h(studentId)}" class="staffModalContent"><div class="modalHead"><h2>Chuyển lớp học sinh</h2><button class="close" onclick="closeModal()">×</button></div><div class="staffModalScroll"><div class="transferStudentSummary"><div class="transferStudentInfoBlock"><span class="transferStudentLabel">Tên học sinh</span><h3 class="transferStudentName">${h(student.name)}</h3></div><div class="transferStudentInfoBlock transferCurrentClassBlock"><span class="transferStudentLabel">Lớp hiện tại</span><b class="transferCurrentClassName">${h(source.name)}</b></div></div><div class="formGrid"><label>Lớp chuyển đến<select id="studentTransferTarget" class="input">${targets.map(c=>`<option value="${h(c.id)}">${h(c.name)} • ${c.students?.length||0} học sinh</option>`).join('')}</select></label><label>Ngày bắt đầu lớp mới<input id="studentTransferDate" class="input" type="date" value="${today}"></label><label class="full">Lý do chuyển lớp<input id="studentTransferReason" class="input" maxlength="500" placeholder="VD: Điều chỉnh trình độ / thay đổi lịch học"></label></div><div id="studentTransferFeedback" class="staffModalFeedback" hidden></div><div class="studentHistoryPanel"><b>Lịch sử lớp</b><div id="studentTransferHistory" style="margin-top:8px"><div class="mini">Đang tải lịch sử lớp...</div></div></div></div><div class="staffModalFooter"><div></div><div><button class="btn ghost" onclick="openClassDetail('${sourceClassId}')">Hủy</button><button id="confirmStudentTransferBtn" class="btn primary" onclick="confirmStudentTransfer('${sourceClassId}','${studentId}')">Xác nhận chuyển lớp</button></div></div></div>`);
       setTimeout(()=>v30LoadStudentHistory(studentId),0);
     }
     function openStudentClassHistory(sourceClassId,studentId){

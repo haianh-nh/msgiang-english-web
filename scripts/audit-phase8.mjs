@@ -8,7 +8,7 @@ const fail = (message) => { console.error(`✗ ${message}`); process.exitCode = 
 const pass = (message) => console.log(`✓ ${message}`);
 const expect = (condition, message) => condition ? pass(message) : fail(message);
 
-const build = '20phase8-student-transfer-schedule-attendance';
+const build = '20phase8a-transfer-popup-ui-history-fix';
 const index = read('public/index-v15.html');
 const app = read('public/v15/app.js');
 const css = read('public/v15/app.css');
@@ -31,6 +31,10 @@ expect(app.includes("if(r==='attendance') r='schedule'"), 'Route Điểm danh c�
 expect(app.includes('openStudentTransferModal'), 'Có popup chuyển lớp học sinh');
 expect(app.includes('confirmStudentTransfer'), 'Có luồng xác nhận chuyển lớp');
 expect(app.includes('v30PatchTransferredStudentUi'), 'Chuyển lớp cập nhật UI cục bộ');
+expect(app.includes('transferStudentLabel'), 'Popup chuyển lớp có nhãn thông tin rõ ràng');
+expect(app.includes('Không có lịch sử chuyển lớp'), 'Lịch sử trống dùng thông báo thân thiện');
+expect(css.includes('.transferCurrentClassName'), 'Tên lớp hiện tại có CSS tách riêng');
+expect(transferApi.includes('isMissingEnrollmentHistoryTable'), 'API ẩn lỗi kỹ thuật khi bảng lịch sử chưa sẵn sàng');
 expect(app.includes('v28BeginModalAction(button'), 'Chuyển lớp có khóa nút chống bấm lặp');
 expect(transferApi.includes('official_transfer_student'), 'API gọi RPC chuyển lớp nguyên tử');
 expect(transferApi.includes('requestId'), 'API hỗ trợ idempotency');

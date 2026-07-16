@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "build": "20phase8-student-transfer-schedule-attendance",
+  "build": "20phase8a-transfer-popup-ui-history-fix",
   "phase": "8-student-transfer-schedule-attendance",
   "realtimeFrontend": true
 }
