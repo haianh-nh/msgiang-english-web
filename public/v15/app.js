@@ -1,4 +1,4 @@
-window.MSGIANG_BUILD_VERSION='20phase8-student-transfer-schedule-attendance';
+window.MSGIANG_BUILD_VERSION='20phase8d2-linked-runtime-module-split';
 const SEED = {"classes": [{"id": "c01", "name": "GK (2021)", "teacher": "Ms Chi (Luna)", "ta": "", "time": "17h – 18h30 Mon; 18h30-20 Wed", "month": "June, 2026", "students": [{"id": "s01_01", "name": "Bình An", "contact": "Mẹ: 034***82"}, {"id": "s01_02", "name": "Linh Đan", "contact": "Mẹ: 036***33"}, {"id": "s01_03", "name": "Minh Nhật", "contact": "Em Gia Bảo G2.1"}, {"id": "s01_04", "name": "Quỳnh Chi", "contact": "Mẹ: 038***18"}, {"id": "s01_05", "name": "Gấu", "contact": "Mẹ: 096***19"}, {"id": "s01_06", "name": "Duy Quyền", "contact": "Mẹ: 096***97"}, {"id": "s01_07", "name": "Lương Gia Bảo", "contact": "Mẹ: 097***21"}, {"id": "s01_08", "name": "Tuệ Nhi", "contact": "Mẹ:"}], "teacherId": "t01", "taId": null}, {"id": "c02", "name": "G1.2 (2020)", "teacher": "Ms Ngọc Bích", "ta": "", "time": "17h – 18h30 Mon; 18h30-20 Wed", "month": "June, 2026", "students": [{"id": "s02_01", "name": "Bảo Khôi", "contact": "Mẹ: 097***81"}, {"id": "s02_02", "name": "Minh Khang", "contact": "Bà: 096***59"}, {"id": "s02_03", "name": "Nhật Nam", "contact": "Mẹ: 035***96"}, {"id": "s02_04", "name": "Ngọc Lan", "contact": "Mẹ: 036***67"}, {"id": "s02_05", "name": "Duy An", "contact": "Mẹ: 098***30"}, {"id": "s02_06", "name": "Hà My", "contact": "Ông:"}], "teacherId": "t02", "taId": null}, {"id": "c03", "name": "1.1", "teacher": "Ms Chi (Luna)", "ta": "Ms Ánh", "time": "17h – 18h30 Tue; 9h – 10h30 Sun", "month": "June, 2026", "students": [{"id": "s03_01", "name": "Bảo An - Tina", "contact": "Mẹ: 036***51"}, {"id": "s03_02", "name": "Ngọc Bảo Hân - Hana", "contact": "Mẹ: 037***22"}, {"id": "s03_03", "name": "Đức Phúc - Luca", "contact": "Mẹ: 034***82"}, {"id": "s03_04", "name": "Phương Thảo - Anna", "contact": "Mẹ: 097***94"}, {"id": "s03_05", "name": "Minh Tú – Peter", "contact": "Mẹ: 093***26"}, {"id": "s03_06", "name": "Minh Anh – Mary", "contact": "Mẹ: 035***61"}, {"id": "s03_07", "name": "Yến Nhi - Alice", "contact": "Bố: 091***88\nMẹ: 032***93"}, {"id": "s03_08", "name": "Gia Hân - Lily", "contact": "Bố: 097***83"}, {"id": "s03_09", "name": "Cát Tiên - Lisa", "contact": "Mẹ: 082***79"}, {"id": "s03_10", "name": "Thảo My - Lucy", "contact": "Mẹ: 036***46\nÔng: 036***13"}, {"id": "s03_11", "name": "Bảo Hân - Linda", "contact": "Mẹ: 082***79"}, {"id": "s03_12", "name": "Minh Đức – Eric", "contact": "Mẹ: 036***94"}, {"id": "s03_13", "name": "Hoàng Long – Billy", "contact": "Mẹ: 098***42"}, {"id": "s03_14", "name": "Khánh Nhi – Mia", "contact": "Mẹ: 097***88\nBố: 096***89"}], "teacherId": "t01", "taId": "t03"}, {"id": "c04", "name": "G2.1", "teacher": "Ms Kate", "ta": "Ms Ánh", "time": "17h – 18h30 Mon; 17h – 18h30 Wed", "month": "June, 2026", "students": [{"id": "s04_01", "name": "Minh Khang- Kevin", "contact": "Mẹ: 098***49"}, {"id": "s04_02", "name": "Đức Hậu - Timmy", "contact": "Bố: 098***28"}, {"id": "s04_03", "name": "Đức Phát - Peter", "contact": "Mẹ: 098***83"}, {"id": "s04_04", "name": "Mạnh Quân - Kevin", "contact": "Mẹ: 096***68"}, {"id": "s04_05", "name": "Thuý Nga - Hana", "contact": "Mẹ: 039***63"}, {"id": "s04_06", "name": "Minh Nhật – Alex", "contact": "Mẹ: 097***36"}, {"id": "s04_07", "name": "Anh Nhật - Philip", "contact": "Mẹ: 035***02"}, {"id": "s04_08", "name": "Hoàng Nam - Alan", "contact": "Mẹ: 091***68"}, {"id": "s04_09", "name": "Duy Hưng – Tony", "contact": "Mẹ: 033***83"}, {"id": "s04_10", "name": "Bảo Long - Liam", "contact": "Bà: 032***63"}, {"id": "s04_11", "name": "Quỳnh Anh - Rosie", "contact": "Mẹ: 098***40"}, {"id": "s04_12", "name": "Bảo Khang - David", "contact": "Mẹ: 033***48"}, {"id": "s04_13", "name": "Diệu Anh – Mary", "contact": "Mẹ: 091***66"}, {"id": "s04_14", "name": "Thanh Tùng – Hary", "contact": "Mẹ: 097***57"}], "teacherId": "t04", "taId": "t03"}, {"id": "c05", "name": "G2.2", "teacher": "Ms Bích", "ta": "Ms Ánh", "time": "17h- 18h30 Wed; 17h – 18h30 Thurs", "month": "June, 2026", "students": [{"id": "s05_01", "name": "Khôi Nguyên", "contact": "Mẹ: 091***68"}, {"id": "s05_02", "name": "Đại Việt", "contact": "Mẹ: 096***94"}, {"id": "s05_03", "name": "Minh Nguyên", "contact": "Mẹ: 087***96"}, {"id": "s05_04", "name": "Công Phát", "contact": "Mẹ: 086***92"}, {"id": "s05_05", "name": "Hải Vương", "contact": "Mẹ: 039***42"}, {"id": "s05_06", "name": "Anh Đức", "contact": "Mẹ: 098***03"}, {"id": "s05_07", "name": "Minh Anh", "contact": "Mẹ: 098***48"}, {"id": "s05_08", "name": "Minh Đức", "contact": "G3.2"}, {"id": "s05_09", "name": "Ngọc Dũng", "contact": "Mẹ: 039***29"}, {"id": "s05_10", "name": "Tuệ Minh", "contact": "Mẹ: 097***67"}, {"id": "s05_11", "name": "Bảo Thanh", "contact": "Mẹ: 033***16"}], "teacherId": "t05", "taId": "t03"}, {"id": "c06", "name": "G3.3", "teacher": "Ms Chi (Luna)", "ta": "Ms Dung", "time": "17h – 18h30 Fri; 17h – 18h30 Sun", "month": "June, 2026", "students": [{"id": "s06_01", "name": "Gia Bảo – Harry", "contact": "Mẹ: 097***34"}, {"id": "s06_02", "name": "Trọng Phước - Billy", "contact": "Mẹ: 038***97"}, {"id": "s06_03", "name": "Tuấn Hưng - Tom", "contact": "Mẹ: 035***25"}, {"id": "s06_04", "name": "Tuệ Lâm - Anna", "contact": "Me: 036***59"}, {"id": "s06_05", "name": "Đình Tùng – Henry", "contact": "Mẹ: 036***38"}, {"id": "s06_06", "name": "Quốc Hưng - Ben", "contact": "Mẹ: 093***26"}, {"id": "s06_07", "name": "Khánh Vy – Mary", "contact": "Mẹ: 038***91"}, {"id": "s06_08", "name": "Hà My - Lily", "contact": "Mẹ: 034***62"}, {"id": "s06_09", "name": "Tuệ Nhi – Lucy", "contact": "Mẹ: 097***89"}, {"id": "s06_10", "name": "Đức Minh - Lucas", "contact": "Mẹ: 033***62"}, {"id": "s06_11", "name": "Xuân Đức – Alex", "contact": "Mẹ: 098***38"}, {"id": "s06_12", "name": "Xuân Lộc - Alan", "contact": "Mẹ: 098***38"}, {"id": "s06_13", "name": "Đăng Khoa – Kevin", "contact": "Mẹ: 039***68"}], "teacherId": "t01", "taId": "t06"}, {"id": "c07", "name": "G3.1", "teacher": "Ms An (Kate)", "ta": "", "time": "18h30 – 20h Wed; 17h – 18h30 Sat", "month": "June, 2026", "students": [{"id": "s07_01", "name": "Minh Anh – Mia", "contact": "Mẹ: 096***01"}, {"id": "s07_02", "name": "Xuân Bắc – Billy", "contact": "Mẹ: 098***29"}, {"id": "s07_03", "name": "Bảo Nam – Tom", "contact": "Mẹ: 090***92"}, {"id": "s07_04", "name": "Quỳnh Trang – Hana", "contact": "Mẹ: 097***17"}, {"id": "s07_05", "name": "An Nhiên – Anna", "contact": "Mẹ Hiền"}, {"id": "s07_06", "name": "Minh Trang – Rosie", "contact": "Mẹ: 036***57"}, {"id": "s07_07", "name": "Gia Bảo – John", "contact": "Mẹ: 098***18"}, {"id": "s07_08", "name": "Phương Tiên – Mary", "contact": "Mẹ: 097***97"}, {"id": "s07_09", "name": "Huy Hoàng - Tom", "contact": "Mẹ: 036***58"}, {"id": "s07_10", "name": "Khánh Ngân – Elsa", "contact": "Mẹ: 097***88\nBố: 096***89"}, {"id": "s07_11", "name": "Quỳnh Nga - Anna", "contact": "Mẹ: 090***62"}, {"id": "s07_12", "name": "Cẩm Sang - Bella", "contact": "Mẹ: 096***48"}, {"id": "s07_13", "name": "Gia Hưng – Alex", "contact": "Mẹ: 098***06"}, {"id": "s07_14", "name": "Khả Ngân - Hana", "contact": "Bố: 098***29"}, {"id": "s07_15", "name": "Ánh Dương - Lily", "contact": "Mẹ: 037***05"}], "teacherId": "t07", "taId": null}, {"id": "c08", "name": "G3.2", "teacher": "Ms Luna", "ta": "", "time": "18h30 – 20h Fri; 15h30 – 17h Sun", "month": "June, 2026", "students": [{"id": "s08_01", "name": "Minh Tuấn - Tony", "contact": "Mẹ: 036***46"}, {"id": "s08_02", "name": "N. Gia Bảo - Billy", "contact": "Mẹ: 033***81"}, {"id": "s08_03", "name": "Phúc Hưng - Kevin", "contact": "Mẹ: 098***83"}, {"id": "s08_04", "name": "Thu Huyền - Elsa", "contact": "Mẹ: 098***98"}, {"id": "s08_05", "name": "Quốc Hưng - Alan", "contact": "Mẹ: 038***95"}, {"id": "s08_06", "name": "Tú Linh - Hana", "contact": "Mẹ: 097***97"}, {"id": "s08_07", "name": "Ngọc Chi - Bella", "contact": "Mẹ: 033***90"}, {"id": "s08_08", "name": "Khả Ngân - Lisa", "contact": "Mẹ: 038***89"}, {"id": "s08_09", "name": "Đỗ Gia Bảo - Evan", "contact": "Mẹ: 033***48"}, {"id": "s08_10", "name": "Minh Nhật – Ben", "contact": "Mẹ: 098***42"}], "teacherId": "t08", "taId": null}, {"id": "c09", "name": "G4.1", "teacher": "Ms Kate", "ta": "Ms Ánh", "time": "18h30 – 20h Tues; 17h – 18h30 Thur", "month": "June, 2026", "students": [{"id": "s09_01", "name": "Gia Hưng", "contact": "Mẹ: 034***62"}, {"id": "s09_02", "name": "Phương Thảo", "contact": "Mẹ: 098***22"}, {"id": "s09_03", "name": "Đức Dũng", "contact": "Mẹ: 096***16"}, {"id": "s09_04", "name": "Đinh Gia Khánh", "contact": "Mẹ: 097***92"}, {"id": "s09_05", "name": "Hoàng Anh - Bill", "contact": "Mẹ: 086***92"}, {"id": "s09_06", "name": "An Nhiên", "contact": "Mẹ: 096***28"}, {"id": "s09_07", "name": "Minh Trường", "contact": "Mẹ: 037***12"}, {"id": "s09_08", "name": "Quỳnh Chi", "contact": "Mẹ: 035***38"}, {"id": "s09_09", "name": "Thiện An", "contact": "Mẹ: 097***90"}, {"id": "s09_10", "name": "Ngọc Diệp", "contact": "Mẹ: 098***95"}, {"id": "s09_11", "name": "Bảo Trâm", "contact": "Mẹ: 037***13"}, {"id": "s09_12", "name": "Tiến Dũng - John", "contact": "Mẹ: 035***06"}, {"id": "s09_13", "name": "Thiện Phúc - Max", "contact": "Mẹ: 035***63"}], "teacherId": "t04", "taId": "t03"}, {"id": "c10", "name": "G4.2", "teacher": "Ms An (Kate)", "ta": "", "time": "18h30 - 20h Mon; 17h – 18h30 Tues", "month": "May, 2026", "students": [{"id": "s10_01", "name": "Đăng Khoa - Alex", "contact": "Mẹ: 096***37"}, {"id": "s10_02", "name": "Bảo Phong - Tony", "contact": "Mẹ: 097***32"}, {"id": "s10_03", "name": "Ngọc Mai - Elsa", "contact": ""}, {"id": "s10_04", "name": "Hoàng Hải - Billy", "contact": "Mẹ: 086***92"}, {"id": "s10_05", "name": "Tuấn Khang - Kevin", "contact": "Mẹ: 096***57"}, {"id": "s10_06", "name": "Phú Thịnh - Joe", "contact": "Mẹ: 036***93"}, {"id": "s10_07", "name": "Hoàng Anh - Tony", "contact": "Mẹ: 098***87"}, {"id": "s10_08", "name": "Ngọc Hân - Alice", "contact": "Mẹ: 096***19"}, {"id": "s10_09", "name": "Anh Thư - Lilly", "contact": "Mẹ: 086***03"}, {"id": "s10_10", "name": "Thiên Phú – Tom", "contact": "Mẹ: 039***91"}, {"id": "s10_11", "name": "Minh Trang - Lucy", "contact": "Bố: 097***71"}, {"id": "s10_12", "name": "Lan Anh - Anna", "contact": "Mẹ: 086***16"}], "teacherId": "t07", "taId": null}, {"id": "c11", "name": "G5.1", "teacher": "Ms Giang (Stella)", "ta": "Ms Dung", "time": "18h30 – 20h Thur; Fri", "month": "June, 2026", "students": [{"id": "s11_01", "name": "Ngọc Bích", "contact": "Mẹ: 098***03"}, {"id": "s11_02", "name": "Minh Khang", "contact": "Mẹ: 039***25"}, {"id": "s11_03", "name": "Duy Anh – Peter", "contact": "Bố: 096***69"}, {"id": "s11_04", "name": "Đại Dương", "contact": "Mẹ: 096***94"}, {"id": "s11_05", "name": "Quang Khánh", "contact": "Mẹ: 096***56"}, {"id": "s11_06", "name": "Minh Đức - John", "contact": "Mẹ: 096***19"}, {"id": "s11_07", "name": "Đăng Khoa – Alex", "contact": "Mẹ: 034***84"}, {"id": "s11_08", "name": "Duy Anh – Henry", "contact": "Mẹ: 097***17"}, {"id": "s11_09", "name": "Bảo Bình", "contact": "Mẹ: 097***00"}, {"id": "s11_10", "name": "Anh Tuấn", "contact": "Mẹ: 096***50"}, {"id": "s11_11", "name": "Khánh Linh - Bella", "contact": "Mẹ: 096***91"}, {"id": "s11_12", "name": "Phương Thảo", "contact": "Mẹ: 097***92"}, {"id": "s11_13", "name": "Gia Phong - Ben", "contact": "Mẹ: 098***48"}, {"id": "s11_14", "name": "Khánh Vân", "contact": "Mẹ: 038***91"}, {"id": "s11_15", "name": "Diệp Chi", "contact": "Mẹ: 096***13"}], "teacherId": "t09", "taId": "t06"}, {"id": "c12", "name": "G5.2", "teacher": "Ms An (Kate)", "ta": "", "time": "18h30 – 20h Thurs; 18h - 19h30 Sat", "month": "June, 2026", "students": [{"id": "s12_01", "name": "Hải Đăng", "contact": "Mẹ: 097***22"}, {"id": "s12_02", "name": "Vũ Đức Thịnh", "contact": "Mẹ: 038***97"}, {"id": "s12_03", "name": "Nguyên Khang", "contact": "Bố: 097***55"}, {"id": "s12_04", "name": "Hương Giang", "contact": "Mẹ: 097***65"}, {"id": "s12_05", "name": "Tuyết Vân", "contact": "Mẹ: 098***95"}, {"id": "s12_06", "name": "Duy Nhật", "contact": "Mẹ: 033***83"}, {"id": "s12_07", "name": "Nhật Nam", "contact": "Mẹ: 098***29"}, {"id": "s12_08", "name": "Minh Nhật", "contact": "Bà: 098***07"}, {"id": "s12_09", "name": "Thảo Linh", "contact": "Mẹ: 096***82"}, {"id": "s12_10", "name": "Ngọc Anh - Anna", "contact": "Bố: 097***90"}, {"id": "s12_11", "name": "Hồng Hà", "contact": "Bố: 097***71"}, {"id": "s12_12", "name": "Khánh Diễm", "contact": "Mẹ: 039***91"}, {"id": "s12_13", "name": "Ngọc Anh - Lisa", "contact": "Mẹ: 093***42"}, {"id": "s12_14", "name": "Bảo An – Lilly", "contact": "Mẹ: 038***89"}], "teacherId": "t07", "taId": null}, {"id": "c13", "name": "G6.1", "teacher": "Ms Giang (Stella)", "ta": "Ms Ánh", "time": "17h30 – 19h Mon, Wed", "month": "May, 2026", "students": [{"id": "s13_01", "name": "Nhật Duy", "contact": "Mẹ: 035***97"}, {"id": "s13_02", "name": "Tiến Nghĩa", "contact": "Mẹ: 035***06"}, {"id": "s13_03", "name": "Đức Mạnh", "contact": ""}, {"id": "s13_04", "name": "Trúc Giang", "contact": "Mẹ: 035***92"}, {"id": "s13_05", "name": "Thành Công", "contact": "Mẹ: 036***26"}, {"id": "s13_06", "name": "Phương Vy", "contact": "Mẹ: 033***56"}, {"id": "s13_07", "name": "Vũ Đức Anh", "contact": "Mẹ: 037***12"}, {"id": "s13_08", "name": "Đào Hồng Anh", "contact": "Mẹ: 094***88"}, {"id": "s13_09", "name": "Đoàn Minh Nhật", "contact": "Mẹ: 093***25"}, {"id": "s13_10", "name": "Bảo Ngọc", "contact": "Mẹ: 097***82"}, {"id": "s13_11", "name": "Thùy Linh", "contact": "Mẹ: 033***23"}, {"id": "s13_12", "name": "Mạnh Huy", "contact": "Mẹ: 039***66"}, {"id": "s13_13", "name": "Linh An", "contact": "Mẹ: 097***55"}], "teacherId": "t09", "taId": "t03"}, {"id": "c14", "name": "G6.2", "teacher": "Ms Giang (Stella)", "ta": "Ms Ánh", "time": "18h30h – 20h Tues; 17h – 18h30 Fri", "month": "May, 2026", "students": [{"id": "s14_01", "name": "Lâm Anh", "contact": "Mẹ: 096***19"}, {"id": "s14_02", "name": "Hải Anh", "contact": ""}, {"id": "s14_03", "name": "Phương Oanh", "contact": "Mẹ: 098***42"}, {"id": "s14_04", "name": "Linh Chi", "contact": "Mẹ: 036***58"}, {"id": "s14_05", "name": "Đỗ Anh Kiệt", "contact": "Mẹ: 037***32"}, {"id": "s14_06", "name": "Đào Minh Nhi", "contact": "Mẹ: 034***18"}, {"id": "s14_07", "name": "Thu Trang", "contact": "Mẹ: 097***58"}, {"id": "s14_08", "name": "Thế Cường", "contact": "Mẹ: 074***63"}, {"id": "s14_09", "name": "Ngọc Huyền", "contact": "Mẹ: 098***83"}, {"id": "s14_10", "name": "Nguyễn Lan Anh", "contact": "Mẹ: 036***94"}, {"id": "s14_11", "name": "Quang Huy", "contact": "Mẹ: 039***09"}, {"id": "s14_12", "name": "Minh Dũng", "contact": "Mẹ:"}, {"id": "s14_13", "name": "Gia Hưng", "contact": "Mẹ: 081***00"}, {"id": "s14_14", "name": "Tuấn Hưng", "contact": "Ông: 039***75\nMẹ: 098***42"}], "teacherId": "t09", "taId": "t03"}, {"id": "c15", "name": "G6.3", "teacher": "Ms An (Kate)", "ta": "", "time": "18h30 – 20h Tue; 17h – 18h30 Fri", "month": "May, 2025", "students": [{"id": "s15_01", "name": "Tiến Khiêm - Tom", "contact": "Mẹ: 096***91"}, {"id": "s15_02", "name": "Đức Duy – Alan", "contact": "Mẹ: 035***25"}, {"id": "s15_03", "name": "Thảo Trang - Luna", "contact": "Mẹ: 036***93"}, {"id": "s15_04", "name": "Quang Huy - Max", "contact": "Mẹ: 033***82"}, {"id": "s15_05", "name": "Đức Phát – Jerry", "contact": "Mẹ: 078***66"}, {"id": "s15_06", "name": "Minh Long - Ben", "contact": "Mẹ: 033***86"}, {"id": "s15_07", "name": "Quỳnh Như – Lilly", "contact": "Bà: 035***86"}, {"id": "s15_08", "name": "Minh Khang – Robert", "contact": "Mẹ: 096***85"}, {"id": "s15_09", "name": "Gia Huy – Jack", "contact": "Mẹ: 081***00"}, {"id": "s15_10", "name": "Đỗ Phương Linh", "contact": "Mẹ: 098***26"}, {"id": "s15_11", "name": "Ngô Bảo Trâm", "contact": "Mẹ: 098***25"}, {"id": "s15_12", "name": "Đào Nhật Minh", "contact": "Mẹ: 035***91"}], "teacherId": "t07", "taId": null}, {"id": "c16", "name": "G7", "teacher": "Ms Giang (Stella)", "ta": "Ms Dung", "time": "17h - 18h39 Tue; 16h30 – 18h Sat", "month": "June, 2026", "students": [{"id": "s16_01", "name": "Ngọc Bích", "contact": "Mẹ: 035***51"}, {"id": "s16_02", "name": "Văn Hùng", "contact": "Mẹ: 035***86"}, {"id": "s16_03", "name": "Linh Chi", "contact": "Bố: 096***69"}, {"id": "s16_04", "name": "Hải Yến", "contact": "Mẹ: 033***62"}], "teacherId": "t09", "taId": "t06"}, {"id": "c17", "name": "Tutoring Class", "teacher": "Ms Giang & Ms Dung", "ta": "", "time": "", "month": "May, 2026", "students": [{"id": "s17_01", "name": "Linh Chi", "contact": "Bố: 096***69"}, {"id": "s17_02", "name": "Ngọc Anh - Lisa", "contact": "Mẹ: 093***42"}], "teacherId": "t10", "taId": null}], "teachers": [{"id": "t01", "name": "Ms Chi (Luna)", "phone": "0900000001", "roles": ["teacher"]}, {"id": "t02", "name": "Ms Ngọc Bích", "phone": "0911111111", "roles": ["teacher"]}, {"id": "t03", "name": "Ms Ánh", "phone": "0922222222", "roles": ["teacher"]}, {"id": "t04", "name": "Ms Kate", "phone": "0900000001", "roles": ["teacher"]}, {"id": "t05", "name": "Ms Bích", "phone": "0944444444", "roles": ["teacher"]}, {"id": "t06", "name": "Ms Dung", "phone": "0955555555", "roles": ["teacher"]}, {"id": "t07", "name": "Ms An (Kate)", "phone": "0966666666", "roles": ["teacher"]}, {"id": "t08", "name": "Ms Luna", "phone": "0977777777", "roles": ["teacher"]}, {"id": "t09", "name": "Ms Giang (Stella)", "phone": "0911111111", "roles": ["teacher", "manager"]}, {"id": "t10", "name": "Ms Giang & Ms Dung", "phone": "0911111111", "roles": ["teacher", "manager"]}], "users": [{"id": "admin", "name": "Admin Ms.Giang", "phone": "admin", "password": "123456", "roles": ["admin"]}, {"id": "manager", "name": "Ms Giang (Stella)", "phone": "0911111111", "password": "123456", "roles": ["teacher", "manager"]}, {"id": "teacher", "name": "Ms Kate", "phone": "0900000001", "password": "123456", "roles": ["teacher"]}], "assignments": [{"id": "a001", "classId": "c01", "title": "Unit 5 - Listening Homework", "skill": "Listening", "due": "Hôm nay 21:00", "status": "published", "autoGrade": true}, {"id": "a002", "classId": "c01", "title": "Unit 5 - Speaking Homework", "skill": "Speaking", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": false}, {"id": "a003", "classId": "c01", "title": "Unit 5 - Reading Homework", "skill": "Reading", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": true}, {"id": "a004", "classId": "c01", "title": "Unit 5 - Writing Homework", "skill": "Writing", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": false}, {"id": "a005", "classId": "c02", "title": "Unit 6 - Listening Homework", "skill": "Listening", "due": "Hôm nay 21:00", "status": "published", "autoGrade": true}, {"id": "a006", "classId": "c02", "title": "Unit 6 - Speaking Homework", "skill": "Speaking", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": false}, {"id": "a007", "classId": "c02", "title": "Unit 6 - Reading Homework", "skill": "Reading", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": true}, {"id": "a008", "classId": "c03", "title": "Unit 7 - Listening Homework", "skill": "Listening", "due": "Hôm nay 21:00", "status": "published", "autoGrade": true}, {"id": "a009", "classId": "c03", "title": "Unit 7 - Speaking Homework", "skill": "Speaking", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": false}, {"id": "a010", "classId": "c03", "title": "Unit 7 - Reading Homework", "skill": "Reading", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": true}, {"id": "a011", "classId": "c03", "title": "Unit 7 - Writing Homework", "skill": "Writing", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": false}, {"id": "a012", "classId": "c04", "title": "Unit 8 - Listening Homework", "skill": "Listening", "due": "Hôm nay 21:00", "status": "published", "autoGrade": true}, {"id": "a013", "classId": "c04", "title": "Unit 8 - Speaking Homework", "skill": "Speaking", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": false}, {"id": "a014", "classId": "c04", "title": "Unit 8 - Reading Homework", "skill": "Reading", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": true}, {"id": "a015", "classId": "c05", "title": "Unit 5 - Listening Homework", "skill": "Listening", "due": "Hôm nay 21:00", "status": "published", "autoGrade": true}, {"id": "a016", "classId": "c05", "title": "Unit 5 - Speaking Homework", "skill": "Speaking", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": false}, {"id": "a017", "classId": "c05", "title": "Unit 5 - Reading Homework", "skill": "Reading", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": true}, {"id": "a018", "classId": "c05", "title": "Unit 5 - Writing Homework", "skill": "Writing", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": false}, {"id": "a019", "classId": "c06", "title": "Unit 6 - Listening Homework", "skill": "Listening", "due": "Hôm nay 21:00", "status": "published", "autoGrade": true}, {"id": "a020", "classId": "c06", "title": "Unit 6 - Speaking Homework", "skill": "Speaking", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": false}, {"id": "a021", "classId": "c06", "title": "Unit 6 - Reading Homework", "skill": "Reading", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": true}, {"id": "a022", "classId": "c07", "title": "Unit 7 - Listening Homework", "skill": "Listening", "due": "Hôm nay 21:00", "status": "published", "autoGrade": true}, {"id": "a023", "classId": "c07", "title": "Unit 7 - Speaking Homework", "skill": "Speaking", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": false}, {"id": "a024", "classId": "c07", "title": "Unit 7 - Reading Homework", "skill": "Reading", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": true}, {"id": "a025", "classId": "c07", "title": "Unit 7 - Writing Homework", "skill": "Writing", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": false}, {"id": "a026", "classId": "c08", "title": "Unit 8 - Listening Homework", "skill": "Listening", "due": "Hôm nay 21:00", "status": "published", "autoGrade": true}, {"id": "a027", "classId": "c08", "title": "Unit 8 - Speaking Homework", "skill": "Speaking", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": false}, {"id": "a028", "classId": "c08", "title": "Unit 8 - Reading Homework", "skill": "Reading", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": true}, {"id": "a029", "classId": "c09", "title": "Unit 5 - Listening Homework", "skill": "Listening", "due": "Hôm nay 21:00", "status": "published", "autoGrade": true}, {"id": "a030", "classId": "c09", "title": "Unit 5 - Speaking Homework", "skill": "Speaking", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": false}, {"id": "a031", "classId": "c09", "title": "Unit 5 - Reading Homework", "skill": "Reading", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": true}, {"id": "a032", "classId": "c09", "title": "Unit 5 - Writing Homework", "skill": "Writing", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": false}, {"id": "a033", "classId": "c10", "title": "Unit 6 - Listening Homework", "skill": "Listening", "due": "Hôm nay 21:00", "status": "published", "autoGrade": true}, {"id": "a034", "classId": "c10", "title": "Unit 6 - Speaking Homework", "skill": "Speaking", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": false}, {"id": "a035", "classId": "c10", "title": "Unit 6 - Reading Homework", "skill": "Reading", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": true}, {"id": "a036", "classId": "c11", "title": "Unit 7 - Listening Homework", "skill": "Listening", "due": "Hôm nay 21:00", "status": "published", "autoGrade": true}, {"id": "a037", "classId": "c11", "title": "Unit 7 - Speaking Homework", "skill": "Speaking", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": false}, {"id": "a038", "classId": "c11", "title": "Unit 7 - Reading Homework", "skill": "Reading", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": true}, {"id": "a039", "classId": "c11", "title": "Unit 7 - Writing Homework", "skill": "Writing", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": false}, {"id": "a040", "classId": "c12", "title": "Unit 8 - Listening Homework", "skill": "Listening", "due": "Hôm nay 21:00", "status": "published", "autoGrade": true}, {"id": "a041", "classId": "c12", "title": "Unit 8 - Speaking Homework", "skill": "Speaking", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": false}, {"id": "a042", "classId": "c12", "title": "Unit 8 - Reading Homework", "skill": "Reading", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": true}, {"id": "a043", "classId": "c13", "title": "Unit 5 - Listening Homework", "skill": "Listening", "due": "Hôm nay 21:00", "status": "published", "autoGrade": true}, {"id": "a044", "classId": "c13", "title": "Unit 5 - Speaking Homework", "skill": "Speaking", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": false}, {"id": "a045", "classId": "c13", "title": "Unit 5 - Reading Homework", "skill": "Reading", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": true}, {"id": "a046", "classId": "c13", "title": "Unit 5 - Writing Homework", "skill": "Writing", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": false}, {"id": "a047", "classId": "c14", "title": "Unit 6 - Listening Homework", "skill": "Listening", "due": "Hôm nay 21:00", "status": "published", "autoGrade": true}, {"id": "a048", "classId": "c14", "title": "Unit 6 - Speaking Homework", "skill": "Speaking", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": false}, {"id": "a049", "classId": "c14", "title": "Unit 6 - Reading Homework", "skill": "Reading", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": true}, {"id": "a050", "classId": "c15", "title": "Unit 7 - Listening Homework", "skill": "Listening", "due": "Hôm nay 21:00", "status": "published", "autoGrade": true}, {"id": "a051", "classId": "c15", "title": "Unit 7 - Speaking Homework", "skill": "Speaking", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": false}, {"id": "a052", "classId": "c15", "title": "Unit 7 - Reading Homework", "skill": "Reading", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": true}, {"id": "a053", "classId": "c15", "title": "Unit 7 - Writing Homework", "skill": "Writing", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": false}, {"id": "a054", "classId": "c16", "title": "Unit 8 - Listening Homework", "skill": "Listening", "due": "Hôm nay 21:00", "status": "published", "autoGrade": true}, {"id": "a055", "classId": "c16", "title": "Unit 8 - Speaking Homework", "skill": "Speaking", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": false}, {"id": "a056", "classId": "c16", "title": "Unit 8 - Reading Homework", "skill": "Reading", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": true}, {"id": "a057", "classId": "c17", "title": "Unit 5 - Listening Homework", "skill": "Listening", "due": "Hôm nay 21:00", "status": "published", "autoGrade": true}, {"id": "a058", "classId": "c17", "title": "Unit 5 - Speaking Homework", "skill": "Speaking", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": false}, {"id": "a059", "classId": "c17", "title": "Unit 5 - Reading Homework", "skill": "Reading", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": true}, {"id": "a060", "classId": "c17", "title": "Unit 5 - Writing Homework", "skill": "Writing", "due": "Chủ nhật 20:00", "status": "published", "autoGrade": false}], "submissions": [{"id": "sub_a001_s01_01", "assignmentId": "a001", "studentId": "s01_01", "classId": "c01", "status": "submitted", "gradeStatus": "graded", "score": 74, "submittedAt": "20/06 19:36"}, {"id": "sub_a001_s01_02", "assignmentId": "a001", "studentId": "s01_02", "classId": "c01", "status": "submitted", "gradeStatus": "graded", "score": 69, "submittedAt": "20/06 19:38"}, {"id": "sub_a001_s01_03", "assignmentId": "a001", "studentId": "s01_03", "classId": "c01", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a001_s01_04", "assignmentId": "a001", "studentId": "s01_04", "classId": "c01", "status": "submitted", "gradeStatus": "graded", "score": 97, "submittedAt": "20/06 19:33"}, {"id": "sub_a001_s01_05", "assignmentId": "a001", "studentId": "s01_05", "classId": "c01", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a001_s01_06", "assignmentId": "a001", "studentId": "s01_06", "classId": "c01", "status": "submitted", "gradeStatus": "graded", "score": 69, "submittedAt": "20/06 19:33"}, {"id": "sub_a001_s01_07", "assignmentId": "a001", "studentId": "s01_07", "classId": "c01", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a001_s01_08", "assignmentId": "a001", "studentId": "s01_08", "classId": "c01", "status": "submitted", "gradeStatus": "graded", "score": 72, "submittedAt": "20/06 19:33"}, {"id": "sub_a002_s01_01", "assignmentId": "a002", "studentId": "s01_01", "classId": "c01", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:30"}, {"id": "sub_a002_s01_02", "assignmentId": "a002", "studentId": "s01_02", "classId": "c01", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:33"}, {"id": "sub_a002_s01_03", "assignmentId": "a002", "studentId": "s01_03", "classId": "c01", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a002_s01_04", "assignmentId": "a002", "studentId": "s01_04", "classId": "c01", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:32"}, {"id": "sub_a002_s01_05", "assignmentId": "a002", "studentId": "s01_05", "classId": "c01", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:38"}, {"id": "sub_a002_s01_06", "assignmentId": "a002", "studentId": "s01_06", "classId": "c01", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:39"}, {"id": "sub_a002_s01_07", "assignmentId": "a002", "studentId": "s01_07", "classId": "c01", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:31"}, {"id": "sub_a002_s01_08", "assignmentId": "a002", "studentId": "s01_08", "classId": "c01", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:30"}, {"id": "sub_a003_s01_01", "assignmentId": "a003", "studentId": "s01_01", "classId": "c01", "status": "submitted", "gradeStatus": "graded", "score": 96, "submittedAt": "20/06 19:38"}, {"id": "sub_a003_s01_02", "assignmentId": "a003", "studentId": "s01_02", "classId": "c01", "status": "submitted", "gradeStatus": "graded", "score": 85, "submittedAt": "20/06 19:37"}, {"id": "sub_a003_s01_03", "assignmentId": "a003", "studentId": "s01_03", "classId": "c01", "status": "submitted", "gradeStatus": "graded", "score": 94, "submittedAt": "20/06 19:35"}, {"id": "sub_a003_s01_04", "assignmentId": "a003", "studentId": "s01_04", "classId": "c01", "status": "submitted", "gradeStatus": "graded", "score": 76, "submittedAt": "20/06 19:33"}, {"id": "sub_a003_s01_05", "assignmentId": "a003", "studentId": "s01_05", "classId": "c01", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a003_s01_06", "assignmentId": "a003", "studentId": "s01_06", "classId": "c01", "status": "submitted", "gradeStatus": "graded", "score": 96, "submittedAt": "20/06 19:35"}, {"id": "sub_a003_s01_07", "assignmentId": "a003", "studentId": "s01_07", "classId": "c01", "status": "submitted", "gradeStatus": "graded", "score": 83, "submittedAt": "20/06 19:39"}, {"id": "sub_a003_s01_08", "assignmentId": "a003", "studentId": "s01_08", "classId": "c01", "status": "submitted", "gradeStatus": "graded", "score": 72, "submittedAt": "20/06 19:38"}, {"id": "sub_a004_s01_01", "assignmentId": "a004", "studentId": "s01_01", "classId": "c01", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:32"}, {"id": "sub_a004_s01_02", "assignmentId": "a004", "studentId": "s01_02", "classId": "c01", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:31"}, {"id": "sub_a004_s01_03", "assignmentId": "a004", "studentId": "s01_03", "classId": "c01", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:35"}, {"id": "sub_a004_s01_04", "assignmentId": "a004", "studentId": "s01_04", "classId": "c01", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:37"}, {"id": "sub_a004_s01_05", "assignmentId": "a004", "studentId": "s01_05", "classId": "c01", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:31"}, {"id": "sub_a004_s01_06", "assignmentId": "a004", "studentId": "s01_06", "classId": "c01", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:31"}, {"id": "sub_a004_s01_07", "assignmentId": "a004", "studentId": "s01_07", "classId": "c01", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a004_s01_08", "assignmentId": "a004", "studentId": "s01_08", "classId": "c01", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:37"}, {"id": "sub_a005_s02_01", "assignmentId": "a005", "studentId": "s02_01", "classId": "c02", "status": "submitted", "gradeStatus": "graded", "score": 77, "submittedAt": "20/06 19:33"}, {"id": "sub_a005_s02_02", "assignmentId": "a005", "studentId": "s02_02", "classId": "c02", "status": "submitted", "gradeStatus": "graded", "score": 79, "submittedAt": "20/06 19:33"}, {"id": "sub_a005_s02_03", "assignmentId": "a005", "studentId": "s02_03", "classId": "c02", "status": "submitted", "gradeStatus": "graded", "score": 87, "submittedAt": "20/06 19:30"}, {"id": "sub_a005_s02_04", "assignmentId": "a005", "studentId": "s02_04", "classId": "c02", "status": "submitted", "gradeStatus": "graded", "score": 82, "submittedAt": "20/06 19:37"}, {"id": "sub_a005_s02_05", "assignmentId": "a005", "studentId": "s02_05", "classId": "c02", "status": "submitted", "gradeStatus": "graded", "score": 87, "submittedAt": "20/06 19:37"}, {"id": "sub_a005_s02_06", "assignmentId": "a005", "studentId": "s02_06", "classId": "c02", "status": "submitted", "gradeStatus": "graded", "score": 87, "submittedAt": "20/06 19:35"}, {"id": "sub_a006_s02_01", "assignmentId": "a006", "studentId": "s02_01", "classId": "c02", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a006_s02_02", "assignmentId": "a006", "studentId": "s02_02", "classId": "c02", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a006_s02_03", "assignmentId": "a006", "studentId": "s02_03", "classId": "c02", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:37"}, {"id": "sub_a006_s02_04", "assignmentId": "a006", "studentId": "s02_04", "classId": "c02", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:30"}, {"id": "sub_a006_s02_05", "assignmentId": "a006", "studentId": "s02_05", "classId": "c02", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:31"}, {"id": "sub_a006_s02_06", "assignmentId": "a006", "studentId": "s02_06", "classId": "c02", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:36"}, {"id": "sub_a007_s02_01", "assignmentId": "a007", "studentId": "s02_01", "classId": "c02", "status": "submitted", "gradeStatus": "graded", "score": 77, "submittedAt": "20/06 19:37"}, {"id": "sub_a007_s02_02", "assignmentId": "a007", "studentId": "s02_02", "classId": "c02", "status": "submitted", "gradeStatus": "graded", "score": 92, "submittedAt": "20/06 19:35"}, {"id": "sub_a007_s02_03", "assignmentId": "a007", "studentId": "s02_03", "classId": "c02", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a007_s02_04", "assignmentId": "a007", "studentId": "s02_04", "classId": "c02", "status": "submitted", "gradeStatus": "graded", "score": 90, "submittedAt": "20/06 19:37"}, {"id": "sub_a007_s02_05", "assignmentId": "a007", "studentId": "s02_05", "classId": "c02", "status": "submitted", "gradeStatus": "graded", "score": 70, "submittedAt": "20/06 19:32"}, {"id": "sub_a007_s02_06", "assignmentId": "a007", "studentId": "s02_06", "classId": "c02", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a008_s03_01", "assignmentId": "a008", "studentId": "s03_01", "classId": "c03", "status": "submitted", "gradeStatus": "graded", "score": 85, "submittedAt": "20/06 19:31"}, {"id": "sub_a008_s03_02", "assignmentId": "a008", "studentId": "s03_02", "classId": "c03", "status": "submitted", "gradeStatus": "graded", "score": 92, "submittedAt": "20/06 19:31"}, {"id": "sub_a008_s03_03", "assignmentId": "a008", "studentId": "s03_03", "classId": "c03", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a008_s03_04", "assignmentId": "a008", "studentId": "s03_04", "classId": "c03", "status": "submitted", "gradeStatus": "graded", "score": 72, "submittedAt": "20/06 19:32"}, {"id": "sub_a008_s03_05", "assignmentId": "a008", "studentId": "s03_05", "classId": "c03", "status": "submitted", "gradeStatus": "graded", "score": 88, "submittedAt": "20/06 19:32"}, {"id": "sub_a008_s03_06", "assignmentId": "a008", "studentId": "s03_06", "classId": "c03", "status": "submitted", "gradeStatus": "graded", "score": 73, "submittedAt": "20/06 19:37"}, {"id": "sub_a008_s03_07", "assignmentId": "a008", "studentId": "s03_07", "classId": "c03", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a008_s03_08", "assignmentId": "a008", "studentId": "s03_08", "classId": "c03", "status": "submitted", "gradeStatus": "graded", "score": 90, "submittedAt": "20/06 19:37"}, {"id": "sub_a008_s03_09", "assignmentId": "a008", "studentId": "s03_09", "classId": "c03", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a008_s03_10", "assignmentId": "a008", "studentId": "s03_10", "classId": "c03", "status": "submitted", "gradeStatus": "graded", "score": 79, "submittedAt": "20/06 19:32"}, {"id": "sub_a008_s03_11", "assignmentId": "a008", "studentId": "s03_11", "classId": "c03", "status": "submitted", "gradeStatus": "graded", "score": 97, "submittedAt": "20/06 19:36"}, {"id": "sub_a008_s03_12", "assignmentId": "a008", "studentId": "s03_12", "classId": "c03", "status": "submitted", "gradeStatus": "graded", "score": 77, "submittedAt": "20/06 19:35"}, {"id": "sub_a008_s03_13", "assignmentId": "a008", "studentId": "s03_13", "classId": "c03", "status": "submitted", "gradeStatus": "graded", "score": 88, "submittedAt": "20/06 19:30"}, {"id": "sub_a008_s03_14", "assignmentId": "a008", "studentId": "s03_14", "classId": "c03", "status": "submitted", "gradeStatus": "graded", "score": 94, "submittedAt": "20/06 19:37"}, {"id": "sub_a009_s03_01", "assignmentId": "a009", "studentId": "s03_01", "classId": "c03", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:38"}, {"id": "sub_a009_s03_02", "assignmentId": "a009", "studentId": "s03_02", "classId": "c03", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:31"}, {"id": "sub_a009_s03_03", "assignmentId": "a009", "studentId": "s03_03", "classId": "c03", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a009_s03_04", "assignmentId": "a009", "studentId": "s03_04", "classId": "c03", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:31"}, {"id": "sub_a009_s03_05", "assignmentId": "a009", "studentId": "s03_05", "classId": "c03", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a009_s03_06", "assignmentId": "a009", "studentId": "s03_06", "classId": "c03", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:32"}, {"id": "sub_a009_s03_07", "assignmentId": "a009", "studentId": "s03_07", "classId": "c03", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:36"}, {"id": "sub_a009_s03_08", "assignmentId": "a009", "studentId": "s03_08", "classId": "c03", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:34"}, {"id": "sub_a009_s03_09", "assignmentId": "a009", "studentId": "s03_09", "classId": "c03", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:38"}, {"id": "sub_a009_s03_10", "assignmentId": "a009", "studentId": "s03_10", "classId": "c03", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:31"}, {"id": "sub_a009_s03_11", "assignmentId": "a009", "studentId": "s03_11", "classId": "c03", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:32"}, {"id": "sub_a009_s03_12", "assignmentId": "a009", "studentId": "s03_12", "classId": "c03", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:30"}, {"id": "sub_a009_s03_13", "assignmentId": "a009", "studentId": "s03_13", "classId": "c03", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:31"}, {"id": "sub_a009_s03_14", "assignmentId": "a009", "studentId": "s03_14", "classId": "c03", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:34"}, {"id": "sub_a010_s03_01", "assignmentId": "a010", "studentId": "s03_01", "classId": "c03", "status": "submitted", "gradeStatus": "graded", "score": 94, "submittedAt": "20/06 19:30"}, {"id": "sub_a010_s03_02", "assignmentId": "a010", "studentId": "s03_02", "classId": "c03", "status": "submitted", "gradeStatus": "graded", "score": 100, "submittedAt": "20/06 19:36"}, {"id": "sub_a010_s03_03", "assignmentId": "a010", "studentId": "s03_03", "classId": "c03", "status": "submitted", "gradeStatus": "graded", "score": 82, "submittedAt": "20/06 19:39"}, {"id": "sub_a010_s03_04", "assignmentId": "a010", "studentId": "s03_04", "classId": "c03", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a010_s03_05", "assignmentId": "a010", "studentId": "s03_05", "classId": "c03", "status": "submitted", "gradeStatus": "graded", "score": 80, "submittedAt": "20/06 19:31"}, {"id": "sub_a010_s03_06", "assignmentId": "a010", "studentId": "s03_06", "classId": "c03", "status": "submitted", "gradeStatus": "graded", "score": 81, "submittedAt": "20/06 19:30"}, {"id": "sub_a010_s03_07", "assignmentId": "a010", "studentId": "s03_07", "classId": "c03", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a010_s03_08", "assignmentId": "a010", "studentId": "s03_08", "classId": "c03", "status": "submitted", "gradeStatus": "graded", "score": 84, "submittedAt": "20/06 19:38"}, {"id": "sub_a010_s03_09", "assignmentId": "a010", "studentId": "s03_09", "classId": "c03", "status": "submitted", "gradeStatus": "graded", "score": 83, "submittedAt": "20/06 19:37"}, {"id": "sub_a010_s03_10", "assignmentId": "a010", "studentId": "s03_10", "classId": "c03", "status": "submitted", "gradeStatus": "graded", "score": 76, "submittedAt": "20/06 19:34"}, {"id": "sub_a010_s03_11", "assignmentId": "a010", "studentId": "s03_11", "classId": "c03", "status": "submitted", "gradeStatus": "graded", "score": 66, "submittedAt": "20/06 19:34"}, {"id": "sub_a010_s03_12", "assignmentId": "a010", "studentId": "s03_12", "classId": "c03", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a010_s03_13", "assignmentId": "a010", "studentId": "s03_13", "classId": "c03", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a010_s03_14", "assignmentId": "a010", "studentId": "s03_14", "classId": "c03", "status": "submitted", "gradeStatus": "graded", "score": 77, "submittedAt": "20/06 19:38"}, {"id": "sub_a011_s03_01", "assignmentId": "a011", "studentId": "s03_01", "classId": "c03", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:31"}, {"id": "sub_a011_s03_02", "assignmentId": "a011", "studentId": "s03_02", "classId": "c03", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:37"}, {"id": "sub_a011_s03_03", "assignmentId": "a011", "studentId": "s03_03", "classId": "c03", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:38"}, {"id": "sub_a011_s03_04", "assignmentId": "a011", "studentId": "s03_04", "classId": "c03", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:33"}, {"id": "sub_a011_s03_05", "assignmentId": "a011", "studentId": "s03_05", "classId": "c03", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:32"}, {"id": "sub_a011_s03_06", "assignmentId": "a011", "studentId": "s03_06", "classId": "c03", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:30"}, {"id": "sub_a011_s03_07", "assignmentId": "a011", "studentId": "s03_07", "classId": "c03", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:34"}, {"id": "sub_a011_s03_08", "assignmentId": "a011", "studentId": "s03_08", "classId": "c03", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:36"}, {"id": "sub_a011_s03_09", "assignmentId": "a011", "studentId": "s03_09", "classId": "c03", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:34"}, {"id": "sub_a011_s03_10", "assignmentId": "a011", "studentId": "s03_10", "classId": "c03", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:30"}, {"id": "sub_a011_s03_11", "assignmentId": "a011", "studentId": "s03_11", "classId": "c03", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:37"}, {"id": "sub_a011_s03_12", "assignmentId": "a011", "studentId": "s03_12", "classId": "c03", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a011_s03_13", "assignmentId": "a011", "studentId": "s03_13", "classId": "c03", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:38"}, {"id": "sub_a011_s03_14", "assignmentId": "a011", "studentId": "s03_14", "classId": "c03", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:34"}, {"id": "sub_a012_s04_01", "assignmentId": "a012", "studentId": "s04_01", "classId": "c04", "status": "submitted", "gradeStatus": "graded", "score": 84, "submittedAt": "20/06 19:34"}, {"id": "sub_a012_s04_02", "assignmentId": "a012", "studentId": "s04_02", "classId": "c04", "status": "submitted", "gradeStatus": "graded", "score": 81, "submittedAt": "20/06 19:36"}, {"id": "sub_a012_s04_03", "assignmentId": "a012", "studentId": "s04_03", "classId": "c04", "status": "submitted", "gradeStatus": "graded", "score": 84, "submittedAt": "20/06 19:37"}, {"id": "sub_a012_s04_04", "assignmentId": "a012", "studentId": "s04_04", "classId": "c04", "status": "submitted", "gradeStatus": "graded", "score": 90, "submittedAt": "20/06 19:31"}, {"id": "sub_a012_s04_05", "assignmentId": "a012", "studentId": "s04_05", "classId": "c04", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a012_s04_06", "assignmentId": "a012", "studentId": "s04_06", "classId": "c04", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a012_s04_07", "assignmentId": "a012", "studentId": "s04_07", "classId": "c04", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a012_s04_08", "assignmentId": "a012", "studentId": "s04_08", "classId": "c04", "status": "submitted", "gradeStatus": "graded", "score": 96, "submittedAt": "20/06 19:38"}, {"id": "sub_a012_s04_09", "assignmentId": "a012", "studentId": "s04_09", "classId": "c04", "status": "submitted", "gradeStatus": "graded", "score": 86, "submittedAt": "20/06 19:37"}, {"id": "sub_a012_s04_10", "assignmentId": "a012", "studentId": "s04_10", "classId": "c04", "status": "submitted", "gradeStatus": "graded", "score": 100, "submittedAt": "20/06 19:33"}, {"id": "sub_a012_s04_11", "assignmentId": "a012", "studentId": "s04_11", "classId": "c04", "status": "submitted", "gradeStatus": "graded", "score": 76, "submittedAt": "20/06 19:35"}, {"id": "sub_a012_s04_12", "assignmentId": "a012", "studentId": "s04_12", "classId": "c04", "status": "submitted", "gradeStatus": "graded", "score": 85, "submittedAt": "20/06 19:33"}, {"id": "sub_a012_s04_13", "assignmentId": "a012", "studentId": "s04_13", "classId": "c04", "status": "submitted", "gradeStatus": "graded", "score": 77, "submittedAt": "20/06 19:30"}, {"id": "sub_a012_s04_14", "assignmentId": "a012", "studentId": "s04_14", "classId": "c04", "status": "submitted", "gradeStatus": "graded", "score": 91, "submittedAt": "20/06 19:36"}, {"id": "sub_a013_s04_01", "assignmentId": "a013", "studentId": "s04_01", "classId": "c04", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:36"}, {"id": "sub_a013_s04_02", "assignmentId": "a013", "studentId": "s04_02", "classId": "c04", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:37"}, {"id": "sub_a013_s04_03", "assignmentId": "a013", "studentId": "s04_03", "classId": "c04", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:32"}, {"id": "sub_a013_s04_04", "assignmentId": "a013", "studentId": "s04_04", "classId": "c04", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:33"}, {"id": "sub_a013_s04_05", "assignmentId": "a013", "studentId": "s04_05", "classId": "c04", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a013_s04_06", "assignmentId": "a013", "studentId": "s04_06", "classId": "c04", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:37"}, {"id": "sub_a013_s04_07", "assignmentId": "a013", "studentId": "s04_07", "classId": "c04", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:30"}, {"id": "sub_a013_s04_08", "assignmentId": "a013", "studentId": "s04_08", "classId": "c04", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a013_s04_09", "assignmentId": "a013", "studentId": "s04_09", "classId": "c04", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:37"}, {"id": "sub_a013_s04_10", "assignmentId": "a013", "studentId": "s04_10", "classId": "c04", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:31"}, {"id": "sub_a013_s04_11", "assignmentId": "a013", "studentId": "s04_11", "classId": "c04", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:38"}, {"id": "sub_a013_s04_12", "assignmentId": "a013", "studentId": "s04_12", "classId": "c04", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:33"}, {"id": "sub_a013_s04_13", "assignmentId": "a013", "studentId": "s04_13", "classId": "c04", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:32"}, {"id": "sub_a013_s04_14", "assignmentId": "a013", "studentId": "s04_14", "classId": "c04", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:37"}, {"id": "sub_a014_s04_01", "assignmentId": "a014", "studentId": "s04_01", "classId": "c04", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a014_s04_02", "assignmentId": "a014", "studentId": "s04_02", "classId": "c04", "status": "submitted", "gradeStatus": "graded", "score": 65, "submittedAt": "20/06 19:32"}, {"id": "sub_a014_s04_03", "assignmentId": "a014", "studentId": "s04_03", "classId": "c04", "status": "submitted", "gradeStatus": "graded", "score": 67, "submittedAt": "20/06 19:34"}, {"id": "sub_a014_s04_04", "assignmentId": "a014", "studentId": "s04_04", "classId": "c04", "status": "submitted", "gradeStatus": "graded", "score": 81, "submittedAt": "20/06 19:38"}, {"id": "sub_a014_s04_05", "assignmentId": "a014", "studentId": "s04_05", "classId": "c04", "status": "submitted", "gradeStatus": "graded", "score": 72, "submittedAt": "20/06 19:31"}, {"id": "sub_a014_s04_06", "assignmentId": "a014", "studentId": "s04_06", "classId": "c04", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a014_s04_07", "assignmentId": "a014", "studentId": "s04_07", "classId": "c04", "status": "submitted", "gradeStatus": "graded", "score": 77, "submittedAt": "20/06 19:36"}, {"id": "sub_a014_s04_08", "assignmentId": "a014", "studentId": "s04_08", "classId": "c04", "status": "submitted", "gradeStatus": "graded", "score": 65, "submittedAt": "20/06 19:30"}, {"id": "sub_a014_s04_09", "assignmentId": "a014", "studentId": "s04_09", "classId": "c04", "status": "submitted", "gradeStatus": "graded", "score": 94, "submittedAt": "20/06 19:34"}, {"id": "sub_a014_s04_10", "assignmentId": "a014", "studentId": "s04_10", "classId": "c04", "status": "submitted", "gradeStatus": "graded", "score": 80, "submittedAt": "20/06 19:37"}, {"id": "sub_a014_s04_11", "assignmentId": "a014", "studentId": "s04_11", "classId": "c04", "status": "submitted", "gradeStatus": "graded", "score": 100, "submittedAt": "20/06 19:33"}, {"id": "sub_a014_s04_12", "assignmentId": "a014", "studentId": "s04_12", "classId": "c04", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a014_s04_13", "assignmentId": "a014", "studentId": "s04_13", "classId": "c04", "status": "submitted", "gradeStatus": "graded", "score": 84, "submittedAt": "20/06 19:30"}, {"id": "sub_a014_s04_14", "assignmentId": "a014", "studentId": "s04_14", "classId": "c04", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a015_s05_01", "assignmentId": "a015", "studentId": "s05_01", "classId": "c05", "status": "submitted", "gradeStatus": "graded", "score": 87, "submittedAt": "20/06 19:33"}, {"id": "sub_a015_s05_02", "assignmentId": "a015", "studentId": "s05_02", "classId": "c05", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a015_s05_03", "assignmentId": "a015", "studentId": "s05_03", "classId": "c05", "status": "submitted", "gradeStatus": "graded", "score": 67, "submittedAt": "20/06 19:33"}, {"id": "sub_a015_s05_04", "assignmentId": "a015", "studentId": "s05_04", "classId": "c05", "status": "submitted", "gradeStatus": "graded", "score": 67, "submittedAt": "20/06 19:39"}, {"id": "sub_a015_s05_05", "assignmentId": "a015", "studentId": "s05_05", "classId": "c05", "status": "submitted", "gradeStatus": "graded", "score": 78, "submittedAt": "20/06 19:30"}, {"id": "sub_a015_s05_06", "assignmentId": "a015", "studentId": "s05_06", "classId": "c05", "status": "submitted", "gradeStatus": "graded", "score": 91, "submittedAt": "20/06 19:35"}, {"id": "sub_a015_s05_07", "assignmentId": "a015", "studentId": "s05_07", "classId": "c05", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a015_s05_08", "assignmentId": "a015", "studentId": "s05_08", "classId": "c05", "status": "submitted", "gradeStatus": "graded", "score": 78, "submittedAt": "20/06 19:30"}, {"id": "sub_a015_s05_09", "assignmentId": "a015", "studentId": "s05_09", "classId": "c05", "status": "submitted", "gradeStatus": "graded", "score": 100, "submittedAt": "20/06 19:37"}, {"id": "sub_a015_s05_10", "assignmentId": "a015", "studentId": "s05_10", "classId": "c05", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a015_s05_11", "assignmentId": "a015", "studentId": "s05_11", "classId": "c05", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a016_s05_01", "assignmentId": "a016", "studentId": "s05_01", "classId": "c05", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:38"}, {"id": "sub_a016_s05_02", "assignmentId": "a016", "studentId": "s05_02", "classId": "c05", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a016_s05_03", "assignmentId": "a016", "studentId": "s05_03", "classId": "c05", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a016_s05_04", "assignmentId": "a016", "studentId": "s05_04", "classId": "c05", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:34"}, {"id": "sub_a016_s05_05", "assignmentId": "a016", "studentId": "s05_05", "classId": "c05", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:30"}, {"id": "sub_a016_s05_06", "assignmentId": "a016", "studentId": "s05_06", "classId": "c05", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:35"}, {"id": "sub_a016_s05_07", "assignmentId": "a016", "studentId": "s05_07", "classId": "c05", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:35"}, {"id": "sub_a016_s05_08", "assignmentId": "a016", "studentId": "s05_08", "classId": "c05", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:36"}, {"id": "sub_a016_s05_09", "assignmentId": "a016", "studentId": "s05_09", "classId": "c05", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a016_s05_10", "assignmentId": "a016", "studentId": "s05_10", "classId": "c05", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a016_s05_11", "assignmentId": "a016", "studentId": "s05_11", "classId": "c05", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:31"}, {"id": "sub_a017_s05_01", "assignmentId": "a017", "studentId": "s05_01", "classId": "c05", "status": "submitted", "gradeStatus": "graded", "score": 88, "submittedAt": "20/06 19:37"}, {"id": "sub_a017_s05_02", "assignmentId": "a017", "studentId": "s05_02", "classId": "c05", "status": "submitted", "gradeStatus": "graded", "score": 73, "submittedAt": "20/06 19:30"}, {"id": "sub_a017_s05_03", "assignmentId": "a017", "studentId": "s05_03", "classId": "c05", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a017_s05_04", "assignmentId": "a017", "studentId": "s05_04", "classId": "c05", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a017_s05_05", "assignmentId": "a017", "studentId": "s05_05", "classId": "c05", "status": "submitted", "gradeStatus": "graded", "score": 90, "submittedAt": "20/06 19:31"}, {"id": "sub_a017_s05_06", "assignmentId": "a017", "studentId": "s05_06", "classId": "c05", "status": "submitted", "gradeStatus": "graded", "score": 88, "submittedAt": "20/06 19:38"}, {"id": "sub_a017_s05_07", "assignmentId": "a017", "studentId": "s05_07", "classId": "c05", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a017_s05_08", "assignmentId": "a017", "studentId": "s05_08", "classId": "c05", "status": "submitted", "gradeStatus": "graded", "score": 75, "submittedAt": "20/06 19:38"}, {"id": "sub_a017_s05_09", "assignmentId": "a017", "studentId": "s05_09", "classId": "c05", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a017_s05_10", "assignmentId": "a017", "studentId": "s05_10", "classId": "c05", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a017_s05_11", "assignmentId": "a017", "studentId": "s05_11", "classId": "c05", "status": "submitted", "gradeStatus": "graded", "score": 77, "submittedAt": "20/06 19:34"}, {"id": "sub_a018_s05_01", "assignmentId": "a018", "studentId": "s05_01", "classId": "c05", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a018_s05_02", "assignmentId": "a018", "studentId": "s05_02", "classId": "c05", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:37"}, {"id": "sub_a018_s05_03", "assignmentId": "a018", "studentId": "s05_03", "classId": "c05", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:36"}, {"id": "sub_a018_s05_04", "assignmentId": "a018", "studentId": "s05_04", "classId": "c05", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a018_s05_05", "assignmentId": "a018", "studentId": "s05_05", "classId": "c05", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:32"}, {"id": "sub_a018_s05_06", "assignmentId": "a018", "studentId": "s05_06", "classId": "c05", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:39"}, {"id": "sub_a018_s05_07", "assignmentId": "a018", "studentId": "s05_07", "classId": "c05", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:37"}, {"id": "sub_a018_s05_08", "assignmentId": "a018", "studentId": "s05_08", "classId": "c05", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a018_s05_09", "assignmentId": "a018", "studentId": "s05_09", "classId": "c05", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a018_s05_10", "assignmentId": "a018", "studentId": "s05_10", "classId": "c05", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:36"}, {"id": "sub_a018_s05_11", "assignmentId": "a018", "studentId": "s05_11", "classId": "c05", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:33"}, {"id": "sub_a019_s06_01", "assignmentId": "a019", "studentId": "s06_01", "classId": "c06", "status": "submitted", "gradeStatus": "graded", "score": 82, "submittedAt": "20/06 19:36"}, {"id": "sub_a019_s06_02", "assignmentId": "a019", "studentId": "s06_02", "classId": "c06", "status": "submitted", "gradeStatus": "graded", "score": 65, "submittedAt": "20/06 19:30"}, {"id": "sub_a019_s06_03", "assignmentId": "a019", "studentId": "s06_03", "classId": "c06", "status": "submitted", "gradeStatus": "graded", "score": 100, "submittedAt": "20/06 19:35"}, {"id": "sub_a019_s06_04", "assignmentId": "a019", "studentId": "s06_04", "classId": "c06", "status": "submitted", "gradeStatus": "graded", "score": 93, "submittedAt": "20/06 19:39"}, {"id": "sub_a019_s06_05", "assignmentId": "a019", "studentId": "s06_05", "classId": "c06", "status": "submitted", "gradeStatus": "graded", "score": 96, "submittedAt": "20/06 19:33"}, {"id": "sub_a019_s06_06", "assignmentId": "a019", "studentId": "s06_06", "classId": "c06", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a019_s06_07", "assignmentId": "a019", "studentId": "s06_07", "classId": "c06", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a019_s06_08", "assignmentId": "a019", "studentId": "s06_08", "classId": "c06", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a019_s06_09", "assignmentId": "a019", "studentId": "s06_09", "classId": "c06", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a019_s06_10", "assignmentId": "a019", "studentId": "s06_10", "classId": "c06", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a019_s06_11", "assignmentId": "a019", "studentId": "s06_11", "classId": "c06", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a019_s06_12", "assignmentId": "a019", "studentId": "s06_12", "classId": "c06", "status": "submitted", "gradeStatus": "graded", "score": 71, "submittedAt": "20/06 19:30"}, {"id": "sub_a019_s06_13", "assignmentId": "a019", "studentId": "s06_13", "classId": "c06", "status": "submitted", "gradeStatus": "graded", "score": 77, "submittedAt": "20/06 19:32"}, {"id": "sub_a020_s06_01", "assignmentId": "a020", "studentId": "s06_01", "classId": "c06", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:38"}, {"id": "sub_a020_s06_02", "assignmentId": "a020", "studentId": "s06_02", "classId": "c06", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:39"}, {"id": "sub_a020_s06_03", "assignmentId": "a020", "studentId": "s06_03", "classId": "c06", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a020_s06_04", "assignmentId": "a020", "studentId": "s06_04", "classId": "c06", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:30"}, {"id": "sub_a020_s06_05", "assignmentId": "a020", "studentId": "s06_05", "classId": "c06", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:37"}, {"id": "sub_a020_s06_06", "assignmentId": "a020", "studentId": "s06_06", "classId": "c06", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:36"}, {"id": "sub_a020_s06_07", "assignmentId": "a020", "studentId": "s06_07", "classId": "c06", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:37"}, {"id": "sub_a020_s06_08", "assignmentId": "a020", "studentId": "s06_08", "classId": "c06", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a020_s06_09", "assignmentId": "a020", "studentId": "s06_09", "classId": "c06", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:30"}, {"id": "sub_a020_s06_10", "assignmentId": "a020", "studentId": "s06_10", "classId": "c06", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a020_s06_11", "assignmentId": "a020", "studentId": "s06_11", "classId": "c06", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:34"}, {"id": "sub_a020_s06_12", "assignmentId": "a020", "studentId": "s06_12", "classId": "c06", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:38"}, {"id": "sub_a020_s06_13", "assignmentId": "a020", "studentId": "s06_13", "classId": "c06", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:38"}, {"id": "sub_a021_s06_01", "assignmentId": "a021", "studentId": "s06_01", "classId": "c06", "status": "submitted", "gradeStatus": "graded", "score": 83, "submittedAt": "20/06 19:33"}, {"id": "sub_a021_s06_02", "assignmentId": "a021", "studentId": "s06_02", "classId": "c06", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a021_s06_03", "assignmentId": "a021", "studentId": "s06_03", "classId": "c06", "status": "submitted", "gradeStatus": "graded", "score": 75, "submittedAt": "20/06 19:34"}, {"id": "sub_a021_s06_04", "assignmentId": "a021", "studentId": "s06_04", "classId": "c06", "status": "submitted", "gradeStatus": "graded", "score": 77, "submittedAt": "20/06 19:32"}, {"id": "sub_a021_s06_05", "assignmentId": "a021", "studentId": "s06_05", "classId": "c06", "status": "submitted", "gradeStatus": "graded", "score": 85, "submittedAt": "20/06 19:33"}, {"id": "sub_a021_s06_06", "assignmentId": "a021", "studentId": "s06_06", "classId": "c06", "status": "submitted", "gradeStatus": "graded", "score": 86, "submittedAt": "20/06 19:39"}, {"id": "sub_a021_s06_07", "assignmentId": "a021", "studentId": "s06_07", "classId": "c06", "status": "submitted", "gradeStatus": "graded", "score": 99, "submittedAt": "20/06 19:37"}, {"id": "sub_a021_s06_08", "assignmentId": "a021", "studentId": "s06_08", "classId": "c06", "status": "submitted", "gradeStatus": "graded", "score": 98, "submittedAt": "20/06 19:30"}, {"id": "sub_a021_s06_09", "assignmentId": "a021", "studentId": "s06_09", "classId": "c06", "status": "submitted", "gradeStatus": "graded", "score": 92, "submittedAt": "20/06 19:33"}, {"id": "sub_a021_s06_10", "assignmentId": "a021", "studentId": "s06_10", "classId": "c06", "status": "submitted", "gradeStatus": "graded", "score": 84, "submittedAt": "20/06 19:33"}, {"id": "sub_a021_s06_11", "assignmentId": "a021", "studentId": "s06_11", "classId": "c06", "status": "submitted", "gradeStatus": "graded", "score": 69, "submittedAt": "20/06 19:39"}, {"id": "sub_a021_s06_12", "assignmentId": "a021", "studentId": "s06_12", "classId": "c06", "status": "submitted", "gradeStatus": "graded", "score": 74, "submittedAt": "20/06 19:30"}, {"id": "sub_a021_s06_13", "assignmentId": "a021", "studentId": "s06_13", "classId": "c06", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a022_s07_01", "assignmentId": "a022", "studentId": "s07_01", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": 81, "submittedAt": "20/06 19:36"}, {"id": "sub_a022_s07_02", "assignmentId": "a022", "studentId": "s07_02", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": 66, "submittedAt": "20/06 19:39"}, {"id": "sub_a022_s07_03", "assignmentId": "a022", "studentId": "s07_03", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": 98, "submittedAt": "20/06 19:32"}, {"id": "sub_a022_s07_04", "assignmentId": "a022", "studentId": "s07_04", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": 85, "submittedAt": "20/06 19:30"}, {"id": "sub_a022_s07_05", "assignmentId": "a022", "studentId": "s07_05", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": 96, "submittedAt": "20/06 19:31"}, {"id": "sub_a022_s07_06", "assignmentId": "a022", "studentId": "s07_06", "classId": "c07", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a022_s07_07", "assignmentId": "a022", "studentId": "s07_07", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": 75, "submittedAt": "20/06 19:33"}, {"id": "sub_a022_s07_08", "assignmentId": "a022", "studentId": "s07_08", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": 71, "submittedAt": "20/06 19:39"}, {"id": "sub_a022_s07_09", "assignmentId": "a022", "studentId": "s07_09", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": 78, "submittedAt": "20/06 19:37"}, {"id": "sub_a022_s07_10", "assignmentId": "a022", "studentId": "s07_10", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": 88, "submittedAt": "20/06 19:38"}, {"id": "sub_a022_s07_11", "assignmentId": "a022", "studentId": "s07_11", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": 94, "submittedAt": "20/06 19:33"}, {"id": "sub_a022_s07_12", "assignmentId": "a022", "studentId": "s07_12", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": 76, "submittedAt": "20/06 19:36"}, {"id": "sub_a022_s07_13", "assignmentId": "a022", "studentId": "s07_13", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": 72, "submittedAt": "20/06 19:39"}, {"id": "sub_a022_s07_14", "assignmentId": "a022", "studentId": "s07_14", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": 68, "submittedAt": "20/06 19:34"}, {"id": "sub_a022_s07_15", "assignmentId": "a022", "studentId": "s07_15", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": 90, "submittedAt": "20/06 19:30"}, {"id": "sub_a023_s07_01", "assignmentId": "a023", "studentId": "s07_01", "classId": "c07", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a023_s07_02", "assignmentId": "a023", "studentId": "s07_02", "classId": "c07", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:35"}, {"id": "sub_a023_s07_03", "assignmentId": "a023", "studentId": "s07_03", "classId": "c07", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:34"}, {"id": "sub_a023_s07_04", "assignmentId": "a023", "studentId": "s07_04", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:38"}, {"id": "sub_a023_s07_05", "assignmentId": "a023", "studentId": "s07_05", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:36"}, {"id": "sub_a023_s07_06", "assignmentId": "a023", "studentId": "s07_06", "classId": "c07", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:31"}, {"id": "sub_a023_s07_07", "assignmentId": "a023", "studentId": "s07_07", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:37"}, {"id": "sub_a023_s07_08", "assignmentId": "a023", "studentId": "s07_08", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:32"}, {"id": "sub_a023_s07_09", "assignmentId": "a023", "studentId": "s07_09", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:36"}, {"id": "sub_a023_s07_10", "assignmentId": "a023", "studentId": "s07_10", "classId": "c07", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:38"}, {"id": "sub_a023_s07_11", "assignmentId": "a023", "studentId": "s07_11", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:37"}, {"id": "sub_a023_s07_12", "assignmentId": "a023", "studentId": "s07_12", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:34"}, {"id": "sub_a023_s07_13", "assignmentId": "a023", "studentId": "s07_13", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:36"}, {"id": "sub_a023_s07_14", "assignmentId": "a023", "studentId": "s07_14", "classId": "c07", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:34"}, {"id": "sub_a023_s07_15", "assignmentId": "a023", "studentId": "s07_15", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:35"}, {"id": "sub_a024_s07_01", "assignmentId": "a024", "studentId": "s07_01", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": 92, "submittedAt": "20/06 19:39"}, {"id": "sub_a024_s07_02", "assignmentId": "a024", "studentId": "s07_02", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": 88, "submittedAt": "20/06 19:32"}, {"id": "sub_a024_s07_03", "assignmentId": "a024", "studentId": "s07_03", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": 89, "submittedAt": "20/06 19:30"}, {"id": "sub_a024_s07_04", "assignmentId": "a024", "studentId": "s07_04", "classId": "c07", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a024_s07_05", "assignmentId": "a024", "studentId": "s07_05", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": 85, "submittedAt": "20/06 19:32"}, {"id": "sub_a024_s07_06", "assignmentId": "a024", "studentId": "s07_06", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": 87, "submittedAt": "20/06 19:39"}, {"id": "sub_a024_s07_07", "assignmentId": "a024", "studentId": "s07_07", "classId": "c07", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a024_s07_08", "assignmentId": "a024", "studentId": "s07_08", "classId": "c07", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a024_s07_09", "assignmentId": "a024", "studentId": "s07_09", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": 83, "submittedAt": "20/06 19:34"}, {"id": "sub_a024_s07_10", "assignmentId": "a024", "studentId": "s07_10", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": 74, "submittedAt": "20/06 19:33"}, {"id": "sub_a024_s07_11", "assignmentId": "a024", "studentId": "s07_11", "classId": "c07", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a024_s07_12", "assignmentId": "a024", "studentId": "s07_12", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": 74, "submittedAt": "20/06 19:33"}, {"id": "sub_a024_s07_13", "assignmentId": "a024", "studentId": "s07_13", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": 99, "submittedAt": "20/06 19:32"}, {"id": "sub_a024_s07_14", "assignmentId": "a024", "studentId": "s07_14", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": 70, "submittedAt": "20/06 19:38"}, {"id": "sub_a024_s07_15", "assignmentId": "a024", "studentId": "s07_15", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": 84, "submittedAt": "20/06 19:33"}, {"id": "sub_a025_s07_01", "assignmentId": "a025", "studentId": "s07_01", "classId": "c07", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:31"}, {"id": "sub_a025_s07_02", "assignmentId": "a025", "studentId": "s07_02", "classId": "c07", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:31"}, {"id": "sub_a025_s07_03", "assignmentId": "a025", "studentId": "s07_03", "classId": "c07", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:33"}, {"id": "sub_a025_s07_04", "assignmentId": "a025", "studentId": "s07_04", "classId": "c07", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:38"}, {"id": "sub_a025_s07_05", "assignmentId": "a025", "studentId": "s07_05", "classId": "c07", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a025_s07_06", "assignmentId": "a025", "studentId": "s07_06", "classId": "c07", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:37"}, {"id": "sub_a025_s07_07", "assignmentId": "a025", "studentId": "s07_07", "classId": "c07", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:39"}, {"id": "sub_a025_s07_08", "assignmentId": "a025", "studentId": "s07_08", "classId": "c07", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:35"}, {"id": "sub_a025_s07_09", "assignmentId": "a025", "studentId": "s07_09", "classId": "c07", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:34"}, {"id": "sub_a025_s07_10", "assignmentId": "a025", "studentId": "s07_10", "classId": "c07", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:36"}, {"id": "sub_a025_s07_11", "assignmentId": "a025", "studentId": "s07_11", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:32"}, {"id": "sub_a025_s07_12", "assignmentId": "a025", "studentId": "s07_12", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:30"}, {"id": "sub_a025_s07_13", "assignmentId": "a025", "studentId": "s07_13", "classId": "c07", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a025_s07_14", "assignmentId": "a025", "studentId": "s07_14", "classId": "c07", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a025_s07_15", "assignmentId": "a025", "studentId": "s07_15", "classId": "c07", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:31"}, {"id": "sub_a026_s08_01", "assignmentId": "a026", "studentId": "s08_01", "classId": "c08", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a026_s08_02", "assignmentId": "a026", "studentId": "s08_02", "classId": "c08", "status": "submitted", "gradeStatus": "graded", "score": 78, "submittedAt": "20/06 19:34"}, {"id": "sub_a026_s08_03", "assignmentId": "a026", "studentId": "s08_03", "classId": "c08", "status": "submitted", "gradeStatus": "graded", "score": 65, "submittedAt": "20/06 19:36"}, {"id": "sub_a026_s08_04", "assignmentId": "a026", "studentId": "s08_04", "classId": "c08", "status": "submitted", "gradeStatus": "graded", "score": 70, "submittedAt": "20/06 19:38"}, {"id": "sub_a026_s08_05", "assignmentId": "a026", "studentId": "s08_05", "classId": "c08", "status": "submitted", "gradeStatus": "graded", "score": 69, "submittedAt": "20/06 19:33"}, {"id": "sub_a026_s08_06", "assignmentId": "a026", "studentId": "s08_06", "classId": "c08", "status": "submitted", "gradeStatus": "graded", "score": 98, "submittedAt": "20/06 19:34"}, {"id": "sub_a026_s08_07", "assignmentId": "a026", "studentId": "s08_07", "classId": "c08", "status": "submitted", "gradeStatus": "graded", "score": 98, "submittedAt": "20/06 19:35"}, {"id": "sub_a026_s08_08", "assignmentId": "a026", "studentId": "s08_08", "classId": "c08", "status": "submitted", "gradeStatus": "graded", "score": 77, "submittedAt": "20/06 19:33"}, {"id": "sub_a026_s08_09", "assignmentId": "a026", "studentId": "s08_09", "classId": "c08", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a026_s08_10", "assignmentId": "a026", "studentId": "s08_10", "classId": "c08", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a027_s08_01", "assignmentId": "a027", "studentId": "s08_01", "classId": "c08", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:39"}, {"id": "sub_a027_s08_02", "assignmentId": "a027", "studentId": "s08_02", "classId": "c08", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:38"}, {"id": "sub_a027_s08_03", "assignmentId": "a027", "studentId": "s08_03", "classId": "c08", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:37"}, {"id": "sub_a027_s08_04", "assignmentId": "a027", "studentId": "s08_04", "classId": "c08", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:37"}, {"id": "sub_a027_s08_05", "assignmentId": "a027", "studentId": "s08_05", "classId": "c08", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:39"}, {"id": "sub_a027_s08_06", "assignmentId": "a027", "studentId": "s08_06", "classId": "c08", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a027_s08_07", "assignmentId": "a027", "studentId": "s08_07", "classId": "c08", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:31"}, {"id": "sub_a027_s08_08", "assignmentId": "a027", "studentId": "s08_08", "classId": "c08", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a027_s08_09", "assignmentId": "a027", "studentId": "s08_09", "classId": "c08", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:37"}, {"id": "sub_a027_s08_10", "assignmentId": "a027", "studentId": "s08_10", "classId": "c08", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:34"}, {"id": "sub_a028_s08_01", "assignmentId": "a028", "studentId": "s08_01", "classId": "c08", "status": "submitted", "gradeStatus": "graded", "score": 93, "submittedAt": "20/06 19:39"}, {"id": "sub_a028_s08_02", "assignmentId": "a028", "studentId": "s08_02", "classId": "c08", "status": "submitted", "gradeStatus": "graded", "score": 73, "submittedAt": "20/06 19:34"}, {"id": "sub_a028_s08_03", "assignmentId": "a028", "studentId": "s08_03", "classId": "c08", "status": "submitted", "gradeStatus": "graded", "score": 86, "submittedAt": "20/06 19:33"}, {"id": "sub_a028_s08_04", "assignmentId": "a028", "studentId": "s08_04", "classId": "c08", "status": "submitted", "gradeStatus": "graded", "score": 89, "submittedAt": "20/06 19:31"}, {"id": "sub_a028_s08_05", "assignmentId": "a028", "studentId": "s08_05", "classId": "c08", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a028_s08_06", "assignmentId": "a028", "studentId": "s08_06", "classId": "c08", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a028_s08_07", "assignmentId": "a028", "studentId": "s08_07", "classId": "c08", "status": "submitted", "gradeStatus": "graded", "score": 94, "submittedAt": "20/06 19:37"}, {"id": "sub_a028_s08_08", "assignmentId": "a028", "studentId": "s08_08", "classId": "c08", "status": "submitted", "gradeStatus": "graded", "score": 69, "submittedAt": "20/06 19:39"}, {"id": "sub_a028_s08_09", "assignmentId": "a028", "studentId": "s08_09", "classId": "c08", "status": "submitted", "gradeStatus": "graded", "score": 72, "submittedAt": "20/06 19:31"}, {"id": "sub_a028_s08_10", "assignmentId": "a028", "studentId": "s08_10", "classId": "c08", "status": "submitted", "gradeStatus": "graded", "score": 79, "submittedAt": "20/06 19:31"}, {"id": "sub_a029_s09_01", "assignmentId": "a029", "studentId": "s09_01", "classId": "c09", "status": "submitted", "gradeStatus": "graded", "score": 68, "submittedAt": "20/06 19:38"}, {"id": "sub_a029_s09_02", "assignmentId": "a029", "studentId": "s09_02", "classId": "c09", "status": "submitted", "gradeStatus": "graded", "score": 86, "submittedAt": "20/06 19:34"}, {"id": "sub_a029_s09_03", "assignmentId": "a029", "studentId": "s09_03", "classId": "c09", "status": "submitted", "gradeStatus": "graded", "score": 96, "submittedAt": "20/06 19:31"}, {"id": "sub_a029_s09_04", "assignmentId": "a029", "studentId": "s09_04", "classId": "c09", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a029_s09_05", "assignmentId": "a029", "studentId": "s09_05", "classId": "c09", "status": "submitted", "gradeStatus": "graded", "score": 95, "submittedAt": "20/06 19:32"}, {"id": "sub_a029_s09_06", "assignmentId": "a029", "studentId": "s09_06", "classId": "c09", "status": "submitted", "gradeStatus": "graded", "score": 82, "submittedAt": "20/06 19:33"}, {"id": "sub_a029_s09_07", "assignmentId": "a029", "studentId": "s09_07", "classId": "c09", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a029_s09_08", "assignmentId": "a029", "studentId": "s09_08", "classId": "c09", "status": "submitted", "gradeStatus": "graded", "score": 88, "submittedAt": "20/06 19:30"}, {"id": "sub_a029_s09_09", "assignmentId": "a029", "studentId": "s09_09", "classId": "c09", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a029_s09_10", "assignmentId": "a029", "studentId": "s09_10", "classId": "c09", "status": "submitted", "gradeStatus": "graded", "score": 65, "submittedAt": "20/06 19:35"}, {"id": "sub_a029_s09_11", "assignmentId": "a029", "studentId": "s09_11", "classId": "c09", "status": "submitted", "gradeStatus": "graded", "score": 93, "submittedAt": "20/06 19:38"}, {"id": "sub_a029_s09_12", "assignmentId": "a029", "studentId": "s09_12", "classId": "c09", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a029_s09_13", "assignmentId": "a029", "studentId": "s09_13", "classId": "c09", "status": "submitted", "gradeStatus": "graded", "score": 80, "submittedAt": "20/06 19:35"}, {"id": "sub_a030_s09_01", "assignmentId": "a030", "studentId": "s09_01", "classId": "c09", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:39"}, {"id": "sub_a030_s09_02", "assignmentId": "a030", "studentId": "s09_02", "classId": "c09", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:31"}, {"id": "sub_a030_s09_03", "assignmentId": "a030", "studentId": "s09_03", "classId": "c09", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:38"}, {"id": "sub_a030_s09_04", "assignmentId": "a030", "studentId": "s09_04", "classId": "c09", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a030_s09_05", "assignmentId": "a030", "studentId": "s09_05", "classId": "c09", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:33"}, {"id": "sub_a030_s09_06", "assignmentId": "a030", "studentId": "s09_06", "classId": "c09", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:32"}, {"id": "sub_a030_s09_07", "assignmentId": "a030", "studentId": "s09_07", "classId": "c09", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a030_s09_08", "assignmentId": "a030", "studentId": "s09_08", "classId": "c09", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:30"}, {"id": "sub_a030_s09_09", "assignmentId": "a030", "studentId": "s09_09", "classId": "c09", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a030_s09_10", "assignmentId": "a030", "studentId": "s09_10", "classId": "c09", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:34"}, {"id": "sub_a030_s09_11", "assignmentId": "a030", "studentId": "s09_11", "classId": "c09", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a030_s09_12", "assignmentId": "a030", "studentId": "s09_12", "classId": "c09", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:38"}, {"id": "sub_a030_s09_13", "assignmentId": "a030", "studentId": "s09_13", "classId": "c09", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:35"}, {"id": "sub_a031_s09_01", "assignmentId": "a031", "studentId": "s09_01", "classId": "c09", "status": "submitted", "gradeStatus": "graded", "score": 76, "submittedAt": "20/06 19:30"}, {"id": "sub_a031_s09_02", "assignmentId": "a031", "studentId": "s09_02", "classId": "c09", "status": "submitted", "gradeStatus": "graded", "score": 94, "submittedAt": "20/06 19:37"}, {"id": "sub_a031_s09_03", "assignmentId": "a031", "studentId": "s09_03", "classId": "c09", "status": "submitted", "gradeStatus": "graded", "score": 82, "submittedAt": "20/06 19:31"}, {"id": "sub_a031_s09_04", "assignmentId": "a031", "studentId": "s09_04", "classId": "c09", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a031_s09_05", "assignmentId": "a031", "studentId": "s09_05", "classId": "c09", "status": "submitted", "gradeStatus": "graded", "score": 73, "submittedAt": "20/06 19:38"}, {"id": "sub_a031_s09_06", "assignmentId": "a031", "studentId": "s09_06", "classId": "c09", "status": "submitted", "gradeStatus": "graded", "score": 79, "submittedAt": "20/06 19:32"}, {"id": "sub_a031_s09_07", "assignmentId": "a031", "studentId": "s09_07", "classId": "c09", "status": "submitted", "gradeStatus": "graded", "score": 94, "submittedAt": "20/06 19:36"}, {"id": "sub_a031_s09_08", "assignmentId": "a031", "studentId": "s09_08", "classId": "c09", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a031_s09_09", "assignmentId": "a031", "studentId": "s09_09", "classId": "c09", "status": "submitted", "gradeStatus": "graded", "score": 89, "submittedAt": "20/06 19:36"}, {"id": "sub_a031_s09_10", "assignmentId": "a031", "studentId": "s09_10", "classId": "c09", "status": "submitted", "gradeStatus": "graded", "score": 98, "submittedAt": "20/06 19:30"}, {"id": "sub_a031_s09_11", "assignmentId": "a031", "studentId": "s09_11", "classId": "c09", "status": "submitted", "gradeStatus": "graded", "score": 68, "submittedAt": "20/06 19:35"}, {"id": "sub_a031_s09_12", "assignmentId": "a031", "studentId": "s09_12", "classId": "c09", "status": "submitted", "gradeStatus": "graded", "score": 80, "submittedAt": "20/06 19:35"}, {"id": "sub_a031_s09_13", "assignmentId": "a031", "studentId": "s09_13", "classId": "c09", "status": "submitted", "gradeStatus": "graded", "score": 85, "submittedAt": "20/06 19:36"}, {"id": "sub_a032_s09_01", "assignmentId": "a032", "studentId": "s09_01", "classId": "c09", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:38"}, {"id": "sub_a032_s09_02", "assignmentId": "a032", "studentId": "s09_02", "classId": "c09", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a032_s09_03", "assignmentId": "a032", "studentId": "s09_03", "classId": "c09", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:36"}, {"id": "sub_a032_s09_04", "assignmentId": "a032", "studentId": "s09_04", "classId": "c09", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:31"}, {"id": "sub_a032_s09_05", "assignmentId": "a032", "studentId": "s09_05", "classId": "c09", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:36"}, {"id": "sub_a032_s09_06", "assignmentId": "a032", "studentId": "s09_06", "classId": "c09", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a032_s09_07", "assignmentId": "a032", "studentId": "s09_07", "classId": "c09", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:36"}, {"id": "sub_a032_s09_08", "assignmentId": "a032", "studentId": "s09_08", "classId": "c09", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:37"}, {"id": "sub_a032_s09_09", "assignmentId": "a032", "studentId": "s09_09", "classId": "c09", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:30"}, {"id": "sub_a032_s09_10", "assignmentId": "a032", "studentId": "s09_10", "classId": "c09", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a032_s09_11", "assignmentId": "a032", "studentId": "s09_11", "classId": "c09", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:39"}, {"id": "sub_a032_s09_12", "assignmentId": "a032", "studentId": "s09_12", "classId": "c09", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:30"}, {"id": "sub_a032_s09_13", "assignmentId": "a032", "studentId": "s09_13", "classId": "c09", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:38"}, {"id": "sub_a033_s10_01", "assignmentId": "a033", "studentId": "s10_01", "classId": "c10", "status": "submitted", "gradeStatus": "graded", "score": 97, "submittedAt": "20/06 19:33"}, {"id": "sub_a033_s10_02", "assignmentId": "a033", "studentId": "s10_02", "classId": "c10", "status": "submitted", "gradeStatus": "graded", "score": 77, "submittedAt": "20/06 19:36"}, {"id": "sub_a033_s10_03", "assignmentId": "a033", "studentId": "s10_03", "classId": "c10", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a033_s10_04", "assignmentId": "a033", "studentId": "s10_04", "classId": "c10", "status": "submitted", "gradeStatus": "graded", "score": 71, "submittedAt": "20/06 19:35"}, {"id": "sub_a033_s10_05", "assignmentId": "a033", "studentId": "s10_05", "classId": "c10", "status": "submitted", "gradeStatus": "graded", "score": 67, "submittedAt": "20/06 19:36"}, {"id": "sub_a033_s10_06", "assignmentId": "a033", "studentId": "s10_06", "classId": "c10", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a033_s10_07", "assignmentId": "a033", "studentId": "s10_07", "classId": "c10", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a033_s10_08", "assignmentId": "a033", "studentId": "s10_08", "classId": "c10", "status": "submitted", "gradeStatus": "graded", "score": 100, "submittedAt": "20/06 19:30"}, {"id": "sub_a033_s10_09", "assignmentId": "a033", "studentId": "s10_09", "classId": "c10", "status": "submitted", "gradeStatus": "graded", "score": 90, "submittedAt": "20/06 19:31"}, {"id": "sub_a033_s10_10", "assignmentId": "a033", "studentId": "s10_10", "classId": "c10", "status": "submitted", "gradeStatus": "graded", "score": 66, "submittedAt": "20/06 19:33"}, {"id": "sub_a033_s10_11", "assignmentId": "a033", "studentId": "s10_11", "classId": "c10", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a033_s10_12", "assignmentId": "a033", "studentId": "s10_12", "classId": "c10", "status": "submitted", "gradeStatus": "graded", "score": 82, "submittedAt": "20/06 19:38"}, {"id": "sub_a034_s10_01", "assignmentId": "a034", "studentId": "s10_01", "classId": "c10", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:33"}, {"id": "sub_a034_s10_02", "assignmentId": "a034", "studentId": "s10_02", "classId": "c10", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:32"}, {"id": "sub_a034_s10_03", "assignmentId": "a034", "studentId": "s10_03", "classId": "c10", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:30"}, {"id": "sub_a034_s10_04", "assignmentId": "a034", "studentId": "s10_04", "classId": "c10", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a034_s10_05", "assignmentId": "a034", "studentId": "s10_05", "classId": "c10", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a034_s10_06", "assignmentId": "a034", "studentId": "s10_06", "classId": "c10", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:39"}, {"id": "sub_a034_s10_07", "assignmentId": "a034", "studentId": "s10_07", "classId": "c10", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:30"}, {"id": "sub_a034_s10_08", "assignmentId": "a034", "studentId": "s10_08", "classId": "c10", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:32"}, {"id": "sub_a034_s10_09", "assignmentId": "a034", "studentId": "s10_09", "classId": "c10", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:32"}, {"id": "sub_a034_s10_10", "assignmentId": "a034", "studentId": "s10_10", "classId": "c10", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a034_s10_11", "assignmentId": "a034", "studentId": "s10_11", "classId": "c10", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:39"}, {"id": "sub_a034_s10_12", "assignmentId": "a034", "studentId": "s10_12", "classId": "c10", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a035_s10_01", "assignmentId": "a035", "studentId": "s10_01", "classId": "c10", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a035_s10_02", "assignmentId": "a035", "studentId": "s10_02", "classId": "c10", "status": "submitted", "gradeStatus": "graded", "score": 66, "submittedAt": "20/06 19:30"}, {"id": "sub_a035_s10_03", "assignmentId": "a035", "studentId": "s10_03", "classId": "c10", "status": "submitted", "gradeStatus": "graded", "score": 90, "submittedAt": "20/06 19:39"}, {"id": "sub_a035_s10_04", "assignmentId": "a035", "studentId": "s10_04", "classId": "c10", "status": "submitted", "gradeStatus": "graded", "score": 67, "submittedAt": "20/06 19:37"}, {"id": "sub_a035_s10_05", "assignmentId": "a035", "studentId": "s10_05", "classId": "c10", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a035_s10_06", "assignmentId": "a035", "studentId": "s10_06", "classId": "c10", "status": "submitted", "gradeStatus": "graded", "score": 79, "submittedAt": "20/06 19:30"}, {"id": "sub_a035_s10_07", "assignmentId": "a035", "studentId": "s10_07", "classId": "c10", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a035_s10_08", "assignmentId": "a035", "studentId": "s10_08", "classId": "c10", "status": "submitted", "gradeStatus": "graded", "score": 76, "submittedAt": "20/06 19:35"}, {"id": "sub_a035_s10_09", "assignmentId": "a035", "studentId": "s10_09", "classId": "c10", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a035_s10_10", "assignmentId": "a035", "studentId": "s10_10", "classId": "c10", "status": "submitted", "gradeStatus": "graded", "score": 94, "submittedAt": "20/06 19:34"}, {"id": "sub_a035_s10_11", "assignmentId": "a035", "studentId": "s10_11", "classId": "c10", "status": "submitted", "gradeStatus": "graded", "score": 81, "submittedAt": "20/06 19:37"}, {"id": "sub_a035_s10_12", "assignmentId": "a035", "studentId": "s10_12", "classId": "c10", "status": "submitted", "gradeStatus": "graded", "score": 69, "submittedAt": "20/06 19:33"}, {"id": "sub_a036_s11_01", "assignmentId": "a036", "studentId": "s11_01", "classId": "c11", "status": "submitted", "gradeStatus": "graded", "score": 79, "submittedAt": "20/06 19:34"}, {"id": "sub_a036_s11_02", "assignmentId": "a036", "studentId": "s11_02", "classId": "c11", "status": "submitted", "gradeStatus": "graded", "score": 87, "submittedAt": "20/06 19:36"}, {"id": "sub_a036_s11_03", "assignmentId": "a036", "studentId": "s11_03", "classId": "c11", "status": "submitted", "gradeStatus": "graded", "score": 86, "submittedAt": "20/06 19:38"}, {"id": "sub_a036_s11_04", "assignmentId": "a036", "studentId": "s11_04", "classId": "c11", "status": "submitted", "gradeStatus": "graded", "score": 93, "submittedAt": "20/06 19:38"}, {"id": "sub_a036_s11_05", "assignmentId": "a036", "studentId": "s11_05", "classId": "c11", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a036_s11_06", "assignmentId": "a036", "studentId": "s11_06", "classId": "c11", "status": "submitted", "gradeStatus": "graded", "score": 92, "submittedAt": "20/06 19:38"}, {"id": "sub_a036_s11_07", "assignmentId": "a036", "studentId": "s11_07", "classId": "c11", "status": "submitted", "gradeStatus": "graded", "score": 73, "submittedAt": "20/06 19:37"}, {"id": "sub_a036_s11_08", "assignmentId": "a036", "studentId": "s11_08", "classId": "c11", "status": "submitted", "gradeStatus": "graded", "score": 67, "submittedAt": "20/06 19:38"}, {"id": "sub_a036_s11_09", "assignmentId": "a036", "studentId": "s11_09", "classId": "c11", "status": "submitted", "gradeStatus": "graded", "score": 99, "submittedAt": "20/06 19:32"}, {"id": "sub_a036_s11_10", "assignmentId": "a036", "studentId": "s11_10", "classId": "c11", "status": "submitted", "gradeStatus": "graded", "score": 80, "submittedAt": "20/06 19:38"}, {"id": "sub_a036_s11_11", "assignmentId": "a036", "studentId": "s11_11", "classId": "c11", "status": "submitted", "gradeStatus": "graded", "score": 68, "submittedAt": "20/06 19:32"}, {"id": "sub_a036_s11_12", "assignmentId": "a036", "studentId": "s11_12", "classId": "c11", "status": "submitted", "gradeStatus": "graded", "score": 91, "submittedAt": "20/06 19:31"}, {"id": "sub_a036_s11_13", "assignmentId": "a036", "studentId": "s11_13", "classId": "c11", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a036_s11_14", "assignmentId": "a036", "studentId": "s11_14", "classId": "c11", "status": "submitted", "gradeStatus": "graded", "score": 73, "submittedAt": "20/06 19:37"}, {"id": "sub_a036_s11_15", "assignmentId": "a036", "studentId": "s11_15", "classId": "c11", "status": "submitted", "gradeStatus": "graded", "score": 80, "submittedAt": "20/06 19:33"}, {"id": "sub_a037_s11_01", "assignmentId": "a037", "studentId": "s11_01", "classId": "c11", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a037_s11_02", "assignmentId": "a037", "studentId": "s11_02", "classId": "c11", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:35"}, {"id": "sub_a037_s11_03", "assignmentId": "a037", "studentId": "s11_03", "classId": "c11", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:32"}, {"id": "sub_a037_s11_04", "assignmentId": "a037", "studentId": "s11_04", "classId": "c11", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:31"}, {"id": "sub_a037_s11_05", "assignmentId": "a037", "studentId": "s11_05", "classId": "c11", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:32"}, {"id": "sub_a037_s11_06", "assignmentId": "a037", "studentId": "s11_06", "classId": "c11", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:37"}, {"id": "sub_a037_s11_07", "assignmentId": "a037", "studentId": "s11_07", "classId": "c11", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:33"}, {"id": "sub_a037_s11_08", "assignmentId": "a037", "studentId": "s11_08", "classId": "c11", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a037_s11_09", "assignmentId": "a037", "studentId": "s11_09", "classId": "c11", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:33"}, {"id": "sub_a037_s11_10", "assignmentId": "a037", "studentId": "s11_10", "classId": "c11", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a037_s11_11", "assignmentId": "a037", "studentId": "s11_11", "classId": "c11", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:31"}, {"id": "sub_a037_s11_12", "assignmentId": "a037", "studentId": "s11_12", "classId": "c11", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:31"}, {"id": "sub_a037_s11_13", "assignmentId": "a037", "studentId": "s11_13", "classId": "c11", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a037_s11_14", "assignmentId": "a037", "studentId": "s11_14", "classId": "c11", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:34"}, {"id": "sub_a037_s11_15", "assignmentId": "a037", "studentId": "s11_15", "classId": "c11", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a038_s11_01", "assignmentId": "a038", "studentId": "s11_01", "classId": "c11", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a038_s11_02", "assignmentId": "a038", "studentId": "s11_02", "classId": "c11", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a038_s11_03", "assignmentId": "a038", "studentId": "s11_03", "classId": "c11", "status": "submitted", "gradeStatus": "graded", "score": 96, "submittedAt": "20/06 19:31"}, {"id": "sub_a038_s11_04", "assignmentId": "a038", "studentId": "s11_04", "classId": "c11", "status": "submitted", "gradeStatus": "graded", "score": 86, "submittedAt": "20/06 19:39"}, {"id": "sub_a038_s11_05", "assignmentId": "a038", "studentId": "s11_05", "classId": "c11", "status": "submitted", "gradeStatus": "graded", "score": 96, "submittedAt": "20/06 19:36"}, {"id": "sub_a038_s11_06", "assignmentId": "a038", "studentId": "s11_06", "classId": "c11", "status": "submitted", "gradeStatus": "graded", "score": 99, "submittedAt": "20/06 19:35"}, {"id": "sub_a038_s11_07", "assignmentId": "a038", "studentId": "s11_07", "classId": "c11", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a038_s11_08", "assignmentId": "a038", "studentId": "s11_08", "classId": "c11", "status": "submitted", "gradeStatus": "graded", "score": 83, "submittedAt": "20/06 19:39"}, {"id": "sub_a038_s11_09", "assignmentId": "a038", "studentId": "s11_09", "classId": "c11", "status": "submitted", "gradeStatus": "graded", "score": 81, "submittedAt": "20/06 19:33"}, {"id": "sub_a038_s11_10", "assignmentId": "a038", "studentId": "s11_10", "classId": "c11", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a038_s11_11", "assignmentId": "a038", "studentId": "s11_11", "classId": "c11", "status": "submitted", "gradeStatus": "graded", "score": 66, "submittedAt": "20/06 19:36"}, {"id": "sub_a038_s11_12", "assignmentId": "a038", "studentId": "s11_12", "classId": "c11", "status": "submitted", "gradeStatus": "graded", "score": 83, "submittedAt": "20/06 19:35"}, {"id": "sub_a038_s11_13", "assignmentId": "a038", "studentId": "s11_13", "classId": "c11", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a038_s11_14", "assignmentId": "a038", "studentId": "s11_14", "classId": "c11", "status": "submitted", "gradeStatus": "graded", "score": 75, "submittedAt": "20/06 19:31"}, {"id": "sub_a038_s11_15", "assignmentId": "a038", "studentId": "s11_15", "classId": "c11", "status": "submitted", "gradeStatus": "graded", "score": 84, "submittedAt": "20/06 19:39"}, {"id": "sub_a039_s11_01", "assignmentId": "a039", "studentId": "s11_01", "classId": "c11", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:35"}, {"id": "sub_a039_s11_02", "assignmentId": "a039", "studentId": "s11_02", "classId": "c11", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:38"}, {"id": "sub_a039_s11_03", "assignmentId": "a039", "studentId": "s11_03", "classId": "c11", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:34"}, {"id": "sub_a039_s11_04", "assignmentId": "a039", "studentId": "s11_04", "classId": "c11", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:39"}, {"id": "sub_a039_s11_05", "assignmentId": "a039", "studentId": "s11_05", "classId": "c11", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:36"}, {"id": "sub_a039_s11_06", "assignmentId": "a039", "studentId": "s11_06", "classId": "c11", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:37"}, {"id": "sub_a039_s11_07", "assignmentId": "a039", "studentId": "s11_07", "classId": "c11", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:34"}, {"id": "sub_a039_s11_08", "assignmentId": "a039", "studentId": "s11_08", "classId": "c11", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:32"}, {"id": "sub_a039_s11_09", "assignmentId": "a039", "studentId": "s11_09", "classId": "c11", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:37"}, {"id": "sub_a039_s11_10", "assignmentId": "a039", "studentId": "s11_10", "classId": "c11", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:30"}, {"id": "sub_a039_s11_11", "assignmentId": "a039", "studentId": "s11_11", "classId": "c11", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:33"}, {"id": "sub_a039_s11_12", "assignmentId": "a039", "studentId": "s11_12", "classId": "c11", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:39"}, {"id": "sub_a039_s11_13", "assignmentId": "a039", "studentId": "s11_13", "classId": "c11", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:36"}, {"id": "sub_a039_s11_14", "assignmentId": "a039", "studentId": "s11_14", "classId": "c11", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a039_s11_15", "assignmentId": "a039", "studentId": "s11_15", "classId": "c11", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a040_s12_01", "assignmentId": "a040", "studentId": "s12_01", "classId": "c12", "status": "submitted", "gradeStatus": "graded", "score": 73, "submittedAt": "20/06 19:30"}, {"id": "sub_a040_s12_02", "assignmentId": "a040", "studentId": "s12_02", "classId": "c12", "status": "submitted", "gradeStatus": "graded", "score": 71, "submittedAt": "20/06 19:33"}, {"id": "sub_a040_s12_03", "assignmentId": "a040", "studentId": "s12_03", "classId": "c12", "status": "submitted", "gradeStatus": "graded", "score": 71, "submittedAt": "20/06 19:35"}, {"id": "sub_a040_s12_04", "assignmentId": "a040", "studentId": "s12_04", "classId": "c12", "status": "submitted", "gradeStatus": "graded", "score": 80, "submittedAt": "20/06 19:32"}, {"id": "sub_a040_s12_05", "assignmentId": "a040", "studentId": "s12_05", "classId": "c12", "status": "submitted", "gradeStatus": "graded", "score": 84, "submittedAt": "20/06 19:35"}, {"id": "sub_a040_s12_06", "assignmentId": "a040", "studentId": "s12_06", "classId": "c12", "status": "submitted", "gradeStatus": "graded", "score": 97, "submittedAt": "20/06 19:33"}, {"id": "sub_a040_s12_07", "assignmentId": "a040", "studentId": "s12_07", "classId": "c12", "status": "submitted", "gradeStatus": "graded", "score": 100, "submittedAt": "20/06 19:36"}, {"id": "sub_a040_s12_08", "assignmentId": "a040", "studentId": "s12_08", "classId": "c12", "status": "submitted", "gradeStatus": "graded", "score": 86, "submittedAt": "20/06 19:35"}, {"id": "sub_a040_s12_09", "assignmentId": "a040", "studentId": "s12_09", "classId": "c12", "status": "submitted", "gradeStatus": "graded", "score": 95, "submittedAt": "20/06 19:38"}, {"id": "sub_a040_s12_10", "assignmentId": "a040", "studentId": "s12_10", "classId": "c12", "status": "submitted", "gradeStatus": "graded", "score": 80, "submittedAt": "20/06 19:33"}, {"id": "sub_a040_s12_11", "assignmentId": "a040", "studentId": "s12_11", "classId": "c12", "status": "submitted", "gradeStatus": "graded", "score": 74, "submittedAt": "20/06 19:32"}, {"id": "sub_a040_s12_12", "assignmentId": "a040", "studentId": "s12_12", "classId": "c12", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a040_s12_13", "assignmentId": "a040", "studentId": "s12_13", "classId": "c12", "status": "submitted", "gradeStatus": "graded", "score": 94, "submittedAt": "20/06 19:36"}, {"id": "sub_a040_s12_14", "assignmentId": "a040", "studentId": "s12_14", "classId": "c12", "status": "submitted", "gradeStatus": "graded", "score": 84, "submittedAt": "20/06 19:32"}, {"id": "sub_a041_s12_01", "assignmentId": "a041", "studentId": "s12_01", "classId": "c12", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:34"}, {"id": "sub_a041_s12_02", "assignmentId": "a041", "studentId": "s12_02", "classId": "c12", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:35"}, {"id": "sub_a041_s12_03", "assignmentId": "a041", "studentId": "s12_03", "classId": "c12", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a041_s12_04", "assignmentId": "a041", "studentId": "s12_04", "classId": "c12", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a041_s12_05", "assignmentId": "a041", "studentId": "s12_05", "classId": "c12", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:34"}, {"id": "sub_a041_s12_06", "assignmentId": "a041", "studentId": "s12_06", "classId": "c12", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:35"}, {"id": "sub_a041_s12_07", "assignmentId": "a041", "studentId": "s12_07", "classId": "c12", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:31"}, {"id": "sub_a041_s12_08", "assignmentId": "a041", "studentId": "s12_08", "classId": "c12", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:32"}, {"id": "sub_a041_s12_09", "assignmentId": "a041", "studentId": "s12_09", "classId": "c12", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:30"}, {"id": "sub_a041_s12_10", "assignmentId": "a041", "studentId": "s12_10", "classId": "c12", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:33"}, {"id": "sub_a041_s12_11", "assignmentId": "a041", "studentId": "s12_11", "classId": "c12", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:36"}, {"id": "sub_a041_s12_12", "assignmentId": "a041", "studentId": "s12_12", "classId": "c12", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:34"}, {"id": "sub_a041_s12_13", "assignmentId": "a041", "studentId": "s12_13", "classId": "c12", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:33"}, {"id": "sub_a041_s12_14", "assignmentId": "a041", "studentId": "s12_14", "classId": "c12", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:32"}, {"id": "sub_a042_s12_01", "assignmentId": "a042", "studentId": "s12_01", "classId": "c12", "status": "submitted", "gradeStatus": "graded", "score": 70, "submittedAt": "20/06 19:31"}, {"id": "sub_a042_s12_02", "assignmentId": "a042", "studentId": "s12_02", "classId": "c12", "status": "submitted", "gradeStatus": "graded", "score": 86, "submittedAt": "20/06 19:32"}, {"id": "sub_a042_s12_03", "assignmentId": "a042", "studentId": "s12_03", "classId": "c12", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a042_s12_04", "assignmentId": "a042", "studentId": "s12_04", "classId": "c12", "status": "submitted", "gradeStatus": "graded", "score": 65, "submittedAt": "20/06 19:35"}, {"id": "sub_a042_s12_05", "assignmentId": "a042", "studentId": "s12_05", "classId": "c12", "status": "submitted", "gradeStatus": "graded", "score": 78, "submittedAt": "20/06 19:35"}, {"id": "sub_a042_s12_06", "assignmentId": "a042", "studentId": "s12_06", "classId": "c12", "status": "submitted", "gradeStatus": "graded", "score": 66, "submittedAt": "20/06 19:37"}, {"id": "sub_a042_s12_07", "assignmentId": "a042", "studentId": "s12_07", "classId": "c12", "status": "submitted", "gradeStatus": "graded", "score": 86, "submittedAt": "20/06 19:32"}, {"id": "sub_a042_s12_08", "assignmentId": "a042", "studentId": "s12_08", "classId": "c12", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a042_s12_09", "assignmentId": "a042", "studentId": "s12_09", "classId": "c12", "status": "submitted", "gradeStatus": "graded", "score": 67, "submittedAt": "20/06 19:31"}, {"id": "sub_a042_s12_10", "assignmentId": "a042", "studentId": "s12_10", "classId": "c12", "status": "submitted", "gradeStatus": "graded", "score": 86, "submittedAt": "20/06 19:37"}, {"id": "sub_a042_s12_11", "assignmentId": "a042", "studentId": "s12_11", "classId": "c12", "status": "submitted", "gradeStatus": "graded", "score": 90, "submittedAt": "20/06 19:34"}, {"id": "sub_a042_s12_12", "assignmentId": "a042", "studentId": "s12_12", "classId": "c12", "status": "submitted", "gradeStatus": "graded", "score": 65, "submittedAt": "20/06 19:30"}, {"id": "sub_a042_s12_13", "assignmentId": "a042", "studentId": "s12_13", "classId": "c12", "status": "submitted", "gradeStatus": "graded", "score": 85, "submittedAt": "20/06 19:30"}, {"id": "sub_a042_s12_14", "assignmentId": "a042", "studentId": "s12_14", "classId": "c12", "status": "submitted", "gradeStatus": "graded", "score": 86, "submittedAt": "20/06 19:32"}, {"id": "sub_a043_s13_01", "assignmentId": "a043", "studentId": "s13_01", "classId": "c13", "status": "submitted", "gradeStatus": "graded", "score": 89, "submittedAt": "20/06 19:36"}, {"id": "sub_a043_s13_02", "assignmentId": "a043", "studentId": "s13_02", "classId": "c13", "status": "submitted", "gradeStatus": "graded", "score": 74, "submittedAt": "20/06 19:30"}, {"id": "sub_a043_s13_03", "assignmentId": "a043", "studentId": "s13_03", "classId": "c13", "status": "submitted", "gradeStatus": "graded", "score": 97, "submittedAt": "20/06 19:34"}, {"id": "sub_a043_s13_04", "assignmentId": "a043", "studentId": "s13_04", "classId": "c13", "status": "submitted", "gradeStatus": "graded", "score": 89, "submittedAt": "20/06 19:33"}, {"id": "sub_a043_s13_05", "assignmentId": "a043", "studentId": "s13_05", "classId": "c13", "status": "submitted", "gradeStatus": "graded", "score": 72, "submittedAt": "20/06 19:31"}, {"id": "sub_a043_s13_06", "assignmentId": "a043", "studentId": "s13_06", "classId": "c13", "status": "submitted", "gradeStatus": "graded", "score": 67, "submittedAt": "20/06 19:30"}, {"id": "sub_a043_s13_07", "assignmentId": "a043", "studentId": "s13_07", "classId": "c13", "status": "submitted", "gradeStatus": "graded", "score": 100, "submittedAt": "20/06 19:35"}, {"id": "sub_a043_s13_08", "assignmentId": "a043", "studentId": "s13_08", "classId": "c13", "status": "submitted", "gradeStatus": "graded", "score": 93, "submittedAt": "20/06 19:38"}, {"id": "sub_a043_s13_09", "assignmentId": "a043", "studentId": "s13_09", "classId": "c13", "status": "submitted", "gradeStatus": "graded", "score": 94, "submittedAt": "20/06 19:39"}, {"id": "sub_a043_s13_10", "assignmentId": "a043", "studentId": "s13_10", "classId": "c13", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a043_s13_11", "assignmentId": "a043", "studentId": "s13_11", "classId": "c13", "status": "submitted", "gradeStatus": "graded", "score": 95, "submittedAt": "20/06 19:38"}, {"id": "sub_a043_s13_12", "assignmentId": "a043", "studentId": "s13_12", "classId": "c13", "status": "submitted", "gradeStatus": "graded", "score": 99, "submittedAt": "20/06 19:36"}, {"id": "sub_a043_s13_13", "assignmentId": "a043", "studentId": "s13_13", "classId": "c13", "status": "submitted", "gradeStatus": "graded", "score": 89, "submittedAt": "20/06 19:35"}, {"id": "sub_a044_s13_01", "assignmentId": "a044", "studentId": "s13_01", "classId": "c13", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:38"}, {"id": "sub_a044_s13_02", "assignmentId": "a044", "studentId": "s13_02", "classId": "c13", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:35"}, {"id": "sub_a044_s13_03", "assignmentId": "a044", "studentId": "s13_03", "classId": "c13", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a044_s13_04", "assignmentId": "a044", "studentId": "s13_04", "classId": "c13", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:39"}, {"id": "sub_a044_s13_05", "assignmentId": "a044", "studentId": "s13_05", "classId": "c13", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:37"}, {"id": "sub_a044_s13_06", "assignmentId": "a044", "studentId": "s13_06", "classId": "c13", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:39"}, {"id": "sub_a044_s13_07", "assignmentId": "a044", "studentId": "s13_07", "classId": "c13", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:32"}, {"id": "sub_a044_s13_08", "assignmentId": "a044", "studentId": "s13_08", "classId": "c13", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a044_s13_09", "assignmentId": "a044", "studentId": "s13_09", "classId": "c13", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:33"}, {"id": "sub_a044_s13_10", "assignmentId": "a044", "studentId": "s13_10", "classId": "c13", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:33"}, {"id": "sub_a044_s13_11", "assignmentId": "a044", "studentId": "s13_11", "classId": "c13", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:37"}, {"id": "sub_a044_s13_12", "assignmentId": "a044", "studentId": "s13_12", "classId": "c13", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a044_s13_13", "assignmentId": "a044", "studentId": "s13_13", "classId": "c13", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:30"}, {"id": "sub_a045_s13_01", "assignmentId": "a045", "studentId": "s13_01", "classId": "c13", "status": "submitted", "gradeStatus": "graded", "score": 88, "submittedAt": "20/06 19:36"}, {"id": "sub_a045_s13_02", "assignmentId": "a045", "studentId": "s13_02", "classId": "c13", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a045_s13_03", "assignmentId": "a045", "studentId": "s13_03", "classId": "c13", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a045_s13_04", "assignmentId": "a045", "studentId": "s13_04", "classId": "c13", "status": "submitted", "gradeStatus": "graded", "score": 71, "submittedAt": "20/06 19:35"}, {"id": "sub_a045_s13_05", "assignmentId": "a045", "studentId": "s13_05", "classId": "c13", "status": "submitted", "gradeStatus": "graded", "score": 98, "submittedAt": "20/06 19:38"}, {"id": "sub_a045_s13_06", "assignmentId": "a045", "studentId": "s13_06", "classId": "c13", "status": "submitted", "gradeStatus": "graded", "score": 70, "submittedAt": "20/06 19:34"}, {"id": "sub_a045_s13_07", "assignmentId": "a045", "studentId": "s13_07", "classId": "c13", "status": "submitted", "gradeStatus": "graded", "score": 93, "submittedAt": "20/06 19:31"}, {"id": "sub_a045_s13_08", "assignmentId": "a045", "studentId": "s13_08", "classId": "c13", "status": "submitted", "gradeStatus": "graded", "score": 95, "submittedAt": "20/06 19:32"}, {"id": "sub_a045_s13_09", "assignmentId": "a045", "studentId": "s13_09", "classId": "c13", "status": "submitted", "gradeStatus": "graded", "score": 74, "submittedAt": "20/06 19:30"}, {"id": "sub_a045_s13_10", "assignmentId": "a045", "studentId": "s13_10", "classId": "c13", "status": "submitted", "gradeStatus": "graded", "score": 88, "submittedAt": "20/06 19:37"}, {"id": "sub_a045_s13_11", "assignmentId": "a045", "studentId": "s13_11", "classId": "c13", "status": "submitted", "gradeStatus": "graded", "score": 80, "submittedAt": "20/06 19:39"}, {"id": "sub_a045_s13_12", "assignmentId": "a045", "studentId": "s13_12", "classId": "c13", "status": "submitted", "gradeStatus": "graded", "score": 86, "submittedAt": "20/06 19:36"}, {"id": "sub_a045_s13_13", "assignmentId": "a045", "studentId": "s13_13", "classId": "c13", "status": "submitted", "gradeStatus": "graded", "score": 100, "submittedAt": "20/06 19:33"}, {"id": "sub_a046_s13_01", "assignmentId": "a046", "studentId": "s13_01", "classId": "c13", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a046_s13_02", "assignmentId": "a046", "studentId": "s13_02", "classId": "c13", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:34"}, {"id": "sub_a046_s13_03", "assignmentId": "a046", "studentId": "s13_03", "classId": "c13", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:35"}, {"id": "sub_a046_s13_04", "assignmentId": "a046", "studentId": "s13_04", "classId": "c13", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:37"}, {"id": "sub_a046_s13_05", "assignmentId": "a046", "studentId": "s13_05", "classId": "c13", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a046_s13_06", "assignmentId": "a046", "studentId": "s13_06", "classId": "c13", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:33"}, {"id": "sub_a046_s13_07", "assignmentId": "a046", "studentId": "s13_07", "classId": "c13", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a046_s13_08", "assignmentId": "a046", "studentId": "s13_08", "classId": "c13", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:35"}, {"id": "sub_a046_s13_09", "assignmentId": "a046", "studentId": "s13_09", "classId": "c13", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:36"}, {"id": "sub_a046_s13_10", "assignmentId": "a046", "studentId": "s13_10", "classId": "c13", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:34"}, {"id": "sub_a046_s13_11", "assignmentId": "a046", "studentId": "s13_11", "classId": "c13", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:39"}, {"id": "sub_a046_s13_12", "assignmentId": "a046", "studentId": "s13_12", "classId": "c13", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:36"}, {"id": "sub_a046_s13_13", "assignmentId": "a046", "studentId": "s13_13", "classId": "c13", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:39"}, {"id": "sub_a047_s14_01", "assignmentId": "a047", "studentId": "s14_01", "classId": "c14", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a047_s14_02", "assignmentId": "a047", "studentId": "s14_02", "classId": "c14", "status": "submitted", "gradeStatus": "graded", "score": 98, "submittedAt": "20/06 19:38"}, {"id": "sub_a047_s14_03", "assignmentId": "a047", "studentId": "s14_03", "classId": "c14", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a047_s14_04", "assignmentId": "a047", "studentId": "s14_04", "classId": "c14", "status": "submitted", "gradeStatus": "graded", "score": 66, "submittedAt": "20/06 19:37"}, {"id": "sub_a047_s14_05", "assignmentId": "a047", "studentId": "s14_05", "classId": "c14", "status": "submitted", "gradeStatus": "graded", "score": 70, "submittedAt": "20/06 19:33"}, {"id": "sub_a047_s14_06", "assignmentId": "a047", "studentId": "s14_06", "classId": "c14", "status": "submitted", "gradeStatus": "graded", "score": 84, "submittedAt": "20/06 19:39"}, {"id": "sub_a047_s14_07", "assignmentId": "a047", "studentId": "s14_07", "classId": "c14", "status": "submitted", "gradeStatus": "graded", "score": 70, "submittedAt": "20/06 19:33"}, {"id": "sub_a047_s14_08", "assignmentId": "a047", "studentId": "s14_08", "classId": "c14", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a047_s14_09", "assignmentId": "a047", "studentId": "s14_09", "classId": "c14", "status": "submitted", "gradeStatus": "graded", "score": 79, "submittedAt": "20/06 19:39"}, {"id": "sub_a047_s14_10", "assignmentId": "a047", "studentId": "s14_10", "classId": "c14", "status": "submitted", "gradeStatus": "graded", "score": 67, "submittedAt": "20/06 19:39"}, {"id": "sub_a047_s14_11", "assignmentId": "a047", "studentId": "s14_11", "classId": "c14", "status": "submitted", "gradeStatus": "graded", "score": 65, "submittedAt": "20/06 19:35"}, {"id": "sub_a047_s14_12", "assignmentId": "a047", "studentId": "s14_12", "classId": "c14", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a047_s14_13", "assignmentId": "a047", "studentId": "s14_13", "classId": "c14", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a047_s14_14", "assignmentId": "a047", "studentId": "s14_14", "classId": "c14", "status": "submitted", "gradeStatus": "graded", "score": 76, "submittedAt": "20/06 19:35"}, {"id": "sub_a048_s14_01", "assignmentId": "a048", "studentId": "s14_01", "classId": "c14", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:35"}, {"id": "sub_a048_s14_02", "assignmentId": "a048", "studentId": "s14_02", "classId": "c14", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:34"}, {"id": "sub_a048_s14_03", "assignmentId": "a048", "studentId": "s14_03", "classId": "c14", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:37"}, {"id": "sub_a048_s14_04", "assignmentId": "a048", "studentId": "s14_04", "classId": "c14", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a048_s14_05", "assignmentId": "a048", "studentId": "s14_05", "classId": "c14", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:39"}, {"id": "sub_a048_s14_06", "assignmentId": "a048", "studentId": "s14_06", "classId": "c14", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:30"}, {"id": "sub_a048_s14_07", "assignmentId": "a048", "studentId": "s14_07", "classId": "c14", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:32"}, {"id": "sub_a048_s14_08", "assignmentId": "a048", "studentId": "s14_08", "classId": "c14", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:31"}, {"id": "sub_a048_s14_09", "assignmentId": "a048", "studentId": "s14_09", "classId": "c14", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:32"}, {"id": "sub_a048_s14_10", "assignmentId": "a048", "studentId": "s14_10", "classId": "c14", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:31"}, {"id": "sub_a048_s14_11", "assignmentId": "a048", "studentId": "s14_11", "classId": "c14", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:37"}, {"id": "sub_a048_s14_12", "assignmentId": "a048", "studentId": "s14_12", "classId": "c14", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:31"}, {"id": "sub_a048_s14_13", "assignmentId": "a048", "studentId": "s14_13", "classId": "c14", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:37"}, {"id": "sub_a048_s14_14", "assignmentId": "a048", "studentId": "s14_14", "classId": "c14", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:35"}, {"id": "sub_a049_s14_01", "assignmentId": "a049", "studentId": "s14_01", "classId": "c14", "status": "submitted", "gradeStatus": "graded", "score": 75, "submittedAt": "20/06 19:39"}, {"id": "sub_a049_s14_02", "assignmentId": "a049", "studentId": "s14_02", "classId": "c14", "status": "submitted", "gradeStatus": "graded", "score": 97, "submittedAt": "20/06 19:34"}, {"id": "sub_a049_s14_03", "assignmentId": "a049", "studentId": "s14_03", "classId": "c14", "status": "submitted", "gradeStatus": "graded", "score": 77, "submittedAt": "20/06 19:34"}, {"id": "sub_a049_s14_04", "assignmentId": "a049", "studentId": "s14_04", "classId": "c14", "status": "submitted", "gradeStatus": "graded", "score": 78, "submittedAt": "20/06 19:32"}, {"id": "sub_a049_s14_05", "assignmentId": "a049", "studentId": "s14_05", "classId": "c14", "status": "submitted", "gradeStatus": "graded", "score": 99, "submittedAt": "20/06 19:38"}, {"id": "sub_a049_s14_06", "assignmentId": "a049", "studentId": "s14_06", "classId": "c14", "status": "submitted", "gradeStatus": "graded", "score": 71, "submittedAt": "20/06 19:30"}, {"id": "sub_a049_s14_07", "assignmentId": "a049", "studentId": "s14_07", "classId": "c14", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a049_s14_08", "assignmentId": "a049", "studentId": "s14_08", "classId": "c14", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a049_s14_09", "assignmentId": "a049", "studentId": "s14_09", "classId": "c14", "status": "submitted", "gradeStatus": "graded", "score": 78, "submittedAt": "20/06 19:33"}, {"id": "sub_a049_s14_10", "assignmentId": "a049", "studentId": "s14_10", "classId": "c14", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a049_s14_11", "assignmentId": "a049", "studentId": "s14_11", "classId": "c14", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a049_s14_12", "assignmentId": "a049", "studentId": "s14_12", "classId": "c14", "status": "submitted", "gradeStatus": "graded", "score": 66, "submittedAt": "20/06 19:36"}, {"id": "sub_a049_s14_13", "assignmentId": "a049", "studentId": "s14_13", "classId": "c14", "status": "submitted", "gradeStatus": "graded", "score": 98, "submittedAt": "20/06 19:31"}, {"id": "sub_a049_s14_14", "assignmentId": "a049", "studentId": "s14_14", "classId": "c14", "status": "submitted", "gradeStatus": "graded", "score": 72, "submittedAt": "20/06 19:31"}, {"id": "sub_a050_s15_01", "assignmentId": "a050", "studentId": "s15_01", "classId": "c15", "status": "submitted", "gradeStatus": "graded", "score": 80, "submittedAt": "20/06 19:34"}, {"id": "sub_a050_s15_02", "assignmentId": "a050", "studentId": "s15_02", "classId": "c15", "status": "submitted", "gradeStatus": "graded", "score": 66, "submittedAt": "20/06 19:36"}, {"id": "sub_a050_s15_03", "assignmentId": "a050", "studentId": "s15_03", "classId": "c15", "status": "submitted", "gradeStatus": "graded", "score": 91, "submittedAt": "20/06 19:31"}, {"id": "sub_a050_s15_04", "assignmentId": "a050", "studentId": "s15_04", "classId": "c15", "status": "submitted", "gradeStatus": "graded", "score": 89, "submittedAt": "20/06 19:37"}, {"id": "sub_a050_s15_05", "assignmentId": "a050", "studentId": "s15_05", "classId": "c15", "status": "submitted", "gradeStatus": "graded", "score": 88, "submittedAt": "20/06 19:34"}, {"id": "sub_a050_s15_06", "assignmentId": "a050", "studentId": "s15_06", "classId": "c15", "status": "submitted", "gradeStatus": "graded", "score": 96, "submittedAt": "20/06 19:30"}, {"id": "sub_a050_s15_07", "assignmentId": "a050", "studentId": "s15_07", "classId": "c15", "status": "submitted", "gradeStatus": "graded", "score": 87, "submittedAt": "20/06 19:32"}, {"id": "sub_a050_s15_08", "assignmentId": "a050", "studentId": "s15_08", "classId": "c15", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a050_s15_09", "assignmentId": "a050", "studentId": "s15_09", "classId": "c15", "status": "submitted", "gradeStatus": "graded", "score": 68, "submittedAt": "20/06 19:32"}, {"id": "sub_a050_s15_10", "assignmentId": "a050", "studentId": "s15_10", "classId": "c15", "status": "submitted", "gradeStatus": "graded", "score": 98, "submittedAt": "20/06 19:32"}, {"id": "sub_a050_s15_11", "assignmentId": "a050", "studentId": "s15_11", "classId": "c15", "status": "submitted", "gradeStatus": "graded", "score": 68, "submittedAt": "20/06 19:39"}, {"id": "sub_a050_s15_12", "assignmentId": "a050", "studentId": "s15_12", "classId": "c15", "status": "submitted", "gradeStatus": "graded", "score": 89, "submittedAt": "20/06 19:35"}, {"id": "sub_a051_s15_01", "assignmentId": "a051", "studentId": "s15_01", "classId": "c15", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:34"}, {"id": "sub_a051_s15_02", "assignmentId": "a051", "studentId": "s15_02", "classId": "c15", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:39"}, {"id": "sub_a051_s15_03", "assignmentId": "a051", "studentId": "s15_03", "classId": "c15", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:31"}, {"id": "sub_a051_s15_04", "assignmentId": "a051", "studentId": "s15_04", "classId": "c15", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:35"}, {"id": "sub_a051_s15_05", "assignmentId": "a051", "studentId": "s15_05", "classId": "c15", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:34"}, {"id": "sub_a051_s15_06", "assignmentId": "a051", "studentId": "s15_06", "classId": "c15", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a051_s15_07", "assignmentId": "a051", "studentId": "s15_07", "classId": "c15", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:38"}, {"id": "sub_a051_s15_08", "assignmentId": "a051", "studentId": "s15_08", "classId": "c15", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:35"}, {"id": "sub_a051_s15_09", "assignmentId": "a051", "studentId": "s15_09", "classId": "c15", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a051_s15_10", "assignmentId": "a051", "studentId": "s15_10", "classId": "c15", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:38"}, {"id": "sub_a051_s15_11", "assignmentId": "a051", "studentId": "s15_11", "classId": "c15", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:31"}, {"id": "sub_a051_s15_12", "assignmentId": "a051", "studentId": "s15_12", "classId": "c15", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:36"}, {"id": "sub_a052_s15_01", "assignmentId": "a052", "studentId": "s15_01", "classId": "c15", "status": "submitted", "gradeStatus": "graded", "score": 83, "submittedAt": "20/06 19:31"}, {"id": "sub_a052_s15_02", "assignmentId": "a052", "studentId": "s15_02", "classId": "c15", "status": "submitted", "gradeStatus": "graded", "score": 65, "submittedAt": "20/06 19:30"}, {"id": "sub_a052_s15_03", "assignmentId": "a052", "studentId": "s15_03", "classId": "c15", "status": "submitted", "gradeStatus": "graded", "score": 84, "submittedAt": "20/06 19:35"}, {"id": "sub_a052_s15_04", "assignmentId": "a052", "studentId": "s15_04", "classId": "c15", "status": "submitted", "gradeStatus": "graded", "score": 88, "submittedAt": "20/06 19:34"}, {"id": "sub_a052_s15_05", "assignmentId": "a052", "studentId": "s15_05", "classId": "c15", "status": "submitted", "gradeStatus": "graded", "score": 69, "submittedAt": "20/06 19:38"}, {"id": "sub_a052_s15_06", "assignmentId": "a052", "studentId": "s15_06", "classId": "c15", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a052_s15_07", "assignmentId": "a052", "studentId": "s15_07", "classId": "c15", "status": "submitted", "gradeStatus": "graded", "score": 91, "submittedAt": "20/06 19:31"}, {"id": "sub_a052_s15_08", "assignmentId": "a052", "studentId": "s15_08", "classId": "c15", "status": "submitted", "gradeStatus": "graded", "score": 75, "submittedAt": "20/06 19:32"}, {"id": "sub_a052_s15_09", "assignmentId": "a052", "studentId": "s15_09", "classId": "c15", "status": "submitted", "gradeStatus": "graded", "score": 72, "submittedAt": "20/06 19:36"}, {"id": "sub_a052_s15_10", "assignmentId": "a052", "studentId": "s15_10", "classId": "c15", "status": "submitted", "gradeStatus": "graded", "score": 86, "submittedAt": "20/06 19:36"}, {"id": "sub_a052_s15_11", "assignmentId": "a052", "studentId": "s15_11", "classId": "c15", "status": "submitted", "gradeStatus": "graded", "score": 86, "submittedAt": "20/06 19:35"}, {"id": "sub_a052_s15_12", "assignmentId": "a052", "studentId": "s15_12", "classId": "c15", "status": "submitted", "gradeStatus": "graded", "score": 74, "submittedAt": "20/06 19:38"}, {"id": "sub_a053_s15_01", "assignmentId": "a053", "studentId": "s15_01", "classId": "c15", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:34"}, {"id": "sub_a053_s15_02", "assignmentId": "a053", "studentId": "s15_02", "classId": "c15", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a053_s15_03", "assignmentId": "a053", "studentId": "s15_03", "classId": "c15", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:36"}, {"id": "sub_a053_s15_04", "assignmentId": "a053", "studentId": "s15_04", "classId": "c15", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a053_s15_05", "assignmentId": "a053", "studentId": "s15_05", "classId": "c15", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a053_s15_06", "assignmentId": "a053", "studentId": "s15_06", "classId": "c15", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:36"}, {"id": "sub_a053_s15_07", "assignmentId": "a053", "studentId": "s15_07", "classId": "c15", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:34"}, {"id": "sub_a053_s15_08", "assignmentId": "a053", "studentId": "s15_08", "classId": "c15", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:32"}, {"id": "sub_a053_s15_09", "assignmentId": "a053", "studentId": "s15_09", "classId": "c15", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a053_s15_10", "assignmentId": "a053", "studentId": "s15_10", "classId": "c15", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:38"}, {"id": "sub_a053_s15_11", "assignmentId": "a053", "studentId": "s15_11", "classId": "c15", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a053_s15_12", "assignmentId": "a053", "studentId": "s15_12", "classId": "c15", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:36"}, {"id": "sub_a054_s16_01", "assignmentId": "a054", "studentId": "s16_01", "classId": "c16", "status": "submitted", "gradeStatus": "graded", "score": 65, "submittedAt": "20/06 19:33"}, {"id": "sub_a054_s16_02", "assignmentId": "a054", "studentId": "s16_02", "classId": "c16", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a054_s16_03", "assignmentId": "a054", "studentId": "s16_03", "classId": "c16", "status": "submitted", "gradeStatus": "graded", "score": 71, "submittedAt": "20/06 19:31"}, {"id": "sub_a054_s16_04", "assignmentId": "a054", "studentId": "s16_04", "classId": "c16", "status": "submitted", "gradeStatus": "graded", "score": 73, "submittedAt": "20/06 19:33"}, {"id": "sub_a055_s16_01", "assignmentId": "a055", "studentId": "s16_01", "classId": "c16", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:37"}, {"id": "sub_a055_s16_02", "assignmentId": "a055", "studentId": "s16_02", "classId": "c16", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:30"}, {"id": "sub_a055_s16_03", "assignmentId": "a055", "studentId": "s16_03", "classId": "c16", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:33"}, {"id": "sub_a055_s16_04", "assignmentId": "a055", "studentId": "s16_04", "classId": "c16", "status": "submitted", "gradeStatus": "need_grade", "score": null, "submittedAt": "20/06 19:37"}, {"id": "sub_a056_s16_01", "assignmentId": "a056", "studentId": "s16_01", "classId": "c16", "status": "submitted", "gradeStatus": "graded", "score": 72, "submittedAt": "20/06 19:37"}, {"id": "sub_a056_s16_02", "assignmentId": "a056", "studentId": "s16_02", "classId": "c16", "status": "submitted", "gradeStatus": "graded", "score": 69, "submittedAt": "20/06 19:33"}, {"id": "sub_a056_s16_03", "assignmentId": "a056", "studentId": "s16_03", "classId": "c16", "status": "submitted", "gradeStatus": "graded", "score": 79, "submittedAt": "20/06 19:30"}, {"id": "sub_a056_s16_04", "assignmentId": "a056", "studentId": "s16_04", "classId": "c16", "status": "submitted", "gradeStatus": "graded", "score": 79, "submittedAt": "20/06 19:30"}, {"id": "sub_a057_s17_01", "assignmentId": "a057", "studentId": "s17_01", "classId": "c17", "status": "submitted", "gradeStatus": "graded", "score": 70, "submittedAt": "20/06 19:38"}, {"id": "sub_a057_s17_02", "assignmentId": "a057", "studentId": "s17_02", "classId": "c17", "status": "submitted", "gradeStatus": "graded", "score": 71, "submittedAt": "20/06 19:31"}, {"id": "sub_a058_s17_01", "assignmentId": "a058", "studentId": "s17_01", "classId": "c17", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:31"}, {"id": "sub_a058_s17_02", "assignmentId": "a058", "studentId": "s17_02", "classId": "c17", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a059_s17_01", "assignmentId": "a059", "studentId": "s17_01", "classId": "c17", "status": "submitted", "gradeStatus": "graded", "score": 84, "submittedAt": "20/06 19:34"}, {"id": "sub_a059_s17_02", "assignmentId": "a059", "studentId": "s17_02", "classId": "c17", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}, {"id": "sub_a060_s17_01", "assignmentId": "a060", "studentId": "s17_01", "classId": "c17", "status": "submitted", "gradeStatus": "graded", "score": null, "submittedAt": "20/06 19:33"}, {"id": "sub_a060_s17_02", "assignmentId": "a060", "studentId": "s17_02", "classId": "c17", "status": "missing", "gradeStatus": "missing", "score": null, "submittedAt": ""}], "attendance": [{"studentId": "s01_01", "classId": "c01", "present": 6, "late": 1, "makeup": 0, "absent": 1, "excused": 0}, {"studentId": "s01_02", "classId": "c01", "present": 7, "late": 1, "makeup": 1, "absent": 1, "excused": 1}, {"studentId": "s01_03", "classId": "c01", "present": 5, "late": 0, "makeup": 0, "absent": 2, "excused": 0}, {"studentId": "s01_04", "classId": "c01", "present": 8, "late": 1, "makeup": 0, "absent": 2, "excused": 0}, {"studentId": "s01_05", "classId": "c01", "present": 5, "late": 0, "makeup": 0, "absent": 1, "excused": 0}, {"studentId": "s01_06", "classId": "c01", "present": 4, "late": 0, "makeup": 0, "absent": 0, "excused": 1}, {"studentId": "s01_07", "classId": "c01", "present": 5, "late": 0, "makeup": 0, "absent": 2, "excused": 1}, {"studentId": "s01_08", "classId": "c01", "present": 4, "late": 1, "makeup": 0, "absent": 0, "excused": 1}, {"studentId": "s02_01", "classId": "c02", "present": 5, "late": 0, "makeup": 1, "absent": 2, "excused": 0}, {"studentId": "s02_02", "classId": "c02", "present": 4, "late": 0, "makeup": 0, "absent": 0, "excused": 0}, {"studentId": "s02_03", "classId": "c02", "present": 6, "late": 1, "makeup": 0, "absent": 2, "excused": 1}, {"studentId": "s02_04", "classId": "c02", "present": 5, "late": 0, "makeup": 2, "absent": 2, "excused": 0}, {"studentId": "s02_05", "classId": "c02", "present": 6, "late": 0, "makeup": 0, "absent": 2, "excused": 1}, {"studentId": "s02_06", "classId": "c02", "present": 6, "late": 1, "makeup": 0, "absent": 1, "excused": 0}, {"studentId": "s03_01", "classId": "c03", "present": 5, "late": 1, "makeup": 1, "absent": 1, "excused": 0}, {"studentId": "s03_02", "classId": "c03", "present": 5, "late": 1, "makeup": 0, "absent": 1, "excused": 0}, {"studentId": "s03_03", "classId": "c03", "present": 8, "late": 1, "makeup": 0, "absent": 2, "excused": 1}, {"studentId": "s03_04", "classId": "c03", "present": 8, "late": 0, "makeup": 0, "absent": 2, "excused": 0}, {"studentId": "s03_05", "classId": "c03", "present": 5, "late": 1, "makeup": 0, "absent": 1, "excused": 1}, {"studentId": "s03_06", "classId": "c03", "present": 4, "late": 0, "makeup": 0, "absent": 0, "excused": 1}, {"studentId": "s03_07", "classId": "c03", "present": 7, "late": 1, "makeup": 2, "absent": 1, "excused": 0}, {"studentId": "s03_08", "classId": "c03", "present": 8, "late": 0, "makeup": 0, "absent": 1, "excused": 1}, {"studentId": "s03_09", "classId": "c03", "present": 4, "late": 0, "makeup": 0, "absent": 1, "excused": 0}, {"studentId": "s03_10", "classId": "c03", "present": 4, "late": 0, "makeup": 0, "absent": 1, "excused": 1}, {"studentId": "s03_11", "classId": "c03", "present": 7, "late": 1, "makeup": 0, "absent": 1, "excused": 1}, {"studentId": "s03_12", "classId": "c03", "present": 6, "late": 1, "makeup": 0, "absent": 2, "excused": 0}, {"studentId": "s03_13", "classId": "c03", "present": 6, "late": 0, "makeup": 0, "absent": 2, "excused": 1}, {"studentId": "s03_14", "classId": "c03", "present": 7, "late": 0, "makeup": 0, "absent": 0, "excused": 1}, {"studentId": "s04_01", "classId": "c04", "present": 7, "late": 1, "makeup": 0, "absent": 2, "excused": 1}, {"studentId": "s04_02", "classId": "c04", "present": 6, "late": 0, "makeup": 0, "absent": 1, "excused": 0}, {"studentId": "s04_03", "classId": "c04", "present": 7, "late": 1, "makeup": 0, "absent": 0, "excused": 0}, {"studentId": "s04_04", "classId": "c04", "present": 6, "late": 0, "makeup": 0, "absent": 0, "excused": 1}, {"studentId": "s04_05", "classId": "c04", "present": 6, "late": 1, "makeup": 0, "absent": 0, "excused": 0}, {"studentId": "s04_06", "classId": "c04", "present": 6, "late": 1, "makeup": 2, "absent": 1, "excused": 0}, {"studentId": "s04_07", "classId": "c04", "present": 7, "late": 0, "makeup": 1, "absent": 0, "excused": 0}, {"studentId": "s04_08", "classId": "c04", "present": 6, "late": 1, "makeup": 2, "absent": 2, "excused": 0}, {"studentId": "s04_09", "classId": "c04", "present": 5, "late": 1, "makeup": 2, "absent": 1, "excused": 0}, {"studentId": "s04_10", "classId": "c04", "present": 5, "late": 0, "makeup": 2, "absent": 0, "excused": 1}, {"studentId": "s04_11", "classId": "c04", "present": 7, "late": 1, "makeup": 0, "absent": 1, "excused": 0}, {"studentId": "s04_12", "classId": "c04", "present": 6, "late": 1, "makeup": 1, "absent": 1, "excused": 1}, {"studentId": "s04_13", "classId": "c04", "present": 4, "late": 1, "makeup": 0, "absent": 2, "excused": 0}, {"studentId": "s04_14", "classId": "c04", "present": 6, "late": 0, "makeup": 0, "absent": 2, "excused": 0}, {"studentId": "s05_01", "classId": "c05", "present": 4, "late": 0, "makeup": 0, "absent": 1, "excused": 0}, {"studentId": "s05_02", "classId": "c05", "present": 6, "late": 1, "makeup": 0, "absent": 0, "excused": 0}, {"studentId": "s05_03", "classId": "c05", "present": 7, "late": 0, "makeup": 1, "absent": 1, "excused": 1}, {"studentId": "s05_04", "classId": "c05", "present": 8, "late": 0, "makeup": 2, "absent": 1, "excused": 0}, {"studentId": "s05_05", "classId": "c05", "present": 5, "late": 0, "makeup": 1, "absent": 2, "excused": 1}, {"studentId": "s05_06", "classId": "c05", "present": 8, "late": 0, "makeup": 0, "absent": 0, "excused": 0}, {"studentId": "s05_07", "classId": "c05", "present": 8, "late": 0, "makeup": 0, "absent": 1, "excused": 1}, {"studentId": "s05_08", "classId": "c05", "present": 6, "late": 1, "makeup": 0, "absent": 2, "excused": 0}, {"studentId": "s05_09", "classId": "c05", "present": 6, "late": 1, "makeup": 0, "absent": 2, "excused": 1}, {"studentId": "s05_10", "classId": "c05", "present": 4, "late": 0, "makeup": 0, "absent": 2, "excused": 0}, {"studentId": "s05_11", "classId": "c05", "present": 6, "late": 0, "makeup": 2, "absent": 1, "excused": 0}, {"studentId": "s06_01", "classId": "c06", "present": 4, "late": 0, "makeup": 0, "absent": 2, "excused": 0}, {"studentId": "s06_02", "classId": "c06", "present": 8, "late": 1, "makeup": 2, "absent": 2, "excused": 0}, {"studentId": "s06_03", "classId": "c06", "present": 6, "late": 1, "makeup": 0, "absent": 2, "excused": 0}, {"studentId": "s06_04", "classId": "c06", "present": 6, "late": 1, "makeup": 0, "absent": 2, "excused": 0}, {"studentId": "s06_05", "classId": "c06", "present": 4, "late": 1, "makeup": 0, "absent": 2, "excused": 0}, {"studentId": "s06_06", "classId": "c06", "present": 8, "late": 1, "makeup": 0, "absent": 0, "excused": 1}, {"studentId": "s06_07", "classId": "c06", "present": 4, "late": 1, "makeup": 1, "absent": 1, "excused": 0}, {"studentId": "s06_08", "classId": "c06", "present": 5, "late": 1, "makeup": 2, "absent": 2, "excused": 0}, {"studentId": "s06_09", "classId": "c06", "present": 6, "late": 0, "makeup": 1, "absent": 2, "excused": 0}, {"studentId": "s06_10", "classId": "c06", "present": 8, "late": 1, "makeup": 1, "absent": 0, "excused": 1}, {"studentId": "s06_11", "classId": "c06", "present": 7, "late": 1, "makeup": 2, "absent": 0, "excused": 1}, {"studentId": "s06_12", "classId": "c06", "present": 6, "late": 1, "makeup": 1, "absent": 2, "excused": 1}, {"studentId": "s06_13", "classId": "c06", "present": 8, "late": 0, "makeup": 0, "absent": 2, "excused": 0}, {"studentId": "s07_01", "classId": "c07", "present": 8, "late": 1, "makeup": 0, "absent": 0, "excused": 0}, {"studentId": "s07_02", "classId": "c07", "present": 8, "late": 0, "makeup": 1, "absent": 1, "excused": 1}, {"studentId": "s07_03", "classId": "c07", "present": 8, "late": 1, "makeup": 0, "absent": 2, "excused": 1}, {"studentId": "s07_04", "classId": "c07", "present": 8, "late": 1, "makeup": 0, "absent": 0, "excused": 1}, {"studentId": "s07_05", "classId": "c07", "present": 8, "late": 1, "makeup": 0, "absent": 2, "excused": 0}, {"studentId": "s07_06", "classId": "c07", "present": 7, "late": 0, "makeup": 0, "absent": 2, "excused": 0}, {"studentId": "s07_07", "classId": "c07", "present": 4, "late": 1, "makeup": 0, "absent": 2, "excused": 0}, {"studentId": "s07_08", "classId": "c07", "present": 7, "late": 0, "makeup": 0, "absent": 1, "excused": 0}, {"studentId": "s07_09", "classId": "c07", "present": 4, "late": 0, "makeup": 0, "absent": 0, "excused": 1}, {"studentId": "s07_10", "classId": "c07", "present": 5, "late": 0, "makeup": 2, "absent": 2, "excused": 1}, {"studentId": "s07_11", "classId": "c07", "present": 8, "late": 0, "makeup": 1, "absent": 2, "excused": 0}, {"studentId": "s07_12", "classId": "c07", "present": 4, "late": 1, "makeup": 0, "absent": 0, "excused": 1}, {"studentId": "s07_13", "classId": "c07", "present": 8, "late": 1, "makeup": 0, "absent": 2, "excused": 0}, {"studentId": "s07_14", "classId": "c07", "present": 8, "late": 0, "makeup": 0, "absent": 1, "excused": 0}, {"studentId": "s07_15", "classId": "c07", "present": 8, "late": 0, "makeup": 2, "absent": 2, "excused": 1}, {"studentId": "s08_01", "classId": "c08", "present": 8, "late": 1, "makeup": 0, "absent": 1, "excused": 0}, {"studentId": "s08_02", "classId": "c08", "present": 8, "late": 1, "makeup": 0, "absent": 1, "excused": 0}, {"studentId": "s08_03", "classId": "c08", "present": 6, "late": 1, "makeup": 1, "absent": 1, "excused": 0}, {"studentId": "s08_04", "classId": "c08", "present": 5, "late": 0, "makeup": 0, "absent": 1, "excused": 0}, {"studentId": "s08_05", "classId": "c08", "present": 7, "late": 0, "makeup": 0, "absent": 0, "excused": 1}, {"studentId": "s08_06", "classId": "c08", "present": 7, "late": 0, "makeup": 1, "absent": 2, "excused": 1}, {"studentId": "s08_07", "classId": "c08", "present": 4, "late": 0, "makeup": 0, "absent": 1, "excused": 0}, {"studentId": "s08_08", "classId": "c08", "present": 5, "late": 0, "makeup": 0, "absent": 1, "excused": 0}, {"studentId": "s08_09", "classId": "c08", "present": 6, "late": 1, "makeup": 1, "absent": 0, "excused": 1}, {"studentId": "s08_10", "classId": "c08", "present": 4, "late": 1, "makeup": 0, "absent": 0, "excused": 0}, {"studentId": "s09_01", "classId": "c09", "present": 4, "late": 1, "makeup": 0, "absent": 1, "excused": 0}, {"studentId": "s09_02", "classId": "c09", "present": 8, "late": 0, "makeup": 2, "absent": 0, "excused": 1}, {"studentId": "s09_03", "classId": "c09", "present": 8, "late": 0, "makeup": 0, "absent": 0, "excused": 1}, {"studentId": "s09_04", "classId": "c09", "present": 8, "late": 1, "makeup": 0, "absent": 1, "excused": 0}, {"studentId": "s09_05", "classId": "c09", "present": 5, "late": 1, "makeup": 0, "absent": 0, "excused": 0}, {"studentId": "s09_06", "classId": "c09", "present": 8, "late": 0, "makeup": 0, "absent": 2, "excused": 0}, {"studentId": "s09_07", "classId": "c09", "present": 7, "late": 1, "makeup": 0, "absent": 2, "excused": 0}, {"studentId": "s09_08", "classId": "c09", "present": 6, "late": 0, "makeup": 1, "absent": 2, "excused": 1}, {"studentId": "s09_09", "classId": "c09", "present": 7, "late": 1, "makeup": 0, "absent": 2, "excused": 1}, {"studentId": "s09_10", "classId": "c09", "present": 6, "late": 0, "makeup": 0, "absent": 0, "excused": 0}, {"studentId": "s09_11", "classId": "c09", "present": 8, "late": 1, "makeup": 1, "absent": 0, "excused": 1}, {"studentId": "s09_12", "classId": "c09", "present": 8, "late": 0, "makeup": 0, "absent": 1, "excused": 1}, {"studentId": "s09_13", "classId": "c09", "present": 6, "late": 0, "makeup": 0, "absent": 2, "excused": 0}, {"studentId": "s10_01", "classId": "c10", "present": 7, "late": 0, "makeup": 1, "absent": 2, "excused": 1}, {"studentId": "s10_02", "classId": "c10", "present": 4, "late": 1, "makeup": 0, "absent": 1, "excused": 1}, {"studentId": "s10_03", "classId": "c10", "present": 7, "late": 1, "makeup": 1, "absent": 0, "excused": 1}, {"studentId": "s10_04", "classId": "c10", "present": 5, "late": 1, "makeup": 0, "absent": 0, "excused": 0}, {"studentId": "s10_05", "classId": "c10", "present": 8, "late": 0, "makeup": 1, "absent": 2, "excused": 0}, {"studentId": "s10_06", "classId": "c10", "present": 5, "late": 0, "makeup": 0, "absent": 0, "excused": 0}, {"studentId": "s10_07", "classId": "c10", "present": 4, "late": 0, "makeup": 0, "absent": 0, "excused": 1}, {"studentId": "s10_08", "classId": "c10", "present": 6, "late": 0, "makeup": 0, "absent": 2, "excused": 1}, {"studentId": "s10_09", "classId": "c10", "present": 6, "late": 1, "makeup": 2, "absent": 2, "excused": 1}, {"studentId": "s10_10", "classId": "c10", "present": 4, "late": 1, "makeup": 0, "absent": 1, "excused": 0}, {"studentId": "s10_11", "classId": "c10", "present": 8, "late": 1, "makeup": 0, "absent": 1, "excused": 1}, {"studentId": "s10_12", "classId": "c10", "present": 8, "late": 0, "makeup": 0, "absent": 2, "excused": 0}, {"studentId": "s11_01", "classId": "c11", "present": 4, "late": 1, "makeup": 0, "absent": 0, "excused": 1}, {"studentId": "s11_02", "classId": "c11", "present": 6, "late": 0, "makeup": 0, "absent": 2, "excused": 1}, {"studentId": "s11_03", "classId": "c11", "present": 4, "late": 1, "makeup": 0, "absent": 1, "excused": 1}, {"studentId": "s11_04", "classId": "c11", "present": 5, "late": 1, "makeup": 0, "absent": 0, "excused": 1}, {"studentId": "s11_05", "classId": "c11", "present": 5, "late": 0, "makeup": 0, "absent": 0, "excused": 0}, {"studentId": "s11_06", "classId": "c11", "present": 8, "late": 0, "makeup": 0, "absent": 2, "excused": 0}, {"studentId": "s11_07", "classId": "c11", "present": 4, "late": 0, "makeup": 0, "absent": 2, "excused": 1}, {"studentId": "s11_08", "classId": "c11", "present": 4, "late": 1, "makeup": 1, "absent": 0, "excused": 0}, {"studentId": "s11_09", "classId": "c11", "present": 5, "late": 0, "makeup": 0, "absent": 1, "excused": 0}, {"studentId": "s11_10", "classId": "c11", "present": 8, "late": 1, "makeup": 0, "absent": 0, "excused": 1}, {"studentId": "s11_11", "classId": "c11", "present": 7, "late": 0, "makeup": 0, "absent": 2, "excused": 1}, {"studentId": "s11_12", "classId": "c11", "present": 5, "late": 1, "makeup": 0, "absent": 2, "excused": 1}, {"studentId": "s11_13", "classId": "c11", "present": 8, "late": 1, "makeup": 0, "absent": 0, "excused": 1}, {"studentId": "s11_14", "classId": "c11", "present": 5, "late": 0, "makeup": 1, "absent": 2, "excused": 1}, {"studentId": "s11_15", "classId": "c11", "present": 5, "late": 1, "makeup": 0, "absent": 2, "excused": 0}, {"studentId": "s12_01", "classId": "c12", "present": 4, "late": 0, "makeup": 0, "absent": 2, "excused": 0}, {"studentId": "s12_02", "classId": "c12", "present": 8, "late": 1, "makeup": 2, "absent": 1, "excused": 1}, {"studentId": "s12_03", "classId": "c12", "present": 6, "late": 0, "makeup": 2, "absent": 1, "excused": 0}, {"studentId": "s12_04", "classId": "c12", "present": 4, "late": 0, "makeup": 0, "absent": 0, "excused": 1}, {"studentId": "s12_05", "classId": "c12", "present": 5, "late": 1, "makeup": 0, "absent": 1, "excused": 0}, {"studentId": "s12_06", "classId": "c12", "present": 4, "late": 1, "makeup": 0, "absent": 1, "excused": 0}, {"studentId": "s12_07", "classId": "c12", "present": 7, "late": 0, "makeup": 0, "absent": 1, "excused": 1}, {"studentId": "s12_08", "classId": "c12", "present": 5, "late": 1, "makeup": 1, "absent": 0, "excused": 1}, {"studentId": "s12_09", "classId": "c12", "present": 5, "late": 1, "makeup": 1, "absent": 0, "excused": 1}, {"studentId": "s12_10", "classId": "c12", "present": 6, "late": 0, "makeup": 0, "absent": 1, "excused": 1}, {"studentId": "s12_11", "classId": "c12", "present": 4, "late": 0, "makeup": 2, "absent": 0, "excused": 1}, {"studentId": "s12_12", "classId": "c12", "present": 8, "late": 1, "makeup": 0, "absent": 2, "excused": 0}, {"studentId": "s12_13", "classId": "c12", "present": 5, "late": 0, "makeup": 0, "absent": 0, "excused": 1}, {"studentId": "s12_14", "classId": "c12", "present": 4, "late": 1, "makeup": 0, "absent": 2, "excused": 1}, {"studentId": "s13_01", "classId": "c13", "present": 5, "late": 1, "makeup": 0, "absent": 1, "excused": 0}, {"studentId": "s13_02", "classId": "c13", "present": 7, "late": 1, "makeup": 0, "absent": 1, "excused": 1}, {"studentId": "s13_03", "classId": "c13", "present": 5, "late": 1, "makeup": 0, "absent": 2, "excused": 1}, {"studentId": "s13_04", "classId": "c13", "present": 4, "late": 0, "makeup": 0, "absent": 0, "excused": 0}, {"studentId": "s13_05", "classId": "c13", "present": 4, "late": 0, "makeup": 0, "absent": 2, "excused": 0}, {"studentId": "s13_06", "classId": "c13", "present": 8, "late": 1, "makeup": 0, "absent": 1, "excused": 1}, {"studentId": "s13_07", "classId": "c13", "present": 6, "late": 1, "makeup": 0, "absent": 2, "excused": 0}, {"studentId": "s13_08", "classId": "c13", "present": 7, "late": 1, "makeup": 0, "absent": 1, "excused": 1}, {"studentId": "s13_09", "classId": "c13", "present": 4, "late": 0, "makeup": 2, "absent": 0, "excused": 0}, {"studentId": "s13_10", "classId": "c13", "present": 7, "late": 0, "makeup": 0, "absent": 2, "excused": 1}, {"studentId": "s13_11", "classId": "c13", "present": 4, "late": 0, "makeup": 2, "absent": 1, "excused": 1}, {"studentId": "s13_12", "classId": "c13", "present": 8, "late": 1, "makeup": 0, "absent": 2, "excused": 0}, {"studentId": "s13_13", "classId": "c13", "present": 6, "late": 1, "makeup": 1, "absent": 0, "excused": 0}, {"studentId": "s14_01", "classId": "c14", "present": 8, "late": 0, "makeup": 2, "absent": 2, "excused": 0}, {"studentId": "s14_02", "classId": "c14", "present": 7, "late": 0, "makeup": 1, "absent": 1, "excused": 0}, {"studentId": "s14_03", "classId": "c14", "present": 5, "late": 1, "makeup": 0, "absent": 0, "excused": 0}, {"studentId": "s14_04", "classId": "c14", "present": 4, "late": 1, "makeup": 0, "absent": 0, "excused": 1}, {"studentId": "s14_05", "classId": "c14", "present": 6, "late": 0, "makeup": 0, "absent": 2, "excused": 0}, {"studentId": "s14_06", "classId": "c14", "present": 4, "late": 0, "makeup": 0, "absent": 1, "excused": 0}, {"studentId": "s14_07", "classId": "c14", "present": 7, "late": 1, "makeup": 0, "absent": 1, "excused": 0}, {"studentId": "s14_08", "classId": "c14", "present": 8, "late": 0, "makeup": 0, "absent": 1, "excused": 1}, {"studentId": "s14_09", "classId": "c14", "present": 8, "late": 0, "makeup": 0, "absent": 1, "excused": 0}, {"studentId": "s14_10", "classId": "c14", "present": 5, "late": 1, "makeup": 0, "absent": 1, "excused": 0}, {"studentId": "s14_11", "classId": "c14", "present": 5, "late": 1, "makeup": 0, "absent": 0, "excused": 0}, {"studentId": "s14_12", "classId": "c14", "present": 8, "late": 1, "makeup": 1, "absent": 2, "excused": 1}, {"studentId": "s14_13", "classId": "c14", "present": 7, "late": 0, "makeup": 0, "absent": 1, "excused": 1}, {"studentId": "s14_14", "classId": "c14", "present": 5, "late": 1, "makeup": 1, "absent": 1, "excused": 0}, {"studentId": "s15_01", "classId": "c15", "present": 6, "late": 0, "makeup": 0, "absent": 2, "excused": 1}, {"studentId": "s15_02", "classId": "c15", "present": 6, "late": 0, "makeup": 2, "absent": 0, "excused": 1}, {"studentId": "s15_03", "classId": "c15", "present": 8, "late": 0, "makeup": 0, "absent": 2, "excused": 0}, {"studentId": "s15_04", "classId": "c15", "present": 5, "late": 0, "makeup": 0, "absent": 0, "excused": 1}, {"studentId": "s15_05", "classId": "c15", "present": 6, "late": 0, "makeup": 0, "absent": 1, "excused": 1}, {"studentId": "s15_06", "classId": "c15", "present": 4, "late": 1, "makeup": 0, "absent": 1, "excused": 1}, {"studentId": "s15_07", "classId": "c15", "present": 5, "late": 0, "makeup": 0, "absent": 2, "excused": 0}, {"studentId": "s15_08", "classId": "c15", "present": 6, "late": 0, "makeup": 0, "absent": 2, "excused": 0}, {"studentId": "s15_09", "classId": "c15", "present": 5, "late": 1, "makeup": 0, "absent": 1, "excused": 0}, {"studentId": "s15_10", "classId": "c15", "present": 5, "late": 1, "makeup": 0, "absent": 1, "excused": 1}, {"studentId": "s15_11", "classId": "c15", "present": 5, "late": 1, "makeup": 0, "absent": 0, "excused": 1}, {"studentId": "s15_12", "classId": "c15", "present": 5, "late": 1, "makeup": 0, "absent": 1, "excused": 0}, {"studentId": "s16_01", "classId": "c16", "present": 5, "late": 0, "makeup": 0, "absent": 0, "excused": 0}, {"studentId": "s16_02", "classId": "c16", "present": 7, "late": 1, "makeup": 1, "absent": 0, "excused": 1}, {"studentId": "s16_03", "classId": "c16", "present": 7, "late": 0, "makeup": 0, "absent": 2, "excused": 0}, {"studentId": "s16_04", "classId": "c16", "present": 7, "late": 1, "makeup": 0, "absent": 2, "excused": 0}, {"studentId": "s17_01", "classId": "c17", "present": 4, "late": 0, "makeup": 2, "absent": 2, "excused": 0}, {"studentId": "s17_02", "classId": "c17", "present": 4, "late": 0, "makeup": 0, "absent": 0, "excused": 1}], "evaluations": [{"studentId": "s01_01", "classId": "c01", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 3, "Reading": 3, "Writing": 3, "Vocabulary": 4, "Participation": 3, "Homework": 5}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s01_02", "classId": "c01", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 4, "Reading": 4, "Writing": 5, "Vocabulary": 4, "Participation": 5, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s01_03", "classId": "c01", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 4, "Reading": 3, "Writing": 3, "Vocabulary": 3, "Participation": 4, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s01_04", "classId": "c01", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 5, "Reading": 4, "Writing": 4, "Vocabulary": 3, "Participation": 4, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s01_05", "classId": "c01", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 4, "Reading": 3, "Writing": 3, "Vocabulary": 5, "Participation": 3, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s01_06", "classId": "c01", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 5, "Reading": 3, "Writing": 3, "Vocabulary": 4, "Participation": 4, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s01_07", "classId": "c01", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 4, "Reading": 3, "Writing": 3, "Vocabulary": 5, "Participation": 4, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s01_08", "classId": "c01", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 4, "Reading": 4, "Writing": 3, "Vocabulary": 5, "Participation": 4, "Homework": 5}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s02_01", "classId": "c02", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 5, "Reading": 5, "Writing": 3, "Vocabulary": 5, "Participation": 3, "Homework": 3}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s02_02", "classId": "c02", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 2, "Reading": 3, "Writing": 4, "Vocabulary": 5, "Participation": 4, "Homework": 3}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s02_03", "classId": "c02", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 3, "Reading": 5, "Writing": 4, "Vocabulary": 4, "Participation": 3, "Homework": 5}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s02_04", "classId": "c02", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 2, "Reading": 5, "Writing": 5, "Vocabulary": 3, "Participation": 5, "Homework": 3}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s02_05", "classId": "c02", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 3, "Reading": 3, "Writing": 3, "Vocabulary": 5, "Participation": 5, "Homework": 5}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s02_06", "classId": "c02", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 5, "Reading": 4, "Writing": 5, "Vocabulary": 3, "Participation": 4, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s03_01", "classId": "c03", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 4, "Reading": 3, "Writing": 3, "Vocabulary": 3, "Participation": 3, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s03_02", "classId": "c03", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 4, "Reading": 3, "Writing": 5, "Vocabulary": 3, "Participation": 5, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s03_03", "classId": "c03", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 4, "Reading": 5, "Writing": 2, "Vocabulary": 5, "Participation": 5, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s03_04", "classId": "c03", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 5, "Reading": 5, "Writing": 5, "Vocabulary": 5, "Participation": 3, "Homework": 3}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s03_05", "classId": "c03", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 3, "Reading": 5, "Writing": 5, "Vocabulary": 4, "Participation": 4, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s03_06", "classId": "c03", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 3, "Reading": 3, "Writing": 5, "Vocabulary": 3, "Participation": 5, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s03_07", "classId": "c03", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 5, "Reading": 3, "Writing": 4, "Vocabulary": 4, "Participation": 5, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s03_08", "classId": "c03", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 3, "Reading": 5, "Writing": 3, "Vocabulary": 5, "Participation": 4, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s03_09", "classId": "c03", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 3, "Reading": 5, "Writing": 4, "Vocabulary": 4, "Participation": 3, "Homework": 3}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s03_10", "classId": "c03", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 5, "Reading": 5, "Writing": 4, "Vocabulary": 5, "Participation": 4, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s03_11", "classId": "c03", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 4, "Reading": 4, "Writing": 4, "Vocabulary": 3, "Participation": 4, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s03_12", "classId": "c03", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 3, "Reading": 3, "Writing": 4, "Vocabulary": 5, "Participation": 3, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s03_13", "classId": "c03", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 2, "Reading": 4, "Writing": 4, "Vocabulary": 3, "Participation": 4, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s03_14", "classId": "c03", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 5, "Reading": 5, "Writing": 4, "Vocabulary": 5, "Participation": 3, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s04_01", "classId": "c04", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 3, "Reading": 5, "Writing": 4, "Vocabulary": 4, "Participation": 5, "Homework": 4}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s04_02", "classId": "c04", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 3, "Reading": 4, "Writing": 3, "Vocabulary": 4, "Participation": 5, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s04_03", "classId": "c04", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 2, "Reading": 5, "Writing": 3, "Vocabulary": 5, "Participation": 3, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s04_04", "classId": "c04", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 3, "Reading": 5, "Writing": 5, "Vocabulary": 4, "Participation": 5, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s04_05", "classId": "c04", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 3, "Reading": 3, "Writing": 5, "Vocabulary": 3, "Participation": 4, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s04_06", "classId": "c04", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 5, "Reading": 3, "Writing": 4, "Vocabulary": 4, "Participation": 3, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s04_07", "classId": "c04", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 3, "Reading": 5, "Writing": 4, "Vocabulary": 4, "Participation": 5, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s04_08", "classId": "c04", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 2, "Reading": 5, "Writing": 4, "Vocabulary": 4, "Participation": 4, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s04_09", "classId": "c04", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 2, "Reading": 4, "Writing": 4, "Vocabulary": 5, "Participation": 3, "Homework": 5}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s04_10", "classId": "c04", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 4, "Reading": 4, "Writing": 3, "Vocabulary": 4, "Participation": 5, "Homework": 3}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s04_11", "classId": "c04", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 3, "Reading": 5, "Writing": 4, "Vocabulary": 5, "Participation": 5, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s04_12", "classId": "c04", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 3, "Reading": 3, "Writing": 2, "Vocabulary": 3, "Participation": 4, "Homework": 5}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s04_13", "classId": "c04", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 3, "Reading": 3, "Writing": 2, "Vocabulary": 3, "Participation": 4, "Homework": 4}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s04_14", "classId": "c04", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 4, "Reading": 3, "Writing": 4, "Vocabulary": 5, "Participation": 3, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s05_01", "classId": "c05", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 5, "Reading": 5, "Writing": 4, "Vocabulary": 4, "Participation": 5, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s05_02", "classId": "c05", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 5, "Reading": 4, "Writing": 3, "Vocabulary": 5, "Participation": 4, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s05_03", "classId": "c05", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 4, "Reading": 5, "Writing": 2, "Vocabulary": 3, "Participation": 3, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s05_04", "classId": "c05", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 3, "Reading": 5, "Writing": 5, "Vocabulary": 3, "Participation": 3, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s05_05", "classId": "c05", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 4, "Reading": 4, "Writing": 3, "Vocabulary": 5, "Participation": 4, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s05_06", "classId": "c05", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 3, "Reading": 4, "Writing": 4, "Vocabulary": 4, "Participation": 3, "Homework": 4}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s05_07", "classId": "c05", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 5, "Reading": 3, "Writing": 4, "Vocabulary": 5, "Participation": 4, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s05_08", "classId": "c05", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 4, "Reading": 4, "Writing": 2, "Vocabulary": 5, "Participation": 3, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s05_09", "classId": "c05", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 3, "Reading": 3, "Writing": 2, "Vocabulary": 5, "Participation": 4, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s05_10", "classId": "c05", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 2, "Reading": 4, "Writing": 3, "Vocabulary": 4, "Participation": 5, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s05_11", "classId": "c05", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 3, "Reading": 3, "Writing": 4, "Vocabulary": 3, "Participation": 3, "Homework": 5}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s06_01", "classId": "c06", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 2, "Reading": 5, "Writing": 4, "Vocabulary": 3, "Participation": 5, "Homework": 3}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s06_02", "classId": "c06", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 3, "Reading": 3, "Writing": 2, "Vocabulary": 3, "Participation": 5, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s06_03", "classId": "c06", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 3, "Reading": 4, "Writing": 3, "Vocabulary": 4, "Participation": 3, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s06_04", "classId": "c06", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 3, "Reading": 3, "Writing": 4, "Vocabulary": 3, "Participation": 5, "Homework": 5}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s06_05", "classId": "c06", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 2, "Reading": 4, "Writing": 3, "Vocabulary": 3, "Participation": 4, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s06_06", "classId": "c06", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 4, "Reading": 3, "Writing": 3, "Vocabulary": 3, "Participation": 4, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s06_07", "classId": "c06", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 4, "Reading": 3, "Writing": 3, "Vocabulary": 5, "Participation": 5, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s06_08", "classId": "c06", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 4, "Reading": 3, "Writing": 4, "Vocabulary": 5, "Participation": 4, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s06_09", "classId": "c06", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 2, "Reading": 5, "Writing": 4, "Vocabulary": 3, "Participation": 3, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s06_10", "classId": "c06", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 2, "Reading": 5, "Writing": 2, "Vocabulary": 3, "Participation": 3, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s06_11", "classId": "c06", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 4, "Reading": 3, "Writing": 4, "Vocabulary": 4, "Participation": 5, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s06_12", "classId": "c06", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 4, "Reading": 4, "Writing": 5, "Vocabulary": 5, "Participation": 5, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s06_13", "classId": "c06", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 3, "Reading": 5, "Writing": 4, "Vocabulary": 4, "Participation": 3, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s07_01", "classId": "c07", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 5, "Reading": 3, "Writing": 3, "Vocabulary": 5, "Participation": 4, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s07_02", "classId": "c07", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 3, "Reading": 4, "Writing": 4, "Vocabulary": 4, "Participation": 4, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s07_03", "classId": "c07", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 3, "Reading": 5, "Writing": 3, "Vocabulary": 5, "Participation": 3, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s07_04", "classId": "c07", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 2, "Reading": 3, "Writing": 4, "Vocabulary": 5, "Participation": 3, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s07_05", "classId": "c07", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 3, "Reading": 4, "Writing": 5, "Vocabulary": 3, "Participation": 5, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s07_06", "classId": "c07", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 3, "Reading": 5, "Writing": 4, "Vocabulary": 4, "Participation": 3, "Homework": 4}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s07_07", "classId": "c07", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 5, "Reading": 3, "Writing": 4, "Vocabulary": 4, "Participation": 4, "Homework": 3}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s07_08", "classId": "c07", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 5, "Reading": 3, "Writing": 4, "Vocabulary": 3, "Participation": 3, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s07_09", "classId": "c07", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 4, "Reading": 3, "Writing": 4, "Vocabulary": 3, "Participation": 3, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s07_10", "classId": "c07", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 5, "Reading": 4, "Writing": 3, "Vocabulary": 3, "Participation": 3, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s07_11", "classId": "c07", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 4, "Reading": 4, "Writing": 5, "Vocabulary": 4, "Participation": 5, "Homework": 3}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s07_12", "classId": "c07", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 4, "Reading": 4, "Writing": 4, "Vocabulary": 5, "Participation": 4, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s07_13", "classId": "c07", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 5, "Reading": 5, "Writing": 4, "Vocabulary": 3, "Participation": 4, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s07_14", "classId": "c07", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 3, "Reading": 3, "Writing": 5, "Vocabulary": 3, "Participation": 4, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s07_15", "classId": "c07", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 4, "Reading": 5, "Writing": 4, "Vocabulary": 3, "Participation": 5, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s08_01", "classId": "c08", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 2, "Reading": 4, "Writing": 3, "Vocabulary": 5, "Participation": 3, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s08_02", "classId": "c08", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 5, "Reading": 5, "Writing": 5, "Vocabulary": 5, "Participation": 3, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s08_03", "classId": "c08", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 3, "Reading": 5, "Writing": 3, "Vocabulary": 3, "Participation": 3, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s08_04", "classId": "c08", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 3, "Reading": 4, "Writing": 3, "Vocabulary": 4, "Participation": 4, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s08_05", "classId": "c08", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 4, "Reading": 5, "Writing": 4, "Vocabulary": 3, "Participation": 4, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s08_06", "classId": "c08", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 2, "Reading": 3, "Writing": 4, "Vocabulary": 4, "Participation": 3, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s08_07", "classId": "c08", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 3, "Reading": 4, "Writing": 4, "Vocabulary": 3, "Participation": 3, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s08_08", "classId": "c08", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 3, "Reading": 5, "Writing": 4, "Vocabulary": 4, "Participation": 3, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s08_09", "classId": "c08", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 2, "Reading": 3, "Writing": 5, "Vocabulary": 5, "Participation": 3, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s08_10", "classId": "c08", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 5, "Reading": 5, "Writing": 3, "Vocabulary": 3, "Participation": 3, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s09_01", "classId": "c09", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 4, "Reading": 3, "Writing": 3, "Vocabulary": 5, "Participation": 4, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s09_02", "classId": "c09", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 4, "Reading": 3, "Writing": 4, "Vocabulary": 5, "Participation": 4, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s09_03", "classId": "c09", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 4, "Reading": 4, "Writing": 4, "Vocabulary": 3, "Participation": 3, "Homework": 4}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s09_04", "classId": "c09", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 3, "Reading": 3, "Writing": 4, "Vocabulary": 4, "Participation": 4, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s09_05", "classId": "c09", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 4, "Reading": 3, "Writing": 5, "Vocabulary": 4, "Participation": 4, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s09_06", "classId": "c09", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 4, "Reading": 3, "Writing": 4, "Vocabulary": 5, "Participation": 4, "Homework": 5}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s09_07", "classId": "c09", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 2, "Reading": 5, "Writing": 4, "Vocabulary": 4, "Participation": 5, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s09_08", "classId": "c09", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 5, "Reading": 4, "Writing": 4, "Vocabulary": 5, "Participation": 4, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s09_09", "classId": "c09", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 4, "Reading": 5, "Writing": 2, "Vocabulary": 4, "Participation": 4, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s09_10", "classId": "c09", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 4, "Reading": 4, "Writing": 4, "Vocabulary": 4, "Participation": 5, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s09_11", "classId": "c09", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 3, "Reading": 5, "Writing": 2, "Vocabulary": 4, "Participation": 5, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s09_12", "classId": "c09", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 4, "Reading": 5, "Writing": 4, "Vocabulary": 5, "Participation": 3, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s09_13", "classId": "c09", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 5, "Reading": 5, "Writing": 4, "Vocabulary": 5, "Participation": 4, "Homework": 5}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s10_01", "classId": "c10", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 2, "Reading": 3, "Writing": 4, "Vocabulary": 3, "Participation": 4, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s10_02", "classId": "c10", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 4, "Reading": 3, "Writing": 4, "Vocabulary": 4, "Participation": 5, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s10_03", "classId": "c10", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 2, "Reading": 3, "Writing": 3, "Vocabulary": 3, "Participation": 3, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s10_04", "classId": "c10", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 3, "Reading": 4, "Writing": 4, "Vocabulary": 5, "Participation": 3, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s10_05", "classId": "c10", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 4, "Reading": 4, "Writing": 5, "Vocabulary": 5, "Participation": 3, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s10_06", "classId": "c10", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 4, "Reading": 4, "Writing": 3, "Vocabulary": 5, "Participation": 3, "Homework": 4}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s10_07", "classId": "c10", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 5, "Reading": 3, "Writing": 5, "Vocabulary": 5, "Participation": 4, "Homework": 3}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s10_08", "classId": "c10", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 4, "Reading": 4, "Writing": 5, "Vocabulary": 3, "Participation": 4, "Homework": 3}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s10_09", "classId": "c10", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 4, "Reading": 5, "Writing": 2, "Vocabulary": 3, "Participation": 4, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s10_10", "classId": "c10", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 3, "Reading": 3, "Writing": 4, "Vocabulary": 5, "Participation": 3, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s10_11", "classId": "c10", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 5, "Reading": 3, "Writing": 3, "Vocabulary": 5, "Participation": 4, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s10_12", "classId": "c10", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 3, "Reading": 4, "Writing": 5, "Vocabulary": 4, "Participation": 5, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s11_01", "classId": "c11", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 5, "Reading": 3, "Writing": 4, "Vocabulary": 4, "Participation": 3, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s11_02", "classId": "c11", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 4, "Reading": 5, "Writing": 5, "Vocabulary": 4, "Participation": 5, "Homework": 5}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s11_03", "classId": "c11", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 4, "Reading": 3, "Writing": 4, "Vocabulary": 5, "Participation": 5, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s11_04", "classId": "c11", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 5, "Reading": 4, "Writing": 4, "Vocabulary": 4, "Participation": 4, "Homework": 4}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s11_05", "classId": "c11", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 4, "Reading": 5, "Writing": 4, "Vocabulary": 4, "Participation": 3, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s11_06", "classId": "c11", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 4, "Reading": 4, "Writing": 3, "Vocabulary": 5, "Participation": 5, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s11_07", "classId": "c11", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 3, "Reading": 3, "Writing": 5, "Vocabulary": 3, "Participation": 3, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s11_08", "classId": "c11", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 5, "Reading": 4, "Writing": 3, "Vocabulary": 3, "Participation": 4, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s11_09", "classId": "c11", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 5, "Reading": 5, "Writing": 4, "Vocabulary": 4, "Participation": 3, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s11_10", "classId": "c11", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 4, "Reading": 5, "Writing": 2, "Vocabulary": 5, "Participation": 3, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s11_11", "classId": "c11", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 3, "Reading": 3, "Writing": 3, "Vocabulary": 5, "Participation": 4, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s11_12", "classId": "c11", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 2, "Reading": 3, "Writing": 4, "Vocabulary": 3, "Participation": 3, "Homework": 3}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s11_13", "classId": "c11", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 3, "Reading": 5, "Writing": 4, "Vocabulary": 4, "Participation": 5, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s11_14", "classId": "c11", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 5, "Reading": 4, "Writing": 3, "Vocabulary": 5, "Participation": 4, "Homework": 4}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s11_15", "classId": "c11", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 3, "Reading": 3, "Writing": 4, "Vocabulary": 3, "Participation": 5, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s12_01", "classId": "c12", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 4, "Reading": 5, "Writing": 5, "Vocabulary": 5, "Participation": 3, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s12_02", "classId": "c12", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 4, "Reading": 5, "Writing": 5, "Vocabulary": 4, "Participation": 4, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s12_03", "classId": "c12", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 3, "Reading": 5, "Writing": 3, "Vocabulary": 3, "Participation": 3, "Homework": 5}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s12_04", "classId": "c12", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 4, "Reading": 3, "Writing": 5, "Vocabulary": 3, "Participation": 5, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s12_05", "classId": "c12", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 4, "Reading": 4, "Writing": 3, "Vocabulary": 3, "Participation": 3, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s12_06", "classId": "c12", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 5, "Reading": 4, "Writing": 5, "Vocabulary": 3, "Participation": 3, "Homework": 4}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s12_07", "classId": "c12", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 3, "Reading": 4, "Writing": 3, "Vocabulary": 3, "Participation": 4, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s12_08", "classId": "c12", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 2, "Reading": 5, "Writing": 5, "Vocabulary": 3, "Participation": 5, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s12_09", "classId": "c12", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 4, "Reading": 3, "Writing": 3, "Vocabulary": 3, "Participation": 3, "Homework": 4}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s12_10", "classId": "c12", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 3, "Reading": 5, "Writing": 5, "Vocabulary": 4, "Participation": 3, "Homework": 5}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s12_11", "classId": "c12", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 3, "Reading": 3, "Writing": 3, "Vocabulary": 3, "Participation": 3, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s12_12", "classId": "c12", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 5, "Reading": 3, "Writing": 5, "Vocabulary": 4, "Participation": 3, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s12_13", "classId": "c12", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 3, "Reading": 3, "Writing": 4, "Vocabulary": 5, "Participation": 4, "Homework": 4}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s12_14", "classId": "c12", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 4, "Reading": 5, "Writing": 4, "Vocabulary": 4, "Participation": 4, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s13_01", "classId": "c13", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 4, "Reading": 5, "Writing": 4, "Vocabulary": 5, "Participation": 3, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s13_02", "classId": "c13", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 3, "Reading": 4, "Writing": 4, "Vocabulary": 5, "Participation": 3, "Homework": 5}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s13_03", "classId": "c13", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 4, "Reading": 4, "Writing": 2, "Vocabulary": 3, "Participation": 5, "Homework": 3}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s13_04", "classId": "c13", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 4, "Reading": 3, "Writing": 5, "Vocabulary": 4, "Participation": 5, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s13_05", "classId": "c13", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 4, "Reading": 4, "Writing": 2, "Vocabulary": 4, "Participation": 5, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s13_06", "classId": "c13", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 4, "Reading": 5, "Writing": 3, "Vocabulary": 3, "Participation": 3, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s13_07", "classId": "c13", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 3, "Reading": 5, "Writing": 5, "Vocabulary": 5, "Participation": 4, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s13_08", "classId": "c13", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 4, "Reading": 5, "Writing": 5, "Vocabulary": 5, "Participation": 4, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s13_09", "classId": "c13", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 3, "Reading": 4, "Writing": 2, "Vocabulary": 5, "Participation": 5, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s13_10", "classId": "c13", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 5, "Reading": 3, "Writing": 4, "Vocabulary": 3, "Participation": 4, "Homework": 3}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s13_11", "classId": "c13", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 3, "Reading": 3, "Writing": 4, "Vocabulary": 3, "Participation": 4, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s13_12", "classId": "c13", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 3, "Reading": 3, "Writing": 3, "Vocabulary": 5, "Participation": 3, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s13_13", "classId": "c13", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 3, "Reading": 3, "Writing": 3, "Vocabulary": 4, "Participation": 3, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s14_01", "classId": "c14", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 3, "Reading": 3, "Writing": 2, "Vocabulary": 5, "Participation": 3, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s14_02", "classId": "c14", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 2, "Reading": 5, "Writing": 4, "Vocabulary": 4, "Participation": 3, "Homework": 3}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s14_03", "classId": "c14", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 3, "Reading": 4, "Writing": 3, "Vocabulary": 5, "Participation": 3, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s14_04", "classId": "c14", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 3, "Reading": 4, "Writing": 5, "Vocabulary": 4, "Participation": 3, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s14_05", "classId": "c14", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 4, "Reading": 5, "Writing": 4, "Vocabulary": 5, "Participation": 5, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s14_06", "classId": "c14", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 3, "Reading": 5, "Writing": 3, "Vocabulary": 5, "Participation": 5, "Homework": 5}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s14_07", "classId": "c14", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 5, "Reading": 4, "Writing": 5, "Vocabulary": 4, "Participation": 4, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s14_08", "classId": "c14", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 4, "Reading": 3, "Writing": 4, "Vocabulary": 3, "Participation": 4, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s14_09", "classId": "c14", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 4, "Reading": 5, "Writing": 2, "Vocabulary": 5, "Participation": 5, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s14_10", "classId": "c14", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 4, "Reading": 5, "Writing": 3, "Vocabulary": 4, "Participation": 5, "Homework": 5}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s14_11", "classId": "c14", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 3, "Reading": 5, "Writing": 4, "Vocabulary": 5, "Participation": 3, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s14_12", "classId": "c14", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 5, "Reading": 4, "Writing": 4, "Vocabulary": 4, "Participation": 4, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s14_13", "classId": "c14", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 5, "Reading": 3, "Writing": 4, "Vocabulary": 4, "Participation": 4, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s14_14", "classId": "c14", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 3, "Reading": 5, "Writing": 5, "Vocabulary": 4, "Participation": 3, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s15_01", "classId": "c15", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 4, "Reading": 5, "Writing": 5, "Vocabulary": 4, "Participation": 5, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s15_02", "classId": "c15", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 5, "Reading": 3, "Writing": 3, "Vocabulary": 4, "Participation": 5, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s15_03", "classId": "c15", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 5, "Reading": 3, "Writing": 3, "Vocabulary": 5, "Participation": 4, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s15_04", "classId": "c15", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 5, "Reading": 3, "Writing": 2, "Vocabulary": 5, "Participation": 4, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s15_05", "classId": "c15", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 5, "Reading": 5, "Writing": 3, "Vocabulary": 5, "Participation": 4, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s15_06", "classId": "c15", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 5, "Reading": 3, "Writing": 4, "Vocabulary": 3, "Participation": 4, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s15_07", "classId": "c15", "month": "06/2026", "scores": {"Listening": 4, "Speaking": 3, "Reading": 5, "Writing": 3, "Vocabulary": 3, "Participation": 5, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s15_08", "classId": "c15", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 3, "Reading": 3, "Writing": 5, "Vocabulary": 5, "Participation": 5, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s15_09", "classId": "c15", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 4, "Reading": 4, "Writing": 4, "Vocabulary": 5, "Participation": 4, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s15_10", "classId": "c15", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 4, "Reading": 4, "Writing": 3, "Vocabulary": 5, "Participation": 5, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s15_11", "classId": "c15", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 4, "Reading": 5, "Writing": 3, "Vocabulary": 4, "Participation": 3, "Homework": 3}, "status": "draft", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s15_12", "classId": "c15", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 5, "Reading": 3, "Writing": 3, "Vocabulary": 5, "Participation": 4, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s16_01", "classId": "c16", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 3, "Reading": 3, "Writing": 3, "Vocabulary": 3, "Participation": 5, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s16_02", "classId": "c16", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 4, "Reading": 3, "Writing": 4, "Vocabulary": 5, "Participation": 4, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s16_03", "classId": "c16", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 5, "Reading": 5, "Writing": 4, "Vocabulary": 3, "Participation": 5, "Homework": 5}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s16_04", "classId": "c16", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 3, "Reading": 4, "Writing": 2, "Vocabulary": 5, "Participation": 5, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s17_01", "classId": "c17", "month": "06/2026", "scores": {"Listening": 5, "Speaking": 4, "Reading": 4, "Writing": 5, "Vocabulary": 3, "Participation": 5, "Homework": 3}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}, {"studentId": "s17_02", "classId": "c17", "month": "06/2026", "scores": {"Listening": 3, "Speaking": 3, "Reading": 4, "Writing": 3, "Vocabulary": 3, "Participation": 4, "Homework": 4}, "status": "published", "comment": "Bé học tập chăm chỉ, tiếp thu bài tốt. Cần luyện nói to và trả lời bằng câu đầy đủ hơn để tự tin hơn trong lớp.", "suggestion": "Phụ huynh có thể cho bé nghe lại audio 10 phút mỗi ngày và hỏi bé 2–3 câu tiếng Anh ngắn sau buổi học."}], "settings": {"unitPrice": 70000, "capacity": 15}};
     const fmt = new Intl.NumberFormat('vi-VN');
     const V18H_LOCAL_STATE_VERSION=1;
@@ -4345,13 +4345,13 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
           renderOnRevalidate:false,
           delayMs:V24A_MUTATION_REVALIDATE_IDLE_MS
         });
-        v22RefreshScheduleBehindMakeupModal();
+        if(typeof window.v22RefreshScheduleBehindMakeupModal==='function') window.v22RefreshScheduleBehindMakeupModal();
         if(route==='makeup') lazyRouteState.makeup={loaded:true,loading:false,loadedAt:Date.now(),mutated:true};
         if(route==='schedule') lazyRouteState.schedule={loaded:true,loading:false,loadedAt:Date.now(),mutated:true};
         saveLocalOnly();
         toast('Đã hủy học bù. Học sinh đã quay lại Chờ xếp.');
         if(schedulePopupOpen && targetClassId && targetSessionKey){
-          refreshScheduleMakeupDraftDom(targetClassId,targetSessionKey);
+          if(typeof window.refreshScheduleMakeupDraftDom==='function') window.refreshScheduleMakeupDraftDom(targetClassId,targetSessionKey);
         }else if(route==='makeup'){
           renderApp();
         }else{
@@ -4479,227 +4479,45 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
 
     function statusLabel(v){return v==='present'?'Có mặt':v==='late'?'Muộn':v==='absent'?'Vắng':'Chưa chọn'}
     let v8bAttendanceDraftTimer=null;
-    function v8bScheduleAttendanceDraftPersist(){
-      clearTimeout(v8bAttendanceDraftTimer);
-      v8bAttendanceDraftTimer=setTimeout(()=>{
-        v8bAttendanceDraftTimer=null;
-        window.MsUiAction.runWhenIdle(()=>saveLocalOnly(),500);
-      },280);
-    }
-    function v8bCancelAttendanceDraftPersist(){
-      clearTimeout(v8bAttendanceDraftTimer);
-      v8bAttendanceDraftTimer=null;
-    }
-    function setAttendanceStatus(sessionKey,studentId,type,status){
-      if(!attendanceCanEditSession(sessionKey,true)){toast('Bạn không có quyền sửa điểm danh buổi này');return}
-      const rec=attendanceRecord(sessionKey); const rowKey=`${type}_${studentId}`;
-      rec.rows[rowKey] ||= {studentId,type,status:'present',note:''};
-      rec.rows[rowKey].status=status; rec.saved=false;
-      // Attendance drafts stay local until the explicit Save button is pressed.
-      // Avoid queueing /api/v48-state after every status click.
-      v8bScheduleAttendanceDraftPersist();
-      if(!v18bUpdateAttendanceStatusUI(sessionKey,studentId,type,status)){
-        openAttendance(sessionObjectFromKey(sessionKey).classId,sessionKey,true,{preserveScroll:true});
-      }
-    }
-    function setAttendanceNote(sessionKey,studentId,type,value){
-      if(!attendanceCanEditSession(sessionKey,true)){toast('Bạn không có quyền sửa điểm danh buổi này');return}
-      const rec=attendanceRecord(sessionKey); const rowKey=`${type}_${studentId}`;
-      rec.rows[rowKey] ||= {studentId,type,status:'present',note:''};
-      rec.rows[rowKey].note=value;
-      rec.saved=false;
-      v8bScheduleAttendanceDraftPersist();
-    }
+    
+    // Phase 8D.2: v8bScheduleAttendanceDraftPersist moved to lazy runtime module.
 
-    function syncAbsenceRecordsForAttendance(sessionKey){
-      const s=sessionObjectFromKey(sessionKey); if(!s) return;
-      const c=classById(s.classId); const rec=ensureAttendanceSessions()[attendanceKey(sessionKey)];
-      if(!rec?.saved) return;
-      db.absenceRecords ||= [];
-      const existingById=new Map(db.absenceRecords.filter(a=>a.sourceSessionKey===sessionKey).map(a=>[a.id,a]));
-      const generated=[];
-      const roster=rosterForAttendance(s.classId,sessionKey).filter(x=>x.type==='official');
-      roster.forEach(x=>{
-        const row=rec.rows[`official_${x.student.id}`];
-        if(row?.status==='absent'){
-          const id=absenceId(x.student.id,sessionKey);
-          const old=existingById.get(id)||{};
-          generated.push({
-            id,
-            studentId:x.student.id,
-            sourceClassId:c.id,
-            sourceSessionKey:sessionKey,
-            sourceSessionLabel:sessionLabelFromKey(sessionKey),
-            reason:row.note||old.reason||'Vắng',
-            generatedFromAttendance:true,
-            createdAt:old.createdAt||new Date().toLocaleString('vi-VN')
-          });
-        }
-      });
-      db.absenceRecords = db.absenceRecords.filter(a=>a.sourceSessionKey!==sessionKey || absenceRecordStatus(a.id)==='scheduled');
-      const generatedIds=new Set(generated.map(a=>a.id));
-      db.absenceRecords = db.absenceRecords.filter(a=>!(generatedIds.has(a.id) && a.sourceSessionKey===sessionKey));
-      db.absenceRecords.push(...generated);
-    }
+    
+    // Phase 8D.2: v8bCancelAttendanceDraftPersist moved to lazy runtime module.
 
-    function v20l4InvalidateScheduleAfterAttendanceSave(sessionKey){
-      // Phase 8B: patch đúng thẻ buổi học, không dựng lại sidebar/trang Lịch.
-      if(v18Memo.scheduleCellMap) v18Memo.scheduleCellMap.key='';
-      if(v18Memo.scheduleDayMap) v18Memo.scheduleDayMap.key='';
-      v18Memo.weekKey='';
-      v18Memo.weekSessions=null;
-      v18Touch();
-      v18fUpdateAttendanceModuleCache();
-      v18fUpdateScheduleModuleCache();
-      lazyRouteState.schedule={...(lazyRouteState.schedule||{}),loaded:true,loadedAt:Date.now(),mutated:true};
-      if(route==='schedule' && !v8bPatchScheduleSessions([sessionKey])) v18dRenderPageOnly(navItems());
-    }
+    
+    // Phase 8D.2: setAttendanceStatus moved to lazy runtime module.
 
-    async function saveAttendance(sessionKey){
-      const busyKey=`attendance:${sessionKey}`;
-      if(v20o2IsBusy(busyKey)) return;
-      const rec=attendanceRecord(sessionKey);
-      const s=sessionObjectFromKey(sessionKey);
-      if(!s){toast('Không tìm thấy buổi học');return}
-      if(!attendanceCanEditSession(sessionKey,true)){toast('Điểm danh chỉ mở từ giờ bắt đầu buổi học. Admin/Quản lí/Lễ tân không được điểm danh trước giờ học.');return}
-      // Khi lưu, tự tạo dòng Có mặt mặc định cho toàn bộ roster.
-      rosterForAttendance(s.classId,sessionKey).forEach(x=>{
-        const rowKey=`${x.type}_${x.student.id}`;
-        rec.rows[rowKey] ||= {studentId:x.student.id,type:x.type,status:'present',note:''};
-      });
+    
+    // Phase 8D.2: setAttendanceNote moved to lazy runtime module.
 
-      // A draft status click used to queue /api/v48-state after 650 ms. Cancel that
-      // snapshot write so it cannot compete with the canonical attendance request.
-      clearTimeout(officialSaveTimer);
-      officialSaveTimer=null;
-      v8bCancelAttendanceDraftPersist();
-      v20o2SetBusy(busyKey,true);
-      try{
-        const data=await window.MsUiAction.measureAsync('Lưu điểm danh',()=>officialFetch('/api/attendance/save',{method:'POST',body:JSON.stringify({
-          sessionKey,
-          classId:s.classId,
-          date:s.date,
-          day:s.day,
-          start:s.start,
-          end:s.end,
-          type:s.type||'regular',
-          sessionLabel:sessionLabelFromKey(sessionKey),
-          rows:rec.rows,
-          manualMakeups:rec.manualMakeups||[],
-          pendingMakeupPlans:rec.pendingMakeupPlans||[],
-          capacity:Number(db.settings?.capacity||15)
-        })}),450);
 
-        const affectedMakeupMonths=new Set([sessionKeyMonth(sessionKey)].filter(Boolean));
-        const collectMakeupMonth=value=>{const month=sessionKeyMonth(String(value||''));if(month)affectedMakeupMonths.add(month)};
+    
+    // Phase 8D.2: syncAbsenceRecordsForAttendance moved to lazy runtime module.
 
-        rec.saved=true;
-        rec.editable=false;
-        rec.rows=data.session?.rows || rec.rows;
-        rec.manualMakeups=data.session?.manualMakeups || rec.manualMakeups || [];
-        rec.pendingMakeupPlans=[];
-        rec.updatedAt=data.session?.updatedAt || new Date().toLocaleString('vi-VN');
 
-        (data.makeupPlansCreated||[]).forEach(plan=>{
-          collectMakeupMonth(plan.sourceSessionKey);
-          collectMakeupMonth(plan.targetSessionKey);
-          db.makeupPlans ||= [];
-          db.makeupPlans = db.makeupPlans.filter(p=>String(p.id)!==String(plan.id));
-          db.makeupPlans.push(plan);
-        });
-        db.absenceRecords = (db.absenceRecords||[]).filter(a=>a.sourceSessionKey!==sessionKey);
-        (data.absenceRecords||[]).forEach(a=>collectMakeupMonth(a.sourceSessionKey));
-        db.absenceRecords.push(...(data.absenceRecords||[]));
-        (data.makeupPlanUpdates||[]).forEach(u=>{
-          const p=(db.makeupPlans||[]).find(x=>String(x.id)===String(u.id));
-          if(p){
-            collectMakeupMonth(p.sourceSessionKey);
-            collectMakeupMonth(p.targetSessionKey);
-            p.status=u.status;
-            if(Object.prototype.hasOwnProperty.call(u,'cancelledAt')) p.cancelledAt=u.cancelledAt;
-          }
-        });
-        const resolvedAbsenceIds=new Set((data.makeupResolvedAbsenceIds||[]).map(String));
-        if(resolvedAbsenceIds.size){
-          db.absenceRecords = (db.absenceRecords||[]).filter(a=>!resolvedAbsenceIds.has(String(a.id)));
-        }
-        (data.makeupAbsenceRecords||[]).forEach(a=>{
-          collectMakeupMonth(a.sourceSessionKey);
-          db.absenceRecords = (db.absenceRecords||[]).filter(x=>String(x.id)!==String(a.id));
-          if(String(a.status||'pending')==='pending') db.absenceRecords.push(a);
-        });
+    
+    // Phase 8D.2: v20l4InvalidateScheduleAfterAttendanceSave moved to lazy runtime module.
 
-        // Patch the shared week/month snapshots immediately. No tuition request and
-        // no full attendance/schedule reload is allowed to block the success state.
-        v18fUpdateScheduleModuleCache();
-        v18fUpdateAttendanceModuleCache();
-        v20l4InvalidateScheduleAfterAttendanceSave(sessionKey);
-        v20bAfterMutation(['attendance','schedule'],{
-          sessionKey,
-          targetSessionKey:sessionKey,
-          preserveCache:true,
-          delayMs:6500,
-          renderOnRevalidate:false
-        });
-        // Makeup state can span the target month and older source-absence months.
-        // Invalidate those exact month snapshots so the next Makeup-tab visit fetches
-        // canonical data instead of persisting an incomplete local monthly bundle.
-        v20bAfterMutation(['makeup'],{
-          months:Array.from(affectedMakeupMonths),
-          noRefresh:true
-        });
-        saveLocalOnly();
 
-        // Clear busy before rebuilding the modal, otherwise the new button stays disabled.
-        v20o2SetBusy(busyKey,false);
-        toast('Đã lưu điểm danh');
-        openAttendance(s.classId,sessionKey,false,{preserveScroll:true});
-      }catch(e){
-        v8bScheduleAttendanceDraftPersist();
-        toast(e.message||'Không lưu được điểm danh');
-      }finally{
-        v20o2SetBusy(busyKey,false);
-      }
-    }
+    
+    // Phase 8D.2: saveAttendance moved to lazy runtime module.
 
-    function editAttendance(sessionKey){
-      const w=attendanceWindowInfo(sessionKey);
-      if(w.isEarly){toast('Điểm danh chưa mở. Tất cả tài khoản chỉ được lưu/sửa sau giờ bắt đầu buổi học.');return}
-      if(!w.open && !attendanceCanOverride()){toast('Chỉ Admin/Quản lí/Lễ tân được sửa điểm danh ngoài giờ hoặc đã đóng');return}
-      const rec=attendanceRecord(sessionKey); rec.editable=true; saveLocalOnly(); openAttendance(sessionObjectFromKey(sessionKey).classId,sessionKey,true,{preserveScroll:true})
-    }
-    function classStudentsForManualMakeup(targetClassId){
-      // V20L: thêm học bù thủ công cũng bỏ điều kiện cùng khối.
-      // Chỉ lấy học sinh thuộc lớp còn hoạt động và khác lớp nhận.
-      return allStudents().filter(s=>{
-        const c=classById(s.classId);
-        return s.classId!==targetClassId && canReceiveMakeupClass(c);
-      }).sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'vi') || String(a.className||'').localeCompare(String(b.className||''),'vi'));
-    }
 
-    function addManualMakeupToAttendance(targetClassId,sessionKey){
-      const studentId=document.getElementById('manualMakeupStudent')?.value;
-      if(!studentId){toast('Chọn học sinh học bù');return}
-      const targetSession=sessionObjectFromKey(sessionKey);
-      if(!targetSession || !canReceiveMakeupSession(sessionKey)){toast(makeupSessionPlacementReason(sessionKey)||'Không thể xếp học bù vào buổi này');return}
-      if(!canReceiveMakeupClass(classById(targetClassId))){toast('Không thể xếp học bù vào lớp đã kết thúc hoặc đã hủy');return}
-      const currentTotal=totalRosterCountForSession(targetClassId,sessionKey);
-      if(currentTotal>=(db.settings.capacity||15)){toast(`Lớp đã đủ tối đa ${db.settings.capacity||15} học sinh, không thể thêm học bù`);return}
-      const st=studentById(studentId); const rec=attendanceRecord(sessionKey);
-      if(rec.manualMakeups.some(m=>m.student.id===studentId) || makeupStudentsForSession(sessionKey).some(x=>x.student.id===studentId)){toast('Học sinh đã có trong danh sách học bù buổi này');return}
-      rec.manualMakeups.push({id:'manual_'+Date.now(),student:{...st,className:classById(st.classId).name},sourceClassId:st.classId,targetClassId,targetSessionKey:sessionKey,status:'manual'});
-      rec.rows[`manual_makeup_${studentId}`]={studentId,type:'manual_makeup',status:'present',note:'Thêm học bù'};
-      v8bScheduleAttendanceDraftPersist(); toast('Đã thêm học bù'); openAttendance(targetClassId,sessionKey,true,{preserveScroll:true});
-    }
+    
+    // Phase 8D.2: editAttendance moved to lazy runtime module.
 
-    function rollupAttendanceFromSessions(studentId){
-      const rows=Object.values(ensureAttendanceSessions()).flatMap(rec=>Object.values(rec.rows||{}).filter(r=>r.studentId===studentId && rec.saved));
-      const present=rows.filter(r=>r.status==='present' && r.type==='official').length;
-      const late=rows.filter(r=>r.status==='late' && r.type==='official').length;
-      const absent=rows.filter(r=>r.status==='absent' && r.type==='official').length;
-      const makeup=rows.filter(r=>(r.type==='makeup'||r.type==='manual_makeup') && (r.status==='present'||r.status==='late')).length;
-      return {present,late,absent,excused:0,makeup};
-    }
+    
+    // Phase 8D.2: classStudentsForManualMakeup moved to lazy runtime module.
+
+
+    
+    // Phase 8D.2: addManualMakeupToAttendance moved to lazy runtime module.
+
+
+    
+    // Phase 8D.2: rollupAttendanceFromSessions moved to lazy runtime module.
+
 
 
 
@@ -5123,7 +4941,7 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
           const names={overview:'tổng quan',classes:'lớp học',schedule:'lịch dạy',makeup:'học bù',homework:'thư viện bài tập',evaluation:'đánh giá học sinh',tuition:'học phí',teachers:'giáo viên',settings:'cài đặt'};
           return routeLoadingMarkup(`Đang tải ${names[route]||'dữ liệu'}...`);
         }
-        const lazyRendererNames={classes:'classesPage',schedule:'schedulePage',homework:'homeworkPage',evaluation:'evaluationPage',tuition:'tuitionPage'};
+        const lazyRendererNames={classes:'classesPage',schedule:'schedulePage',makeup:'makeupPage',homework:'homeworkPage',evaluation:'evaluationPage',tuition:'tuitionPage',teachers:'teachersPage',settings:'settingsPage'};
         const lazyRendererName=lazyRendererNames[route];
         if(lazyRendererName && typeof window[lazyRendererName]!=='function'){
           const waitingRoute=route;
@@ -5133,15 +4951,15 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
             console.error('Route module load error',waitingRoute,error);
             if(currentUser && route===waitingRoute) toast(error.message||'Không tải được chức năng');
           });
-          const names={classes:'lớp học',schedule:'lịch dạy',homework:'thư viện bài tập',evaluation:'đánh giá học sinh',tuition:'học phí'};
+          const names={classes:'lớp học',schedule:'lịch dạy',makeup:'học bù',homework:'thư viện bài tập',evaluation:'đánh giá học sinh',tuition:'học phí'};
           return routeLoadingMarkup(`Đang mở ${names[waitingRoute]||'chức năng'}...`);
         }
-        const renderers={overview,makeup:makeupPage,teachers:teachersPage,settings:settingsPage};
+        const renderers={overview};
         const renderer=lazyRendererName?window[lazyRendererName]:(renderers[route]||overview);
         return renderer();
       }catch(e){
         console.error('Page render error',route,e);
-        return `<div class="blockedBox"><h2>⚠️ Không mở được trang</h2><p>${h(e.message||'Có lỗi khi tải trang này')}</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" onclick="route='overview';saveUser();render()">Về tổng quan</button><button class="btn ghost" onclick="runHealthCheck()">Kiểm tra hệ thống</button></div></div>`
+        return `<div class="blockedBox"><h2>⚠️ Không mở được trang</h2><p>${h(e.message||'Có lỗi khi tải trang này')}</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" onclick="route='overview';saveUser();render()">Về tổng quan</button><button class="btn ghost" onclick="go('settings')">Mở cài đặt</button></div></div>`
       }
     }
 
@@ -5156,2219 +4974,285 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
 
 
     
-function teacherRoleValue(t){return t.roles?.includes('admin')?'admin':t.roles?.includes('manager')?'manager':t.roles?.includes('ta')?'ta':'teacher'}
-    function teacherRoleLabel(t){const v=teacherRoleValue(t); return v==='admin'?'Admin':v==='manager'?'Quản lí':v==='ta'?'TA':'Giáo viên'}
-    function teacherRoleClasses(t){const v=teacherRoleValue(t); return v==='admin'?'red':v==='manager'?'blue':v==='ta'?'purple':'green'}
-    function classesOfTeacher(t){return db.classes.filter(c=>c.teacherId===t.id || c.taId===t.id || c.teacher===t.name || c.ta===t.name)}
-
-    function roleChoiceMarkup(active='teacher',prefix='teacherRoleChoice',allowAdmin=isAdmin()){
-      const roles=[
-        ['teacher','👩‍🏫','Giáo viên'],
-        ['ta','🧑‍🏫','TA'],
-        ['manager','🛡️','Quản lí'],
-        ['admin','👑','Admin']
-      ].filter(r=>allowAdmin || r[0]!=='admin');
-      return `<div class="teacherPermGrid compactRoleChoices">${roles.map(r=>`<div class="roleChoice ${active===r[0]?'active':''}" onclick="selectTeacherRole('${prefix}','${r[0]}')"><input type="radio" name="${prefix}" value="${r[0]}" ${active===r[0]?'checked':''} style="display:none"><b>${r[1]} ${r[2]}</b></div>`).join('')}</div>`
-    }
-    function selectTeacherRole(name,value){
-      document.querySelectorAll(`input[name="${name}"]`).forEach(i=>{i.checked=i.value===value});
-      document.querySelectorAll(`input[name="${name}"]`).forEach(i=>i.closest('.roleChoice')?.classList.toggle('active',i.checked));
-      document.querySelector(`input[name="${name}"]:checked`)?.dispatchEvent(new Event('change',{bubbles:true}));
-    }
-    function selectedTeacherRole(name,def='teacher'){
-      return document.querySelector(`input[name="${name}"]:checked`)?.value || def;
-    }
-
-
-    // UI nhân sự: lọc cục bộ và khóa thao tác theo từng action qua utility dùng chung.
-    const v7hStaffFilters={q:'',role:'all',status:'all'};
-    let v7hStaffFilterTimer=null;
-    let v7hConfirmResolver=null;
-
-    function v7hBeginStaffAction(key,button,text){
-      return window.MsUiAction.beginLockedAction(key,button,text);
-    }
-    function v7hEndStaffAction(action){
-      window.MsUiAction.endLockedAction(action);
-    }
-    function v7hStaffSearchText(value){
-      return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('vi').trim();
-    }
-    function v7hReadStaffFilters(){
-      v7hStaffFilters.q=v7hStaffSearchText(document.getElementById('staffSearch')?.value||'');
-      v7hStaffFilters.role=document.getElementById('staffRoleFilter')?.value||'all';
-      v7hStaffFilters.status=document.getElementById('staffStatusFilter')?.value||'all';
-      return v7hStaffFilters;
-    }
-    function v7hScheduleStaffFilter(){
-      clearTimeout(v7hStaffFilterTimer);
-      v7hStaffFilterTimer=setTimeout(v7hApplyStaffFilters,180);
-    }
-    function v7hApplyStaffFilters(){
-      if(route!=='teachers') return;
-      const filters=v7hReadStaffFilters();
-      let visible=0;
-      const sectionCounts={teacher:0,receptionist:0};
-      document.querySelectorAll('[data-staff-card]').forEach(card=>{
-        const search=String(card.dataset.staffSearch||'');
-        const roleValue=card.dataset.staffRole||'';
-        const statusValue=card.dataset.staffStatus||'active';
-        const matchQ=!filters.q || search.includes(filters.q);
-        const matchRole=filters.role==='all' || roleValue===filters.role;
-        const matchStatus=filters.status==='all' || statusValue===filters.status;
-        const show=matchQ&&matchRole&&matchStatus;
-        card.hidden=!show;
-        if(show){visible++;sectionCounts[card.dataset.staffCard==='receptionist'?'receptionist':'teacher']++}
-      });
-      const receptionistSection=document.getElementById('staffReceptionistSection');
-      if(receptionistSection) receptionistSection.hidden=sectionCounts.receptionist===0;
-      const teachingSection=document.getElementById('staffTeachingSection');
-      if(teachingSection) teachingSection.hidden=sectionCounts.teacher===0;
-      const empty=document.getElementById('staffNoResults');
-      if(empty) empty.hidden=visible>0;
-      const visibleCount=document.getElementById('staffVisibleCount');
-      if(visibleCount) visibleCount.textContent=`${visible} kết quả`;
-    }
-    function v7hStaffFilterToolbar(){
-      return `<div class="staffToolbar"><label class="staffSearchBox"><span>Tìm nhân sự</span><input id="staffSearch" class="input" value="${h(v7hStaffFilters.q||'')}" placeholder="Tên, số điện thoại, email hoặc lớp" oninput="v7hScheduleStaffFilter()"></label><label><span>Vai trò</span><select id="staffRoleFilter" class="input" onchange="v7hApplyStaffFilters()"><option value="all">Tất cả</option><option value="teacher">Giáo viên</option><option value="ta">TA</option><option value="manager">Quản lí</option>${isAdmin()?'<option value="receptionist">Lễ tân</option><option value="admin">Admin</option>':''}</select></label><label><span>Trạng thái</span><select id="staffStatusFilter" class="input" onchange="v7hApplyStaffFilters()"><option value="all">Tất cả</option><option value="active">Đang hoạt động</option><option value="inactive">Tạm khóa</option></select></label><span id="staffVisibleCount" class="staffVisibleCount"></span></div>`;
-    }
-    function v7hRestoreStaffFilterControls(){
-      const roleEl=document.getElementById('staffRoleFilter');
-      const statusEl=document.getElementById('staffStatusFilter');
-      if(roleEl) roleEl.value=v7hStaffFilters.role;
-      if(statusEl) statusEl.value=v7hStaffFilters.status;
-      requestAnimationFrame(v7hApplyStaffFilters);
-    }
-    function v7hInlineFieldError(inputId,message=''){
-      const input=document.getElementById(inputId);
-      if(!input) return false;
-      input.classList.toggle('inputError',!!message);
-      let error=input.parentElement?.querySelector?.('.fieldError');
-      if(message && !error){error=document.createElement('div');error.className='fieldError';input.insertAdjacentElement('afterend',error)}
-      if(error){error.textContent=message;error.hidden=!message}
-      return !message;
-    }
-    function v7hClearStaffErrors(){
-      modalBackdrop?.querySelectorAll?.('[data-staff-modal] .inputError').forEach(el=>el.classList.remove('inputError'));
-      modalBackdrop?.querySelectorAll?.('[data-staff-modal] .fieldError').forEach(el=>{el.textContent='';el.hidden=true});
-      v7hStaffFeedback('');
-    }
-    function v7hValidEmail(value){return !value || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)}
-    function v7hStaffFeedback(message,type='success'){
-      const box=modalBackdrop?.querySelector?.('[data-staff-feedback]');
-      if(!box) return false;
-      box.textContent=message||'';
-      box.className=`staffModalFeedback ${message?type:''}`;
-      box.hidden=!message;
-      return true;
-    }
-    function v7hShowStaffError(message){
-      const text=message||'Có lỗi khi xử lý nhân sự';
-      if(!v7hStaffFeedback(text,'error')) toast(text);
-    }
-    function v7hStaffFormSnapshot(scope){
-      if(!scope) return '';
-      const values=[];
-      scope.querySelectorAll('input:not([data-ignore-dirty]),select:not([data-ignore-dirty]),textarea:not([data-ignore-dirty])').forEach(el=>{
-        if(el.type==='radio'||el.type==='checkbox') values.push(`${el.name}:${el.value}:${el.checked?'1':'0'}`);
-        else values.push(`${el.id||el.name}:${el.value}`);
-      });
-      return values.join('|');
-    }
-    function v7hInitStaffModal(){
-      const scope=modalBackdrop?.querySelector?.('[data-staff-modal]');
-      if(!scope) return;
-      scope.dataset.initialSnapshot=v7hStaffFormSnapshot(scope);
-      scope.dataset.staffDirty='0';
-      const mark=(event)=>{
-        scope.dataset.staffDirty=v7hStaffFormSnapshot(scope)===scope.dataset.initialSnapshot?'0':'1';
-        const target=event?.target;
-        if(target?.id && target.classList?.contains('inputError')) v7hInlineFieldError(target.id,'');
-        v7hStaffFeedback('');
-      };
-      scope.querySelectorAll('input:not([data-ignore-dirty]),select:not([data-ignore-dirty]),textarea:not([data-ignore-dirty])').forEach(el=>{el.addEventListener('input',mark);el.addEventListener('change',mark)});
-    }
-    function v7hMarkStaffModalClean(){
-      const scope=modalBackdrop?.querySelector?.('[data-staff-modal]');
-      if(!scope) return;
-      scope.dataset.initialSnapshot=v7hStaffFormSnapshot(scope);
-      scope.dataset.staffDirty='0';
-    }
-    function v7hStaffModalDirty(){return modalBackdrop?.querySelector?.('[data-staff-modal]')?.dataset?.staffDirty==='1'}
-    function v7hConfirm({title='Xác nhận',message='',confirmText='Xác nhận',danger=false}={}){
-      if(v7hConfirmResolver) return Promise.resolve(false);
-      return new Promise(resolve=>{
-        v7hConfirmResolver=resolve;
-        const overlay=document.createElement('div');
-        overlay.id='v7hConfirmOverlay';
-        overlay.className='v7hConfirmOverlay';
-        overlay.innerHTML=`<div class="v7hConfirmCard" role="dialog" aria-modal="true"><h3>${h(title)}</h3><div class="v7hConfirmMessage">${h(message).replace(/\n/g,'<br>')}</div><div class="v7hConfirmActions"><button class="btn ghost" onclick="v7hResolveConfirm(false)">Hủy</button><button id="v7hConfirmPrimary" class="btn ${danger?'dangerAction':'primary'}" onclick="v7hResolveConfirm(true)">${h(confirmText)}</button></div></div>`;
-        document.body.appendChild(overlay);
-        requestAnimationFrame(()=>overlay.classList.add('show'));
-        setTimeout(()=>document.getElementById('v7hConfirmPrimary')?.focus(),0);
-      });
-    }
-    function v7hResolveConfirm(result){
-      const overlay=document.getElementById('v7hConfirmOverlay');
-      const resolver=v7hConfirmResolver;
-      v7hConfirmResolver=null;
-      if(overlay){overlay.classList.remove('show');setTimeout(()=>overlay.remove(),120)}
-      if(resolver) resolver(!!result);
-    }
-    function v7hClassTagMarkup(classes){
-      if(!classes.length) return '';
-      const first=classes.slice(0,3).map(c=>`<span class="sessionTag" title="${h(c.name)}">${h(c.name)}</span>`).join('');
-      return `${first}${classes.length>3?`<span class="sessionTag more">+${classes.length-3} lớp</span>`:''}`;
-    }
-    function v7hTeacherClassPanelMarkup(t){
-      const cls=classesOfTeacher(t);
-      const role=teacherRoleValue(t);
-      const assignmentRole=role==='ta'?'ta':'teacher';
-      const activeClassOptions=sortClassesByGrade(db.classes).filter(c=>!isClassEnded(c)).filter(c=>assignmentRole==='ta'?c.taId!==t.id:c.teacherId!==t.id);
-      const classOptions=activeClassOptions.map(c=>`<option value="${c.id}">${h(c.name)}</option>`).join('');
-      return `<div id="teacherClassPanel" class="teacherClassBox"><div class="teacherClassTitle"><b>Lớp đang phụ trách</b><span class="pill gray">${cls.length} lớp</span></div><div id="teacherAssignedClassList">${cls.length?cls.map(c=>`<div class="teacherClassRow" data-assigned-class="${c.id}"><span><b>${h(c.name)}</b><span class="mini"> • ${h(c.time||'Chưa có lịch')}</span>${isClassEnded(c)?'<span class="pill gray" style="margin-left:8px">Đã kết thúc</span>':''}</span>${isClassEnded(c)?'<span class="mini">Chỉ xem</span>':`<button class="btn ghost miniCardBtn" onclick="removeTeacherFromClass('${t.id}','${c.id}','${assignmentRole}',this)">Bỏ gán</button>`}</div>`).join(''):'<div class="staffEmptyInline">Chưa được gán lớp</div>'}</div><div class="teacherAssignBox"><label>Gán thêm lớp<select id="teacherAssignClass" class="input" data-ignore-dirty="1"><option value="">-- Chọn lớp --</option>${classOptions}</select></label><button id="assignTeacherClassBtn" class="btn primary" ${classOptions?'':'disabled'} onclick="const v=document.getElementById('teacherAssignClass').value;if(v)assignTeacherToClass('${t.id}',v,'${assignmentRole}',this)">Gán lớp</button></div></div>`;
-    }
-    function v7hPatchTeacherClassPanel(teacherId){
-      const t=teacherById(teacherId); const old=document.getElementById('teacherClassPanel');
-      if(!t?.id||!old) return false;
-      const scroll=old.closest('.modal')?.scrollTop||0;
-      const node=v29StaffCardNode(v7hTeacherClassPanelMarkup(t));
-      if(!node) return false;
-      old.replaceWith(node);
-      requestAnimationFrame(()=>{const modalEl=node.closest('.modal');if(modalEl) modalEl.scrollTop=scroll});
-      return true;
-    }
-    function v7hPatchTeacherModalHeader(t){
-      const scope=modalBackdrop?.querySelector?.('[data-staff-modal="teacher"]');
-      if(!scope||!t) return;
-      const name=scope.querySelector('[data-staff-header-name]');
-      const account=scope.querySelector('[data-staff-header-account]');
-      const roleBadge=scope.querySelector('[data-staff-header-role]');
-      const avatar=scope.querySelector('[data-staff-header-avatar]');
-      if(name) name.textContent=t.name||'';
-      if(account) account.textContent=t.phone||'-';
-      if(roleBadge){roleBadge.textContent=teacherRoleLabel(t);roleBadge.className=`pill ${teacherRoleClasses(t)}`}
-      if(avatar) avatar.textContent=(t.name||'T').split(' ').slice(-1)[0][0]||'T';
-    }
-    function v7hPatchReceptionistModalHeader(u){
-      const scope=modalBackdrop?.querySelector?.('[data-staff-modal="receptionist"]');
-      if(!scope||!u) return;
-      const name=scope.querySelector('[data-staff-header-name]');
-      const account=scope.querySelector('[data-staff-header-account]');
-      const avatar=scope.querySelector('[data-staff-header-avatar]');
-      if(name) name.textContent=u.name||'Lễ tân';
-      if(account) account.textContent=u.phone||'-';
-      if(avatar) avatar.textContent=(u.name||'L').split(' ').slice(-1)[0][0]||'L';
-    }
-
-    function receptionistAccountsForTeachersPage(){
-      if(!isAdmin()) return [];
-      return (db.users||[])
-        .filter(u=>u.roles?.includes('receptionist'))
-        .sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'vi'));
-    }
-
-    function v29StaffPayload(){
-      return {teachers:db.teachers||[],users:isAdmin()?(db.users||[]):[]};
-    }
-    function v29PersistStaffMutation(source='staff-mutation'){
-      const payload=v29StaffPayload();
-      moduleCacheSet('teachers:latest',payload);
-      try{v26StoreSet(v26StoreKey('teachers','latest'),payload,{source})}catch(e){console.warn('Không cập nhật được staff shared store',e)}
-      lazyRouteState.teachers={loaded:true,loading:false,loadedAt:Date.now(),mutated:true};
-      v20bAfterMutation(['teachers'],{preserveCache:true,delayMs:5000,renderOnRevalidate:false});
-      saveLocalOnly();
-    }
-    function v29StaffCardNode(markup){
-      const template=document.createElement('template');
-      template.innerHTML=String(markup||'').trim();
-      return template.content.firstElementChild;
-    }
-    function v29SortedStaffInsert(grid,node){
-      if(!grid||!node) return;
-      const name=String(node.dataset.staffName||'');
-      const before=Array.from(grid.children).find(el=>String(el.dataset.staffName||'').localeCompare(name,'vi')>0);
-      if(before) grid.insertBefore(node,before); else grid.appendChild(node);
-    }
-    function v29PatchStaffStats(){
-      if(route!=='teachers') return;
-      const rows=db.teachers||[];
-      const receptionists=receptionistAccountsForTeachersPage();
-      const counts={
-        staffTeacherCount:rows.length,
-        staffManagerCount:rows.filter(t=>t.roles?.includes('manager')).length,
-        staffReceptionistCount:receptionists.length,
-        staffTaCount:rows.filter(t=>t.roles?.includes('ta')).length,
-        staffAdminCount:rows.filter(t=>t.roles?.includes('admin')).length,
-        staffReceptionistSectionCount:`${receptionists.length} tài khoản`,
-        staffTeachingSectionCount:`${rows.length} nhân sự`,
-      };
-      Object.entries(counts).forEach(([id,value])=>{const el=document.getElementById(id);if(el)el.textContent=String(value)});
-      const section=document.getElementById('staffReceptionistSection');
-      if(section) section.hidden=receptionists.length===0;
-    }
-    function v29UpsertStaffCard(kind,item){
-      if(route!=='teachers'||!item?.id) return false;
-      const isReceptionistKind=kind==='receptionist';
-      const grid=document.getElementById(isReceptionistKind?'staffReceptionistGrid':'staffTeacherGrid');
-      if(!grid) return false;
-      const id=`${isReceptionistKind?'receptionist':'teacher'}-card-${item.id}`;
-      const old=document.getElementById(id);
-      const node=v29StaffCardNode(isReceptionistKind?receptionistCard(item,0):teacherCard(item,0));
-      if(!node) return false;
-      if(old) old.remove();
-      v29SortedStaffInsert(grid,node);
-      v29PatchStaffStats();
-      v7hApplyStaffFilters();
-      return true;
-    }
-    function v29RemoveStaffCard(kind,id){
-      if(route!=='teachers') return false;
-      document.getElementById(`${kind==='receptionist'?'receptionist':'teacher'}-card-${id}`)?.remove();
-      v29PatchStaffStats();
-      v7hApplyStaffFilters();
-      return true;
-    }
-    function v29RefreshStaffUi(kind,item,options={}){
-      if(route==='teachers'){
-        if(options.remove) v29RemoveStaffCard(kind,options.id||item?.id);
-        else v29UpsertStaffCard(kind,item);
-        return;
-      }
-      // The settings page also exposes staff actions. Render only the current
-      // page content; the app shell/sidebar stays untouched by V18D.
-      if(route==='settings') render();
-    }
-
-    function teachersPage(){
-      if(!canManageOperations()) return `<div class="blockedBox"><h2>🔒 Không có quyền truy cập</h2></div>`;
-      const rows=[...db.teachers].sort((a,b)=>a.name.localeCompare(b.name,'vi'));
-      const receptionists=receptionistAccountsForTeachersPage();
-      const managerCount=rows.filter(t=>t.roles?.includes('manager')).length;
-      const taCount=rows.filter(t=>t.roles?.includes('ta')).length;
-      const adminCount=rows.filter(t=>t.roles?.includes('admin')).length;
-      const headerActions=`<div class="screenTitleActions">${isAdmin()?`<button class="btn ghost" onclick="openCreateReceptionistModal()">+ Tạo Lễ tân</button>`:''}<button class="btn primary" onclick="openTeacherModal()">+ Tạo giáo viên</button></div>`;
-      const markup=`<div class="screenTitle staffScreenTitle"><div><h1>Giáo viên & nhân sự</h1><p>Quản lý tài khoản và phân công lớp.</p></div>${headerActions}</div>
-      <div class="staffSummaryBar"><span><b id="staffTeacherCount">${rows.length}</b> giảng dạy</span><span><b id="staffManagerCount">${managerCount}</b> quản lí</span>${isAdmin()?`<span><b id="staffReceptionistCount">${receptionists.length}</b> lễ tân</span>`:''}<span><b id="staffTaCount">${taCount}</b> TA</span><span><b id="staffAdminCount">${adminCount}</b> admin</span></div>
-      ${v7hStaffFilterToolbar()}
-      <section id="staffReceptionistSection" ${receptionists.length?'':'hidden'}><div class="staffSectionTitle"><h2>Lễ tân</h2><span id="staffReceptionistSectionCount" class="pill yellow">${receptionists.length}</span></div><div id="staffReceptionistGrid" class="grid3 staffGrid">${receptionists.map((u,i)=>receptionistCard(u,i)).join('')}</div></section>
-      <section id="staffTeachingSection"><div class="staffSectionTitle"><h2>Giáo viên, TA và Quản lí</h2><span id="staffTeachingSectionCount" class="pill gray">${rows.length}</span></div><div id="staffTeacherGrid" class="grid3 staffGrid">${rows.map((t,i)=>teacherCard(t,i)).join('')}</div></section>
-      <div id="staffNoResults" class="staffNoResults" hidden>Không tìm thấy nhân sự phù hợp.</div>`;
-      requestAnimationFrame(v7hRestoreStaffFilterControls);
-      return markup;
-    }
-
-    function teacherCard(t,i){
-      const cls=classesOfTeacher(t);
-      const active=t.status!=='inactive';
-      const id=String(t.id||'');
-      const staffName=String(t.name||'').toLocaleLowerCase('vi');
-      const role=teacherRoleValue(t);
-      const search=v7hStaffSearchText([t.name,t.phone,t.email,...cls.map(c=>c.name)].filter(Boolean).join(' '));
-      const contact=[t.phone||'Chưa có SĐT',t.email||''].filter(Boolean).join(' • ');
-      return `<div id="teacher-card-${id}" data-staff-card="teacher" data-staff-id="${id}" data-staff-name="${h(staffName)}" data-staff-search="${h(search)}" data-staff-role="${role}" data-staff-status="${active?'active':'inactive'}" class="teacherCard staffCompactCard" style="--i:${i}" onclick="openTeacherDetail('${id}')"><div class="teacherTop"><div class="teacherTopLeft"><div class="teacherAvatar">${(t.name||'T').split(' ').slice(-1)[0][0]||'T'}</div><div class="staffIdentity"><h3>${h(t.name||'')}</h3><div class="mini staffContact" title="${h(contact)}">${h(contact)}</div></div></div><span class="pill ${teacherRoleClasses(t)}">${teacherRoleLabel(t)}</span></div><div class="teacherMeta compact"><span class="staffStatusDot ${active?'active':'inactive'}"></span><span>${active?'Đang hoạt động':'Tạm khóa'}</span><span class="metaDivider">•</span><span>${cls.length} lớp</span></div>${cls.length?`<div class="teacherClassList compact">${v7hClassTagMarkup(cls)}</div>`:''}</div>`;
-    }
-
-    function receptionistCard(u,i){
-      const active=u.status!=='inactive';
-      const initial=(u.name||'L').split(' ').slice(-1)[0][0]||'L';
-      const id=String(u.id||'');
-      const staffName=String(u.name||'').toLocaleLowerCase('vi');
-      const search=v7hStaffSearchText([u.name,u.phone,u.email].filter(Boolean).join(' '));
-      const contact=[u.phone||'Chưa có SĐT',u.email||''].filter(Boolean).join(' • ');
-      return `<div id="receptionist-card-${id}" data-staff-card="receptionist" data-staff-id="${id}" data-staff-name="${h(staffName)}" data-staff-search="${h(search)}" data-staff-role="receptionist" data-staff-status="${active?'active':'inactive'}" class="teacherCard receptionistCard staffCompactCard" style="--i:${i}" onclick="openReceptionistDetail('${id}')"><div class="teacherTop"><div class="teacherTopLeft"><div class="teacherAvatar receptionistAvatar">${initial}</div><div class="staffIdentity"><h3>${h(u.name||'Lễ tân')}</h3><div class="mini staffContact" title="${h(contact)}">${h(contact)}</div></div></div><span class="pill yellow">Lễ tân</span></div><div class="teacherMeta compact"><span class="staffStatusDot ${active?'active':'inactive'}"></span><span>${active?'Đang hoạt động':'Tạm khóa'}</span></div></div>`;
-    }
-
-    function openReceptionistDetail(id){
-      if(!isAdmin()) return;
-      const u=(db.users||[]).find(x=>String(x.id)===String(id) && x.roles?.includes('receptionist'));
-      if(!u){toast('Không tìm thấy tài khoản Lễ tân');return}
-      modal(`<div data-staff-modal="receptionist" data-staff-id="${u.id}" class="staffModalContent"><div class="modalHead"><h2>Thông tin Lễ tân</h2><button class="close" onclick="closeModal()">×</button></div><div class="staffModalScroll"><div class="teacherDetailHeader compact"><div data-staff-header-avatar class="teacherAvatar receptionistAvatar">${(u.name||'L').split(' ').slice(-1)[0][0]||'L'}</div><div><h3 data-staff-header-name>${h(u.name||'Lễ tân')}</h3><p class="mini">Tài khoản: <b data-staff-header-account>${h(u.phone||'-')}</b></p><span class="pill yellow">Lễ tân</span></div></div><div class="teacherPopupGrid"><label>Họ tên<input id="editReceptionistName" class="input" value="${h(u.name||'')}"></label><label>Số điện thoại / tài khoản<input id="editReceptionistPhone" class="input" inputmode="tel" value="${h(u.phone||'')}"></label><label>Email<input id="editReceptionistEmail" class="input" type="email" value="${h(u.email||'')}"></label><label>Trạng thái<select id="editReceptionistStatus" class="input"><option value="active" ${u.status!=='inactive'?'selected':''}>Đang hoạt động</option><option value="inactive" ${u.status==='inactive'?'selected':''}>Tạm khóa</option></select></label></div><div data-staff-feedback class="staffModalFeedback" hidden></div></div><div class="staffModalFooter"><div><button id="deleteReceptionistBtn" class="btn ghost dangerMini" onclick="deleteReceptionistAccount('${u.id}',this)">Xóa Lễ tân</button></div><div><button class="btn ghost" onclick="closeModal()">Đóng</button><button id="resetReceptionistPasswordBtn" class="btn ghost" onclick="resetUserPassword('${u.id}',this)">Reset mật khẩu</button><button id="saveReceptionistDetailBtn" class="btn primary" onclick="saveReceptionistDetail('${u.id}')">Lưu thông tin</button></div></div></div>`)
-    }
-
-    async function saveReceptionistDetail(id){
-      if(!isAdmin()) return;
-      const u=(db.users||[]).find(x=>String(x.id)===String(id) && x.roles?.includes('receptionist'));
-      if(!u){toast('Không tìm thấy tài khoản Lễ tân');return}
-      v7hClearStaffErrors();
-      const name=(document.getElementById('editReceptionistName')?.value||'').trim();
-      const phone=normalizePhone(document.getElementById('editReceptionistPhone')?.value||'');
-      const email=(document.getElementById('editReceptionistEmail')?.value||'').trim();
-      const status=document.getElementById('editReceptionistStatus')?.value||'active';
-      let valid=true;
-      if(!name){v7hInlineFieldError('editReceptionistName','Nhập họ tên Lễ tân');valid=false}
-      if(phone.length<8){v7hInlineFieldError('editReceptionistPhone','Số điện thoại/tài khoản chưa hợp lệ');valid=false}
-      if(!v7hValidEmail(email)){v7hInlineFieldError('editReceptionistEmail','Email chưa đúng định dạng');valid=false}
-      if(!valid){modalBackdrop.querySelector('.inputError')?.focus();return}
-      const action=v7hBeginStaffAction(`save:receptionist:${id}`,document.getElementById('saveReceptionistDetailBtn'),'Đang lưu...');
-      if(!action) return;
-      try{
-        const data=await officialFetch('/api/users',{method:'PATCH',body:JSON.stringify({id,name,phone,email,status,role:'receptionist'})});
-        db.users=(db.users||[]).map(x=>String(x.id)===String(id)?data.user:x);
-        v29PersistStaffMutation('receptionist-updated');
-        v29RefreshStaffUi('receptionist',data.user);
-        v7hPatchReceptionistModalHeader(data.user);
-        v7hEndStaffAction(action);
-        v7hMarkStaffModalClean();
-        v7hStaffFeedback('Đã lưu thay đổi.','success');
-      }catch(e){
-        v7hEndStaffAction(action);
-        v7hStaffFeedback(e.message||'Không lưu được tài khoản Lễ tân','error');
-      }
-    }
-
-    async function deleteReceptionistAccount(userId,trigger=null){
-      if(!isAdmin()){toast('Chỉ Admin được xóa tài khoản Lễ tân');return}
-      const u=(db.users||[]).find(x=>String(x.id)===String(userId) && x.roles?.includes('receptionist'));
-      if(!u){toast('Không tìm thấy tài khoản Lễ tân');return}
-      const confirmed=await v7hConfirm({title:`Xóa Lễ tân ${u.name||u.phone}?`,message:'Tài khoản đăng nhập và các phiên hiện tại sẽ bị xóa. Dữ liệu lớp không bị ảnh hưởng.',confirmText:'Xóa Lễ tân',danger:true});
-      if(!confirmed) return;
-      const action=v7hBeginStaffAction(`delete:receptionist:${userId}`,trigger||document.getElementById('deleteReceptionistBtn'),'Đang xóa...');
-      if(!action) return;
-      try{
-        await officialFetch('/api/users',{method:'DELETE',body:JSON.stringify({id:userId})});
-        db.users=(db.users||[]).filter(x=>String(x.id)!==String(userId));
-        v29PersistStaffMutation('receptionist-deleted');
-        v29RefreshStaffUi('receptionist',null,{remove:true,id:userId});
-        v7hEndStaffAction(action);
-        closeModal(true);
-        toast('Đã xóa Lễ tân');
-      }catch(e){
-        v7hEndStaffAction(action);
-        v7hShowStaffError(e.message||'Không xóa được tài khoản Lễ tân');
-      }
-    }
-
-    function openTeacherModal(){
-      modal(`<div data-staff-modal="teacher-create" class="staffModalContent"><div class="modalHead"><h2>+ Tạo tài khoản giáo viên</h2><button class="close" onclick="closeModal()">×</button></div><div class="staffModalScroll"><div class="teacherDetailHeader compact"><div class="teacherAvatar">+</div><div><h3>Tạo nhân sự giảng dạy</h3><span class="mini">Mật khẩu tạm sẽ hiện sau khi tạo thành công.</span></div></div><div class="formGrid"><label>Họ tên<input id="teacherName" class="input" placeholder="VD: Ms Linh"></label><label>Số điện thoại / tài khoản<input id="teacherPhone" class="input" inputmode="tel" placeholder="VD: 0987654321"></label><label class="full">Email<input id="teacherEmail" class="input" type="email" placeholder="Không bắt buộc"></label></div><div class="teacherPermPanel"><b>Phân quyền</b>${roleChoiceMarkup('teacher','teacherRoleChoice',isAdmin())}</div><div data-staff-feedback class="staffModalFeedback" hidden></div></div><div class="staffModalFooter"><div></div><div><button class="btn ghost" onclick="closeModal()">Hủy</button><button id="saveTeacherFromModalBtn" class="btn primary" onclick="saveTeacherFromModal()">Tạo tài khoản</button></div></div></div>`)
-    }
-
-    async function saveTeacherFromModal(){
-      v7hClearStaffErrors();
-      const name=(document.getElementById('teacherName')?.value||'').trim();
-      const phone=normalizePhone(document.getElementById('teacherPhone')?.value||'');
-      const email=(document.getElementById('teacherEmail')?.value||'').trim();
-      let role=selectedTeacherRole('teacherRoleChoice','teacher');
-      if(!isAdmin() && role==='admin') role='manager';
-      let valid=true;
-      if(!name){v7hInlineFieldError('teacherName','Nhập họ tên');valid=false}
-      if(phone.length<8){v7hInlineFieldError('teacherPhone','Số điện thoại/tài khoản chưa hợp lệ');valid=false}
-      if(!v7hValidEmail(email)){v7hInlineFieldError('teacherEmail','Email chưa đúng định dạng');valid=false}
-      if(!valid){modalBackdrop.querySelector('.inputError')?.focus();return}
-      const action=v7hBeginStaffAction('create:teacher',document.getElementById('saveTeacherFromModalBtn'),'Đang tạo...');
-      if(!action) return;
-      try{
-        const data=await officialFetch('/api/teachers',{method:'POST',body:JSON.stringify({name,phone,email,role})});
-        db.teachers=db.teachers.filter(t=>t.id!==data.teacher.id);
-        db.teachers.push(data.teacher);
-        v29PersistStaffMutation('teacher-created');
-        v29RefreshStaffUi('teacher',data.teacher);
-        v7hEndStaffAction(action);
-        showTempPasswordModal('Đã tạo tài khoản',data.teacher.phone,data.tempPassword,'close');
-      }catch(e){
-        v7hEndStaffAction(action);
-        v7hStaffFeedback(e.message||'Không tạo được giáo viên','error');
-      }
-    }
-
-    function openTeacherDetail(id){
-      if(!canManageOperations()) return;
-      const t=teacherById(id); if(!t?.id) return;
-      const role=teacherRoleValue(t);
-      modal(`<div data-staff-modal="teacher" data-staff-id="${t.id}" class="staffModalContent"><div class="modalHead"><h2>Thông tin giáo viên</h2><button class="close" onclick="closeModal()">×</button></div><div class="staffModalScroll"><div class="teacherDetailHeader compact"><div data-staff-header-avatar class="teacherAvatar">${(t.name||'T').split(' ').slice(-1)[0][0]||'T'}</div><div><h3 data-staff-header-name>${h(t.name||'')}</h3><p class="mini">Tài khoản: <b data-staff-header-account>${h(t.phone||'-')}</b></p><span data-staff-header-role class="pill ${teacherRoleClasses(t)}">${teacherRoleLabel(t)}</span></div></div><div class="teacherPopupGrid"><label>Họ tên<input id="editTeacherName" class="input" value="${h(t.name||'')}"></label><label>Số điện thoại / tài khoản<input id="editTeacherPhone" class="input" inputmode="tel" value="${h(t.phone||'')}"></label><label>Email<input id="editTeacherEmail" class="input" type="email" value="${h(t.email||'')}"></label><label>Trạng thái<select id="editTeacherStatus" class="input"><option value="active" ${t.status!=='inactive'?'selected':''}>Đang hoạt động</option><option value="inactive" ${t.status==='inactive'?'selected':''}>Tạm khóa</option></select></label></div><div class="teacherPermPanel"><b>Phân quyền</b>${roleChoiceMarkup(role,'editTeacherRoleChoice',isAdmin())}</div>${v7hTeacherClassPanelMarkup(t)}<div data-staff-feedback class="staffModalFeedback" hidden></div></div><div class="staffModalFooter"><div><button id="deleteTeacherBtn" class="btn ghost dangerMini" onclick="deleteTeacher('${t.id}',this)">Xóa giáo viên</button></div><div><button class="btn ghost" onclick="closeModal()">Đóng</button><button id="resetTeacherPasswordBtn" class="btn ghost" onclick="resetTeacherPassword('${t.id}',this)">Reset mật khẩu</button><button id="saveTeacherDetailBtn" class="btn primary" onclick="saveTeacherDetail('${t.id}')">Lưu thông tin</button></div></div></div>`)
-    }
-
-    async function saveTeacherDetail(id){
-      if(!canManageOperations()) return;
-      const t=teacherById(id); if(!t?.id) return;
-      v7hClearStaffErrors();
-      const name=(document.getElementById('editTeacherName')?.value||'').trim();
-      const phone=normalizePhone(document.getElementById('editTeacherPhone')?.value||'');
-      const email=(document.getElementById('editTeacherEmail')?.value||'').trim();
-      const status=document.getElementById('editTeacherStatus')?.value||'active';
-      let role=selectedTeacherRole('editTeacherRoleChoice',teacherRoleValue(t));
-      if(!isAdmin() && role==='admin') role='manager';
-      let valid=true;
-      if(!name){v7hInlineFieldError('editTeacherName','Nhập họ tên');valid=false}
-      if(phone.length<8){v7hInlineFieldError('editTeacherPhone','Số điện thoại/tài khoản chưa hợp lệ');valid=false}
-      if(!v7hValidEmail(email)){v7hInlineFieldError('editTeacherEmail','Email chưa đúng định dạng');valid=false}
-      if(!valid){modalBackdrop.querySelector('.inputError')?.focus();return}
-      const action=v7hBeginStaffAction(`save:teacher:${id}`,document.getElementById('saveTeacherDetailBtn'),'Đang lưu...');
-      if(!action) return;
-      try{
-        const data=await officialFetch('/api/teachers',{method:'PATCH',body:JSON.stringify({id,name,phone,email,status,role})});
-        db.teachers=db.teachers.map(x=>x.id===id?data.teacher:x);
-        db.classes.forEach(c=>{if(c.teacherId===id){c.teacher=data.teacher.name};if(c.taId===id){c.ta=data.teacher.name}});
-        v29PersistStaffMutation('teacher-updated');
-        v20bAfterMutation(['core'],{delayMs:5000,renderOnRevalidate:false});
-        v29RefreshStaffUi('teacher',data.teacher);
-        v7hPatchTeacherModalHeader(data.teacher);
-        v7hEndStaffAction(action);
-        v7hPatchTeacherClassPanel(id);
-        v7hMarkStaffModalClean();
-        v7hStaffFeedback('Đã lưu thay đổi.','success');
-      }catch(e){
-        v7hEndStaffAction(action);
-        v7hStaffFeedback(e.message||'Không lưu được giáo viên','error');
-      }
-    }
-
-    async function resetTeacherPassword(teacherId,trigger=null){
-      const t=teacherById(teacherId); if(!t?.id) return;
-      if(v7hStaffModalDirty()){v7hStaffFeedback('Hãy lưu hoặc bỏ thay đổi trước khi reset mật khẩu.','error');return}
-      const action=v7hBeginStaffAction(`reset:teacher:${teacherId}`,trigger||document.getElementById('resetTeacherPasswordBtn'),'Đang reset...');
-      if(!action) return;
-      try{
-        const data=await officialFetch(`/api/teachers/${teacherId}/reset-password`,{method:'POST',body:'{}'});
-        v7hEndStaffAction(action);
-        showTempPasswordModal('Đã reset mật khẩu',data.phone||t.phone,data.tempPassword,'close');
-      }catch(e){
-        v7hEndStaffAction(action);
-        v7hShowStaffError(e.message||'Không reset được mật khẩu');
-      }
-    }
-
-    async function assignTeacherToClass(teacherId,classId,assignmentRole='teacher',trigger=null){
-      if(!canManageOperations()) return;
-      const t=teacherById(teacherId),c=classById(classId);
-      if(!t?.id||!c?.id) return;
-      if(isClassEnded(c)){v7hStaffFeedback('Lớp đã kết thúc, không thể gán.','error');return}
-      if(assignmentRole==='ta'&&String(c.teacherId||'')===String(teacherId)){v7hStaffFeedback('Một người không thể vừa là giáo viên chính vừa là TA của cùng lớp.','error');return}
-      if(assignmentRole!=='ta'&&String(c.taId||'')===String(teacherId)){v7hStaffFeedback('Một người không thể vừa là giáo viên chính vừa là TA của cùng lớp.','error');return}
-      const action=v7hBeginStaffAction(`assign:${teacherId}:${classId}:${assignmentRole}`,trigger||document.getElementById('assignTeacherClassBtn'),'Đang gán...');
-      if(!action) return;
-      try{
-        await officialFetch(`/api/teachers/${teacherId}/classes`,{method:'POST',body:JSON.stringify({classId,action:'assign',assignmentRole})});
-        if(assignmentRole==='ta'){c.ta=t.name;c.taId=t.id}else{c.teacher=t.name;c.teacherId=t.id}
-        v29PersistStaffMutation('teacher-class-assigned');
-        v20bAfterMutation(['core'],{delayMs:5000,renderOnRevalidate:false});
-        v29RefreshStaffUi('teacher',t);
-        v7hEndStaffAction(action);
-        v7hPatchTeacherClassPanel(teacherId);
-        v7hStaffFeedback(`Đã gán vào ${c.name}.`,'success');
-      }catch(e){
-        v7hEndStaffAction(action);
-        v7hStaffFeedback(e.message||'Không gán được lớp','error');
-      }
-    }
-
-    async function removeTeacherFromClass(teacherId,classId,assignmentRole='teacher',trigger=null){
-      if(!canManageOperations()) return;
-      const c=classById(classId),t=teacherById(teacherId);if(!c?.id||!t?.id) return;
-      if(isClassEnded(c)){v7hStaffFeedback('Lớp đã kết thúc, không thể bỏ gán.','error');return}
-      const action=v7hBeginStaffAction(`remove:${teacherId}:${classId}:${assignmentRole}`,trigger,'Đang bỏ gán...');
-      if(!action) return;
-      try{
-        await officialFetch(`/api/teachers/${teacherId}/classes`,{method:'POST',body:JSON.stringify({classId,action:'remove',assignmentRole})});
-        if(assignmentRole==='ta'&&(c.taId===teacherId||c.ta===t.name)){c.ta='';c.taId=null}
-        if(assignmentRole!=='ta'&&(c.teacherId===teacherId||c.teacher===t.name)){c.teacher='';c.teacherId=null}
-        v29PersistStaffMutation('teacher-class-removed');
-        v20bAfterMutation(['core'],{delayMs:5000,renderOnRevalidate:false});
-        v29RefreshStaffUi('teacher',t);
-        v7hEndStaffAction(action);
-        v7hPatchTeacherClassPanel(teacherId);
-        v7hStaffFeedback(`Đã bỏ gán khỏi ${c.name}.`,'success');
-      }catch(e){
-        v7hEndStaffAction(action);
-        v7hStaffFeedback(e.message||'Không bỏ gán được lớp','error');
-      }
-    }
-
-    async function deleteTeacher(teacherId,trigger=null){
-      if(!canManageOperations()) return;
-      const t=teacherById(teacherId);if(!t?.id) return;
-      const cls=classesOfTeacher(t);
-      const ended=cls.filter(isClassEnded);
-      if(ended.length){v7hShowStaffError('Không thể xóa nhân sự đang nằm trong lớp đã kết thúc.');return}
-      const confirmed=await v7hConfirm({title:`Xóa ${t.name}?`,message:`Tài khoản đăng nhập sẽ bị xóa. ${cls.length} lớp đang học sẽ được bỏ phân công.`,confirmText:'Xóa giáo viên',danger:true});
-      if(!confirmed) return;
-      const action=v7hBeginStaffAction(`delete:teacher:${teacherId}`,trigger||document.getElementById('deleteTeacherBtn'),'Đang xóa...');
-      if(!action) return;
-      try{
-        await officialFetch('/api/teachers',{method:'DELETE',body:JSON.stringify({id:teacherId})});
-        db.teachers=db.teachers.filter(x=>x.id!==teacherId);
-        db.users=(db.users||[]).filter(u=>normalizePhone(u.phone)!==normalizePhone(t.phone));
-        db.classes.forEach(c=>{if(c.teacherId===teacherId||c.teacher===t.name){c.teacher='';c.teacherId=null};if(c.taId===teacherId||c.ta===t.name){c.ta='';c.taId=null}});
-        v29PersistStaffMutation('teacher-deleted');
-        v20bAfterMutation(['core'],{delayMs:5000,renderOnRevalidate:false});
-        v29RefreshStaffUi('teacher',null,{remove:true,id:teacherId});
-        v7hEndStaffAction(action);
-        closeModal(true);
-        toast('Đã xóa giáo viên');
-      }catch(e){
-        v7hEndStaffAction(action);
-        v7hShowStaffError(e.message||'Không xóa được giáo viên');
-      }
-    }
-
 // V19A: classesPage/classCard/filterClasses moved to /v15/modules/classes.js
 
-    function openClassDetail(id,sessionKey=null){
-      normalizeMakeupPlans(); normalizeClassOperations();
-      const c=classById(id);
-      const mk=sessionKey?makeupStudentsForSession(sessionKey):makeupStudentsForClass(id);
-      const active=!isClassEnded(c);
-      const canEdit=canEditActiveClass(c);
-      const actionMarkup=canManageOperations()
-        ? (canEdit
-          ? `<button class="btn primary" onclick="openEditClassModal('${id}')">Sửa lớp</button><button class="btn primary" onclick="openAddStudentModal('${id}')">+ Thêm học sinh</button><button class="btn primary" onclick="openPromoteClassModal('${id}')">Chuyển cả lớp</button><button class="btn ghost" onclick="openEndClassModal('${id}')">Kết thúc lớp</button><button class="btn ghost" onclick="openDeleteClassModal('${id}')">Xóa lớp</button>`
-          : `<span class="pill gray">Lớp đã kết thúc • chỉ xem</span>`)
-        : '';
-      modal(`<div class="modalHead"><h2>${c.name}</h2><div class="classActionRow">${actionMarkup}<button class="close" onclick="closeModal()">×</button></div></div>
-      ${!active?'<div class="lockedClassNotice">🔒 Lớp đã kết thúc. Dữ liệu lớp này được khóa để giữ lịch sử, không thể chỉnh sửa thông tin, học sinh, lịch học hoặc chuyển lớp.</div>':''}
-      <div class="modalInfoGrid">
-        <div><p><b>Giáo viên:</b> ${c.teacher||'-'}</p><p><b>TA:</b> ${c.ta||'-'}</p><p><b>Lịch học:</b> ${c.time||'-'}</p></div>
-        <div><p><b>Ngày bắt đầu:</b> ${c.startDate?formatVNDate(parseISODate(c.startDate)):'-'}</p><p><b>Ngày kết thúc:</b> ${c.endDate?formatVNDate(parseISODate(c.endDate)):'-'}</p><p><span class="pill ${active?'green':'gray'}">${active?'Đang học':'Đã kết thúc'}</span></p></div>
-      </div>
-      ${c.note?`<div class="rulesBox"><b>Ghi chú lớp:</b> ${h(c.note)}</div>`:''}
-      <div class="rosterSectionTitle"><h3>Học sinh chính thức</h3><span class="officialBadge">${c.students.length} học sinh</span></div>
-      <div class="modalTableWrap"><table class="modalTable"><thead><tr><th>STT</th><th>Học sinh</th><th>Liên hệ</th><th>Loại</th>${canEdit?'<th>Thao tác</th>':''}</tr></thead><tbody>${c.students.map((s,i)=>`<tr><td>${i+1}</td><td><b>${s.name}</b></td><td>${s.contact||'Chưa có'}</td><td><span class="pill gray">Chính thức</span></td>${canEdit?`<td><div class="studentRowActions"><button class="studentActionBtn transfer" onclick="openStudentTransferModal('${c.id}','${s.id}')">Chuyển lớp</button><button class="studentActionBtn history" onclick="openStudentClassHistory('${c.id}','${s.id}')">Lịch sử</button><button class="studentActionBtn danger" onclick="openDeleteStudentModal('${c.id}','${s.id}')">Xóa</button></div></td>`:''}</tr>`).join('')}</tbody></table></div>
-      <div class="rosterSectionTitle"><h3>${sessionKey?'Học bù buổi này':'Học bù của lớp'}</h3><span class="makeupBadge">${mk.length} học bù</span></div>
-      ${sessionKey?makeupStudentMarkupForSession(sessionKey):makeupStudentMarkup(id)}`)
-    }
-
-
-
-    function isClassEnded(c){
-      return String(c?.status || '').toLowerCase()==='ended';
-    }
-    function canEditActiveClass(c){
-      return canManageOperations() && !!c?.id && !isClassEnded(c);
-    }
-    function assertActiveClassEditable(classId,action='chỉnh sửa lớp'){
-      const c=classById(classId);
-      if(!c?.id){toast('Không tìm thấy lớp');return null}
-      if(!canEditActiveClass(c)){
-        toast('Lớp đã kết thúc, không thể chỉnh sửa.');
-        return null;
-      }
-      return c;
-    }
-    function classNameExists(name,excludeId=null){
-      const key=String(name||'').trim().toLowerCase();
-      // V20M: chỉ kiểm tra trùng với lớp đang học. Lớp đã kết thúc là dữ liệu lịch sử.
-      return !!key && db.classes.some(c=>String(c.id)!==String(excludeId||'') && !isClassEnded(c) && String(c.name||'').trim().toLowerCase()===key);
-    }
-    function staffRoleMini(t){
-      const r=teacherRoleValue(t);
-      return r==='manager'?' • Quản lí':r==='admin'?' • Admin':r==='ta'?' • TA':'';
-    }
-    function isPureTA(t){
-      const roles=t?.roles||[];
-      return roles.includes('ta') && !roles.includes('teacher') && !roles.includes('manager') && !roles.includes('admin');
-    }
-    function staffOptionsForClass(selectedId='',mode='teacher'){
-      const selected=String(selectedId||'');
-      const rows=(db.teachers||[]).filter(t=>t.status!=='inactive').filter(t=>mode==='ta' || !isPureTA(t));
-      const blank=mode==='ta'?'<option value="">-- Không chọn TA --</option>':'';
-      return blank + rows.map(t=>`<option value="${h(t.id)}" ${String(t.id)===selected?'selected':''}>${h(t.name)}${staffRoleMini(t)}</option>`).join('');
-    }
-
-    function editDayOptions(selected='Mon'){
-      return WEEK_DAYS.map(d=>`<option value="${d.key}" ${d.key===selected?'selected':''}>${d.label}</option>`).join('');
-    }
-    function editSlotOptions(selected='17:00-18:30'){
-      return CLASS_TIME_SLOTS.map(s=>{const v=`${s.start}-${s.end}`;return `<option value="${v}" ${v===selected?'selected':''}>${s.label}</option>`}).join('');
-    }
-    function editInitialSessions(c){
-      const parsed=parseClassSessions(c||{}).slice(0,2);
-      const fallback1={day:'Mon',start:'17:00',end:'18:30'};
-      const fallback2={day:'Wed',start:'17:00',end:'18:30'};
-      const s1=parsed[0]||fallback1;
-      const s2=parsed[1]||fallback2;
-      return [
-        {day:s1.day||'Mon',slot:`${s1.start||'17:00'}-${s1.end||'18:30'}`},
-        {day:s2.day||'Wed',slot:`${s2.start||'17:00'}-${s2.end||'18:30'}`}
-      ];
-    }
-    function buildEditClassTimeFromForm(){
-      const count=Number(document.getElementById('editSessionCount')?.value||1);
-      const sessions=[];
-      for(let i=1;i<=count;i++){
-        const day=document.getElementById(`editDay${i}`)?.value || 'Mon';
-        const slot=timeSlotByValue(document.getElementById(`editSlot${i}`)?.value || '17:00-18:30');
-        sessions.push(`${slot.start.replace(':','h')} - ${slot.end.replace(':','h')} ${day}`);
-      }
-      return sessions.join('; ');
-    }
-    function schedulePayloadFromEditClassForm(){
-      const count=Number(document.getElementById('editSessionCount')?.value||1);
-      const schedules=[];
-      const seen=new Set();
-      for(let i=1;i<=count;i++){
-        const day=document.getElementById(`editDay${i}`)?.value || 'Mon';
-        const slot=timeSlotByValue(document.getElementById(`editSlot${i}`)?.value || '17:00-18:30');
-        const key=`${day}|${slot.start}-${slot.end}`;
-        if(seen.has(key)) return {error:'Hai buổi học không được trùng cùng thứ và cùng khung giờ.',schedules:[]};
-        seen.add(key);
-        schedules.push({day,start:slot.start,end:slot.end});
-      }
-      return {schedules,error:''};
-    }
-    function scheduleSignatureFromPayload(rows=[]){
-      return (rows||[]).map(s=>`${s.day}|${s.start}-${s.end}`).sort().join(';');
-    }
-    function scheduleSignatureForClass(c){
-      return scheduleSignatureFromPayload(parseClassSessions(c||{}).map(s=>({day:s.day,start:s.start,end:s.end})));
-    }
-    function scheduleDateFromKey(key){
-      const parts=String(key||'').split('|');
-      return parts.length>=4 ? parts[1] : '';
-    }
-    function classHasFutureMakeupTargets(classId){
-      const today=isoDate(new Date());
-      return (db.makeupPlans||[]).some(p=>{
-        if(String(p.targetClassId)!==String(classId) || String(p.status||'')==='cancelled') return false;
-        const d=scheduleDateFromKey(p.targetSessionKey);
-        return !d || d>=today;
-      });
-    }
-    function classHasSavedAttendanceInLoadedWeek(classId){
-      return Object.values(ensureAttendanceSessions()).some(rec=>{
-        const key=String(rec?.sessionKey||'');
-        return rec?.saved && key.startsWith(`${classId}|`);
-      });
-    }
-    function updateEditClassPreview(){
-      const el=document.getElementById('editClassPreview'); if(el) el.textContent=buildEditClassTimeFromForm();
-      document.querySelectorAll('.editSession2Only').forEach(x=>x.style.display=Number(document.getElementById('editSessionCount')?.value||1)===2?'block':'none');
-    }
-    function openEditClassModal(classId){
-      const c=assertActiveClassEditable(classId,'sửa lớp'); if(!c) return;
-      const sessions=editInitialSessions(c);
-      const sessionCount=parseClassSessions(c).length>=2?2:1;
-      const teacherOptions=staffOptionsForClass(c.teacherId,'teacher');
-      const taOptions=staffOptionsForClass(c.taId,'ta');
-      modal(`<div class="modalHead"><h2>Sửa lớp ${h(c.name)}</h2><button class="close" onclick="closeModal()">×</button></div>
-      <div class="editClassNotice"><b>Chỉ lớp đang học được chỉnh sửa.</b><br>Lớp đã kết thúc sẽ bị khóa hoàn toàn để giữ dữ liệu lịch sử.</div>
-      <div class="formGrid">
-        <label>Tên lớp<input id="editClassName" class="input" value="${h(c.name)}" placeholder="VD: G3.1"></label>
-        <label>Giáo viên<select id="editTeacher" class="input">${teacherOptions||'<option value="">Chưa phân công</option>'}</select></label>
-        <label>Ngày bắt đầu<input id="editStartDate" class="input" type="date" value="${h(c.startDate||isoDate(new Date()))}"></label>
-        <label>TA / Trợ giảng<select id="editTA" class="input">${taOptions}</select></label>
-        <label>Số buổi/tuần<select id="editSessionCount" class="input" onchange="updateEditClassPreview()"><option value="1" ${sessionCount===1?'selected':''}>1 buổi / tuần</option><option value="2" ${sessionCount===2?'selected':''}>2 buổi / tuần</option></select></label>
-        <div></div>
-        <div class="full sessionConfigurator">
-          <h3>Buổi 1</h3>
-          <div class="inline2"><label>Ngày học<select id="editDay1" class="input" onchange="updateEditClassPreview()">${editDayOptions(sessions[0].day)}</select></label><label>Khung giờ<select id="editSlot1" class="input" onchange="updateEditClassPreview()">${editSlotOptions(sessions[0].slot)}</select></label></div>
-          <div class="editSession2Only">
-            <h3 style="margin-top:14px">Buổi 2</h3>
-            <div class="inline2"><label>Ngày học<select id="editDay2" class="input" onchange="updateEditClassPreview()">${editDayOptions(sessions[1].day)}</select></label><label>Khung giờ<select id="editSlot2" class="input" onchange="updateEditClassPreview()">${editSlotOptions(sessions[1].slot)}</select></label></div>
-          </div>
-          <div class="slotPreview"><b>Lịch học mới:</b> <span id="editClassPreview"></span></div>
-        </div>
-        <label class="full">Ghi chú lớp<textarea id="editClassNote" class="input" rows="3" placeholder="Ghi chú nội bộ về lớp...">${h(c.note||'')}</textarea></label>
-      </div>
-      <div style="text-align:right;margin-top:18px"><button class="btn ghost" onclick="openClassDetail('${classId}')">Hủy</button> <button class="btn primary" onclick="saveEditedClass('${classId}')">Lưu thay đổi</button></div>`);
-      setTimeout(updateEditClassPreview,0);
-    }
-    async function saveEditedClass(classId){
-      const c=assertActiveClassEditable(classId,'sửa lớp'); if(!c) return;
-      const name=(document.getElementById('editClassName')?.value||'').trim();
-      const teacherId=document.getElementById('editTeacher')?.value||'';
-      const taId=document.getElementById('editTA')?.value||'';
-      const startDate=document.getElementById('editStartDate')?.value||c.startDate||isoDate(new Date());
-      const note=(document.getElementById('editClassNote')?.value||'').trim();
-      if(!name){toast('Nhập tên lớp');return}
-      if(teacherId && taId && String(teacherId)===String(taId)){toast('Giáo viên chính và TA không nên là cùng một người.');return}
-      if(classNameExists(name,classId)){toast('Tên lớp đang học đã tồn tại. Vui lòng chọn tên khác.');return}
-      const {schedules,error}=schedulePayloadFromEditClassForm();
-      if(error){toast(error);return}
-      const oldScheduleSig=scheduleSignatureForClass(c);
-      const newScheduleSig=scheduleSignatureFromPayload(schedules);
-      const scheduleChanged=oldScheduleSig!==newScheduleSig;
-      if(scheduleChanged && classHasFutureMakeupTargets(classId)){
-        toast('Lớp đang có học sinh học bù đã xếp vào lịch tương lai. Hãy hủy/xử lý học bù trước khi đổi lịch học.');
-        return;
-      }
-      if(scheduleChanged && classHasSavedAttendanceInLoadedWeek(classId)){
-        const ok=confirm('Lớp này đã có điểm danh trong tuần. Đổi lịch sẽ áp dụng cho các buổi mới, dữ liệu điểm danh cũ vẫn được giữ. Tiếp tục lưu?');
-        if(!ok) return;
-      }
-      const action=v28BeginModalAction(document.querySelector('.modal .btn.primary[onclick^="saveEditedClass"]'),'Đang lưu...');
-      if(!action) return;
-
-      let data;
+    async function v8d1OpenStudentTransferAction(mode,classId,studentId,trigger=null){
+      const key=`student-transfer-module:${mode}:${studentId}`;
+      const action=window.MsUiAction?.beginLockedAction?.(key,trigger,mode==='history'?'Đang mở...':'Đang tải...');
+      if(trigger && !action) return;
       try{
-        data=await officialFetch(`/api/classes/${encodeURIComponent(classId)}`,{
-          method:'PATCH',
-          body:JSON.stringify({name,teacherId,assistantTeacherId:taId,startDate,note,schedules})
-        });
+        await window.MsRouteModules?.ensure('studentTransfer');
+        if(mode==='history') return window.openStudentClassHistory(classId,studentId);
+        return window.openStudentTransferModal(classId,studentId);
       }catch(e){
-        v28EndModalAction(action);
-        toast(e.message||'Không lưu được lớp');
-        return;
+        toast(e?.message||'Không tải được chức năng chuyển lớp');
+      }finally{
+        if(action) window.MsUiAction?.endLockedAction?.(action);
       }
-
-      try{
-        const updated=data.class || {...c,name,teacherId,taId,startDate,note,time:buildEditClassTimeFromForm()};
-        const i=(db.classes||[]).findIndex(x=>String(x.id)===String(classId));
-        if(i>=0) db.classes[i]={...db.classes[i],...updated,status:'active'};
-        else db.classes.push({...updated,status:'active'});
-        v28AfterClassMutation(['schedule','attendance','makeup','evaluation'],{
-          classId,
-          structural:true,
-          delayMs:V28_CLASS_REVALIDATE_DELAY_MS
-        });
-        openClassDetail(classId);
-      }catch(uiError){
-        console.error('Đã lưu lớp trên server nhưng cập nhật giao diện cục bộ gặp lỗi',uiError);
-        closeModal(true);
-        v28RecoverClassUi(classId,true);
-      }
-      toast(`Đã cập nhật lớp ${name}.`);
     }
 
-    function v27VietnamTodayText(){
-      try{
-        const parts=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Ho_Chi_Minh',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).map(x=>[x.type,x.value]));
-        return `${parts.year}-${parts.month}-${parts.day}`;
-      }catch(e){return isoDate(new Date())}
-    }
+    
+    // Phase 8D.2: openClassDetail moved to lazy runtime module.
+
+
+
+
+    
+    // Phase 8D.2: isClassEnded moved to lazy runtime module.
+
+    
+    // Phase 8D.2: canEditActiveClass moved to lazy runtime module.
+
+    
+    // Phase 8D.2: assertActiveClassEditable moved to lazy runtime module.
+
+    
+    // Phase 8D.2: teacherRoleValue moved to lazy runtime module.
+
+    
+    // Phase 8D.2: classNameExists moved to lazy runtime module.
+
+    
+    // Phase 8D.2: staffRoleMini moved to lazy runtime module.
+
+    
+    // Phase 8D.2: isPureTA moved to lazy runtime module.
+
+    
+    // Phase 8D.2: staffOptionsForClass moved to lazy runtime module.
+
+
+    
+    // Phase 8D.2: editDayOptions moved to lazy runtime module.
+
+    
+    // Phase 8D.2: editSlotOptions moved to lazy runtime module.
+
+    
+    // Phase 8D.2: editInitialSessions moved to lazy runtime module.
+
+    
+    // Phase 8D.2: buildEditClassTimeFromForm moved to lazy runtime module.
+
+    
+    // Phase 8D.2: schedulePayloadFromEditClassForm moved to lazy runtime module.
+
+    
+    // Phase 8D.2: scheduleSignatureFromPayload moved to lazy runtime module.
+
+    
+    // Phase 8D.2: scheduleSignatureForClass moved to lazy runtime module.
+
+    
+    // Phase 8D.2: scheduleDateFromKey moved to lazy runtime module.
+
+    
+    // Phase 8D.2: classHasFutureMakeupTargets moved to lazy runtime module.
+
+    
+    // Phase 8D.2: classHasSavedAttendanceInLoadedWeek moved to lazy runtime module.
+
+    
+    // Phase 8D.2: updateEditClassPreview moved to lazy runtime module.
+
+    
+    // Phase 8D.2: openEditClassModal moved to lazy runtime module.
+
+    
+    // Phase 8D.2: saveEditedClass moved to lazy runtime module.
+
+
+    
+    // Phase 8D.2: v27VietnamTodayText moved to lazy runtime module.
+
     function v27MonthLabel(monthKey){return formatTuitionMonth(monthKey||'')}
-    function v27EnrollmentSessionLabel(item){
-      if(!item) return '-';
-      return `${dayNameFromKey(item.day)||item.day} ${formatVNDate(parseISODate(item.date))} • ${item.start} - ${item.end}`;
-    }
+    
+    // Phase 8D.2: v27EnrollmentSessionLabel moved to lazy runtime module.
+
     let v27EnrollmentPreviewSeq=0;
     let v27EnrollmentPreviewCache=null;
-    function v27ToggleEnrollmentTuition(classId){
-      const enabled=!!document.getElementById('newStudentTuitionEnabled')?.checked;
-      const box=document.getElementById('newStudentTuitionFields');
-      if(box) box.style.display=enabled?'':'none';
-      const preview=document.getElementById('newStudentTuitionPreview');
-      if(!enabled){
-        v27EnrollmentPreviewCache=null;
-        if(preview) preview.innerHTML='<div class="mini">Không thu phần còn lại của tháng này. Học phí thường sẽ bắt đầu từ tháng kế tiếp.</div>';
-        const btn=document.getElementById('saveNewStudentBtn'); if(btn) btn.disabled=false;
-        return;
-      }
-      v27RefreshEnrollmentPreview(classId,false);
-    }
-    async function v27RefreshEnrollmentPreview(classId,preserveFirst=true){
-      const enabled=!!document.getElementById('newStudentTuitionEnabled')?.checked;
-      if(!enabled) return;
-      const startDate=canViewTuition()?(document.getElementById('newStudentStartDate')?.value||v27VietnamTodayText()):'';
-      const targetMonth=canViewTuition()?(document.getElementById('newStudentTargetMonth')?.value||addMonthsToMonthKey(startDate.slice(0,7),1)):'';
-      const firstSelect=document.getElementById('newStudentFirstSession');
-      const previousFirst=preserveFirst?(firstSelect?.value||''):'';
-      const previewBox=document.getElementById('newStudentTuitionPreview');
-      const saveBtn=document.getElementById('saveNewStudentBtn');
-      const seq=++v27EnrollmentPreviewSeq;
-      if(previewBox) previewBox.innerHTML='<div class="mini">Đang tính các buổi còn lại...</div>';
-      if(saveBtn) saveBtn.disabled=true;
-      try{
-        const qs=new URLSearchParams({classId,startDate,targetMonth});
-        if(previousFirst) qs.set('firstSessionKey',previousFirst);
-        const data=await officialFetch(`/api/tuition/enrollment-preview?${qs.toString()}`);
-        if(seq!==v27EnrollmentPreviewSeq) return;
-        const pv=data.preview||{};
-        v27EnrollmentPreviewCache=pv;
-        const targetInput=document.getElementById('newStudentTargetMonth');
-        if(targetInput){
-          targetInput.min=pv.minimumTargetMonth||'';
-          if(targetInput.value!==pv.targetMonth) targetInput.value=pv.targetMonth||'';
-        }
-        if(firstSelect){
-          const options=(pv.availableSessions||[]).map(item=>`<option value="${h(item.sessionKey)}" ${item.sessionKey===pv.firstSessionKey?'selected':''}>${h(v27EnrollmentSessionLabel(item))}</option>`).join('');
-          firstSelect.innerHTML=options||'<option value="">Không còn buổi học hợp lệ</option>';
-          firstSelect.disabled=!(pv.availableSessions||[]).length;
-        }
-        if(previewBox){
-          const sessions=pv.sessions||[];
-          const first=sessions[0];
-          const last=sessions[sessions.length-1];
-          previewBox.innerHTML=sessions.length?`<div class="enrollmentTuitionPreviewGrid">
-            <div><span>Tháng phát sinh</span><b>${h(v27MonthLabel(pv.sourceMonth))}</b></div>
-            <div><span>Số buổi còn lại</span><b>${Number(pv.sessionCount||0)} buổi</b></div>
-            <div><span>Đơn giá</span><b>${fmt.format(Number(pv.unitPrice||0))}đ</b></div>
-            <div><span>Chuyển sang thu</span><b>${h(v27MonthLabel(pv.targetMonth))}</b></div>
-          </div>
-          <div class="enrollmentTuitionTotal"><span>Khoản phát sinh</span><strong>${fmt.format(Number(pv.amount||0))}đ</strong></div>
-          <div class="mini">Từ ${h(v27EnrollmentSessionLabel(first))}${last&&last.sessionKey!==first?.sessionKey?` đến ${h(v27EnrollmentSessionLabel(last))}`:''}. Các buổi trung tâm đã cho nghỉ không được tính.</div>`:
-          '<div class="dangerBox compactDanger"><b>Không còn buổi học hợp lệ</b><span>Hãy chọn ngày bắt đầu khác hoặc tắt khoản học phí phát sinh.</span></div>';
-        }
-        if(saveBtn) saveBtn.disabled=!(pv.sessionCount>0);
-      }catch(e){
-        if(seq!==v27EnrollmentPreviewSeq) return;
-        v27EnrollmentPreviewCache=null;
-        if(previewBox) previewBox.innerHTML=`<div class="dangerBox compactDanger"><b>Không tính được học phí</b><span>${h(e.message||'Vui lòng thử lại')}</span></div>`;
-        if(saveBtn) saveBtn.disabled=true;
-      }
-    }
-    function v27ChangeEnrollmentFirstSession(classId){v27RefreshEnrollmentPreview(classId,true)}
+    
+    // Phase 8D.2: v27ToggleEnrollmentTuition moved to lazy runtime module.
 
-    function openAddStudentModal(classId){
-      const c=assertActiveClassEditable(classId,'thêm học sinh'); if(!c) return;
-      const today=v27VietnamTodayText();
-      const nextMonth=addMonthsToMonthKey(today.slice(0,7),1);
-      v27EnrollmentPreviewCache=null;
-      modal(`<div class="modalHead"><h2>+ Thêm học sinh vào ${h(c.name)}</h2><button class="close" onclick="closeModal()">×</button></div>
-      <div class="formGrid">
-        <label>Họ tên học sinh<input id="newStudentName" class="input" placeholder="VD: Minh Anh - Mia"></label>
-        <label>Tên phụ huynh / người liên hệ<input id="newParentName" class="input" placeholder="VD: Mẹ Minh Anh"></label>
-        <label>Số điện thoại liên hệ<input id="newParentPhone" class="input" placeholder="VD: 0987654321"></label>
-        <label>Thông tin liên hệ khác<input id="newStudentContact" class="input" placeholder="VD: Zalo mẹ / bố"></label>
-        <label class="full">Ghi chú<input id="newStudentNote" class="input" placeholder="VD: mới đăng ký / cần theo sát"></label>
-      </div>
-      ${canViewTuition()?`<div class="enrollmentTuitionBlock">
-        <label class="checkLine"><input id="newStudentTuitionEnabled" type="checkbox" checked onchange="v27ToggleEnrollmentTuition('${classId}')"><span><b>Tính học phí các buổi còn lại của tháng này</b><small>Tạo một khoản phát sinh và đưa vào cùng hóa đơn tháng sau.</small></span></label>
-        <div id="newStudentTuitionFields">
-          <div class="formGrid" style="margin-top:12px">
-            <label>Ngày bắt đầu học<input id="newStudentStartDate" class="input" type="date" value="${today}" onchange="v27RefreshEnrollmentPreview('${classId}',false)"></label>
-            <label>Tháng thu khoản phát sinh<input id="newStudentTargetMonth" class="input" type="month" min="${nextMonth}" value="${nextMonth}" onchange="v27RefreshEnrollmentPreview('${classId}',true)"></label>
-            <label class="full">Buổi đầu tiên tính học phí<select id="newStudentFirstSession" class="input" onchange="v27ChangeEnrollmentFirstSession('${classId}')"><option>Đang tải...</option></select></label>
-          </div>
-          <div id="newStudentTuitionPreview" class="enrollmentTuitionPreview"><div class="mini">Đang tính các buổi còn lại...</div></div>
-        </div>
-      </div>`:''}
-      <div style="text-align:right;margin-top:18px"><button class="btn ghost" onclick="openClassDetail('${classId}')">Quay lại lớp</button> <button id="saveNewStudentBtn" class="btn primary" ${canViewTuition()?'disabled':''} onclick="saveStudentToClass('${classId}',false)">Thêm học sinh</button></div>`);
-      if(canViewTuition()) setTimeout(()=>v27RefreshEnrollmentPreview(classId,false),0);
-    }
+    
+    // Phase 8D.2: v27RefreshEnrollmentPreview moved to lazy runtime module.
 
-    async function saveStudentToClass(classId,quick=false){
-      const c=assertActiveClassEditable(classId,'thêm học sinh'); if(!c) return;
-      const name=(document.getElementById(quick?`quickStudentName_${classId}`:'newStudentName')?.value||'').trim();
-      const contact=(document.getElementById(quick?`quickStudentContact_${classId}`:'newStudentContact')?.value||'').trim();
-      const note=(document.getElementById('newStudentNote')?.value||'').trim();
-      const parentName=(document.getElementById('newParentName')?.value||'').trim();
-      const parentPhone=normalizePhone(document.getElementById('newParentPhone')?.value||'');
-      const tuitionEnabled=canViewTuition() && !!document.getElementById('newStudentTuitionEnabled')?.checked;
-      const startDate=canViewTuition()?(document.getElementById('newStudentStartDate')?.value||v27VietnamTodayText()):'';
-      const targetMonth=canViewTuition()?(document.getElementById('newStudentTargetMonth')?.value||addMonthsToMonthKey(startDate.slice(0,7),1)):'';
-      const firstSessionKey=canViewTuition()?(document.getElementById('newStudentFirstSession')?.value||''):'';
-      if(!name){toast('Nhập tên học sinh');return}
-      if(tuitionEnabled && !firstSessionKey){toast('Chọn buổi đầu tiên tính học phí');return}
-      const action=v28BeginModalAction(document.getElementById('saveNewStudentBtn'),'Đang thêm...');
-      if(!action) return;
-
-      let data;
-      try{
-        data=await officialFetch(`/api/classes/${classId}/students`,{method:'POST',body:JSON.stringify({
-          name,contact,note,parentName,parentPhone,
-          tuitionEnrollment:canViewTuition()?{enabled:tuitionEnabled,startDate,targetMonth,firstSessionKey}:null
-        })});
-      }catch(e){
-        v28EndModalAction(action);
-        toast(e.message||'Không thêm được học sinh');
-        return;
-      }
-
-      const pv=data.tuitionPreview;
-      const regularStartMonth=data.student?.tuitionRegularStartMonth||targetMonth;
-      const msg=!canViewTuition()?`Đã thêm ${name} vào ${c.name}.`:data.tuitionAdjustment&&pv
-        ? `Đã thêm ${name} vào ${c.name}. Khoản phát sinh ${pv.sessionCount} buổi (${fmt.format(Number(pv.amount||0))}đ) sẽ thu trong ${v27MonthLabel(pv.targetMonth)}.`
-        : `Đã thêm ${name} vào ${c.name}. Học phí sẽ bắt đầu được tính từ ${v27MonthLabel(regularStartMonth)}.`;
-
-      // Server đã lưu thành công: không được báo thất bại chỉ vì bước patch UI gặp lỗi.
-      try{
-        c.students ||= [];
-        if(!c.students.some(s=>String(s.id)===String(data.student?.id))) c.students.push(data.student);
-        db.evaluations ||= [];
-        if(data.student?.id && !db.evaluations.some(x=>String(x.studentId)===String(data.student.id) && String(x.classId)===String(c.id))){
-          db.evaluations.push({studentId:data.student.id,classId:c.id,month:new Date().toLocaleDateString('vi-VN',{month:'2-digit',year:'numeric'}),scores:{Listening:3,Speaking:3,Reading:3,Writing:3,Vocabulary:3,Participation:3,Homework:3},status:'draft',comment:'Học sinh mới, cần theo dõi thêm trong các buổi tới.',strengths:'Có tinh thần học tập tốt.',improvements:'Cần làm quen với nề nếp lớp và luyện phản xạ nói.',suggestion:'Phụ huynh hỗ trợ bé ôn từ vựng 10 phút mỗi ngày.'});
-        }
-        v28AfterClassMutation(canViewTuition()?['schedule','attendance','evaluation','tuition']:['schedule','attendance','evaluation'],{
-          classId,
-          structural:false,
-          month:targetMonth,
-          months:[startDate.slice(0,7),targetMonth],
-          delayMs:V28_CLASS_REVALIDATE_DELAY_MS
-        });
-      }catch(uiError){
-        console.error('Đã thêm học sinh trên server nhưng cập nhật giao diện cục bộ gặp lỗi',uiError);
-        v28RecoverClassUi(classId,false);
-      }
-
-      closeModal(true);
-      toast(msg);
-    }
+    
+    // Phase 8D.2: v27ChangeEnrollmentFirstSession moved to lazy runtime module.
 
 
-    function v30StudentTransferRequestId(studentId,targetClassId){
-      const random=(window.crypto&&typeof window.crypto.randomUUID==='function')?window.crypto.randomUUID():`${Date.now()}_${Math.random().toString(36).slice(2)}`;
-      return `student-transfer:${studentId}:${targetClassId}:${random}`;
-    }
-    function v30StudentTransferFeedback(message='',type='error'){
-      const el=document.getElementById('studentTransferFeedback');
-      if(!el) return;
-      el.hidden=!message;
-      el.className=`staffModalFeedback ${type}`;
-      el.textContent=message;
-    }
-    function v30ActiveTransferTargets(sourceClassId){
-      return sortClassesByGrade(operationalClasses().filter(c=>String(c.id)!==String(sourceClassId)&&!isClassEnded(c)));
-    }
-    function v30EnrollmentHistoryMarkup(rows=[]){
-      if(!rows.length) return '<div class="studentHistoryEmpty">Không có lịch sử chuyển lớp</div>';
-      return `<div class="studentHistoryList">${rows.map(row=>`<div class="studentHistoryItem"><div><b>${h(row.className||'Lớp')}</b><div class="mini">${row.startDate?formatVNDate(parseISODate(row.startDate)):'-'} → ${row.endDate?formatVNDate(parseISODate(row.endDate)):'Hiện tại'}</div>${row.reason?`<div class="mini">Lý do: ${h(row.reason)}</div>`:''}</div><span class="pill ${row.status==='active'?'green':'gray'}">${row.status==='active'?'Đang học':'Đã chuyển'}</span></div>`).join('')}</div>`;
-    }
-    async function v30LoadStudentHistory(studentId,containerId='studentTransferHistory'){
-      const box=document.getElementById(containerId);
-      if(!box) return;
-      box.innerHTML='<div class="mini">Đang tải lịch sử lớp...</div>';
-      try{
-        const data=await officialFetch(`/api/students/${encodeURIComponent(studentId)}/transfer`);
-        const current=document.getElementById(containerId);
-        if(current) current.innerHTML=v30EnrollmentHistoryMarkup(data.history||[]);
-      }catch(e){
-        const current=document.getElementById(containerId);
-        const message=String(e?.message||'');
-        const missingHistoryTable=/official_student_enrollments|schema cache|relation .* does not exist|PGRST205/i.test(message);
-        if(current) current.innerHTML=missingHistoryTable
-          ? '<div class="studentHistoryEmpty">Không có lịch sử chuyển lớp</div>'
-          : `<div class="mini errorText">${h(message||'Không tải được lịch sử lớp')}</div>`;
-      }
-    }
-    function openStudentTransferModal(sourceClassId,studentId){
-      if(!canManageOperations()) return;
-      const source=assertActiveClassEditable(sourceClassId,'chuyển lớp học sinh'); if(!source) return;
-      const student=(source.students||[]).find(item=>String(item.id)===String(studentId));
-      if(!student?.id){toast('Không tìm thấy học sinh trong lớp hiện tại');return}
-      const targets=v30ActiveTransferTargets(sourceClassId);
-      if(!targets.length){toast('Chưa có lớp đang học khác để chuyển đến');return}
-      const today=isoDate(new Date());
-      modal(`<div data-student-transfer-modal data-student-id="${h(studentId)}" class="staffModalContent"><div class="modalHead"><h2>Chuyển lớp học sinh</h2><button class="close" onclick="closeModal()">×</button></div><div class="staffModalScroll"><div class="transferStudentSummary"><div class="transferStudentInfoBlock"><span class="transferStudentLabel">Tên học sinh</span><h3 class="transferStudentName">${h(student.name)}</h3></div><div class="transferStudentInfoBlock transferCurrentClassBlock"><span class="transferStudentLabel">Lớp hiện tại</span><b class="transferCurrentClassName">${h(source.name)}</b></div></div><div class="formGrid"><label>Lớp chuyển đến<select id="studentTransferTarget" class="input">${targets.map(c=>`<option value="${h(c.id)}">${h(c.name)} • ${c.students?.length||0} học sinh</option>`).join('')}</select></label><label>Ngày bắt đầu lớp mới<input id="studentTransferDate" class="input" type="date" value="${today}"></label><label class="full">Lý do chuyển lớp<input id="studentTransferReason" class="input" maxlength="500" placeholder="VD: Điều chỉnh trình độ / thay đổi lịch học"></label></div><div id="studentTransferFeedback" class="staffModalFeedback" hidden></div><div class="studentHistoryPanel"><b>Lịch sử lớp</b><div id="studentTransferHistory" style="margin-top:8px"><div class="mini">Đang tải lịch sử lớp...</div></div></div></div><div class="staffModalFooter"><div></div><div><button class="btn ghost" onclick="openClassDetail('${sourceClassId}')">Hủy</button><button id="confirmStudentTransferBtn" class="btn primary" onclick="confirmStudentTransfer('${sourceClassId}','${studentId}')">Xác nhận chuyển lớp</button></div></div></div>`);
-      setTimeout(()=>v30LoadStudentHistory(studentId),0);
-    }
-    function openStudentClassHistory(sourceClassId,studentId){
-      const source=classById(sourceClassId);
-      const student=(source?.students||[]).find(item=>String(item.id)===String(studentId));
-      if(!student?.id) return;
-      modal(`<div class="modalHead"><h2>Lịch sử lớp • ${h(student.name)}</h2><button class="close" onclick="closeModal()">×</button></div><div id="studentClassHistoryOnly"><div class="mini">Đang tải lịch sử lớp...</div></div><div style="text-align:right;margin-top:18px"><button class="btn ghost" onclick="openClassDetail('${sourceClassId}')">Quay lại lớp</button></div>`);
-      setTimeout(()=>v30LoadStudentHistory(studentId,'studentClassHistoryOnly'),0);
-    }
-    function v30PatchTransferredStudentUi(sourceClassId,targetClassId){
-      const scrollY=window.scrollY;
-      v28InvalidateClassMarkupMemo();
-      if(route==='classes'){
-        const searchValue=document.getElementById('classSearch')?.value||'';
-        if(searchValue) v18bUpdateClassListNow();
-        else{
-          v28PatchClassCard(sourceClassId);
-          v28PatchClassCard(targetClassId);
-        }
-        v28UpdateClassSummaryCounts();
-      }
-      requestAnimationFrame(()=>{
-        if(Math.abs(window.scrollY-scrollY)>2) window.scrollTo({top:scrollY,left:0,behavior:'auto'});
-      });
-    }
-    function v30PersistStudentTransfer(sourceClassId,targetClassId,transferDate){
-      v20bAfterMutation(['core'],{preserveCache:true,delayMs:5000,renderOnRevalidate:false,classId:sourceClassId});
-      const modules=canViewTuition()?['schedule','makeup','evaluation','tuition']:['schedule','makeup','evaluation'];
-      v20bAfterMutation(modules,{delayMs:5000,renderOnRevalidate:false,classId:targetClassId,month:String(transferDate||'').slice(0,7)});
-      const corePayload={classes:db.classes||[],teachers:db.teachers||[]};
-      v18iHashPayload('classes:latest',corePayload);
-      moduleCacheSet('classes:latest',corePayload);
-      lazyRouteState.core={loaded:true,loading:false,loadedAt:Date.now(),mutated:true,sharedFresh:true};
-      saveLocalOnly();
-      v30PatchTransferredStudentUi(sourceClassId,targetClassId);
-    }
-    async function confirmStudentTransfer(sourceClassId,studentId){
-      if(!canManageOperations()) return;
-      const source=assertActiveClassEditable(sourceClassId,'chuyển lớp học sinh'); if(!source) return;
-      const existing=(source.students||[]).find(item=>String(item.id)===String(studentId));
-      if(!existing?.id){v30StudentTransferFeedback('Học sinh không còn trong lớp hiện tại. Hãy tải lại dữ liệu.');return}
-      const targetClassId=document.getElementById('studentTransferTarget')?.value||'';
-      const transferDate=document.getElementById('studentTransferDate')?.value||isoDate(new Date());
-      const reason=(document.getElementById('studentTransferReason')?.value||'').trim();
-      const target=classById(targetClassId);
-      if(!target?.id || isClassEnded(target)){v30StudentTransferFeedback('Chọn một lớp đang học hợp lệ.');return}
-      if(String(targetClassId)===String(sourceClassId)){v30StudentTransferFeedback('Lớp chuyển đến phải khác lớp hiện tại.');return}
-      const button=document.getElementById('confirmStudentTransferBtn');
-      const action=window.MsUiAction.beginLockedAction(`student-transfer:${studentId}`,button,'Đang chuyển lớp...');
-      if(!action) return;
-      v30StudentTransferFeedback('');
-      const modalEl=document.querySelector('[data-student-transfer-modal]');
-      const requestId=modalEl?.dataset.transferRequestId||v30StudentTransferRequestId(studentId,targetClassId);
-      if(modalEl) modalEl.dataset.transferRequestId=requestId;
-
-      let data;
-      try{
-        data=await window.MsUiAction.measureAsync('Chuyển lớp học sinh',()=>officialFetch(`/api/students/${encodeURIComponent(studentId)}/transfer`,{
-          method:'POST',
-          body:JSON.stringify({targetClassId,transferDate,reason,requestId})
-        }),450);
-      }catch(e){
-        window.MsUiAction.endLockedAction(action);
-        v30StudentTransferFeedback(e.message||'Không chuyển lớp được. Dữ liệu đã nhập vẫn được giữ.');
-        return;
-      }
-
-      try{
-        const moved={...existing,...(data.student||{}),id:studentId,classId:targetClassId};
-        source.students=(source.students||[]).filter(item=>String(item.id)!==String(studentId));
-        target.students ||= [];
-        target.students=target.students.filter(item=>String(item.id)!==String(studentId));
-        target.students.push(moved);
-        target.students.sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'vi'));
-        v30PersistStudentTransfer(sourceClassId,targetClassId,transferDate);
-      }catch(uiError){
-        console.error('Đã chuyển lớp trên server nhưng cập nhật giao diện cục bộ gặp lỗi',uiError);
-        v28RecoverClassUi('',true);
-      }
-
-      window.MsUiAction.endLockedAction(action);
-      closeModal(true);
-      toast(`Chuyển lớp thành công: ${existing.name} → ${target.name}.`);
-    }
-
-    function openDeleteStudentModal(classId,studentId){
-      if(!canManageOperations()) return;
-      const c=assertActiveClassEditable(classId,'xóa học sinh'); if(!c) return;
-      const st=(c.students||[]).find(s=>s.id===studentId);
-      if(!c?.id || !st?.id) return;
-      modal(`<div class="modalHead"><h2>Xóa học sinh khỏi ${c.name}</h2><button class="close" onclick="closeModal()">×</button></div>
-      <div class="dangerBox"><b>Xác nhận xóa học sinh</b><span>Học sinh <b>${h(st.name)}</b> sẽ được xóa khỏi lớp này trong . Không cần xác nhận mật khẩu.</span></div>
-      <div class="modalInfoGrid"><div><p><b>Học sinh:</b> ${h(st.name)}</p><p><b>Lớp:</b> ${h(c.name)}</p></div><div><p><b>Liên hệ:</b> ${h(st.contact||'Chưa có')}</p></div></div>
-      <div style="text-align:right;margin-top:18px"><button class="btn ghost" onclick="openClassDetail('${classId}')">Hủy</button> <button class="btn dangerAction" onclick="confirmDeleteStudent('${classId}','${studentId}')">Xóa học sinh</button></div>`)
-    }
-    async function confirmDeleteStudent(classId,studentId){
-      if(!canManageOperations()) return;
-      const c=assertActiveClassEditable(classId,'xóa học sinh'); if(!c) return;
-      const st=(c.students||[]).find(s=>String(s.id)===String(studentId));
-      const action=v28BeginModalAction(document.querySelector('.modal .dangerAction[onclick^="confirmDeleteStudent"]'),'Đang xóa...');
-      if(!action) return;
-
-      try{
-        await officialFetch(`/api/students/${studentId}`,{method:'DELETE'});
-      }catch(e){
-        v28EndModalAction(action);
-        toast(e.message||'Không xóa được học sinh');
-        return;
-      }
-
-      try{
-        c.students=(c.students||[]).filter(s=>String(s.id)!==String(studentId));
-        db.submissions=(db.submissions||[]).filter(s=>String(s.studentId)!==String(studentId));
-        db.evaluations=(db.evaluations||[]).filter(e=>String(e.studentId)!==String(studentId));
-        db.attendance=(db.attendance||[]).filter(a=>String(a.studentId)!==String(studentId));
-        db.absenceRecords=(db.absenceRecords||[]).filter(a=>String(a.studentId)!==String(studentId));
-        db.makeupPlans=(db.makeupPlans||[]).filter(p=>String(p.studentId)!==String(studentId));
-        db.payments=db.payments||{}; delete db.payments[studentId];
-        db.tuitionMessages=db.tuitionMessages||{}; delete db.tuitionMessages[studentId];
-
-        if(db.attendanceSessions){
-          Object.values(db.attendanceSessions).forEach(rec=>{
-            if(rec.rows){
-              Object.keys(rec.rows).forEach(k=>{if(String(rec.rows[k]?.studentId)===String(studentId)) delete rec.rows[k]});
-            }
-            if(Array.isArray(rec.manualMakeups)) rec.manualMakeups=rec.manualMakeups.filter(m=>String(m.student?.id)!==String(studentId));
-          });
-        }
-        (db.users||[]).forEach(u=>{
-          if(Array.isArray(u.children)) u.children=u.children.filter(id=>String(id)!==String(studentId));
-        });
-
-        v28AfterClassMutation(canViewTuition()?['attendance','tuition','evaluation','schedule','makeup']:['attendance','evaluation','schedule','makeup'],{
-          classId,
-          structural:false,
-          delayMs:V28_CLASS_REVALIDATE_DELAY_MS
-        });
-        openClassDetail(classId);
-      }catch(uiError){
-        console.error('Đã xóa học sinh trên server nhưng cập nhật giao diện cục bộ gặp lỗi',uiError);
-        closeModal(true);
-        v28RecoverClassUi(classId,false);
-      }
-      toast(`Đã xóa ${st?.name||'học sinh'} khỏi lớp ${c.name}.`);
-    }
+    
+    // Phase 8D.2: openAddStudentModal moved to lazy runtime module.
 
 
-    function suggestPromotedClassName(name){
-      const raw=String(name||'').trim();
-      let m=raw.match(/^G\s*(\d+)\s*\.(\d+)/i);
-      if(m) return `G${Number(m[1])+1}.${m[2]}`;
-      m=raw.match(/^(\d+)\s*\.(\d+)/);
-      if(m) return `G${Number(m[1])+1}.${m[2]}`;
-      if(/^GK/i.test(raw)) return 'G1.1';
-      return raw?`${raw} - New`:'G4.1';
-    }
-    function buildPromoteClassTimeFromForm(){
-      const count=Number(document.getElementById('promoteSessionCount')?.value||1);
-      const sessions=[];
-      for(let i=1;i<=count;i++){
-        const day=document.getElementById(`promoteDay${i}`)?.value || 'Mon';
-        const slot=timeSlotByValue(document.getElementById(`promoteSlot${i}`)?.value || '17:00-18:30');
-        sessions.push(`${slot.start.replace(':','h')} - ${slot.end.replace(':','h')} ${day}`);
-      }
-      return sessions.join('; ');
-    }
-    function schedulePayloadFromPromoteClassForm(){
-      const count=Number(document.getElementById('promoteSessionCount')?.value||1);
-      const schedules=[];
-      for(let i=1;i<=count;i++){
-        const day=document.getElementById(`promoteDay${i}`)?.value || 'Mon';
-        const slot=timeSlotByValue(document.getElementById(`promoteSlot${i}`)?.value || '17:00-18:30');
-        schedules.push({day,start:slot.start,end:slot.end});
-      }
-      return schedules;
-    }
-    function firstUpcomingDateFromPromoteForm(){
-      const count=Number(document.getElementById('promoteSessionCount')?.value||1);
-      let best=null;
-      for(let i=1;i<=count;i++){
-        const day=document.getElementById(`promoteDay${i}`)?.value || 'Mon';
-        const d=nextDateForDay(day);
-        if(!best || d<best) best=d;
-      }
-      return best || new Date();
-    }
-    function updatePromoteClassPreview(){
-      const el=document.getElementById('promoteClassPreview'); if(el) el.textContent=buildPromoteClassTimeFromForm();
-      document.querySelectorAll('.promoteSession2Only').forEach(x=>x.style.display=Number(document.getElementById('promoteSessionCount')?.value||1)===2?'block':'none');
-      const start=document.getElementById('promoteStartDate'); if(start && !start.value) start.value=isoDate(firstUpcomingDateFromPromoteForm());
-    }
-    function togglePromoteStudents(checked){document.querySelectorAll('.promoteStudent').forEach(x=>x.checked=checked)}
-    function openPromoteClassModal(classId){
-      if(!canManageOperations()) return;
-      const c=assertActiveClassEditable(classId,'chuyển lớp'); if(!c) return;
-      const dayOptions=WEEK_DAYS.map(d=>`<option value="${d.key}">${d.label}</option>`).join('');
-      const slotOptions=CLASS_TIME_SLOTS.map(s=>`<option value="${s.start}-${s.end}">${s.label}</option>`).join('');
-      const suggested=suggestPromotedClassName(c.name);
-      const teacherOptions=staffOptionsForClass(c.teacherId,'teacher');
-      const taOptions=staffOptionsForClass(c.taId,'ta');
-      modal(`<div class="modalHead"><h2>Chuyển lớp từ ${c.name}</h2><button class="close" onclick="closeModal()">×</button></div>
-      <div class="promoteNotice"><b>Tạo lớp mới cho kỳ tiếp theo.</b><br>Lớp cũ sẽ tự chuyển sang mục <b>Lớp đã học</b>. Dữ liệu điểm danh, đánh giá và lịch sử lớp cũ vẫn được giữ lại cho đến khi Admin/Quản lí/Lễ tân xóa lớp.</div>
-      <div class="formGrid">
-        <label>Tên lớp mới<input id="promoteClassName" class="input" value="${h(suggested)}" placeholder="VD: G4.1"></label>
-        <label>Giáo viên<select id="promoteTeacher" class="input">${teacherOptions}</select></label>
-        <label>Ngày bắt đầu<input id="promoteStartDate" class="input" type="date"></label>
-        <label>TA / Trợ giảng<select id="promoteTA" class="input">${taOptions}</select></label>
-        <label>Số buổi/tuần<select id="promoteSessionCount" class="input" onchange="updatePromoteClassPreview()"><option value="1">1 buổi / tuần</option><option value="2" selected>2 buổi / tuần</option></select></label>
-        <div></div>
-        <div class="full sessionConfigurator"><h3>Buổi 1</h3><div class="inline2"><label>Ngày học<select id="promoteDay1" class="input" onchange="updatePromoteClassPreview()">${dayOptions}</select></label><label>Khung giờ<select id="promoteSlot1" class="input" onchange="updatePromoteClassPreview()">${slotOptions}</select></label></div><div class="promoteSession2Only"><h3 style="margin-top:14px">Buổi 2</h3><div class="inline2"><label>Ngày học<select id="promoteDay2" class="input" onchange="updatePromoteClassPreview()">${dayOptions.replace('value="Wed"','value="Wed" selected')}</select></label><label>Khung giờ<select id="promoteSlot2" class="input" onchange="updatePromoteClassPreview()">${slotOptions}</select></label></div></div><div class="slotPreview"><b>Lịch học:</b> <span id="promoteClassPreview"></span></div></div>
-        <div class="full"><div class="rosterSectionTitle"><h3>Học sinh chuyển lên lớp mới</h3><span><button class="btn ghost" onclick="togglePromoteStudents(true)">Chọn tất cả</button> <button class="btn ghost" onclick="togglePromoteStudents(false)">Bỏ chọn</button></span></div><div class="promoteStudentGrid">${(c.students||[]).map(s=>`<label class="promoteStudentItem"><input class="promoteStudent" type="checkbox" value="${s.id}" checked><span>${h(s.name)}</span></label>`).join('')}</div></div>
-      </div>
-      <div style="text-align:right;margin-top:18px"><button class="btn ghost" onclick="openClassDetail('${classId}')">Hủy</button> <button class="btn primary" onclick="savePromotedClass('${classId}')">Tạo lớp mới & chuyển lớp</button></div>`);
-      setTimeout(()=>{updatePromoteClassPreview(); const el=document.getElementById('promoteStartDate'); if(el&&!el.value) el.value=isoDate(firstUpcomingDateFromPromoteForm())},0);
-    }
-    async function savePromotedClass(sourceClassId){
-      if(!canManageOperations()) return;
-      const old=assertActiveClassEditable(sourceClassId,'chuyển lớp'); if(!old) return;
-
-      const name=(document.getElementById('promoteClassName')?.value||'').trim();
-      if(!name){toast('Nhập tên lớp mới');return}
-      if(classNameExists(name)){toast('Tên lớp mới đã tồn tại. Vui lòng chọn tên khác.');return}
-
-      const promoteTeacherId=document.getElementById('promoteTeacher')?.value||'';
-      const promoteTAId=document.getElementById('promoteTA')?.value||'';
-      if(promoteTeacherId && promoteTAId && String(promoteTeacherId)===String(promoteTAId)){toast('Giáo viên chính và TA không nên là cùng một người.');return}
-
-      const selected=Array.from(document.querySelectorAll('.promoteStudent:checked')).map(x=>x.value);
-      if(!selected.length){toast('Chọn ít nhất 1 học sinh để chuyển lớp');return}
-
-      const action=v28BeginModalAction(document.querySelector('.modal .btn.primary[onclick^="savePromotedClass"]'),'Đang chuyển lớp...');
-      if(!action) return;
-
-      const teacherId=promoteTeacherId;
-      const taId=promoteTAId;
-      const startDate=document.getElementById('promoteStartDate')?.value || isoDate(firstUpcomingDateFromPromoteForm());
-      const oldEndDate=isoDate(addDays(parseISODate(startDate),-1));
-      const schedules=schedulePayloadFromPromoteClassForm();
-
-      let result;
-      try{
-        result=await officialFetch('/api/classes/transfer',{
-          method:'POST',
-          body:JSON.stringify({sourceClassId,name,teacherId,assistantTeacherId:taId,startDate,oldEndDate,schedules,studentIds:selected})
-        });
-      }catch(e){
-        v28EndModalAction(action);
-        toast(e.message||'Không chuyển lớp được');
-        return;
-      }
-
-      try{
-        const oldClass=result.oldClass;
-        const newClass=result.newClass;
-        if(!oldClass?.id || !newClass?.id) throw new Error('Server chưa trả đủ dữ liệu chuyển lớp');
-
-        const oldIndex=(db.classes||[]).findIndex(c=>String(c.id)===String(oldClass.id));
-        if(oldIndex>=0) db.classes[oldIndex]={...db.classes[oldIndex],...oldClass,status:'ended'};
-        else db.classes.push({...oldClass,status:'ended'});
-
-        const newIndex=(db.classes||[]).findIndex(c=>String(c.id)===String(newClass.id));
-        if(newIndex>=0) db.classes[newIndex]={...db.classes[newIndex],...newClass,status:'active'};
-        else db.classes.push({...newClass,status:'active'});
-
-        v28AfterClassMutation(canViewTuition()?['evaluation','schedule','tuition','attendance']:['evaluation','schedule','attendance'],{
-          classId:newClass.id,
-          structural:true,
-          delayMs:V28_CLASS_REVALIDATE_DELAY_MS
-        });
-      }catch(uiError){
-        console.error('Đã chuyển lớp trên server nhưng cập nhật giao diện cục bộ gặp lỗi',uiError);
-        v28RecoverClassUi('',true);
-      }
-
-      closeModal(true);
-      toast(`Đã chuyển ${old.name} sang ${name}.`);
-    }
+    
+    // Phase 8D.2: saveStudentToClass moved to lazy runtime module.
 
 
-    function openEndClassModal(classId){
-      const c=assertActiveClassEditable(classId,'kết thúc lớp'); if(!c) return; const today=isoDate(new Date());
-      modal(`<div class="modalHead"><h2>Kết thúc lớp ${c.name}</h2><button class="close" onclick="closeModal()">×</button></div><div class="formGrid"><label>Ngày kết thúc<input id="endClassDate" class="input" type="date" value="${today}"></label><label>Trạng thái<input class="input" value="Đã kết thúc" disabled></label></div><div class="rulesBox"><b>Lưu ý:</b> Lớp sẽ chuyển xuống phần <b>Lớp đã học</b>. Dữ liệu điểm danh, đánh giá và lịch sử liên quan vẫn được giữ lại cho đến khi Admin/Quản lí/Lễ tân xóa lớp.</div><div style="text-align:right;margin-top:18px"><button class="btn ghost" onclick="openClassDetail('${classId}')">Hủy</button> <button class="btn primary" onclick="endClass('${classId}')">Kết thúc lớp</button></div>`)
-    }
-    async function endClass(classId){
-      if(!canManageOperations()) return;
-      const c=assertActiveClassEditable(classId,'kết thúc lớp'); if(!c) return;
-      const endDate=document.getElementById('endClassDate')?.value || isoDate(new Date());
-      const action=v28BeginModalAction(document.querySelector('.modal .btn.primary[onclick^="endClass"]'),'Đang kết thúc...');
-      if(!action) return;
 
-      let data;
-      try{
-        data=await officialFetch(`/api/classes/${encodeURIComponent(classId)}`,{
-          method:'PATCH',
-          body:JSON.stringify({status:'ended',endDate})
-        });
-      }catch(e){
-        v28EndModalAction(action);
-        toast(e.message||'Không kết thúc được lớp');
-        return;
-      }
+    
+    // Phase 8D.2: openDeleteStudentModal moved to lazy runtime module.
 
-      try{
-        const updated=data.class || {...c,status:'ended',endDate};
-        const i=(db.classes||[]).findIndex(x=>String(x.id)===String(classId));
-        if(i>=0) db.classes[i]={...db.classes[i],...updated,status:'ended',endDate:updated.endDate||endDate};
-        else db.classes.push({...updated,status:'ended',endDate:updated.endDate||endDate});
-        v28AfterClassMutation(['schedule','attendance'],{
-          classId,
-          structural:true,
-          delayMs:V28_CLASS_REVALIDATE_DELAY_MS
-        });
-      }catch(uiError){
-        console.error('Đã kết thúc lớp trên server nhưng cập nhật giao diện cục bộ gặp lỗi',uiError);
-        v28RecoverClassUi(classId,true);
-      }
+    
+    // Phase 8D.2: confirmDeleteStudent moved to lazy runtime module.
 
-      closeModal(true);
-      toast(`Đã kết thúc lớp ${c.name}.`);
-    }
-    async function reactivateClass(classId){
-      if(!canManageOperations()) return;
-      toast('Lớp đã kết thúc, không thể mở lại hoặc chỉnh sửa.');
-      return;
-      const c=classById(classId); if(!c?.id) return;
-      try{
-        const data=await officialFetch(`/api/classes/${encodeURIComponent(classId)}`,{
-          method:'PATCH',
-          body:JSON.stringify({status:'active',endDate:null})
-        });
-        const updated=data.class || {...c,status:'active',endDate:''};
-        const i=(db.classes||[]).findIndex(x=>String(x.id)===String(classId));
-        if(i>=0) db.classes[i]={...db.classes[i],...updated,status:'active',endDate:''};
-        else db.classes.push({...updated,status:'active',endDate:''});
-        v20bAfterMutation(['core','schedule']);
-        v20b13InvalidateScheduleAfterMutation();
-        save();
-        await refreshOfficialClasses({skipSave:true});
-        const persisted=(db.classes||[]).find(x=>String(x.id)===String(classId));
-        if(persisted && String(persisted.status)==='ended'){
-          persisted.status='active';
-          persisted.endDate='';
-        }
-        toast('Đã mở lại lớp');
-        closeModal();
-        route='classes'; saveUser(); render();
-      }catch(e){toast(e.message||'Không mở lại được lớp')}
-    }
 
-    function currentPasswordMatches(pw){
-      const u=db.users.find(x=>x.id===currentUser?.id) || findUserByPhone(currentUser?.phone);
-      return !!u && u.password===pw;
-    }
-    function openDeleteClassModal(classId){
-      if(!canManageOperations()) return;
-      const c=classById(classId); if(!c?.id) return;
-      modal(`<div class="modalHead"><h2>Xóa lớp ${c.name}</h2><button class="close" onclick="closeModal()">×</button></div>
-      <div class="dangerBox">
-        <b>Thao tác này sẽ xóa lớp khỏi hệ thống.</b>
-        <span>Dữ liệu liên quan của lớp như học sinh, lịch, điểm danh, bài tập và học bù sẽ được gỡ khỏi giao diện.</span>
-        <span>Để xác nhận, nhập mật khẩu tài khoản đang đăng nhập.</span>
-      </div>
-      <div class="formGrid">
-        <label>Tên lớp<input class="input" value="${h(c.name)}" disabled></label>
-        <label>Mật khẩu xác nhận<input id="deleteClassPassword" class="input" type="password" placeholder="Nhập mật khẩu của bạn"></label>
-      </div>
-      <div style="text-align:right;margin-top:18px">
-        <button class="btn ghost" onclick="openClassDetail('${classId}')">Hủy</button>
-        <button class="btn dangerAction" onclick="confirmDeleteClass('${classId}')">Xác nhận xóa lớp</button>
-      </div>`)
-    }
-    async function confirmDeleteClass(classId){
-      if(!canManageOperations()) return;
-      const pw=document.getElementById('deleteClassPassword')?.value||'';
-      if(!currentPasswordMatches(pw)){toast('Mật khẩu xác nhận không đúng');return}
-      const c=classById(classId); if(!c?.id){toast('Không tìm thấy lớp');return}
-      const studentIds=(c.students||[]).map(s=>s.id);
-      const assignmentIds=(db.assignments||[]).filter(a=>a.classId===classId).map(a=>a.id);
-      const action=v28BeginModalAction(document.querySelector('.modal .dangerAction[onclick^="confirmDeleteClass"]'),'Đang xóa...');
-      if(!action) return;
 
-      try{
-        await officialFetch(`/api/classes/${encodeURIComponent(classId)}`,{method:'DELETE'});
-      }catch(e){
-        v28EndModalAction(action);
-        toast(e.message||'Không xóa được lớp trên server');
-        return;
-      }
+    
+    // Phase 8D.2: suggestPromotedClassName moved to lazy runtime module.
 
-      try{
-        db.classes=(db.classes||[]).filter(x=>String(x.id)!==String(classId));
-        db.assignments=(db.assignments||[]).filter(a=>String(a.classId)!==String(classId));
-        db.submissions=(db.submissions||[]).filter(s=>String(s.classId)!==String(classId) && !assignmentIds.includes(s.assignmentId) && !studentIds.includes(s.studentId));
-        db.evaluations=(db.evaluations||[]).filter(e=>String(e.classId)!==String(classId) && !studentIds.includes(e.studentId));
-        db.attendance=(db.attendance||[]).filter(a=>String(a.classId)!==String(classId) && !studentIds.includes(a.studentId));
-        db.absenceRecords=(db.absenceRecords||[]).filter(a=>String(a.sourceClassId)!==String(classId) && !studentIds.includes(a.studentId));
-        db.makeupPlans=(db.makeupPlans||[]).filter(p=>String(p.sourceClassId)!==String(classId) && String(p.targetClassId)!==String(classId) && !studentIds.includes(p.studentId));
-        db.classMakeupSessions=(db.classMakeupSessions||[]).filter(m=>String(m.classId)!==String(classId));
-        db.tuitionRollup=db.tuitionRollup||{};
-        studentIds.forEach(id=>{delete db.tuitionRollup[id]});
-        db.payments=db.payments||{};
-        studentIds.forEach(id=>{delete db.payments[id]});
-        db.tuitionMessages=db.tuitionMessages||{};
-        studentIds.forEach(id=>{delete db.tuitionMessages[id]});
+    
+    // Phase 8D.2: buildPromoteClassTimeFromForm moved to lazy runtime module.
 
-        if(db.classCancellations){
-          Object.keys(db.classCancellations).forEach(k=>{if(k.startsWith(classId+'|')) delete db.classCancellations[k]});
-        }
-        if(db.attendanceSessions){
-          Object.keys(db.attendanceSessions).forEach(k=>{
-            const rec=db.attendanceSessions[k];
-            if(k.startsWith(classId+'|') || k.includes('|'+classId+'|') || String(rec?.sessionKey||'').startsWith(classId+'|') || String(rec?.classId)===String(classId)) delete db.attendanceSessions[k];
-          });
-        }
-        (db.users||[]).forEach(u=>{
-          if(Array.isArray(u.children)) u.children=u.children.filter(id=>!studentIds.includes(id));
-        });
+    
+    // Phase 8D.2: schedulePayloadFromPromoteClassForm moved to lazy runtime module.
 
-        v28AfterClassMutation(canViewTuition()?['schedule','attendance','tuition','evaluation','makeup']:['schedule','attendance','evaluation','makeup'],{
-          classId,
-          structural:true,
-          delayMs:V28_CLASS_REVALIDATE_DELAY_MS
-        });
-      }catch(uiError){
-        console.error('Đã xóa lớp trên server nhưng cập nhật giao diện cục bộ gặp lỗi',uiError);
-        v28RecoverClassUi('',true);
-      }
+    
+    // Phase 8D.2: firstUpcomingDateFromPromoteForm moved to lazy runtime module.
 
-      closeModal(true);
-      toast(`Đã xóa lớp ${c.name} và dữ liệu liên quan.`);
-    }
+    
+    // Phase 8D.2: updatePromoteClassPreview moved to lazy runtime module.
+
+    
+    // Phase 8D.2: togglePromoteStudents moved to lazy runtime module.
+
+    
+    // Phase 8D.2: openPromoteClassModal moved to lazy runtime module.
+
+    
+    // Phase 8D.2: savePromotedClass moved to lazy runtime module.
+
+
+
+    
+    // Phase 8D.2: openEndClassModal moved to lazy runtime module.
+
+    
+    // Phase 8D.2: endClass moved to lazy runtime module.
+
+    
+    // Phase 8D.2: reactivateClass moved to lazy runtime module.
+
+
+    
+    // Phase 8D.2: currentPasswordMatches moved to lazy runtime module.
+
+    
+    // Phase 8D.2: openDeleteClassModal moved to lazy runtime module.
+
+    
+    // Phase 8D.2: confirmDeleteClass moved to lazy runtime module.
+
 
 
     // V19B: schedulePage/weeklyTable/lessonCard/mobileScheduleList moved to /v15/modules/schedule.js
-    async function cancelClassSession(sessionKey){
-      if(!canManageOperations()) return;
-      const busyKey=`cancelClass:${sessionKey}`;
-      if(v20o2IsBusy(busyKey)) return;
-      const s=sessionObjectFromKey(sessionKey); if(!s) return;
-      const ok=confirm(canViewTuition()
-        ? 'Cho nghỉ cả lớp buổi này? Khoản tiền của buổi nghỉ sẽ được khấu trừ vào học phí tháng sau cho học sinh trong lớp.'
-        : 'Cho nghỉ cả lớp buổi này? Hệ thống sẽ cập nhật toàn bộ dữ liệu liên quan theo quy định của trung tâm.');
-      if(!ok) return;
-      const reason=prompt('Lý do cho nghỉ lớp:', 'Trung tâm cho nghỉ lớp') || 'Trung tâm cho nghỉ lớp';
-      normalizeClassOperations();
-      try{
-        v20o2SetBusy(busyKey,true);
-        const data=await officialFetch('/api/schedule/cancellations',{method:'POST',body:JSON.stringify({sessionKey,classId:s.classId,date:s.date,day:s.day,start:s.start,end:s.end,reason})});
-        db.classCancellations[sessionKey]=data.cancellation;
-        if(canViewTuition()) await refreshOfficialTuitionState({skipSave:true});
-        v18fUpdateScheduleModuleCache();
-        if(canViewTuition()) v18fUpdateTuitionModuleCache();
-        v20bAfterMutation(canViewTuition()?['schedule','attendance','tuition']:['schedule','attendance']);
-        v20b13InvalidateScheduleAfterMutation();
-        save(); toast(canViewTuition()?'Đã cho nghỉ lớp và tạo khấu trừ tháng sau':'Đã cho nghỉ lớp'); render();
-      }catch(e){toast(e.message||'Không thể cho nghỉ lớp')}
-      finally{v20o2SetBusy(busyKey,false)}
-    }
-    async function uncancelClassSession(sessionKey){
-      if(!canManageOperations()) return;
-      const busyKey=`uncancelClass:${sessionKey}`;
-      if(v20o2IsBusy(busyKey)) return;
-      normalizeClassOperations();
-      const cm=classMakeupForSourceSession(sessionKey);
-      if(cm && classMakeupHasSavedAttendance(cm)){
-        toast('Buổi dạy bù này đã có điểm danh, không thể mở lại buổi nghỉ.');
-        return;
-      }
-      const msg=canViewTuition()
-        ? (cm
-          ? 'Buổi nghỉ này đang có lịch dạy bù. Mở lại buổi học sẽ hủy mềm lịch dạy bù liên quan và hủy khấu trừ tháng sau. Tiếp tục?'
-          : 'Mở lại buổi học này? Khoản khấu trừ tháng sau phát sinh từ buổi nghỉ sẽ bị hủy.')
-        : (cm
-          ? 'Buổi nghỉ này đang có lịch dạy bù. Mở lại buổi học sẽ hủy lịch dạy bù liên quan. Tiếp tục?'
-          : 'Mở lại buổi học này?');
-      if(!confirm(msg)) return;
-      try{
-        v20o2SetBusy(busyKey,true);
-        await officialFetch(`/api/schedule/cancellations?sessionKey=${encodeURIComponent(sessionKey)}`,{method:'DELETE'});
-        delete db.classCancellations[sessionKey];
-        if(cm){
-          db.classMakeupSessions=(db.classMakeupSessions||[]).map(m=>m.sourceSessionKey===sessionKey?{...m,status:'cancelled'}:m);
-        }
-        if(canViewTuition()) await refreshOfficialTuitionState({skipSave:true});
-        v18fUpdateScheduleModuleCache();
-        if(canViewTuition()) v18fUpdateTuitionModuleCache();
-        v20bAfterMutation(canViewTuition()?['schedule','attendance','tuition']:['schedule','attendance']);
-        v20b13InvalidateScheduleAfterMutation();
-        save(); closeModal(); toast(canViewTuition()?'Đã mở lại buổi học và hủy khấu trừ liên quan':'Đã mở lại buổi học'); render();
-      }catch(e){toast(e.message||'Không mở lại được buổi học')}
-      finally{v20o2SetBusy(busyKey,false)}
-    }
-    async function cancelClassMakeup(sourceSessionKey){
-      if(!canManageOperations()) return;
-      normalizeClassOperations();
-      const cm=classMakeupForSourceSession(sourceSessionKey) || classMakeupForAnySessionKey(sourceSessionKey);
-      if(!cm){toast('Không tìm thấy lịch dạy bù cần hủy');return}
-      if(classMakeupHasSavedAttendance(cm)){
-        toast('Buổi dạy bù này đã có điểm danh, không thể hủy dạy bù.');
-        return;
-      }
-      if(!confirm('Hủy lịch dạy bù này? Buổi nghỉ gốc vẫn được giữ và có thể xếp dạy bù lại.')) return;
-      try{
-        await officialFetch(`/api/schedule/class-makeup?sourceSessionKey=${encodeURIComponent(cm.sourceSessionKey)}`,{method:'DELETE'});
-        db.classMakeupSessions=(db.classMakeupSessions||[]).map(m=>m.sourceSessionKey===cm.sourceSessionKey?{...m,status:'cancelled'}:m);
-        v18fUpdateScheduleModuleCache();
-        v20bAfterMutation(['schedule','attendance','makeup']);
-        v20b13InvalidateScheduleAfterMutation();
-        save(); closeModal(); toast('Đã hủy lịch dạy bù'); render();
-      }catch(e){toast(e.message||'Không hủy được lịch dạy bù')}
-    }
+    
+    // Phase 8D.2: cancelClassSession moved to lazy runtime module.
+
+    
+    // Phase 8D.2: uncancelClassSession moved to lazy runtime module.
+
+    
+    // Phase 8D.2: cancelClassMakeup moved to lazy runtime module.
 
 
-    function teacherOptionsWithEmpty(selectedId='',emptyLabel='Không chọn'){
-      const active=(db.teachers||[]).filter(t=>t.status!=='inactive');
-      return `<option value="">${h(emptyLabel)}</option>`+active.map(t=>`<option value="${t.id}" ${String(t.id)===String(selectedId||'')?'selected':''}>${h(t.name)}${t.roles?.includes('manager')?' • Quản lí':''}</option>`).join('');
-    }
-    function tutoringPendingRows(monthKey=makeupSelectedMonthKey()){
-      if(makeupMonthDeleted(monthKey)) return [];
-      const st=makeupTabStateForMonth(monthKey);
-      return makeupTabPendingRows(st,monthKey);
-    }
-    function tutoringStudentChecklist(monthKey=makeupSelectedMonthKey(),query=''){
-      const rows=tutoringPendingRows(monthKey).filter(x=>smartSearchMatch(smartSearchIndex(x.student?.name,x.sourceClass?.name,x.record?.sourceSessionLabel,x.record?.reason,classGradeLabel(x.sourceClass?.name)),query));
-      if(!rows.length) return '<div class="empty">Không có học sinh chờ học bù trong tháng này.</div>';
-      const grouped=new Map();
-      rows.forEach(x=>{const g=classGradeLabel(x.sourceClass?.name||'Khác')||'Khác'; if(!grouped.has(g)) grouped.set(g,[]); grouped.get(g).push(x);});
-      return [...grouped.entries()].map(([grade,items])=>`<div class="makeupGroup"><h3>${h(grade)}</h3><div class="modalTableWrap"><table class="modalTable"><thead><tr><th>Chọn</th><th>Học sinh</th><th>Lớp vắng</th><th>Buổi vắng</th></tr></thead><tbody>${items.map(x=>`<tr><td><input type="checkbox" class="tutoringAbsenceCheck" value="${h(x.record.id)}"></td><td><b>${h(x.student.name)}</b></td><td>${h(x.sourceClass.name)}</td><td>${h(x.record.sourceSessionLabel||safeSessionLabel(x.record.sourceSessionKey))}</td></tr>`).join('')}</tbody></table></div></div>`).join('');
-    }
-    async function openTutoringClassModal(monthKey=makeupSelectedMonthKey()){
-      if(!canManageOperations()){toast('Không có quyền tạo lớp học kèm');return}
-      if(!db.makeupTabState || db.makeupTabState.month!==monthKey){
-        modal(`<div class="modalHead"><h2>Thêm lớp học kèm</h2><button class="close" onclick="closeModal()">×</button></div><div class="empty">Đang tải danh sách chờ học bù...</div>`);
-        await refreshOfficialMakeupState({month:monthKey,applyGlobal:true,skipSave:true}).catch(e=>toast(e.message||'Không tải được học bù'));
-      }
-      await refreshMakeupMonths();
-      const today=isoDate(new Date());
-      const monthOptions=makeupMonthOptions(monthKey);
-      const teacherOptions=classMakeupTeacherOptions('', currentTeacherRecord()?.id||'') || '<option value="">Chưa có giáo viên</option>';
-      const taOptions=teacherOptionsWithEmpty('', 'Không chọn TA');
-      modal(`<div class="modalHead"><h2>Thêm lớp học kèm</h2><button class="close" onclick="closeModal()">×</button></div>
-        <div class="formGrid"><label>Tên lớp học kèm<input id="tutoringName" class="input" placeholder="VD: Học kèm G3.3 tối thứ 7"></label><label>Tháng dữ liệu vắng<select id="tutoringMonth" class="input" onchange="openTutoringClassModal(this.value)">${monthOptions}</select></label><label>Giáo viên dạy<select id="tutoringTeacher" class="input">${teacherOptions}</select></label><label>TA<select id="tutoringTA" class="input">${taOptions}</select></label><label>Ngày dạy<input id="tutoringDate" class="input" type="date" value="${today}"></label><label>Giờ bắt đầu<input id="tutoringStart" class="input" type="time" value="19:00"></label><label>Giờ kết thúc<input id="tutoringEnd" class="input" type="time" value="20:30"></label><label>Tìm học sinh<input id="tutoringSearch" class="input" placeholder="Tìm tên, lớp, buổi vắng..." oninput="document.getElementById('tutoringList').innerHTML=tutoringStudentChecklist(document.getElementById('tutoringMonth').value,this.value)"></label></div>
-        <div class="panel softPanel"><div class="panelHead"><h2>Chọn học sinh chờ học bù</h2><span class="pill yellow">${formatMonthKeyVN(monthKey)}</span></div><div id="tutoringList">${tutoringStudentChecklist(monthKey)}</div></div>
-        <div style="text-align:right;margin-top:14px"><button class="btn ghost" onclick="closeModal()">Hủy</button><button class="btn primary" onclick="submitTutoringClass()">Tạo lớp học kèm</button></div>`);
-    }
-    async function submitTutoringClass(){
-      const name=(document.getElementById('tutoringName')?.value||'').trim();
-      const teacherId=document.getElementById('tutoringTeacher')?.value||'';
-      const assistantTeacherId=document.getElementById('tutoringTA')?.value||'';
-      const date=document.getElementById('tutoringDate')?.value||'';
-      const start=document.getElementById('tutoringStart')?.value||'';
-      const end=document.getElementById('tutoringEnd')?.value||'';
-      const absenceIds=[...document.querySelectorAll('.tutoringAbsenceCheck:checked')].map(x=>x.value);
-      if(!name){toast('Nhập tên lớp học kèm');return}
-      if(!teacherId){toast('Chọn giáo viên dạy');return}
-      if(!date||!start||!end||start>=end){toast('Ngày hoặc giờ học chưa hợp lệ');return}
-      if(!absenceIds.length){toast('Chọn ít nhất một học sinh');return}
-      try{
-        const data=await officialFetch('/api/schedule/tutoring',{method:'POST',body:JSON.stringify({name,teacherId,assistantTeacherId,date,start,end,absenceIds})});
-        db.classMakeupSessions=v20bMergeClassMakeupSessions(db.classMakeupSessions||[],[data.classMakeup]);
-        v20b7MergeClassSnapshotsFromMakeups(db.classMakeupSessions);
-        db.makeupPlans=[...(db.makeupPlans||[]).filter(p=>!(data.makeupPlans||[]).some(np=>String(np.id)===String(p.id))),...(data.makeupPlans||[])];
-        const ids=new Set(absenceIds.map(String));
-        (db.absenceRecords||[]).forEach(a=>{if(ids.has(String(a.id))) a.status='scheduled'});
-        if(db.makeupTabState){
-          db.makeupTabState.makeupPlans=[...(db.makeupTabState.makeupPlans||[]).filter(p=>!(data.makeupPlans||[]).some(np=>String(np.id)===String(p.id))),...(data.makeupPlans||[])];
-          (db.makeupTabState.absenceRecords||[]).forEach(a=>{if(ids.has(String(a.id))) a.status='scheduled'});
-        }
-        v20bAfterMutation(['schedule','makeup','attendance'],{targetSessionKey:data.targetSessionKey||data.classMakeup?.sourceSessionKey,month:date.slice(0,7),force:true});
-        v20b13InvalidateScheduleAfterMutation();
-        save(); toast('Đã tạo lớp học kèm'); closeModal(); if(route==='schedule') renderApp();
-      }catch(e){toast(e.message||'Không tạo được lớp học kèm')}
-    }
 
-    function openClassMakeupModal(sourceSessionKey){
-      const s=sessionObjectFromKey(sourceSessionKey); if(!s) return;
-      const old=(db.classMakeupSessions||[]).find(m=>m.sourceSessionKey===sourceSessionKey);
-      const c=classById(s.classId);
-      const defaultDate=old?.date || isoDate(addDays(parseISODate(s.date),7));
-      const currentSlot=old?`${old.start}-${old.end}`:`${s.start}-${s.end}`;
-      const slotOptions=CLASS_TIME_SLOTS.map(x=>`<option value="${x.start}-${x.end}" ${`${x.start}-${x.end}`===currentSlot?'selected':''}>${x.label}</option>`).join('');
-      const teacherOptions=classMakeupTeacherOptions(old?.teacherId,c.teacherId);
-      modal(`<div class="modalHead"><h2>Xếp / đổi lịch dạy bù</h2><button class="close" onclick="closeModal()">×</button></div>
-      <div class="formGrid"><label>Buổi nghỉ<input class="input" value="${sessionLabelFromKey(sourceSessionKey)}" disabled></label><label>Ngày dạy bù<input id="classMakeupDate" class="input" type="date" value="${defaultDate}"></label><label>Khung giờ<select id="classMakeupSlot" class="input">${slotOptions}</select></label><label>Giáo viên dạy bù<select id="classMakeupTeacher" class="input">${teacherOptions||'<option value="">Chưa có danh sách giáo viên</option>'}</select></label><label class="full">Ghi chú<input id="classMakeupReason" class="input" value="${old?.reason||'Dạy bù buổi nghỉ'}"></label></div>
-      <div style="text-align:right;margin-top:18px"><button class="btn ghost" onclick="closeModal()">Hủy</button> <button class="btn primary" onclick="saveClassMakeup('${sourceSessionKey}')">Lưu lịch dạy bù</button></div>`)
-    }
+    
+    // Phase 8D.2: teacherOptionsWithEmpty moved to lazy runtime module.
+
+    
+    // Phase 8D.2: tutoringPendingRows moved to lazy runtime module.
+
+    
+    // Phase 8D.2: tutoringStudentChecklist moved to lazy runtime module.
+
+    
+    // Phase 8D.2: openTutoringClassModal moved to lazy runtime module.
+
+    
+    // Phase 8D.2: submitTutoringClass moved to lazy runtime module.
 
 
-    async function saveClassMakeup(sourceSessionKey){
-      const src=sessionObjectFromKey(sourceSessionKey); if(!src) return;
-      const date=document.getElementById('classMakeupDate')?.value;
-      const slot=document.getElementById('classMakeupSlot')?.value||`${src.start}-${src.end}`;
-      const [start,end]=slot.split('-');
-      if(!date){toast('Chọn ngày dạy bù');return}
-      const d=parseISODate(date); const day=WEEK_DAYS[(d.getDay()+6)%7].key;
-      const reason=(document.getElementById('classMakeupReason')?.value||'Dạy bù');
-      const teacherId=document.getElementById('classMakeupTeacher')?.value||'';
-      const teacherName=(db.teachers||[]).find(t=>String(t.id)===String(teacherId))?.name || '';
-      if(!teacherId){toast('Chọn giáo viên dạy bù');return}
-      try{
-        const data=await officialFetch('/api/schedule/class-makeup',{method:'POST',body:JSON.stringify({sourceSessionKey,classId:src.classId,date,day,start,end,reason,teacherId,teacherName})});
-        db.classMakeupSessions = v20bMergeClassMakeupSessions(db.classMakeupSessions||[], [data.classMakeup]);
-        v20b7MergeClassSnapshotsFromMakeups(db.classMakeupSessions);
-        v20bAfterMutation(['schedule','attendance','makeup']);
-        v20b13InvalidateScheduleAfterMutation();
-        save(); closeModal(); toast('Đã lưu lịch dạy bù'); render();
-      }catch(e){toast(e.message||'Không lưu được lịch dạy bù')}
-    }
+    
+    // Phase 8D.2: openClassMakeupModal moved to lazy runtime module.
 
-    function makeupCandidateSearchIndex(x,label,reason){
-      return makeupFreeSearchText(
-        x.student?.name,
-        smartInitials(x.student?.name),
-        x.sourceClass?.name,
-        classGradeLabel(x.sourceClass?.name),
-        label,
-        reason,
-        String(label||'').replace(/\D/g,''),
-        String(x.record?.sourceSessionKey||'').replace(/\D/g,'')
-      );
-    }
+
+
+    
+    // Phase 8D.2: saveClassMakeup moved to lazy runtime module.
+
+
+    
+    // Phase 8D.2: makeupCandidateSearchIndex moved to lazy runtime module.
+
     let scheduleMakeupDraft=null;
-    function scheduleMakeupDraftState(targetClassId,targetSessionKey){
-      const same=scheduleMakeupDraft && String(scheduleMakeupDraft.targetClassId)===String(targetClassId) && String(scheduleMakeupDraft.targetSessionKey)===String(targetSessionKey);
-      if(!same){
-        scheduleMakeupDraft={targetClassId:String(targetClassId||''),targetSessionKey:String(targetSessionKey||''),items:[],cancelPlanIds:[],searchQuery:''};
-      }
-      scheduleMakeupDraft.items ||= [];
-      scheduleMakeupDraft.cancelPlanIds ||= [];
-      return scheduleMakeupDraft;
-    }
-    function scheduleMakeupDraftItems(targetClassId,targetSessionKey){
-      return scheduleMakeupDraftState(targetClassId,targetSessionKey).items||[];
-    }
-    function scheduleMakeupDraftRecord(absenceIdValue){
-      const id=String(absenceIdValue||'');
-      return (db.makeupTabState?.absenceRecords||[]).find(a=>String(a?.id||'')===id)
-        || (db.absenceRecords||[]).find(a=>String(a?.id||'')===id)
-        || null;
-    }
-    function scheduleMakeupDraftRows(targetClassId,targetSessionKey){
-      return scheduleMakeupDraftItems(targetClassId,targetSessionKey).map(item=>({
-        item,
-        record:scheduleMakeupDraftRecord(item.absenceId),
-        student:studentById(item.studentId),
-        sourceClass:classById(item.sourceClassId)
-      })).filter(x=>x.student?.id && x.sourceClass?.id);
-    }
-    function rememberScheduleMakeupSearch(){
-      if(!scheduleMakeupDraft) return;
-      scheduleMakeupDraft.searchQuery=document.getElementById('makeupCandidateSearch')?.value||scheduleMakeupDraft.searchQuery||'';
-      scheduleMakeupDraft.scrollTop=modalBackdrop?.querySelector?.('.modal')?.scrollTop||0;
-    }
-    function queueMakeupCandidate(absenceIdValue,studentId,sourceClassId,sourceSessionKey,targetClassId,targetSessionKey=''){
-      rememberScheduleMakeupSearch();
-      const draft=scheduleMakeupDraftState(targetClassId,targetSessionKey);
-      if(!targetSessionKey){toast('Bạn cần chọn đúng buổi học bù trước');return}
-      const targetSession=sessionObjectFromKey(targetSessionKey);
-      if(!targetSession || !canOpenScheduleMakeupPopup(targetSessionKey)){
-        toast(sessionStatus(targetSession).key==='done'?'Buổi đã điểm danh: hãy bấm Mở điểm danh để thêm học bù rồi lưu lại.':(makeupSessionPlacementReason(targetSessionKey)||'Không thể xếp học bù vào buổi này'));
-        return;
-      }
-      if(!canReceiveMakeupClass(classById(targetClassId))){toast('Không thể xếp học bù vào lớp đã kết thúc hoặc đã hủy');return}
-      if(String(sourceClassId||'')===String(targetClassId||'')){toast('Học sinh đã thuộc lớp này, không cần xếp học bù vào chính lớp gốc');return}
-      if(draft.items.some(x=>String(x.absenceId)===String(absenceIdValue))){toast('Lượt vắng này đã được chọn');return}
-      if(draft.items.some(x=>String(x.studentId)===String(studentId))){toast('Mỗi học sinh chỉ được chọn một lượt vắng cho cùng buổi học bù');return}
-      if(plannedMakeupsForSession(targetSessionKey).some(p=>String(p.studentId)===String(studentId))){toast('Học sinh đã có trong buổi học bù này');return}
-      const rec=scheduleMakeupDraftRecord(absenceIdValue);
-      if(!rec){toast('Không tìm thấy lượt vắng');return}
-      if(absenceRecordStatus(absenceIdValue)==='scheduled'){toast('Lượt vắng này đã được xếp học bù');return}
-      const capacity=db.settings.capacity||15;
-      const cancelIds=new Set((draft.cancelPlanIds||[]).map(String));
-      const cancelCount=plannedMakeupsForSession(targetSessionKey).filter(p=>cancelIds.has(String(p.id))).length;
-      const projected=Math.max(0,totalRosterCountForSession(targetClassId,targetSessionKey)-cancelCount)+draft.items.length;
-      if(projected>=capacity){toast(`Buổi này đã đủ ${capacity} học sinh`);return}
-      draft.items.push({
-        id:`mk_${Date.now()}_${draft.items.length}_${Math.random().toString(36).slice(2,8)}`,
-        absenceId:String(absenceIdValue),
-        studentId:String(studentId),
-        sourceClassId:String(sourceClassId),
-        sourceSessionKey:String(sourceSessionKey||rec.sourceSessionKey||'')
-      });
-      refreshScheduleMakeupDraftDom(targetClassId,targetSessionKey);
-    }
-    function removeQueuedMakeup(absenceIdValue,targetClassId,targetSessionKey){
-      rememberScheduleMakeupSearch();
-      const draft=scheduleMakeupDraftState(targetClassId,targetSessionKey);
-      draft.items=draft.items.filter(x=>String(x.absenceId)!==String(absenceIdValue));
-      refreshScheduleMakeupDraftDom(targetClassId,targetSessionKey);
-    }
-    function queueMakeupCancellation(planId,targetClassId,targetSessionKey){
-      rememberScheduleMakeupSearch();
-      const draft=scheduleMakeupDraftState(targetClassId,targetSessionKey);
-      const plan=plannedMakeupsForSession(targetSessionKey).find(p=>String(p?.id||'')===String(planId||''));
-      if(!plan){toast('Không tìm thấy lịch học bù đang hoạt động');return}
-      if(String(plan.targetClassId||'')!==String(targetClassId||'') || String(plan.targetSessionKey||'')!==String(targetSessionKey||'')){
-        toast('Lịch học bù không thuộc buổi đang mở');return;
-      }
-      if(!draft.cancelPlanIds.some(id=>String(id)===String(planId))) draft.cancelPlanIds.push(String(planId));
-      refreshScheduleMakeupDraftDom(targetClassId,targetSessionKey);
-    }
-    function undoQueuedMakeupCancellation(planId,targetClassId,targetSessionKey){
-      rememberScheduleMakeupSearch();
-      const draft=scheduleMakeupDraftState(targetClassId,targetSessionKey);
-      draft.cancelPlanIds=draft.cancelPlanIds.filter(id=>String(id)!==String(planId));
-      refreshScheduleMakeupDraftDom(targetClassId,targetSessionKey);
-    }
-    function makeupCandidateTableRows(rows,targetClassId,targetSessionKey){
-      return rows.map((x,i)=>{
-        const label=x.record.sourceSessionLabel||sessionLabelFromKey(x.record.sourceSessionKey);
-        const reason=x.record.reason||'Vắng';
-        const search=makeupCandidateSearchIndex(x,label,reason);
-        return `<tr data-makeup-candidate data-absence-id="${h(x.record.id)}" data-student-id="${h(x.student.id)}" data-search="${h(search)}"><td>${i+1}</td><td><b>${h(x.student.name)}</b><div class="mini">${h(classGradeLabel(x.sourceClass.name))}</div></td><td><span class="pill blue">${h(x.sourceClass.name)}</span></td><td>${h(label)}</td><td>${h(reason)}</td><td><button class="btn primary smallBtn" onclick="queueMakeupCandidate('${x.record.id}','${x.student.id}','${x.sourceClass.id}','${x.record.sourceSessionKey}','${targetClassId}','${targetSessionKey}')">Chọn</button></td></tr>`;
-      }).join('');
-    }
-    function groupedMakeupCandidateTables(candidates,targetClassId,targetSessionKey){
-      const map=new Map();
-      candidates.forEach(x=>{
-        const k=classGradeLabel(x.sourceClass?.name);
-        if(!map.has(k)) map.set(k,[]);
-        map.get(k).push(x);
-      });
-      const groups=[...map.entries()].sort((a,b)=>{
-        const av=a[1][0]?.sourceClass?.name||a[0];
-        const bv=b[1][0]?.sourceClass?.name||b[0];
-        return gradeOrderValue(av)-gradeOrderValue(bv) || String(a[0]).localeCompare(String(b[0]),'vi',{numeric:true});
-      });
-      return groups.map(([grade,items])=>{
-        const sorted=items.sort((a,b)=>String(a.sourceClass?.name||'').localeCompare(String(b.sourceClass?.name||''),'vi',{numeric:true}) || String(a.student?.name||'').localeCompare(String(b.student?.name||''),'vi'));
-        return `<section class="makeupGroup" data-makeup-group><div class="makeupGroupHead"><h3>${h(grade)}</h3><span class="pill gray">${sorted.length} lượt</span></div><div class="modalTableWrap makeupAssignTableWrap"><table class="modalTable makeupAssignTable"><thead><tr><th>STT</th><th>Học sinh</th><th>Lớp vắng</th><th>Buổi vắng</th><th>Lý do</th><th></th></tr></thead><tbody>${makeupCandidateTableRows(sorted,targetClassId,targetSessionKey)}</tbody></table></div></section>`;
-      }).join('');
-    }
-    function scheduledMakeupTable(plans,draftRows,draft,targetClassId,targetSessionKey){
-      const cancelIds=new Set((draft?.cancelPlanIds||[]).map(String));
-      const cancelCount=plans.filter(p=>cancelIds.has(String(p.id))).length;
-      const changeCount=draftRows.length+cancelCount;
-      const projectedAssigned=Math.max(0,plans.length-cancelCount+draftRows.length);
-      const confirmLabel=changeCount===1?'Lưu 1 thay đổi':`Lưu ${changeCount} thay đổi`;
-      const rows=[
-        ...plans.map((p,i)=>{
-          const pendingCancel=cancelIds.has(String(p.id));
-          return `<tr class="${pendingCancel?'makeupCancelDraftRow':''}"><td>${i+1}</td><td><b>${safeStudentName(p.studentId)}</b>${pendingCancel?'<div class="mini">Sẽ quay lại danh sách Chờ xếp sau khi lưu</div>':''}</td><td>${safeClassName(p.sourceClassId)}</td><td>${safeSessionLabel(p.targetSessionKey)}</td><td>${pendingCancel?'<span class="pill red">Chờ hủy</span>':makeupPlanStatusBadge(p)}</td><td>${pendingCancel?`<button class="btn ghost smallBtn" onclick="undoQueuedMakeupCancellation('${p.id}','${targetClassId}','${targetSessionKey}')">Hoàn tác</button>`:`<button class="btn ghost smallBtn" onclick="queueMakeupCancellation('${p.id}','${targetClassId}','${targetSessionKey}')">Hủy</button>`}</td></tr>`;
-        }),
-        ...draftRows.map((x,i)=>`<tr class="makeupDraftRow"><td>${plans.length+i+1}</td><td><b>${h(x.student.name)}</b><div class="mini">Chưa lưu vào hệ thống</div></td><td>${h(x.sourceClass.name)}</td><td>${safeSessionLabel(targetSessionKey)}</td><td><span class="pill yellow">Chờ thêm</span></td><td><button class="btn ghost smallBtn" onclick="removeQueuedMakeup('${x.item.absenceId}','${targetClassId}','${targetSessionKey}')">Bỏ chọn</button></td></tr>`)
-      ];
-      return `<section id="makeupAssignedSection" class="makeupAssignedSection"><div class="makeupAssignedHead"><div><h3>Đã xếp trong buổi này (${projectedAssigned})</h3><div class="mini">${Math.max(0,plans.length-cancelCount)} giữ nguyên${draftRows.length?` • ${draftRows.length} chờ thêm`:''}${cancelCount?` • ${cancelCount} chờ hủy`:''}</div></div><button id="confirmMakeupBatchBtn" class="btn primary" ${changeCount?'':'disabled'} onclick="confirmScheduleMakeupBatch('${targetClassId}','${targetSessionKey}')">${changeCount?confirmLabel:'Lưu thay đổi'}</button></div><div class="modalTableWrap makeupAssignTableWrap makeupAssignedTableWrap"><table class="modalTable makeupAssignTable"><thead><tr><th>STT</th><th>Học sinh</th><th>Lớp gốc</th><th>Buổi học bù</th><th>Trạng thái</th><th></th></tr></thead><tbody>${rows.length?rows.join(''):'<tr><td colspan="6"><div class="empty compactEmpty">Chưa có học sinh được xếp vào buổi này.</div></td></tr>'}</tbody></table></div></section>`;
-    }
+    
+    // Phase 8D.2: scheduleMakeupDraftState moved to lazy runtime module.
 
-    function scheduleMakeupCandidatesRegionHtml(candidates,targetClassId,targetSessionKey,emptyReason,draft){
-      const candidateTables=groupedMakeupCandidateTables(candidates,targetClassId,targetSessionKey);
-      return `<div id="makeupCandidatesRegion"><div class="makeupSearchBox"><label>Tìm học sinh chờ học bù<input id="makeupCandidateSearch" class="input" value="${h(draft.searchQuery||'')}" placeholder="Gõ tên, viết tắt, lớp, buổi vắng..." oninput="scheduleMakeupDraft.searchQuery=this.value;filterMakeupCandidates(this.value)"></label><span class="pill gray" id="makeupSearchCount">Hiện ${candidates.length}/${candidates.length} lượt chờ</span></div><h3 id="makeupPendingHeading">Chờ xếp (${candidates.length})</h3>${candidates.length?candidateTables:`<div class="empty">${h(emptyReason)}</div>`}</div>`;
-    }
-    function refreshScheduleMakeupDraftDom(targetClassId,targetSessionKey){
-      const root=modalBackdrop?.querySelector?.('[data-schedule-makeup-modal]');
-      if(!root){
-        openScheduleMakeup(targetClassId,targetSessionKey);
-        return;
-      }
-      rememberScheduleMakeupSearch();
-      const modalEl=modalBackdrop?.querySelector?.('.modal');
-      const scrollTop=modalEl?.scrollTop||0;
-      const activeId=document.activeElement?.id||'';
-      const selectionStart=activeId==='makeupCandidateSearch'?document.activeElement?.selectionStart:null;
-      const draft=scheduleMakeupDraftState(targetClassId,targetSessionKey);
-      const targetMonth=sessionKeyMonth(targetSessionKey)||makeupCurrentMonthKey();
-      const plans=plannedMakeupsForSession(targetSessionKey);
-      const draftRows=scheduleMakeupDraftRows(targetClassId,targetSessionKey);
-      const cancelIds=new Set((draft.cancelPlanIds||[]).map(String));
-      const cancelCount=plans.filter(p=>cancelIds.has(String(p.id))).length;
-      const savedTotal=totalRosterCountForSession(targetClassId,targetSessionKey);
-      const projectedTotal=Math.max(0,savedTotal-cancelCount+draftRows.length);
-      const capacity=db.settings.capacity||15;
-      const allPending=pendingMakeupRows(targetMonth);
-      const draftAbsenceIds=new Set(draft.items.map(x=>String(x.absenceId)));
-      const draftStudentIds=new Set(draft.items.map(x=>String(x.studentId)));
-      const canPlace=canOpenScheduleMakeupPopup(targetSessionKey) && projectedTotal<capacity;
-      const allCandidates=absentCandidatesForTargetSession(targetClassId,targetSessionKey,{cancelPlanIds:[...cancelIds]});
-      const candidates=canPlace?allCandidates.filter(x=>!draftAbsenceIds.has(String(x.record.id)) && !draftStudentIds.has(String(x.student.id))):[];
-      const sessionPlacementReason=makeupSessionPlacementReason(targetSessionKey);
-      const emptyReason=sessionPlacementReason || (projectedTotal>=capacity?`Buổi này đã đủ ${capacity} học sinh.`:allPending.length?'Không có lượt vắng phù hợp cho buổi này.':'Chưa có học sinh chờ học bù. Hãy lưu điểm danh với trạng thái Vắng trước.');
-      const assignedEl=root.querySelector('#makeupAssignedSection');
-      if(assignedEl) assignedEl.outerHTML=scheduledMakeupTable(plans,draftRows,draft,targetClassId,targetSessionKey);
-      const summaryEl=root.querySelector('#makeupScheduleSummary');
-      if(summaryEl){
-        summaryEl.innerHTML=`<span class="capacityBadge ${projectedTotal>=capacity?'full':''}">Tổng dự kiến ${projectedTotal}/${capacity}</span> <span class="pill blue">${Math.max(0,plans.length-cancelCount)} giữ nguyên</span>${draftRows.length?` <span class="pill yellow">${draftRows.length} chờ thêm</span>`:''}${cancelCount?` <span class="pill red">${cancelCount} chờ hủy</span>`:''} <span class="pill gray">${allPending.length} lượt đang chờ</span>`;
-      }
-      const candidatesEl=root.querySelector('#makeupCandidatesRegion');
-      if(candidatesEl) candidatesEl.outerHTML=scheduleMakeupCandidatesRegionHtml(candidates,targetClassId,targetSessionKey,emptyReason,draft);
-      if(draft.searchQuery) filterMakeupCandidates(draft.searchQuery);
-      if(modalEl) modalEl.scrollTop=scrollTop;
-      if(activeId==='makeupCandidateSearch'){
-        const input=document.getElementById('makeupCandidateSearch');
-        if(input){
-          input.focus({preventScroll:true});
-          if(Number.isInteger(selectionStart)) input.setSelectionRange(selectionStart,selectionStart);
-        }
-      }
-    }
+    
+    // Phase 8D.2: scheduleMakeupDraftItems moved to lazy runtime module.
+
+    
+    // Phase 8D.2: scheduleMakeupDraftRecord moved to lazy runtime module.
+
+    
+    // Phase 8D.2: scheduleMakeupDraftRows moved to lazy runtime module.
+
+    
+    // Phase 8D.2: rememberScheduleMakeupSearch moved to lazy runtime module.
+
+    
+    // Phase 8D.2: queueMakeupCandidate moved to lazy runtime module.
+
+    
+    // Phase 8D.2: removeQueuedMakeup moved to lazy runtime module.
+
+    
+    // Phase 8D.2: queueMakeupCancellation moved to lazy runtime module.
+
+    
+    // Phase 8D.2: undoQueuedMakeupCancellation moved to lazy runtime module.
+
+    
+    // Phase 8D.2: makeupCandidateTableRows moved to lazy runtime module.
+
+    
+    // Phase 8D.2: groupedMakeupCandidateTables moved to lazy runtime module.
+
+    
+    // Phase 8D.2: scheduledMakeupTable moved to lazy runtime module.
+
+
+    
+    // Phase 8D.2: scheduleMakeupCandidatesRegionHtml moved to lazy runtime module.
+
+    
+    // Phase 8D.2: refreshScheduleMakeupDraftDom moved to lazy runtime module.
+
 
     let scheduleMakeupMonthLoadingKey='';
-    function openScheduleMakeup(targetClassId,targetSessionKey=null){
-      normalizeMakeupPlans(); ensureAbsenceRecords();
-      const targetMonth=targetSessionKey?(sessionKeyMonth(targetSessionKey)||makeupCurrentMonthKey()):makeupCurrentMonthKey();
-      let monthStateOk=v22CurrentMakeupStateFresh(targetMonth);
-      if(!monthStateOk){
-        const prefetched=v22FreshMakeupMonthPayload(targetMonth);
-        if(prefetched) monthStateOk=v22ApplyMakeupPayloadForPopup(targetMonth,prefetched);
-      }
-      if(targetSessionKey && !monthStateOk && scheduleMakeupMonthLoadingKey!==targetSessionKey){
-        scheduleMakeupMonthLoadingKey=targetSessionKey;
-        modal(`<div data-schedule-makeup-modal data-disable-modal-autofocus><div class="modalHead"><h2>Xếp học bù</h2><button class="close" onclick="closeModal()">×</button></div><div class="empty">Đang tải dữ liệu học bù tháng này...</div></div>`);
-        v22PreloadMakeupMonth(targetMonth,{force:true}).then(payload=>v22ApplyMakeupPayloadForPopup(targetMonth,payload)).catch(e=>toast(e.message||'Không tải được dữ liệu học bù')).finally(()=>{
-          scheduleMakeupMonthLoadingKey='';
-          openScheduleMakeup(targetClassId,targetSessionKey);
-        });
-        return;
-      }
-      const draft=scheduleMakeupDraftState(targetClassId,targetSessionKey);
-      const target=classById(targetClassId)||{};
-      const targetSession=sessionObjectFromKey(targetSessionKey);
-      const plans=targetSessionKey?plannedMakeupsForSession(targetSessionKey):[];
-      const draftRows=scheduleMakeupDraftRows(targetClassId,targetSessionKey);
-      const cancelIds=new Set((draft.cancelPlanIds||[]).map(String));
-      const cancelCount=plans.filter(p=>cancelIds.has(String(p.id))).length;
-      const savedTotal=targetSessionKey?totalRosterCountForSession(targetClassId,targetSessionKey):0;
-      const projectedTotal=Math.max(0,savedTotal-cancelCount+draftRows.length);
-      const capacity=db.settings.capacity||15;
-      const canPlace=!!(targetSessionKey && canOpenScheduleMakeupPopup(targetSessionKey) && projectedTotal<capacity);
-      const allPending=pendingMakeupRows(targetMonth);
-      const draftAbsenceIds=new Set(draft.items.map(x=>String(x.absenceId)));
-      const draftStudentIds=new Set(draft.items.map(x=>String(x.studentId)));
-      const allCandidates=targetSessionKey?absentCandidatesForTargetSession(targetClassId,targetSessionKey,{cancelPlanIds:[...cancelIds]}):[];
-      const candidates=canPlace?allCandidates.filter(x=>!draftAbsenceIds.has(String(x.record.id)) && !draftStudentIds.has(String(x.student.id))):[];
-      const assignedTable=scheduledMakeupTable(plans,draftRows,draft,targetClassId,targetSessionKey);
-      const sessionPlacementReason=targetSessionKey?makeupSessionPlacementReason(targetSessionKey):'Chọn một buổi trong thời khóa biểu.';
-      const emptyReason=!targetSessionKey?'Chọn một buổi trong thời khóa biểu.':sessionPlacementReason || (projectedTotal>=capacity?`Buổi này đã đủ ${capacity} học sinh.`:allPending.length?'Không có lượt vắng phù hợp cho buổi này.':'Chưa có học sinh chờ học bù. Hãy lưu điểm danh với trạng thái Vắng trước.');
-      modal(`<div data-schedule-makeup-modal data-disable-modal-autofocus><div class="modalHead"><h2>Xếp học bù - ${h(target.name||'Lớp')}</h2><button class="close" onclick="closeModal()">×</button></div>
-      <div class="rulesBox compactRules"><b>${targetSessionKey?sessionLabelFromKey(targetSessionKey):'Chưa chọn buổi'}</b><div id="makeupScheduleSummary" style="margin-top:8px"><span class="capacityBadge ${projectedTotal>=capacity?'full':''}">Tổng dự kiến ${projectedTotal}/${capacity}</span> <span class="pill blue">${Math.max(0,plans.length-cancelCount)} giữ nguyên</span>${draftRows.length?` <span class="pill yellow">${draftRows.length} chờ thêm</span>`:''}${cancelCount?` <span class="pill red">${cancelCount} chờ hủy</span>`:''} <span class="pill gray">${allPending.length} lượt đang chờ</span></div></div>
-      ${assignedTable}
-      ${!targetSessionKey?`<div class="empty">${h(emptyReason)}</div>`:scheduleMakeupCandidatesRegionHtml(candidates,targetClassId,targetSessionKey,emptyReason,draft)}
-      </div>`);
-      setTimeout(()=>{
-        if(draft.searchQuery) filterMakeupCandidates(draft.searchQuery);
-        const modalEl=modalBackdrop?.querySelector?.('.modal');
-        if(modalEl && draft.scrollTop) modalEl.scrollTop=draft.scrollTop;
-      },0);
-    }
+    
+    // Phase 8D.2: openScheduleMakeup moved to lazy runtime module.
 
-    function mergeConfirmedMakeupBatch(data){
-      const plans=Array.isArray(data?.plans)?data.plans:(data?.plan?[data.plan]:[]);
-      const cancelledPlans=Array.isArray(data?.cancelledPlans)?data.cancelledPlans:[];
-      const absenceRecords=Array.isArray(data?.absenceRecords)?data.absenceRecords:(data?.absenceRecord?[data.absenceRecord]:[]);
-      db.makeupPlans ||= [];
-      [...plans,...cancelledPlans].forEach(plan=>{
-        db.makeupPlans=db.makeupPlans.filter(p=>String(p?.id||'')!==String(plan?.id||''));
-        db.makeupPlans.push(plan);
-      });
-      const mergeAbsences=(arr=[])=>{
-        absenceRecords.forEach(updated=>{
-          const i=arr.findIndex(a=>String(a?.id||'')===String(updated?.id||''));
-          if(i>=0) arr[i]={...arr[i],...updated}; else arr.push(updated);
-        });
-      };
-      db.absenceRecords ||= [];
-      mergeAbsences(db.absenceRecords);
-      if(db.makeupTabState){
-        db.makeupTabState.makeupPlans ||= [];
-        [...plans,...cancelledPlans].forEach(plan=>{
-          db.makeupTabState.makeupPlans=db.makeupTabState.makeupPlans.filter(p=>String(p?.id||'')!==String(plan?.id||''));
-          db.makeupTabState.makeupPlans.push(plan);
-        });
-        db.makeupTabState.absenceRecords ||= [];
-        mergeAbsences(db.makeupTabState.absenceRecords);
-        db.makeupTabState.updatedAt=Date.now();
-      }
-      return {plans,cancelledPlans};
-    }
-    function v22RefreshScheduleBehindMakeupModal(sessionKeys=[]){
-      if(v18Memo.scheduleCellMap) v18Memo.scheduleCellMap.key='';
-      if(v18Memo.scheduleDayMap) v18Memo.scheduleDayMap.key='';
-      v18Memo.weekKey='';
-      v18Memo.weekSessions=null;
-      lazyRouteState.schedule={...(lazyRouteState.schedule||{}),loaded:true,loading:false,loadedAt:Date.now(),mutated:true};
-      if(route==='schedule' && !v8bPatchScheduleSessions(sessionKeys)) v18dRenderPageOnly(navItems());
-    }
 
-    async function confirmScheduleMakeupBatch(targetClassId,targetSessionKey){
-      rememberScheduleMakeupSearch();
-      const draft=scheduleMakeupDraftState(targetClassId,targetSessionKey);
-      const items=[...(draft.items||[])];
-      const cancelPlanIds=[...(draft.cancelPlanIds||[])];
-      if(!items.length && !cancelPlanIds.length){toast('Chưa có thay đổi để lưu');return}
-      const targetSession=sessionObjectFromKey(targetSessionKey);
-      if(!targetSession){toast('Không tìm thấy buổi học');return}
-      if(items.length && !canOpenScheduleMakeupPopup(targetSessionKey)){toast('Buổi này không còn nhận học bù theo cách xếp trước giờ học');return}
-      const capacity=db.settings.capacity||15;
-      const validCancelCount=plannedMakeupsForSession(targetSessionKey).filter(p=>cancelPlanIds.some(id=>String(id)===String(p.id))).length;
-      if(Math.max(0,totalRosterCountForSession(targetClassId,targetSessionKey)-validCancelCount)+items.length>capacity){toast(`Số học sinh vượt quá sĩ số tối đa ${capacity}`);return}
-      const btn=document.getElementById('confirmMakeupBatchBtn');
-      const action=window.MsUiAction.beginLockedAction(`makeup-batch:${targetSessionKey}`,btn,'Đang lưu...');
-      if(!action) return;
-      try{
-        const data=await window.MsUiAction.measureAsync('Lưu xếp học bù',()=>officialFetch('/api/makeup/plans',{method:'POST',body:JSON.stringify({targetClassId,targetSessionKey,items,cancelPlanIds}),preserveGetCache:true}),450);
-        const merged=mergeConfirmedMakeupBatch(data);
-        draft.items=[];
-        draft.cancelPlanIds=[];
-        draft.scrollTop=0;
-        const firstChangedPlan=merged.plans[0]||merged.cancelledPlans[0]||null;
-        const mutationMonth=sessionKeyMonth(items[0]?.sourceSessionKey||firstChangedPlan?.sourceSessionKey)||sessionKeyMonth(targetSessionKey);
-        v20bAfterMutation(['schedule','makeup'],{
-          targetSessionKey,
-          sourceSessionKey:items[0]?.sourceSessionKey||firstChangedPlan?.sourceSessionKey||'',
-          sessionKeys:[
-            targetSessionKey,
-            ...items.map(x=>x.sourceSessionKey),
-            ...merged.cancelledPlans.flatMap(x=>[x?.targetSessionKey,x?.sourceSessionKey])
-          ].filter(Boolean),
-          month:mutationMonth,
-          preserveCache:true,
-          renderOnRevalidate:false,
-          delayMs:V24A_BATCH_REVALIDATE_IDLE_MS
-        });
-        saveLocalOnly();
-        const changedSessionKeys=[targetSessionKey,...items.map(x=>x.sourceSessionKey),...merged.cancelledPlans.flatMap(x=>[x?.targetSessionKey,x?.sourceSessionKey])].filter(Boolean);
-        v22RefreshScheduleBehindMakeupModal(changedSessionKeys);
-        const addedCount=merged.plans.length||items.length;
-        const cancelledCount=merged.cancelledPlans.length||cancelPlanIds.length;
-        const parts=[];
-        if(addedCount) parts.push(`thêm ${addedCount}`);
-        if(cancelledCount) parts.push(`hủy ${cancelledCount}`);
-        toast(`Đã lưu thay đổi: ${parts.join(', ')} học sinh`);
-        window.MsUiAction.endLockedAction(action);
-        refreshScheduleMakeupDraftDom(targetClassId,targetSessionKey);
-      }catch(e){
-        window.MsUiAction.endLockedAction(action);
-        toast(e.message||'Không xác nhận được danh sách học bù');
-        refreshScheduleMakeupDraftDom(targetClassId,targetSessionKey);
-      }
-    }
+    
+    // Phase 8D.2: mergeConfirmedMakeupBatch moved to lazy runtime module.
+
+    
+    // Phase 8D.2: v22RefreshScheduleBehindMakeupModal moved to lazy runtime module.
+
+
+    
+    // Phase 8D.2: confirmScheduleMakeupBatch moved to lazy runtime module.
+
 
     // Backward-compatible alias: selecting a row no longer writes to Supabase immediately.
-    function scheduleMakeupFromAbsence(absenceIdValue,studentId,sourceClassId,sourceSessionKey,targetClassId,targetSessionKey=''){
-      queueMakeupCandidate(absenceIdValue,studentId,sourceClassId,sourceSessionKey,targetClassId,targetSessionKey);
-    }
+    
+    // Phase 8D.2: scheduleMakeupFromAbsence moved to lazy runtime module.
+
 
 
     // Phase 8.0: popup điểm danh nằm trong /v15/modules/attendance-modal.js và chỉ mở từ Lịch dạy.
-    function homeworkTypeOptions(){
-      return [
-        ['listen_tick','Listening - Listen and tick'],
-        ['listen_complete','Listening - Listen and complete'],
-        ['listen_number','Listening - Listen and number'],
-        ['listen_match','Listening - Listen and match'],
-        ['reading_choose','Reading - Choose the correct answer'],
-        ['reading_complete','Reading - Look, read and complete'],
-        ['reading_match','Reading - Read and match'],
-        ['reading_tick_picture','Reading - Tick the correct picture'],
-        ['writing_order','Writing - Put the words in order'],
-        ['writing_complete','Writing - Complete the sentences'],
-        ['writing_missing_letter','Writing - Write the missing letter'],
-        ['upload_file','Upload photo/file']
-      ];
-    }
-    function homeworkTypeLabel(t){return (homeworkTypeOptions().find(x=>x[0]===t)||[])[1]||t||'Thư viện bài tập'}
-    function assignmentQuestions(a){
-      if(a.questions?.length) return a.questions;
-      const type=a.type || (a.skill==='Listening'?'listen_tick':a.skill==='Reading'?'reading_choose':a.skill==='Writing'?'writing_complete':'upload_file');
-      if(type==='listen_tick') return [{q:'Listen and tick the correct answer.',answer:'B'},{q:'Listen and choose True or False.',answer:'True'},{q:'Listen and tick the picture you hear.',answer:'A'}];
-      if(type==='listen_complete') return [{q:'I have a _____.',answer:'book'},{q:'She is in the _____.',answer:'classroom'}];
-      if(type==='reading_choose') return [{q:'Choose the correct answer: This is my school.',answer:'school'},{q:'What color is the bag?',answer:'red'}];
-      if(type==='reading_complete') return [{q:'Look, read and complete: This is my _____.',answer:'teacher'},{q:'I can see a _____.',answer:'cat'}];
-      if(type==='writing_order') return [{q:'Put the words in order: like / I / English',answer:'I like English'},{q:'is / This / pen / my',answer:'This is my pen'}];
-      if(type==='writing_missing_letter') return [{q:'Write the missing letter: b_ok',answer:'o'},{q:'c_t',answer:'a'}];
-      return [{q:'Upload photo/file of your homework.',answer:''}];
-    }
-    function assignmentAutoGrade(a){return a.autoGrade!==false && (a.type||'').indexOf('upload')<0 && a.skill!=='Speaking'}
-    function homeworkStatusPill(status,gradeStatus){
-      if(gradeStatus==='graded') return '<span class="pill green">Đã chấm</span>';
-      if(status==='submitted') return '<span class="pill yellow">Đã nộp</span>';
-      if(status==='missing') return '<span class="pill red">Chưa nộp</span>';
-      return '<span class="pill blue">Đang làm</span>';
-    }
-    function ensureHomework(){
-      db.assignments ||= []; db.submissions ||= [];
-      db.assignments.forEach(a=>{a.type ||= a.skill==='Listening'?'listen_tick':a.skill==='Reading'?'reading_choose':a.skill==='Writing'?'writing_complete':a.skill==='Speaking'?'upload_file':'reading_choose'; a.totalScore ||= 100;});
-    }
-    function homeworkFilteredClasses(){return isParent()?classesForUser():classesForTeachingUser()}
-    function assignmentById(id){return db.assignments.find(a=>a.id===id)||{}}
-    function submissionById(id){return db.submissions.find(s=>s.id===id)||{}}
-    function submissionsForAssignment(id){return db.submissions.filter(s=>s.assignmentId===id)}
-    function openHomeworkPreview(assignmentId){
-      const a=assignmentById(assignmentId); const qs=assignmentQuestions(a);
-      modal(`<div class="modalHead"><h2>${a.title}</h2><button class="close" onclick="closeModal()">×</button></div>
-      <div class="modalInfoGrid"><div><p><b>Lớp:</b> ${classById(a.classId).name}</p><p><b>Dạng bài:</b> ${homeworkTypeLabel(a.type)}</p><p><b>Hạn nộp:</b> ${a.due||'-'}</p></div><div>${a.skill==='Listening'?'<div class="audioMock">Audio : unit-listening.mp3</div>':'<div class="empty">File/ảnh đính kèm </div>'}</div></div>
-      <div class="modalTableWrap"><table class="modalTable"><thead><tr><th>STT</th><th>Câu hỏi</th><th>Đáp án </th></tr></thead><tbody>${qs.map((q,i)=>`<tr><td>${i+1}</td><td>${q.q}</td><td>${q.answer||'-'}</td></tr>`).join('')}</tbody></table></div>`)
-    }
-    function submitHomework(assignmentId,studentId){
-      const a=assignmentById(assignmentId);
-      let s=db.submissions.find(x=>x.assignmentId===assignmentId&&x.studentId===studentId);
-      if(!s){s={id:'sub_'+assignmentId+'_'+studentId,assignmentId,studentId,classId:a.classId}; db.submissions.push(s)}
-      s.status='submitted'; s.submittedAt=new Date().toLocaleString('vi-VN',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
-      if(assignmentAutoGrade(a)){s.gradeStatus='graded'; s.score=88; s.teacherComment='Hệ thống đã tự chấm phần câu hỏi ngắn.'}
-      else{s.gradeStatus='need_grade'; s.score=null; s.teacherComment='Chờ giáo viên chấm.'}
-      save(); toast('Đã nộp bài '); closeModal(); render();
-    }
-    function openStudentHomework(assignmentId,studentId){
-      const a=assignmentById(assignmentId); const st=studentById(studentId); const qs=assignmentQuestions(a); const sub=db.submissions.find(s=>s.assignmentId===assignmentId&&s.studentId===studentId);
-      modal(`<div class="modalHead"><h2>Làm bài: ${a.title}</h2><button class="close" onclick="closeModal()">×</button></div>
-      <div class="modalInfoGrid"><div><p><b>Học sinh:</b> ${st.name}</p><p><b>Kỹ năng:</b> ${a.skill}</p><p><b>Dạng bài:</b> ${homeworkTypeLabel(a.type)}</p><p><b>Hạn nộp:</b> ${a.due}</p></div><div>${a.skill==='Listening'?'<div class="audioMock">Nghe audio </div>':'<div class="empty">Nội dung/ảnh bài tập </div>'}</div></div>
-      <div class="questionPreview">${qs.map((q,i)=>`<div class="questionRow"><div class="qNo">${i+1}</div><div><b>${q.q}</b><div class="mini">Học sinh trả lời trực tiếp trên web</div></div><input class="answerBox" placeholder="Nhập/chọn đáp án" value="${i===0?' answer':''}"></div>`).join('')}</div>
-      <div style="text-align:right;margin-top:14px">${sub?.status==='submitted'?'<span class="paidBadge">Đã nộp</span>':`<button class="btn primary" onclick="submitHomework('${assignmentId}','${studentId}')">Nộp bài</button>`}</div>`)
-    }
-    function openGradeSubmission(id){
-      const s=submissionById(id); const a=assignmentById(s.assignmentId); const st=studentById(s.studentId);
-      modal(`<div class="modalHead"><h2>Chấm bài: ${st.name}</h2><button class="close" onclick="closeModal()">×</button></div>
-      <div class="modalInfoGrid"><div><p><b>Bài:</b> ${a.title}</p><p><b>Dạng:</b> ${homeworkTypeLabel(a.type)}</p><p><b>Nộp lúc:</b> ${s.submittedAt||'-'}</p></div><div class="studentWorkBox"><b>Bài làm </b><p>${a.type==='upload_file'?'Ảnh/file bài làm của học sinh.':'Câu trả lời trực tiếp trên web.'}</p></div></div>
-      <div class="formGrid"><label>Điểm<input id="gradeScore" class="input" type="number" min="0" max="100" value="${s.score??90}"></label><label class="full">Nhận xét<textarea id="gradeComment" class="input" rows="4">${s.teacherComment||'Con làm bài tốt, cần chú ý phần phát âm/từ vựng.'}</textarea></label></div>
-      <div style="text-align:right;margin-top:14px"><button class="btn primary" onclick="saveSubmissionGrade('${id}')">Lưu điểm</button></div>`)
-    }
-    function saveSubmissionGrade(id){
-      const s=submissionById(id); s.gradeStatus='graded'; s.status='submitted'; s.score=Number(document.getElementById('gradeScore')?.value||0); s.teacherComment=document.getElementById('gradeComment')?.value||''; s.gradedAt=new Date().toLocaleString('vi-VN'); save(); toast('Đã lưu điểm'); closeModal(); render();
-    }
-    function createAssignmentFromModal(){
-      const classId=document.getElementById('hwClass')?.value;
-      const skill=document.getElementById('hwSkill')?.value;
-      const type=document.getElementById('hwType')?.value;
-      const title=document.getElementById('hwTitle')?.value || 'Homework';
-      const due=document.getElementById('hwDue')?.value || 'Chủ nhật 20:00';
-      const c=classById(classId);
-      const id='a_'+Date.now();
-      const a={id,classId,title,skill,type,due,status:'published',autoGrade:assignmentAutoGrade({type,skill}),totalScore:100,createdBy:currentUser.id};
-      db.assignments.push(a);
-      (c.students||[]).forEach(st=>db.submissions.push({id:'sub_'+id+'_'+st.id,assignmentId:id,studentId:st.id,classId,status:'missing',gradeStatus:'missing',score:null,submittedAt:''}));
-      save(); toast('Đã giao bài tập'); closeModal(); render();
-    }
-
-
-
-
-    function ensureExerciseLibrary(){
-      db.exerciseLibrary ||= [];
-      db.exerciseLibrary = (db.exerciseLibrary||[]).map(x=>x?.type==='pdf'?{...x,type:'word'}:x).filter(Boolean);
-      if(db.libraryTab==='pdf') db.libraryTab='word';
-      db.libraryTab ||= 'word';
-      return db.exerciseLibrary;
-    }
-    
-    function setLibraryTab(tab){ensureExerciseLibrary(); db.libraryTab=(tab==='pdf'?'word':tab); v18bSetLocalUiState(); render()}
-    function setLibrarySearch(v){ensureExerciseLibrary(); db.libraryQ=v; v18bSetLocalUiState(); v18bRenderDebounced('librarySearch',220)}
-    function libraryFilterValues(field,type=normalizeLibraryTab()){
-      ensureExerciseLibrary();
-      const key=v18FastKey()+`|libraryFilterValues|${field}|${type}`;
-      v18Memo.libraryFilterValues ||= {};
-      if(v18Memo.libraryFilterValues[key]) return v18Memo.libraryFilterValues[key];
-      const values=[...new Set((db.exerciseLibrary||[]).filter(x=>x.type===type).map(x=>x[field]).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b),'vi',{numeric:true}));
-      v18Memo.libraryFilterValues[key]=values;
-      return values;
-    }
-    function setLibraryFilter(field,value){
-      ensureExerciseLibrary();
-      if(field==='level') db.libraryLevel=value;
-      if(field==='skill') db.librarySkill=value;
-      if(field==='unit') db.libraryUnit=value;
-      v18bSetLocalUiState(); render();
-    }
-    function resetLibraryFilters(){
-      ensureExerciseLibrary();
-      db.libraryQ=''; db.libraryLevel='all'; db.librarySkill='all'; db.libraryUnit='all';
-      v18bSetLocalUiState(); render();
-    }
-    // V19E: library filter UI helpers moved to /v15/modules/library.js
-    function libraryItems(type=normalizeLibraryTab()){
-      ensureExerciseLibrary();
-      const q=String(db.libraryQ||'').toLowerCase().trim();
-      const level=db.libraryLevel||'all';
-      const skill=db.librarySkill||'all';
-      const unit=db.libraryUnit||'all';
-      const key=v18FastKey()+`|library|${type}|${q}|${level}|${skill}|${unit}`;
-      v18Memo.library ||= {};
-      if(v18Memo.library.key===key) return v18Memo.library.rows;
-      const rows=(db.exerciseLibrary||[])
-        .filter(x=>x.type===type)
-        .filter(x=>!q || smartSearchMatch(smartSearchIndex(x.title,x.level,x.skill,x.unit,x.fileName,x.uploadedBy), q))
-        .filter(x=>level==='all' || x.level===level)
-        .filter(x=>skill==='all' || x.skill===skill)
-        .filter(x=>unit==='all' || x.unit===unit)
-        .sort((a,b)=>String(b.uploadedAt||b.createdAt||'').localeCompare(String(a.uploadedAt||a.createdAt||''),'vi') || String(a.title).localeCompare(String(b.title),'vi'));
-      v18Memo.library={key,rows};
-      return rows;
-    }
-
-    function libraryExtension(item){
-      const ext=String(item?.extension||item?.fileName?.split('.').pop()||'').toLowerCase();
-      return ['doc','docx','pdf','mp3','wav','m4a','aac'].includes(ext)?ext:'';
-    }
-    function libraryTypeLabel(t,item=null){
-      if(t==='audio') return 'Audio';
-      if(t==='pdf') return 'PDF';
-      const ext=libraryExtension(item);
-      return ext?`Word .${ext.toUpperCase()}`:'Word';
-    }
-    function libraryIcon(t){return t==='audio'?'🎧':t==='pdf'?'📄':'📝'}
-    
-
-function canManageLibrary(){return canManageOperations()||isTeachingUser()}
-    function canDeleteLibrary(){return canManageOperations()}
-    function fileSizeLabel(bytes){
-      const n=Number(bytes||0);
-      if(!n) return 'Không rõ dung lượng';
-      if(n<1024*1024) return `${Math.round(n/1024)} KB`;
-      return `${(n/1024/1024).toFixed(n<10*1024*1024?1:0)} MB`;
-    }
-    function libraryDateLabel(v){
-      if(!v) return '-';
-      const d=new Date(v);
-      if(Number.isNaN(d.getTime())) return v;
-      return d.toLocaleString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-    }
-    function normalizeLibraryTab(){
-      if(!['word','pdf','audio'].includes(db.libraryTab)) db.libraryTab='word';
-      db.libraryTab ||= 'word';
-      return db.libraryTab;
-    }
-
-    // V19E: homeworkPage/libraryCard moved to /v15/modules/library.js. Upload/delete/preview API stays in app core for safety.
-    function openLibraryPreview(id){
-      const item=(db.exerciseLibrary||[]).find(x=>x.id===id); if(!item) return;
-      if(item.type==='word') return openWordPreview(id);
-      const url=item.publicUrl||item.url||'';
-      if(item.type==='pdf'){
-        modal(`<div class="modalHead"><h2>${h(item.title)}</h2><button class="close" onclick="closeModal()">×</button></div>
-        <div class="wordPreviewMeta"><span class="pill red">PDF</span><span class="pill gray">${h(item.fileName||'')}</span><span class="pill green">${h(item.level||'All')}</span><span class="pill blue">${fileSizeLabel(item.fileSize)}</span></div>
-        ${url?`<iframe class="pdfPreviewFrame" src="${h(url)}#toolbar=1" title="${h(item.title)}"></iframe>`:'<div class="empty">File chưa có link mở.</div>'}
-        <div style="text-align:right;margin-top:14px">${url?`<a class="btn primary" href="${h(url)}" target="_blank" rel="noopener">Mở / tải PDF</a>`:''}</div>`);
-        return;
-      }
-      modal(`<div class="modalHead"><h2>${h(item.title)}</h2><button class="close" onclick="closeModal()">×</button></div>
-      <div class="wordPreviewMeta"><span class="pill blue">Audio</span><span class="pill gray">${fileSizeLabel(item.fileSize)}</span><span class="pill green">${h(item.level||'All')}</span></div>
-      ${url?`<audio class="libraryAudio" controls src="${h(url)}"></audio>`:'<div class="empty">File chưa có link mở.</div>'}
-      <div style="text-align:right;margin-top:14px">${url?`<a class="btn primary" href="${h(url)}" target="_blank" rel="noopener">Mở / tải Audio</a>`:''}</div>`)
-    }
-
-    async function openWordPreview(id){
-      const item=(db.exerciseLibrary||[]).find(x=>x.id===id); if(!item) return;
-      const url=item.publicUrl||item.url||'';
-      modal(`<div class="modalHead"><h2>Xem trước Word</h2><button class="close" onclick="closeModal()">×</button></div>
-        <div class="wordPreviewMeta"><span class="pill red">${libraryTypeLabel(item.type,item)}</span><span class="pill gray">${h(item.fileName||'')}</span><span class="pill green">${h(item.level||'All')}</span></div>
-        <div class="uploadProgressNote">Đang tải nội dung xem trước...</div>`);
-      try{
-        const data=await officialFetch(`/api/library/${encodeURIComponent(id)}/preview`);
-        const text=data.text||'Không có nội dung xem trước.';
-        const note=data.previewable?'' : '<div class="uploadProgressNote">File này không hỗ trợ preview trực tiếp. Hãy tải về để xem đầy đủ.</div>';
-        modal(`<div class="modalHead"><h2>${h(data.title||item.title)}</h2><button class="close" onclick="closeModal()">×</button></div>
-          <div class="wordPreviewMeta"><span class="pill red">${libraryTypeLabel(item.type,{...item,fileName:data.fileName||item.fileName})}</span><span class="pill gray">${h(data.fileName||item.fileName||'')}</span><span class="pill green">${h(item.level||'All')}</span></div>
-          ${note}
-          <div class="wordPreviewText">${h(text)}</div>
-          <div style="text-align:right;margin-top:14px">${url?`<a class="btn primary" href="${h(url)}" target="_blank" rel="noopener">Mở / tải file Word</a>`:''}</div>`);
-      }catch(e){
-        modal(`<div class="modalHead"><h2>${h(item.title)}</h2><button class="close" onclick="closeModal()">×</button></div>
-          <div class="dangerBox"><b>Không xem trước được file này</b><span>${h(e.message||'Có lỗi khi đọc file Word')}</span></div>
-          <div style="text-align:right;margin-top:14px">${url?`<a class="btn primary" href="${h(url)}" target="_blank" rel="noopener">Mở / tải file Word</a>`:''}</div>`);
-      }
-    }
-
-    function openLibraryItemModal(){
-      ensureExerciseLibrary();
-      const currentType=normalizeLibraryTab();
-      modal(`<div class="modalHead"><h2>+ Upload tài liệu vào thư viện</h2><button class="close" onclick="closeModal()">×</button></div>
-      <div class="libraryUploadBox"><b>File thật sẽ được lưu vào Supabase Storage</b><span class="mini">Hỗ trợ Word (.doc/.docx), PDF, MP3, WAV, M4A, AAC. Tối đa 50MB/file.</span><input id="libFile" class="input" type="file" accept=".doc,.docx,.pdf,.mp3,.wav,.m4a,.aac,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf,audio/*" onchange="syncLibraryFileType()"></div>
-      <div class="formGrid" style="margin-top:14px"><label>Loại tài liệu<select id="libType" class="input"><option value="word" ${currentType==='word'?'selected':''}>Word</option><option value="pdf" ${currentType==='pdf'?'selected':''}>PDF</option><option value="audio" ${currentType==='audio'?'selected':''}>Audio</option></select></label>
-      <label>Tên tài liệu<input id="libTitle" class="input" placeholder="VD: G3 - Unit 7 Worksheet"></label>
-      <label>Khối / Level<input id="libLevel" class="input" placeholder="VD: G3, G4, Starter"></label>
-      <label>Kỹ năng<select id="libSkill" class="input"><option>Listening</option><option>Reading</option><option>Writing</option><option>Speaking</option><option>Vocabulary</option><option>Grammar</option><option>Other</option></select></label>
-      <label class="full">Unit / Chủ đề<input id="libUnit" class="input" placeholder="VD: Unit 7, Review 2, Phonics"></label></div>
-      <div id="libUploadStatus"></div>
-      <div style="text-align:right;margin-top:18px"><button class="btn ghost" onclick="closeModal()">Hủy</button> <button class="btn primary" onclick="saveLibraryItem()">Upload tài liệu</button></div>`)
-    }
-
-    function syncLibraryFileType(){
-      const file=document.getElementById('libFile')?.files?.[0];
-      if(!file) return;
-      const name=file.name.toLowerCase();
-      const type=/\.pdf$/i.test(name)||file.type==='application/pdf'
-        ? 'pdf'
-        : (/\.(doc|docx)$/i.test(name)||file.type.includes('wordprocessingml')||file.type==='application/msword'?'word':'audio');
-      const typeEl=document.getElementById('libType'); if(typeEl) typeEl.value=type;
-      const titleEl=document.getElementById('libTitle');
-      if(titleEl && !titleEl.value) titleEl.value=file.name.replace(/\.[^.]+$/,'').replace(/[_-]+/g,' ');
-    }
-
-    async function saveLibraryItem(){
-      const type=document.getElementById('libType')?.value||'word';
-      const title=(document.getElementById('libTitle')?.value||'').trim();
-      const level=(document.getElementById('libLevel')?.value||'').trim();
-      const skill=document.getElementById('libSkill')?.value||'';
-      const unit=(document.getElementById('libUnit')?.value||'').trim();
-      const file=document.getElementById('libFile')?.files?.[0];
-      const status=document.getElementById('libUploadStatus');
-      if(!title){toast('Nhập tên tài liệu');return}
-      if(!file){toast('Chọn file Word, PDF hoặc Audio');return}
-      try{
-        if(status) status.innerHTML='<div class="uploadProgressNote">Đang upload file lên Supabase Storage...</div>';
-        const fd=new FormData();
-        fd.append('type',type); fd.append('title',title); fd.append('level',level||'All'); fd.append('skill',skill); fd.append('unit',unit); fd.append('file',file);
-        const res=await fetch('/api/library',{method:'POST',body:fd,credentials:'include'});
-        const data=await res.json().catch(()=>({}));
-        if(!res.ok) throw new Error(data.error||'Upload lỗi');
-        db.exerciseLibrary ||= [];
-        db.exerciseLibrary.unshift(data.item);
-        db.libraryTab=data.item.type;
-        v18gClearNetworkCache();
-        v18fUpdateLibraryModuleCache();
-        v20bAfterMutation(['library']);
-        save(); closeModal(); render(); toast('Đã upload tài liệu thật');
-      }catch(e){
-        if(status) status.innerHTML='';
-        toast(e.message||'Không upload được tài liệu');
-      }
-    }
-
-    function openDeleteLibraryItem(id){
-      const item=(db.exerciseLibrary||[]).find(x=>x.id===id); if(!item) return;
-      modal(`<div class="modalHead"><h2>Xóa tài liệu</h2><button class="close" onclick="closeModal()">×</button></div>
-      <div class="dangerBox"><b>${h(item.title)}</b><span>Thao tác này sẽ xóa tài liệu khỏi thư viện và xóa file trong Storage. Chỉ Admin/Quản lí/Lễ tân có quyền xóa.</span></div>
-      <div style="text-align:right;margin-top:18px"><button class="btn ghost" onclick="closeModal()">Hủy</button> <button class="btn dangerAction" onclick="deleteLibraryItem('${id}')">Xóa tài liệu</button></div>`)
-    }
-
-    async function deleteLibraryItem(id){
-      try{
-        await officialFetch(`/api/library/${encodeURIComponent(id)}`,{method:'DELETE',body:'{}'});
-        db.exerciseLibrary=(db.exerciseLibrary||[]).filter(x=>x.id!==id);
-        v18fUpdateLibraryModuleCache();
-        v20bAfterMutation(['library']);
-        save(); closeModal(); render(); toast('Đã xóa tài liệu');
-      }catch(e){toast(e.message||'Không xóa được tài liệu')}
-    }
-
-
-
-    // V19D: tuitionPage moved to /v15/modules/tuition.js. Data/helpers/mutations remain in app core for safety.
     function tuitionFilterState(){
       db.settings.tuitionFilter ||= {q:'',status:'all',month:new Date().toISOString().slice(0,7)};
       db.settings.tuitionFilter.month ||= new Date().toISOString().slice(0,7);
@@ -7573,375 +5457,73 @@ function canManageLibrary(){return canManageOperations()||isTeachingUser()}
 
 
 
-    function makeupTabStateForMonth(monthKey=makeupCurrentMonthKey()){
-      const st=db.makeupTabState;
-      if(st && st.month===monthKey){
-        return {
-          month: monthKey,
-          makeupPlans: Array.isArray(st.makeupPlans)?st.makeupPlans:[],
-          absenceRecords: Array.isArray(st.absenceRecords)?st.absenceRecords:[],
-          attendanceSessions: st.attendanceSessions||{}
-        };
-      }
-      return {
-        month: monthKey,
-        makeupPlans: db.makeupPlans||[],
-        absenceRecords: db.absenceRecords||[],
-        attendanceSessions: db.attendanceSessions||{}
-      };
-    }
-    function makeupTabAttendanceRow(plan,state){
-      if(!plan?.targetSessionKey) return null;
-      const rec=(state.attendanceSessions||{})[attendanceKey(plan.targetSessionKey)] || (db.attendanceSessions||{})[attendanceKey(plan.targetSessionKey)];
-      if(!rec?.saved) return null;
-      return rec.rows?.[`makeup_${plan.studentId}`] || rec.rows?.[`manual_makeup_${plan.studentId}`] || null;
-    }
-    function makeupTabCompleted(plan,state){
-      if(String(plan?.status||'')==='completed') return true;
-      const row=makeupTabAttendanceRow(plan,state);
-      return !!row && (row.status==='present' || row.status==='late');
-    }
-    function makeupTabMissed(plan,state){
-      if(makeupTabCompleted(plan,state)) return false;
-      const row=makeupTabAttendanceRow(plan,state);
-      return row?.status==='absent';
-    }
-    function makeupTabSourceAbsenceExists(plan,state){
-      if(!plan?.absenceId) return true;
-      return (state.absenceRecords||[]).some(a=>String(a.id)===String(plan.absenceId));
-    }
-    function makeupTabCancelledBySourceCorrection(plan,state){
-      return String(plan?.status||'')==='cancelled' && plan?.absenceId && !makeupTabSourceAbsenceExists(plan,state);
-    }
-    function makeupTabAbsenceRecordStatus(absenceIdValue,state){
-      const plans=(state.makeupPlans||[]).filter(p=>String(p?.absenceId||'')===String(absenceIdValue));
-      if(plans.some(p=>makeupTabCompleted(p,state))) return 'completed';
-      const scheduled=plans.find(p=>String(p?.status||'scheduled')==='scheduled' && !makeupTabMissed(p,state));
-      return scheduled?'scheduled':'pending';
-    }
-    function makeupTabActiveRows(state,monthKey){
-      return (state.makeupPlans||[])
-        .filter(p=>p && !makeupTabCancelledBySourceCorrection(p,state))
-        .filter(p=>!monthKey || makeupPlanMonth(p)===monthKey)
-        .filter(p=>String(p.status||'scheduled')==='scheduled' && !makeupTabCompleted(p,state) && !makeupTabMissed(p,state))
-        .map(p=>({plan:p,student:studentById(p.studentId),sourceClass:classById(p.sourceClassId),targetClass:classById(p.targetClassId)}))
-        .filter(x=>x.student?.id)
-        .sort((a,b)=>String(a.plan.targetSessionKey||'').localeCompare(String(b.plan.targetSessionKey||'')) || String(a.student.name||'').localeCompare(String(b.student.name||''),'vi'));
-    }
-    function makeupTabPendingRows(state,monthKey){
-      return (state.absenceRecords||[])
-        .filter(a=>a && (!monthKey || absenceRecordMonth(a)===monthKey))
-        .filter(a=>makeupTabAbsenceRecordStatus(a.id,state)==='pending')
-        .map(a=>({record:a, student:studentById(a.studentId), sourceClass:classById(a.sourceClassId), sourceSession:sessionObjectFromKey(a.sourceSessionKey)}))
-        .filter(x=>x.student?.id && x.sourceClass?.id)
-        .sort((a,b)=>String(a.sourceClass?.name||'').localeCompare(String(b.sourceClass?.name||''),'vi',{numeric:true}) || String(a.student.name||'').localeCompare(String(b.student.name||''),'vi'));
-    }
-    function makeupTabCompletedRows(state,monthKey){
-      return (state.makeupPlans||[])
-        .filter(p=>p && !makeupTabCancelledBySourceCorrection(p,state))
-        .filter(p=>!monthKey || makeupPlanMonth(p)===monthKey)
-        .filter(p=>makeupTabCompleted(p,state))
-        .map(p=>({plan:p,student:studentById(p.studentId),sourceClass:classById(p.sourceClassId),targetClass:classById(p.targetClassId)}))
-        .filter(x=>x.student?.id)
-        .sort((a,b)=>String(b.plan.targetSessionKey||b.plan.createdAt||'').localeCompare(String(a.plan.targetSessionKey||a.plan.createdAt||'')) || String(a.student.name||'').localeCompare(String(b.student.name||''),'vi'));
-    }
-
-    function makeupMonthOptions(selected){
-      const months=makeupAvailableMonths();
-      return months.map(m=>`<option value="${m}" ${m===selected?'selected':''}>${formatMonthKeyVN(m)}</option>`).join('') || `<option value="${selected}">${formatMonthKeyVN(selected)}</option>`;
-    }
-    async function setMakeupMonth(value){
-      const month=String(value||'').trim();
-      if(!/^\d{4}-\d{2}$/.test(month)){toast('Tháng không hợp lệ');return}
-      db.settings ||= {}; db.settings.makeupFilter ||= {}; db.settings.makeupFilter.month=month;
-      db.makeupMonth=month;
-      saveLocalOnly();
-      renderApp();
-      try{await refreshOfficialMakeupState({month,force:true,applyGlobal:true}); if(route==='makeup') renderApp();}
-      catch(e){toast(e.message||'Không tải được dữ liệu học bù tháng này')}
-    }
-    async function refreshMakeupMonths(){
-      try{
-        const data=await officialFetch('/api/makeup/months');
-        db.deletedMakeupMonths=data.deletedMonths||[];
-        db.makeupAvailableMonths=data.months||[];
-        if(makeupMonthDeleted(makeupSelectedMonthKey())){
-          db.settings ||= {}; db.settings.makeupFilter ||= {};
-          db.settings.makeupFilter.month=(db.makeupAvailableMonths||[])[0] || makeupCurrentMonthKey();
-          db.makeupMonth=db.settings.makeupFilter.month;
-        }
-        saveLocalOnly();
-        return data;
-      }catch(e){console.warn('Không tải được tháng học bù',e); return null}
-    }
-    async function deleteMakeupMonth(){
-      if(!canManageOperations()){toast('Không có quyền xóa dữ liệu vắng');return}
-      const month=document.getElementById('deleteMakeupMonthSelect')?.value || makeupSelectedMonthKey();
-      if(!/^\d{4}-\d{2}$/.test(month)){toast('Chọn tháng cần xóa');return}
-      if(!confirm(`Bạn có chắc muốn xóa dữ liệu vắng/học bù ${formatMonthKeyVN(month)} không?\n\nSau khi xóa, tháng này sẽ không còn hiện trong tab Học bù và không dùng để xếp học bù nữa. Lịch sử điểm danh trong Lịch dạy vẫn được giữ.`)) return;
-      try{
-        const data=await officialFetch('/api/makeup/months',{method:'POST',body:JSON.stringify({month,reason:'Xóa dữ liệu vắng từ giao diện'})});
-        db.deletedMakeupMonths=data.deletedMonths||[...(db.deletedMakeupMonths||[]),month];
-        db.makeupAvailableMonths=data.months||[];
-        db.makeupTabState=null; db.makeupPlans=[]; db.absenceRecords=[];
-        const next=(db.makeupAvailableMonths||[])[0] || makeupCurrentMonthKey();
-        db.settings ||= {}; db.settings.makeupFilter ||= {}; db.settings.makeupFilter.month=next; db.makeupMonth=next;
-        moduleCacheSet(`makeup:${month}`,{makeupMonth:month,makeupPlans:[],absenceRecords:[],attendanceSessions:{},supportClasses:[],deletedMonths:db.deletedMakeupMonths,availableMonths:db.makeupAvailableMonths});
-        v20bAfterMutation(['makeup','schedule','attendance'],{month,force:true});
-        save(); toast('Đã xóa dữ liệu vắng của '+formatMonthKeyVN(month));
-        await refreshOfficialMakeupState({month:next,applyGlobal:true,skipSave:true});
-        renderApp();
-      }catch(e){toast(e.message||'Không xóa được dữ liệu vắng')}
-    }
-    function openDeleteMakeupMonthModal(){
-      const selected=makeupSelectedMonthKey();
-      const options=makeupMonthOptions(selected);
-      modal(`<div class="modalHead"><h2>Xóa dữ liệu vắng</h2><button class="close" onclick="closeModal()">×</button></div>
-        <div class="blockedBox"><h2>⚠️ Xác nhận trước khi xóa</h2><p>Tháng đã xóa sẽ không còn hiển thị trong tab Học bù và không còn dùng để xếp học bù. Lịch sử điểm danh ở Lịch dạy vẫn được giữ.</p></div>
-        <label>Chọn tháng cần xóa<select id="deleteMakeupMonthSelect" class="input">${options}</select></label>
-        <div style="text-align:right;margin-top:14px"><button class="btn ghost" onclick="closeModal()">Hủy</button><button class="btn primary" onclick="deleteMakeupMonth()">Xóa dữ liệu tháng</button></div>`);
-    }
-
-    function makeupPage(){
-      db.makeupPlans ||= []; ensureAbsenceRecords(); normalizeMakeupPlans();
-      const monthKey=makeupSelectedMonthKey();
-      if(!db.makeupAvailableMonths || !db.makeupAvailableMonths.length) refreshMakeupMonths().then(()=>{if(route==='makeup') renderApp()});
-      const tabState=makeupTabStateForMonth(monthKey);
-      const activeRows=makeupMonthDeleted(monthKey)?[]:makeupTabActiveRows(tabState,monthKey);
-      const pendingRows=makeupMonthDeleted(monthKey)?[]:makeupTabPendingRows(tabState,monthKey);
-      const completedRows=makeupMonthDeleted(monthKey)?[]:makeupTabCompletedRows(tabState,monthKey);
-      const monthAbsenceCount=makeupMonthDeleted(monthKey)?0:(tabState.absenceRecords||[]).filter(a=>absenceRecordMonth(a)===monthKey).length;
-      const monthControls=`<div class="inline2"><label>Tháng hiển thị<select class="input" onchange="setMakeupMonth(this.value)">${makeupMonthOptions(monthKey)}</select></label>${canManageOperations()?`<button class="btn ghost" onclick="openDeleteMakeupMonthModal()">Xóa dữ liệu vắng</button>`:''}</div>`;
-      const activeTable=activeRows.length?activeRows.map((x,i)=>`<tr><td>${i+1}</td><td><b>${safeStudentName(x.plan.studentId)}</b></td><td>${safeClassName(x.plan.sourceClassId)}${x.plan.sourceSessionKey?`<div class="mini">${safeSessionLabel(x.plan.sourceSessionKey)}</div>`:''}</td><td>${safeClassName(x.plan.targetClassId)}</td><td>${x.plan.targetSessionKey?`<span class="sessionTag">${safeSessionLabel(x.plan.targetSessionKey)}</span>`:'-'}</td><td><span class="pill blue">${h(x.plan.status||'scheduled')}</span><div class="mini">${h(makeupTargetStatusText(x.plan))}</div></td><td><button class="btn ghost" data-cancel-makeup-id="${x.plan.id}" onclick="cancelMakeupPlan('${x.plan.id}','${x.plan.targetClassId}','${x.plan.targetSessionKey}')">Hủy</button></td></tr>`).join(''):'<tr><td colspan="7">Chưa có lịch học bù đã xếp.</td></tr>';
-      const pendingTable=pendingRows.length?pendingRows.map((x,i)=>`<tr><td>${i+1}</td><td><b>${h(x.student.name)}</b><div class="mini">${h(classGradeLabel(x.sourceClass.name))}</div></td><td>${h(x.sourceClass.name)}</td><td>${h(x.record.sourceSessionLabel||safeSessionLabel(x.record.sourceSessionKey))}</td><td>${h(x.record.reason||'Vắng')}</td><td><span class="pill yellow">Chờ xếp</span></td></tr>`).join(''):'<tr><td colspan="6">Chưa có học sinh chờ học bù trong tháng này.</td></tr>';
-      const completedTable=completedRows.length?completedRows.map((x,i)=>`<tr><td>${i+1}</td><td><b>${safeStudentName(x.plan.studentId)}</b><div class="mini">${h(x.student?.contact||'')}</div></td><td>${safeClassName(x.plan.sourceClassId)}</td><td>${x.plan.sourceSessionKey?`<span class="sessionTag">${safeSessionLabel(x.plan.sourceSessionKey)}</span>`:'-'}</td><td>${safeClassName(x.plan.targetClassId)}</td><td>${x.plan.targetSessionKey?`<span class="sessionTag">${safeSessionLabel(x.plan.targetSessionKey)}</span>`:'-'}</td><td><span class="pill green">Đã học bù</span></td></tr>`).join(''):'<tr><td colspan="7">Chưa có học sinh đã hoàn tất học bù.</td></tr>';
-      return `<div class="screenTitle"><div><h1>Học bù</h1><p>Đang xem <b>${formatMonthKeyVN(monthKey)}</b></p></div><button class="btn primary" onclick="go('schedule')">Sang lịch dạy để xếp</button></div>
-      <div class="panel"><div class="panelHead"><div><h2>Bộ lọc tháng</h2><div class="mini">Dữ liệu học bù không tự xóa. Admin/Quản lí/Lễ tân có thể xóa tháng không cần xử lý tiếp.</div></div>${monthControls}</div></div>
-      <div class="statGrid"><div class="stat"><div class="statIcon redgrad">🚫</div><div><h3>Lượt vắng</h3><strong>${monthAbsenceCount}</strong><small>trong ${formatMonthKeyVN(monthKey)}</small></div></div><div class="stat"><div class="statIcon bluegrad">🔁</div><div><h3>Đã xếp</h3><strong>${activeRows.length}</strong><small>đang có lịch học bù tháng này</small></div></div><div class="stat"><div class="statIcon greengrad">✅</div><div><h3>Đã học bù</h3><strong>${completedRows.length}</strong><small>lịch sử hoàn tất tháng này</small></div></div><div class="stat"><div class="statIcon yellowgrad">⏳</div><div><h3>Chờ xếp</h3><strong>${pendingRows.length}</strong><small>trong tháng này</small></div></div></div>
-      <div class="panel"><div class="panelHead"><div><h2>Chờ xếp học bù</h2><div class="mini">Học sinh vắng buổi chính trong ${formatMonthKeyVN(monthKey)}</div></div><button class="btn ghost" onclick="refreshCurrentRouteData()">Tải lại dữ liệu</button></div><div class="tableWrap"><table><thead><tr><th>STT</th><th>Học sinh</th><th>Lớp vắng</th><th>Buổi vắng</th><th>Lý do</th><th>Trạng thái</th></tr></thead><tbody>${pendingTable}</tbody></table></div></div>
-      <div class="panel"><div class="panelHead"><h2>Đã xếp học bù</h2><span class="pill blue">${activeRows.length} lượt</span></div><div class="tableWrap"><table><thead><tr><th>STT</th><th>Học sinh</th><th>Lượt vắng</th><th>Lớp nhận</th><th>Buổi học bù</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody>${activeTable}</tbody></table></div></div>
-      <div class="panel"><div class="panelHead"><div><h2>Đã học bù</h2><div class="mini">Ai vắng buổi nào và đã học bù vào buổi nào.</div></div><span class="pill green">${completedRows.length} lượt</span></div><div class="tableWrap"><table><thead><tr><th>STT</th><th>Học sinh</th><th>Lớp vắng</th><th>Buổi vắng</th><th>Lớp học bù</th><th>Buổi học bù</th><th>Trạng thái</th></tr></thead><tbody>${completedTable}</tbody></table></div></div>`;
-    }
-
-
-    function parentMessagesPage(){go('tuition'); return ''}
-
-    function notificationsPage(){return overview()}
+    
+    // Phase 8D.2: makeupTabStateForMonth moved to lazy runtime module.
 
     
-    function accountLinkedRows(){
-      const map=new Map();
-      (db.teachers||[]).forEach(t=>map.set('teacher_'+t.id,{kind:'teacher',teacher:t,name:t.name,phone:t.phone,roles:t.roles||['teacher'],status:t.status||'active',classes:classesOfTeacher(t)}));
-      if(isAdmin()){
-        (db.users||[]).filter(u=>u.roles?.some(role=>role==='admin'||role==='receptionist')).forEach(u=>{
-          const exists=[...map.values()].some(r=>normalizePhone(r.phone)===normalizePhone(u.phone));
-          if(!exists) map.set('user_'+u.id,{kind:'user',user:u,name:u.name,phone:u.phone,roles:u.roles||[],status:u.status||'active',classes:[]});
-        });
-      }
-      return [...map.values()].sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'vi'));
-    }
-    function accountRoleLabel(roles=[]){
-      if(roles.includes('admin')) return 'Admin';
-      if(roles.includes('manager')) return 'Quản lí';
-      if(roles.includes('receptionist')) return 'Lễ tân';
-      if(roles.includes('ta')) return 'TA';
-      return 'Giáo viên';
-    }
-    function accountRoleClass(roles=[]){
-      if(roles.includes('admin')) return 'red';
-      if(roles.includes('manager')) return 'blue';
-      if(roles.includes('receptionist')) return 'yellow';
-      if(roles.includes('ta')) return 'purple';
-      return 'green';
-    }
+    // Phase 8D.2: makeupTabAttendanceRow moved to lazy runtime module.
 
     
+    // Phase 8D.2: makeupTabCompleted moved to lazy runtime module.
+
     
-    function securityPasswordPanel(){
-      if(!currentUser) return '';
-      return `<div class="panel"><div class="panelHead"><div><h2>Đổi mật khẩu tài khoản</h2><div class="mini">Đổi mật khẩu cho tài khoản đang đăng nhập. Với Admin, đây là mật khẩu Admin hiện tại.</div></div><span class="pill red">Bảo mật</span></div>
-        <div class="formGrid">
-          <label>Mật khẩu mới<input id="securityPw1" class="input" type="password" autocomplete="new-password" placeholder="Tối thiểu 6 ký tự"></label>
-          <label>Nhập lại mật khẩu<input id="securityPw2" class="input" type="password" autocomplete="new-password" placeholder="Nhập lại mật khẩu mới"></label>
-        </div>
-        <div style="text-align:right;margin-top:12px"><button class="btn primary" onclick="changeCurrentPassword()">Đổi mật khẩu</button></div>
-      </div>`
-    }
-    async function changeCurrentPassword(){
-      const p1=document.getElementById('securityPw1')?.value||'';
-      const p2=document.getElementById('securityPw2')?.value||'';
-      if(p1.length<6){toast('Mật khẩu mới tối thiểu 6 ký tự');return}
-      if(p1!==p2){toast('Hai mật khẩu chưa giống nhau');return}
-      try{
-        await officialFetch('/api/auth/change-password',{method:'POST',body:JSON.stringify({password:p1})});
-        currentUser.mustChangePassword=false;
-        toast('Đã đổi mật khẩu. Lần đăng nhập sau dùng mật khẩu mới.');
-        const a=document.getElementById('securityPw1'), b=document.getElementById('securityPw2');
-        if(a) a.value=''; if(b) b.value='';
-      }catch(e){toast(e.message||'Không đổi được mật khẩu')}
-    }
+    // Phase 8D.2: makeupTabMissed moved to lazy runtime module.
 
-function productionPanel(){
-      if(!isAdmin()) return '';
-      return `<div class="panel"><div class="panelHead"><div><h2>Production & Backup</h2><div class="mini">Kiểm tra cấu hình, Storage, bảng dữ liệu và xuất backup JSON.</div></div><span class="pill blue">V9</span></div>
-        <div class="prodGrid">
-          <div class="prodCard"><b>Kiểm tra hệ thống</b><span class="mini">Kiểm tra env, Supabase, các bảng bắt buộc và bucket lưu bài tập.</span><button class="btn primary" onclick="runHealthCheck()">Chạy kiểm tra</button></div>
-          <div class="prodCard"><b>Backup dữ liệu</b><span class="mini">Xuất toàn bộ dữ liệu chính thành file JSON để lưu ngoài Supabase.</span><button class="btn ghost" onclick="downloadBackup()">Tải backup JSON</button></div>
-          <div class="prodCard"><b>Dọn phiên hết hạn</b><span class="mini">Xóa session đã hết hạn để hệ thống gọn hơn. Không ảnh hưởng dữ liệu học.</span><button class="btn ghost" onclick="clearExpiredSessions()">Dọn session</button></div>
-        </div>
-        <div id="prodStatus"></div>
-      </div>`
-    }
-    function healthStatusRow(name,ok,desc=''){
-      return `<div class="prodStatusRow ${ok?'ok':'bad'}"><div><b>${h(name)}</b>${desc?`<div class="mini">${h(desc)}</div>`:''}</div><span class="pill ${ok?'green':'red'}">${ok?'OK':'Lỗi'}</span></div>`
-    }
-    async function runHealthCheck(){
-      const box=document.getElementById('prodStatus');
-      if(box) box.innerHTML='<div class="uploadProgressNote">Đang kiểm tra hệ thống...</div>';
-      try{
-        const data=await officialFetch('/api/health');
-        const rows=[];
-        rows.push(healthStatusRow('Supabase URL',!!data.env?.NEXT_PUBLIC_SUPABASE_URL));
-        rows.push(healthStatusRow('Service Role Key',!!data.env?.SUPABASE_SERVICE_ROLE_KEY));
-        rows.push(healthStatusRow('Storage official-exercise-library',!!data.storage?.ok,data.storage?.error||'Bucket lưu Word/Audio'));
-        (data.tables||[]).forEach(t=>rows.push(healthStatusRow(t.table,t.ok,t.ok?`${t.count} dòng`:t.error)));
-        if(box) box.innerHTML=`<div class="prodStatusList">${rows.join('')}</div>`;
-        toast(data.ok?'Hệ thống OK':'Có mục cần kiểm tra');
-      }catch(e){
-        if(box) box.innerHTML=`<div class="dangerBox"><b>Không kiểm tra được hệ thống</b><span>${h(e.message||'Lỗi không xác định')}</span></div>`;
-        toast(e.message||'Không kiểm tra được hệ thống');
-      }
-    }
-    function downloadBackup(){
-      window.open('/api/backup/export','_blank');
-      toast('Đang tải backup JSON');
-    }
-    async function clearExpiredSessions(){
-      try{
-        const data=await officialFetch('/api/maintenance/clear-expired-sessions',{method:'POST',body:'{}'});
-        toast(`Đã dọn ${data.deleted||0} session hết hạn`);
-      }catch(e){toast(e.message||'Không dọn được session')}
-    }
+    
+    // Phase 8D.2: makeupTabSourceAbsenceExists moved to lazy runtime module.
 
-function settingsPage(){
-      if(!canManageOperations()) return `<div class="screenTitle"><div><h1>Tài khoản</h1><p>Không có quyền quản lý tài khoản.</p></div></div>`;
-      const rows=accountLinkedRows();
-      return `<div class="screenTitle"><div><h1>${isAdmin()?'Cài đặt & tài khoản':'Quản lý tài khoản'}</h1><p>Tài khoản nội bộ được liên kết trực tiếp với danh sách giáo viên và nhân viên trung tâm.</p></div></div>
-      ${isAdmin()?`<div class="panel" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px">
-        <label>Đơn giá/buổi <input class="input" type="number" value="${db.settings.unitPrice||70000}" onchange="db.settings.unitPrice=+this.value;save();updateBackendSetting('tuition_per_session',this.value,'Đã cập nhật đơn giá')"></label>
-        <label>Giới hạn học sinh/buổi <input class="input" type="number" value="${db.settings.capacity||15}" onchange="db.settings.capacity=+this.value;save();updateBackendSetting('session_capacity',this.value,'Đã cập nhật giới hạn sĩ số')"></label>
-      </div>`:''}
-      ${securityPasswordPanel()}${productionPanel()}
-      <div class="panel accountTable"><div class="panelHead"><div><h2>Tài khoản giáo viên / nhân viên</h2><div class="mini">Lễ tân có quyền vận hành nhưng không truy cập Học phí.</div></div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="pill red">${rows.length} tài khoản</span>${isAdmin()?`<button class="btn primary" onclick="openCreateReceptionistModal()">+ Tạo Lễ tân</button>`:''}</div></div>
-      <div class="accountLinkedGrid"><div class="accountLinkedRow head"><div>Tên</div><div>Tài khoản</div><div>Vai trò</div><div>Lớp</div><div>Thao tác</div></div>
-      ${rows.map(r=>`<div class="accountLinkedRow"><div><b>${r.name}</b><div class="mini">${r.kind==='teacher'?'Liên kết giáo viên':'Tài khoản hệ thống'}</div></div><div>${r.phone||'-'}</div><div><span class="pill ${accountRoleClass(r.roles)}">${accountRoleLabel(r.roles)}</span></div><div>${r.classes?.length?`<span class="pill gray">${r.classes.length} lớp</span>`:'<span class="mini">Chưa gán lớp</span>'}</div><div class="accountActions">${r.kind==='teacher'?`<button class="btn ghost miniCardBtn" onclick="openTeacherDetail('${r.teacher.id}')">Chi tiết</button><button class="btn ghost miniCardBtn" onclick="resetTeacherPassword('${r.teacher.id}',this)">Reset</button><button class="btn ghost miniCardBtn dangerMini" onclick="deleteTeacher('${r.teacher.id}',this)">Xóa</button>`:(r.roles?.includes('admin')?'<span class="mini">Tài khoản Admin</span>':`<button class="btn ghost miniCardBtn" onclick="resetUserPassword('${r.user.id}',this)">Reset</button><button class="btn ghost miniCardBtn dangerMini" onclick="deleteReceptionistAccount('${r.user.id}',this)">Xóa</button>`)}</div></div>`).join('')}</div></div>`
-    }
+    
+    // Phase 8D.2: makeupTabCancelledBySourceCorrection moved to lazy runtime module.
 
-    function openImportClassesModal(){
-      modal(`<div class="modalHead"><h2>Import lớp / học sinh</h2><button class="close" onclick="closeModal()">×</button></div>
-      <div class="modalInfoGrid"><div><p><b>Mẫu file:</b> CSV hoặc Excel.</p><p>Các cột nên có: class_name, teacher_name, schedule_1_day, schedule_1_start, schedule_1_end, schedule_2_day, schedule_2_start, schedule_2_end, student_name, parent_phone, note.</p></div><div><a class="btn ghost" href="/import-template.xlsx" download="mau-import-lop-hoc.xlsx">Tải file mẫu Excel</a></div></div>
-      <label>Chọn file<input id="classImportFile" class="input" type="file" accept=".xlsx,.xls,.csv"></label>
-      <div style="text-align:right;margin-top:18px"><button class="btn ghost" onclick="closeModal()">Hủy</button> <button class="btn primary" onclick="uploadClassImport()">Import</button></div>`)
-    }
-    async function uploadClassImport(){
-      const file=document.getElementById('classImportFile')?.files?.[0];
-      if(!file){toast('Chọn file import');return}
-      const action=v28BeginModalAction(document.querySelector('.modal .btn.primary[onclick^="uploadClassImport"]'),'Đang import...');
-      if(!action) return;
-      const fd=new FormData(); fd.append('file',file);
-      let data;
-      try{
-        const res=await fetch('/api/import/classes',{method:'POST',body:fd,credentials:'include'});
-        data=await res.json().catch(()=>({}));
-        if(!res.ok) throw new Error(data.error||'Import lỗi');
-        await refreshOfficialClasses({skipSave:true,forceNetwork:true});
-      }catch(e){
-        v28EndModalAction(action);
-        toast(e.message||'Import lỗi');
-        return;
-      }
+    
+    // Phase 8D.2: makeupTabAbsenceRecordStatus moved to lazy runtime module.
 
-      try{
-        v28AfterClassMutation(['schedule','attendance'],{
-          structural:true,
-          delayMs:V28_CLASS_REVALIDATE_DELAY_MS
-        });
-      }catch(uiError){
-        console.error('Import đã thành công nhưng cập nhật giao diện cục bộ gặp lỗi',uiError);
-        v28RecoverClassUi('',true);
-      }
-      closeModal(true);
-      toast(`Import xong: ${data.classCount} lớp, ${data.studentCount} học sinh.`);
-    }
+    
+    // Phase 8D.2: makeupTabActiveRows moved to lazy runtime module.
 
-    function openClassModal(){
-      const dayOptions=WEEK_DAYS.map(d=>`<option value="${d.key}">${d.label}</option>`).join('');
-      const slotOptions=CLASS_TIME_SLOTS.map(s=>`<option value="${s.start}-${s.end}">${s.label}</option>`).join('');
-      const teacherOptions=staffOptionsForClass('','teacher');
-      const taOptions=staffOptionsForClass('','ta');
-      modal(`<div class="modalHead"><h2>+ Thêm lớp mới</h2><button class="close" onclick="closeModal()">×</button></div>
-      <div class="formGrid">
-        <label>Tên lớp<input id="newClassName" class="input" value="G3.4" placeholder="VD: G3.4"></label>
-        <label>Giáo viên<select id="newTeacher" class="input">${teacherOptions}</select></label>
-        <label>Ngày bắt đầu<input id="newStartDate" class="input" type="date"></label>
-        <label>TA / Trợ giảng<select id="newTA" class="input">${taOptions}</select></label>
-        <label>Số buổi/tuần<select id="newSessionCount" onchange="updateNewClassPreview()"><option value="1">1 buổi / tuần</option><option value="2" selected>2 buổi / tuần</option></select></label>
-        <div></div>
-        <div class="full sessionConfigurator">
-          <h3>Buổi 1</h3>
-          <div class="inline2"><label>Ngày học<select id="newDay1" onchange="updateNewClassPreview()">${dayOptions}</select></label><label>Khung giờ<select id="newSlot1" onchange="updateNewClassPreview()">${slotOptions}</select></label></div>
-          <div class="session2Only">
-            <h3 style="margin-top:14px">Buổi 2</h3>
-            <div class="inline2"><label>Ngày học<select id="newDay2" onchange="updateNewClassPreview()">${dayOptions.replace('value="Wed"','value="Wed" selected')}</select></label><label>Khung giờ<select id="newSlot2" onchange="updateNewClassPreview()">${slotOptions}</select></label></div>
-          </div>
-          <div class="slotPreview"><b>Lịch học:</b> <span id="newClassPreview"></span></div>
-        </div>
-      </div>
-      <div style="text-align:right;margin-top:18px"><button class="btn ghost" onclick="closeModal()">Hủy</button> <button class="btn primary" onclick="saveNewClassFromModal()">Tạo lớp</button></div>`);
-      setTimeout(()=>{updateNewClassPreview(); const el=document.getElementById('newStartDate'); if(el&&!el.value) el.value=isoDate(firstUpcomingDateFromForm())},0);
-    }
+    
+    // Phase 8D.2: makeupTabPendingRows moved to lazy runtime module.
+
+    
+    // Phase 8D.2: makeupTabCompletedRows moved to lazy runtime module.
 
 
-    async function saveNewClassFromModal(){
-      const name=(document.getElementById('newClassName')?.value||'').trim();
-      if(!name){toast('Nhập tên lớp');return}
-      if(classNameExists(name)){toast('Tên lớp đã tồn tại. Vui lòng chọn tên khác.');return}
-      const teacherId=document.getElementById('newTeacher')?.value||'';
-      const taId=document.getElementById('newTA')?.value||'';
-      if(teacherId && taId && String(teacherId)===String(taId)){toast('Giáo viên chính và TA không nên là cùng một người.');return}
-      const startDate=document.getElementById('newStartDate')?.value || isoDate(firstUpcomingDateFromForm());
-      const action=v28BeginModalAction(document.querySelector('.modal .btn.primary[onclick^="saveNewClassFromModal"]'),'Đang tạo...');
-      if(!action) return;
+    
+    // Phase 8D.2: makeupMonthOptions moved to lazy runtime module.
 
-      let data;
-      try{
-        data=await officialFetch('/api/classes',{method:'POST',body:JSON.stringify({
-          name,
-          teacherId,
-          assistantTeacherId:taId,
-          startDate,
-          schedules:schedulePayloadFromNewClassForm()
-        })});
-      }catch(e){
-        v28EndModalAction(action);
-        toast(e.message||'Không tạo được lớp');
-        return;
-      }
+    
+    // Phase 8D.2: setMakeupMonth moved to lazy runtime module.
 
-      try{
-        if(data.class?.id && !(db.classes||[]).some(c=>String(c.id)===String(data.class.id))) db.classes.push(data.class);
-        v28AfterClassMutation(['schedule','attendance'],{
-          classId:data.class?.id,
-          structural:true,
-          delayMs:V28_CLASS_REVALIDATE_DELAY_MS
-        });
-      }catch(uiError){
-        console.error('Đã tạo lớp trên server nhưng cập nhật giao diện cục bộ gặp lỗi',uiError);
-        v28RecoverClassUi(data.class?.id||'',true);
-      }
-      closeModal(true);
-      toast(`Đã tạo lớp ${name}.`);
-    }
+    
+    // Phase 8D.2: refreshMakeupMonths moved to lazy runtime module.
+
+    
+    // Phase 8D.2: deleteMakeupMonth moved to lazy runtime module.
+
+    
+    // Phase 8D.2: openDeleteMakeupMonthModal moved to lazy runtime module.
+
+
+    
+    // Phase 8D.2: makeupPage moved to lazy runtime module.
+
+
+
+    
+    // Phase 8D.2: openImportClassesModal moved to lazy runtime module.
+
+    
+    // Phase 8D.2: uploadClassImport moved to lazy runtime module.
+
+
+    
+    // Phase 8D.2: openClassModal moved to lazy runtime module.
+
+
+
+    
+    // Phase 8D.2: saveNewClassFromModal moved to lazy runtime module.
+
 
     function modal(html,options={}){
       const existing=modalBackdrop.querySelector('.modal');
@@ -7959,7 +5541,7 @@ function settingsPage(){
       }
       // Phase 8B: thay nội dung trên cùng modal shell để tránh fade/nháy khi chuyển bước.
       setTimeout(()=>{
-        v7hInitStaffModal();
+        if(typeof window.v7hInitStaffModal==='function') window.v7hInitStaffModal();
         const modalEl=modalBackdrop.querySelector('.modal');
         if(preserveScroll && modalEl) modalEl.scrollTop=previousScroll;
         if(modalBackdrop.querySelector('[data-disable-modal-autofocus]')) return;
@@ -7973,8 +5555,8 @@ function settingsPage(){
         toast('Hệ thống đang xử lý, vui lòng chờ một chút.');
         return;
       }
-      if(!force && v7hStaffModalDirty()){
-        v7hConfirm({title:'Bỏ thay đổi chưa lưu?',message:'Các nội dung vừa chỉnh sửa trong popup sẽ không được lưu.',confirmText:'Bỏ thay đổi',danger:true}).then(ok=>{if(ok) closeModal(true)});
+      if(!force && typeof window.v7hStaffModalDirty==='function' && window.v7hStaffModalDirty()){
+        window.v7hConfirm({title:'Bỏ thay đổi chưa lưu?',message:'Các nội dung vừa chỉnh sửa trong popup sẽ không được lưu.',confirmText:'Bỏ thay đổi',danger:true}).then(ok=>{if(ok) closeModal(true)});
         return;
       }
       const evaluationModal=activeModal?.querySelector?.('[data-evaluation-modal]');
@@ -8036,7 +5618,7 @@ function settingsPage(){
       if(key==='Escape'){
         if(document.getElementById('v7hConfirmOverlay')){
           e.preventDefault();
-          v7hResolveConfirm(false);
+          if(typeof window.v7hResolveConfirm==='function') window.v7hResolveConfirm(false);
           return;
         }
         if(v20b19IsModalOpen()){

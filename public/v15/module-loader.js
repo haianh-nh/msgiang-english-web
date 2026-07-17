@@ -1,14 +1,22 @@
 (function bootstrapMsgiangRouteModules(global) {
   'use strict';
 
-  var BUILD_VERSION = '20phase8-student-transfer-schedule-attendance';
+  var BUILD_VERSION = '20phase8d2-linked-runtime-module-split';
   var ROUTE_MODULES = Object.freeze({
-    classes: { file: 'classes.js', ready: 'classesPage' },
-    attendancePopup: { file: 'attendance-modal.js', ready: 'openAttendance' },
-    schedule: { file: 'schedule.js', ready: 'schedulePage', dependencies: ['attendancePopup'] },
+    studentTransfer: { file: 'student-transfer.js', ready: 'openStudentTransferModal' },
+    classesRuntime: { file: 'classes-runtime.js', ready: 'openClassDetail' },
+    classes: { file: 'classes.js', ready: 'classesPage', dependencies: ['classesRuntime'] },
+    attendanceRuntime: { file: 'attendance-runtime.js', ready: 'saveAttendance' },
+    attendancePopup: { file: 'attendance-modal.js', ready: 'openAttendance', dependencies: ['attendanceRuntime', 'makeup'] },
+    makeup: { file: 'makeup.js', ready: 'makeupPage' },
+    scheduleActions: { file: 'schedule-actions.js', ready: 'openScheduleMakeup', dependencies: ['makeup'] },
+    schedule: { file: 'schedule.js', ready: 'schedulePage', dependencies: ['attendancePopup', 'classesRuntime', 'scheduleActions'] },
     tuition: { file: 'tuition.js', ready: 'tuitionPage' },
-    homework: { file: 'library.js', ready: 'homeworkPage' },
-    evaluation: { file: 'evaluation.js', ready: 'evaluationPage' }
+    homeworkRuntime: { file: 'homework-library-runtime.js', ready: 'ensureHomework' },
+    homework: { file: 'library.js', ready: 'homeworkPage', dependencies: ['homeworkRuntime'] },
+    evaluation: { file: 'evaluation.js', ready: 'evaluationPage' },
+    teachers: { file: 'staff.js', ready: 'teachersPage' },
+    settings: { file: 'settings.js', ready: 'settingsPage', dependencies: ['teachers'] }
   });
   var pending = new Map();
 

@@ -15,14 +15,14 @@ const nextConfig = {
         source: "/index-v15.html",
         headers: [
           { key: "Cache-Control", value: "no-store, max-age=0" },
-          { key: "X-Msgiang-Build", value: "20phase8-student-transfer-schedule-attendance" }
+          { key: "X-Msgiang-Build", value: "20phase8d2-linked-runtime-module-split" }
         ]
       },
       {
         source: "/deployment-version.json",
         headers: [
           { key: "Cache-Control", value: "no-store, max-age=0" },
-          { key: "X-Msgiang-Build", value: "20phase8-student-transfer-schedule-attendance" }
+          { key: "X-Msgiang-Build", value: "20phase8d2-linked-runtime-module-split" }
         ]
       }
     ];

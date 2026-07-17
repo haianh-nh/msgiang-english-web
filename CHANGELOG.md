@@ -1,5 +1,20 @@
 # Changelog
 
+## Phase 8D.2 — Linked Runtime Module Split
+
+- Giảm `app.js` core từ khoảng 663 KB xuống 553 KB.
+- Tách runtime Lớp học, Điểm danh, Lịch/Học bù và trang Học bù.
+- Thêm audit và smoke test dependency module.
+- Không thay đổi database hoặc nghiệp vụ.
+
+## Phase 8D.1 — Core Module Split
+
+- Tách Nhân sự, Cài đặt, Chuyển lớp và runtime Bài tập/Thư viện khỏi `app.js`.
+- Nhân sự/Cài đặt chỉ tải khi mở đúng tab; Chuyển lớp chỉ tải khi bấm thao tác.
+- Giảm `app.js` bắt buộc lúc mở app từ khoảng 742 KB xuống khoảng 662 KB.
+- Giữ nguyên API, database, role Lễ tân, popup điểm danh và nghiệp vụ hiện tại.
+- Thêm audit chặn lỗi thứ tự module và phụ thuộc popup.
+
 ## Phase 7K — Database & Query Performance
 
 - Đăng nhập truy vấn trực tiếp theo tài khoản/SĐT thay vì tải toàn bộ user active.
