@@ -1,0 +1,7 @@
+/* Phase 8D.4 lazy style: transfer */
+.transferStudentSummary{display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,.8fr);column-gap:32px;row-gap:16px;align-items:center;padding:18px 20px;border:1px solid #f2d7dd;border-radius:18px;background:#fff8fa;margin-bottom:14px}
+.transferStudentInfoBlock{min-width:0}
+.transferStudentLabel{display:block;margin-bottom:7px;color:#526176;font-size:15px;line-height:1.25;font-weight:850;white-space:nowrap}
+.transferStudentName,.transferCurrentClassName{display:block;margin:0;color:#111827;font-size:20px;line-height:1.25;font-weight:900;overflow-wrap:anywhere}
+.transferCurrentClassBlock{padding-left:8px}
+@media (max-width:700px){.transferStudentSummary{grid-template-columns:1fr;gap:14px;padding:16px}.transferCurrentClassBlock{padding-left:0}}

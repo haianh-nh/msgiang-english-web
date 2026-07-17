@@ -1,0 +1,317 @@
+/* Phase 8D.4 lazy style: schedule */
+.makeupFlow{display:grid;grid-template-columns:1fr 38px 1fr;gap:12px;align-items:stretch}
+    .makeupFlow .arrow{display:grid;place-items:center;color:var(--red);font-size:26px;font-weight:1000}
+    @media (max-width:900px){
+      .makeupFlow{grid-template-columns:1fr}
+      .makeupFlow .arrow{transform:rotate(90deg)}.sessionRosterGrid{grid-template-columns:1fr}
+  .makeupCandidateList{grid-template-columns:1fr}
+  .makeupSearchBox{display:grid;grid-template-columns:1fr}}
+    .weekLegend{display:flex;gap:8px;flex-wrap:wrap}
+    .timetableShell{overflow:auto;border-radius:24px;border:1px solid var(--line);background:#fff;box-shadow:var(--shadow)}
+    .timetable{min-width:1080px;border:0;border-collapse:separate;border-spacing:0;width:100%}
+    .timetable th{position:sticky;top:0;z-index:2;text-align:center;padding:14px 10px}
+    .timetable th:first-child{left:0;z-index:3}
+    .timeCol{position:sticky;left:0;background:linear-gradient(180deg,#fff7f8,#fff);z-index:1;min-width:132px;font-weight:1000;color:#9f1239;text-align:center;border-right:1px solid #f4d3da}
+    .scheduleCell{min-width:145px;height:126px;vertical-align:top;background:#fff;transition:.24s var(--ease);padding:8px}
+    .scheduleCell:hover{background:#fff7f8}
+    .lessonCard{border:1px solid #ffd0d8;border-radius:18px;padding:10px;background:linear-gradient(135deg,#fff,#fff8f9);box-shadow:0 10px 24px rgba(217,22,51,.06);animation:lessonPop .48s cubic-bezier(.16,1,.3,1) both;animation-delay:calc(var(--i,0)*50ms);margin-bottom:8px}
+    .lessonCard b{display:block;color:#be123c;font-size:15px;margin-bottom:4px}
+    .lessonCard .mini{font-size:12px;line-height:1.35}
+    .lessonActions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+    .lessonActions .btn{padding:7px 9px;font-size:12px;border-radius:11px}
+    .emptySlot{height:100%;min-height:96px;border:1px dashed #f3d4da;border-radius:18px;background:linear-gradient(135deg,#fff,#fffafa);display:grid;place-items:center;color:#c9a3aa;font-size:12px}
+    .mobileScheduleList{display:none}
+    @media (max-width:760px){
+      .timetableShell{display:none}
+      .mobileScheduleList{display:grid;gap:12px}
+      .dayBlock{border:1px solid var(--line);border-radius:22px;background:#fff;box-shadow:var(--shadow);padding:14px;animation:groupReveal .45s var(--ease) both;animation-delay:calc(var(--i,0)*60ms)}
+      .dayBlock h3{margin:0 0 10px;color:#be123c}
+      .dayLesson{border:1px solid #ffd0d8;border-radius:17px;padding:12px;background:#fff8f9;margin:8px 0}
+      .dayLesson b{color:#be123c}
+  .makeupSearchBox{grid-template-columns:1fr}
+  .attendanceActionRow{
+    display:grid;
+    grid-template-columns:1fr;
+  }
+  .attendanceActionRow .btn,
+  .attendanceActionRow .tinyEditBtn{
+    width:100%;
+    min-height:42px;
+  }
+  .dayLesson .lessonActions{
+    display:flex;
+    align-items:center;
+  }
+  .makeupAssignTable{
+    min-width:760px;
+  }
+  .makeupAssignTableWrap{
+    max-height:55vh;
+  }
+  .makeupAssignedHead{
+    align-items:stretch;
+    flex-direction:column;
+  }
+  .makeupAssignedHead .btn{
+    width:100%;
+  }
+  .makeupAssignedTableWrap{
+    max-height:38vh;
+  }}
+    .statusDot{display:inline-flex;align-items:center;gap:6px;width:auto;height:auto;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:1000;border:1px solid transparent;white-space:nowrap;line-height:1;flex:0 0 auto;vertical-align:middle}
+    .statusDot:before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 0 3px rgba(255,255,255,.85);flex:0 0 auto}
+    .statusDot.done{background:#eaf9ef;color:#11833b;border-color:#bfecc9}
+    .statusDot.live{background:#fff4d7;color:#b77700;border-color:#ffe0a3;animation:pulseLive 1.4s ease-in-out infinite}
+    .statusDot.todo{background:#eef5ff;color:#2365b4;border-color:#d4e6ff}
+    .statusDot.unattended{background:#fff1f2;color:#be123c;border-color:#fecdd3}
+    .createdBadge{display:inline-flex;align-items:center;gap:6px;background:#eaf9ef;color:#11833b;border:1px solid #bfecc9;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:1000;margin-top:6px;white-space:nowrap;line-height:1;flex:0 0 auto}
+    .makeupBadge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;background:#eaf3ff;color:#2067b9;border:1px solid #cfe4ff;padding:5px 10px;font-size:12px;font-weight:1000;white-space:nowrap;line-height:1;flex:0 0 auto}
+    .makeupBadge:before{content:"🔁"}
+    .lessonCard .makeupBadge{margin-top:7px}
+    .absenceBtn{display:inline-flex;align-items:center;gap:6px;border:1px solid #fecdd3;background:#fff1f3;color:#be123c;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:1000;cursor:pointer;transition:.2s var(--ease)}
+    .absenceBtn:hover{transform:translateY(-1px);box-shadow:0 10px 20px rgba(217,22,51,.10)}
+    .absenceBtn:before{content:"🚫"}
+    .todoMakeupBtn{width:100%;justify-content:center}
+    .lessonCard.doneCard{background:linear-gradient(135deg,#f8fafc,#fff);border-color:#e2e8f0}
+    .lessonCard.liveCard{background:linear-gradient(135deg,#fff7ed,#fff);border-color:#fed7aa;box-shadow:0 0 0 4px rgba(255,159,28,.08),0 12px 26px rgba(217,22,51,.06)}
+    .lessonCard.todoCard{background:linear-gradient(135deg,#fff,#fff8f9)}
+    .sourceAbsence{font-size:12px;color:#667085;margin-top:3px}
+    .todayColumn{background:linear-gradient(180deg,#fff7f8,#fff)!important}
+    .timetable th.todayColumn{color:#be123c;box-shadow:inset 0 -3px 0 #ef233c}
+    .lessonCard.pastDone{opacity:.94}
+    .lessonCard.futureTodo{border-color:#ffd0d8}
+    .lessonCard .oldActions{display:none!important}
+    .lessonCard.strictDone .lessonActions .btn.primary,
+    .lessonCard.strictDone .lessonActions .btn.ghost,
+    .lessonCard.strictLive .lessonActions .btn.primary,
+    .lessonCard.strictLive .lessonActions .btn.ghost{display:none!important}
+    .strictStateLine{display:flex;align-items:center;justify-content:flex-start;gap:8px;margin-top:8px;flex-wrap:wrap}
+    .strictStateLine>*{flex:0 0 auto;white-space:nowrap}
+    .strictTodo .todoMakeupBtn{box-shadow:0 12px 22px rgba(217,22,51,.12)}
+    .attendanceLock{border:1px dashed #fecdd3;background:#fff7f8;border-radius:18px;padding:16px;color:#7f1d1d;margin:12px 0}
+    .attendanceOpen{border:1px dashed #bfecc9;background:#f3fff6;border-radius:18px;padding:12px;color:#166534;margin:12px 0}
+    .attSavedTag{display:inline-flex;align-items:center;gap:6px;border-radius:999px;background:#eaf9ef;color:#11833b;border:1px solid #bfecc9;padding:6px 10px;font-size:12px;font-weight:1000}
+    .attSavedTag:before{content:"💾"}
+    .manualMakeupBox{border:1px solid #dbeafe;background:#eff6ff;border-radius:18px;padding:12px;margin:12px 0}
+    .manualMakeupBox .inline2{align-items:end}
+    .capacityBadge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;background:#fff1f3;color:#be123c;border:1px solid #ffcbd4;padding:6px 10px;font-size:12px;font-weight:1000}
+    .capacityBadge:before{content:"👥"}
+    .capacityBadge.full{background:#fff7ed;color:#c2410c;border-color:#fed7aa}
+    .statusDot.cancelled{background:#f1f5f9;color:#475569;border:1px solid #cbd5e1}
+    .classMakeupCard{border-color:#93c5fd!important;background:linear-gradient(135deg,#eff6ff,#fff)!important}
+    .classMakeupBadge{display:inline-flex;align-items:center;gap:6px;width:auto;height:auto;border-radius:999px;background:#dbeafe;color:#1d4ed8;border:1px solid #bfdbfe;padding:5px 9px;font-size:11px;font-weight:1000;line-height:1;white-space:nowrap;flex:0 0 auto;margin:4px 0}
+    .attendanceActionRow{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+    .sessionRosterGrid{display:grid;grid-template-columns:1.1fr .9fr;gap:14px;margin-top:14px}
+    .rosterPanel{border:1px solid #fde2e8;background:#fff;border-radius:22px;padding:14px}
+    .rosterPanel h3{margin:0 0 10px;color:#111827}
+    .rosterList{display:grid;gap:8px;max-height:360px;overflow:auto;padding-right:4px}
+    .rosterStudent{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid #fde2e8;background:#fff7f8;border-radius:16px;padding:10px 12px}
+    .rosterStudent b{color:#111827}
+    .rosterStudent .mini{line-height:1.3}
+    .lessonCard{cursor:pointer}
+    .lessonCard:hover{transform:translateY(-2px);box-shadow:0 16px 34px rgba(217,22,51,.14)}
+    .sessionPopupActions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-top:14px}
+    .v20dSkTable .timetable td,.v20dSkTable .timetable th{height:76px}
+    @media (max-width: 820px){
+  .timetableShell{
+    border-radius:18px;
+  }
+  .timetable{
+    min-width:860px;
+  }}
+    .makeupSearchBox{
+  display:grid;
+  grid-template-columns:minmax(240px,1fr) auto;
+  align-items:end;
+  gap:10px;
+  border:1px solid #fde2e8;
+  background:linear-gradient(135deg,#fff7f9,#fff);
+  border-radius:18px;
+  padding:12px;
+  margin:12px 0;
+}
+    .makeupSearchBox label{
+  display:grid;
+  gap:6px;
+  font-weight:900;
+  color:#374151;
+}
+    .attendanceOverride{
+  border:1px solid #bfdbfe;
+  background:linear-gradient(135deg,#eff6ff,#fff);
+  color:#1e3a8a;
+  border-radius:20px;
+  padding:14px;
+  margin:12px 0;
+}
+    .attendanceOverride b{
+  color:#1d4ed8;
+}
+    .attendanceActionRow{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  flex-wrap:wrap;
+  margin-top:12px;
+}
+    .makeupSearchBox{
+  display:flex;
+  gap:10px;
+  align-items:end;
+  flex-wrap:wrap;
+  margin:14px 0;
+  padding:12px;
+  border:1px solid #fde2e8;
+  border-radius:18px;
+  background:#fff7f9;
+}
+    .makeupSearchBox label{
+  display:grid;
+  gap:6px;
+  font-weight:900;
+  min-width:min(100%,320px);
+  flex:1 1 320px;
+}
+    .makeupCandidateList{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  margin:10px 0 16px;
+}
+    .makeupCandidateCard{
+  border:1px solid #ffd1da;
+  border-radius:18px;
+  padding:12px;
+  background:linear-gradient(135deg,#fff,#fff7f9);
+  display:grid;
+  gap:8px;
+  min-width:0;
+  animation:staggerIn .3s var(--ease) both;
+  animation-delay:calc(var(--i,0)*35ms);
+}
+    .makeupCandidateCard.scheduled{
+  border-color:#bfdbfe;
+  background:linear-gradient(135deg,#eff6ff,#fff);
+}
+    .makeupCandidateMain{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+}
+    .makeupCandidateCard .btn{
+  width:100%;
+}
+    .lessonCard .absenceBtn,
+.dayLesson .absenceBtn{
+  min-height:30px;
+  border-radius:999px;
+  padding:6px 10px;
+  font-weight:1000;
+}
+    .lessonCard .strictStateLine,
+.dayLesson .lessonActions{
+  gap:6px;
+  flex-wrap:wrap;
+}
+    .timetable th{
+  color:#fff;
+  background:linear-gradient(135deg,#c90d2c,#a80c25);
+  font-weight:950;
+}
+    .timetable th .mini{
+  color:rgba(255,255,255,.78)!important;
+  font-weight:850;
+}
+    .timeCol{
+  color:#8a1028!important;
+  background:linear-gradient(180deg,#fff7f9,#fff)!important;
+}
+    .timetable th.timeCol .mini{
+  color:#8a1028!important;
+}
+    .lessonCard .mini,.dayLesson .mini{
+  color:#4b5563!important;
+}
+    .makeupGroup{
+  margin:12px 0 18px;
+}
+    .makeupGroupHead{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin:4px 2px 8px;
+}
+    .makeupGroupHead h3{
+  margin:0;
+  font-size:17px;
+  letter-spacing:-.01em;
+  color:#8a102a;
+}
+    .makeupAssignTableWrap{
+  max-height:44vh;
+  margin:0 0 12px;
+  border-radius:16px;
+}
+    .makeupAssignTable{
+  min-width:860px;
+}
+    .makeupAssignTable th:last-child,
+.makeupAssignTable td:last-child{
+  text-align:right;
+  width:104px;
+}
+    .makeupAssignTable td{
+  vertical-align:middle;
+}
+    .makeupSearchBox input::placeholder{
+  color:#667085;
+}
+    .makeupAssignedSection{
+  margin:16px 0 18px;
+  padding:14px;
+  border:1px solid #f5cbd4;
+  border-radius:18px;
+  background:#fffafb;
+}
+    .makeupAssignedHead{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  margin:0 0 10px;
+}
+    .makeupAssignedHead h3{
+  margin:0;
+  color:#111827;
+  font-size:18px;
+  letter-spacing:-.01em;
+}
+    .makeupAssignedHead .btn{
+  flex:0 0 auto;
+  min-width:150px;
+}
+    .makeupAssignedHead .btn:disabled{
+  opacity:.48;
+  cursor:not-allowed;
+  box-shadow:none;
+}
+    .makeupAssignedTableWrap{
+  max-height:30vh;
+  margin-bottom:0;
+}
+    .makeupDraftRow{
+  background:#fffbeb;
+}
+    .makeupDraftRow td{
+  border-color:#fde7a8!important;
+}
+    .makeupCancelDraftRow{
+  background:#fff1f2;
+}
+    .makeupCancelDraftRow td{
+  border-color:#fecdd3!important;
+}
+    .lessonCard.noEntryAnimation{animation:none!important}

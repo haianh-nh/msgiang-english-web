@@ -1,5 +1,21 @@
 # Changelog
 
+## Phase 8D.4 — Startup, CSS & Network Cleanup
+
+- Giảm app core xuống khoảng 234 KB.
+- Giảm CSS bắt buộc xuống khoảng 59 KB.
+- Lazy-load CSS theo module.
+- Loại dữ liệu demo khỏi runtime production.
+- Tách network cache/request runtime dùng chung.
+
+
+## Phase 8D.3 — Dashboard, Tuition & Evaluation Module Split
+
+- Giảm `app.js` core từ khoảng 553 KB xuống 504 KB.
+- Tách Dashboard, runtime Học phí, runtime Đánh giá và helper tạo ảnh báo cáo.
+- Thêm audit/smoke test thứ tự dependency cho các module mới.
+- Không thay đổi database hoặc nghiệp vụ.
+
 ## Phase 8D.2 — Linked Runtime Module Split
 
 - Giảm `app.js` core từ khoảng 663 KB xuống 553 KB.

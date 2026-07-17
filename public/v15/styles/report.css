@@ -1,0 +1,4 @@
+/* Phase 8D.4 lazy style: report */
+.sharePreviewWrap{display:grid;gap:14px}
+  .sharePreviewWrap img{width:100%;max-height:68vh;object-fit:contain;border:1px solid var(--line);border-radius:22px;background:#fff;box-shadow:0 18px 50px rgba(15,23,42,.08)}
+  .shareHint{border:1px dashed #fecdd3;background:#fff7f8;border-radius:18px;padding:12px 14px;color:#9f1239;font-weight:700}

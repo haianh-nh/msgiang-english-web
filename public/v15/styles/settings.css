@@ -1,0 +1,26 @@
+/* Phase 8D.4 lazy style: settings */
+.accountTable .modalTable td{vertical-align:middle}
+
+
+    .prodGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:12px}
+
+
+    .prodCard{border:1px solid #fde2e8;background:#fff;border-radius:20px;padding:14px;display:grid;gap:8px}
+
+
+    .prodCard b{color:#111827}
+
+
+    .prodStatusList{display:grid;gap:8px;margin-top:12px;max-height:360px;overflow:auto}
+
+
+    .prodStatusRow{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;border:1px solid #fde2e8;border-radius:16px;padding:10px;background:#fff7f8}
+
+
+    .prodStatusRow.ok{background:#ecfdf3;border-color:#bbf7d0}
+
+
+    .prodStatusRow.bad{background:#fff1f2;border-color:#fecaca}
+
+
+    @media (max-width:900px){.prodGrid{grid-template-columns:1fr}}
