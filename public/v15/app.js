@@ -1,4 +1,4 @@
-window.MSGIANG_BUILD_VERSION='20phase8d4-startup-css-network-cleanup';
+window.MSGIANG_BUILD_VERSION='20phase8d4-1-tuition-style-hotfix';
 const SEED = {
       classes: [],
       teachers: [],
@@ -4320,7 +4320,8 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
         }
         const lazyRendererNames={overview:'overview',classes:'classesPage',schedule:'schedulePage',makeup:'makeupPage',homework:'homeworkPage',evaluation:'evaluationPage',tuition:'tuitionPage',teachers:'teachersPage',settings:'settingsPage'};
         const lazyRendererName=lazyRendererNames[route];
-        if(lazyRendererName && typeof window[lazyRendererName]!=='function'){
+        const lazyRouteReady=!lazyRendererName || (typeof window[lazyRendererName]==='function' && window.MsRouteModules?.isReady(route));
+        if(lazyRendererName && !lazyRouteReady){
           const waitingRoute=route;
           window.MsRouteModules?.ensure(waitingRoute).then(()=>{
             if(currentUser && route===waitingRoute) render();

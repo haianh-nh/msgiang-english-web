@@ -1,7 +1,13 @@
-/* Phase 8D.4 lazy style: dashboard */
-.hero{display:grid;grid-template-columns:minmax(0,1fr) 450px;gap:20px;align-items:center;margin-bottom:20px}.heroCard{border-radius:32px;background:linear-gradient(135deg,#fff,#fff4f6 50%,#fff0e9);padding:28px;border:1px solid #ffe0e6;box-shadow:var(--shadow);position:relative;overflow:hidden}.heroCard:after{content:"";position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,#ffd9e0,transparent 68%);animation:floatBlob 7s ease-in-out infinite}.hero h1{font-size:38px;line-height:1.05;margin:0 0 8px;letter-spacing:-1.2px}.hero p{margin:0;color:var(--muted);font-size:16px}.heroArt{min-height:160px;border-radius:32px;background:linear-gradient(135deg,#fff,#fff6e8 45%,#ffe1e8);display:flex;align-items:center;justify-content:space-around;padding:18px;box-shadow:var(--shadow);border:1px solid #ffe1e8;overflow:hidden}.heroArt span{font-size:42px;filter:drop-shadow(0 8px 12px rgba(0,0,0,.05));animation:floatIcon 4s ease-in-out infinite}.heroArt span:nth-child(2){animation-delay:.5s}.heroArt span:nth-child(3){animation-delay:1s}.speech{background:linear-gradient(135deg,var(--red),var(--red2));color:#fff;font-weight:1000;border-radius:28px;padding:18px 20px;font-size:21px;line-height:1.05;box-shadow:0 13px 24px rgba(217,22,51,.25);animation:pulseSoft 2.8s ease-in-out infinite}.statGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}.stat{padding:20px;display:flex;gap:15px;align-items:center;animation:staggerIn .45s var(--ease) both;animation-delay:calc(var(--i,0) * 55ms)}.statIcon{width:62px;height:62px;border-radius:21px;display:grid;place-items:center;color:#fff;font-size:29px;box-shadow:0 14px 24px rgba(0,0,0,.12);transition:.28s var(--ease)}.stat:hover .statIcon{transform:rotate(-5deg) scale(1.06)}.stat h3{margin:0 0 2px;font-size:14px}.stat strong{font-size:32px;color:var(--red);line-height:1}.stat small{display:block;color:var(--muted);margin-top:4px}@media (max-width:1180px){.hero{grid-template-columns:1fr}.heroArt{display:none}.statGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media (max-width:640px){.heroCard{padding:20px;border-radius:26px}.hero h1{font-size:28px}.stat{padding:16px}.statIcon{width:54px;height:54px}}@media (min-width: 768px) and (max-width: 1180px){
-  .statGrid{
-    grid-template-columns:repeat(2,minmax(0,1fr));
-  }}.statIcon{
-  box-shadow:0 10px 20px rgba(0,0,0,.10);
-}
+/* Phase 8D.4.1 lazy style: dashboard-only visuals. Shared .stat* rules live in app.css. */
+.hero{display:grid;grid-template-columns:minmax(0,1fr) 450px;gap:20px;align-items:center;margin-bottom:20px}
+.heroCard{border-radius:32px;background:linear-gradient(135deg,#fff,#fff4f6 50%,#fff0e9);padding:28px;border:1px solid #ffe0e6;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.heroCard:after{content:"";position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,#ffd9e0,transparent 68%);animation:floatBlob 7s ease-in-out infinite}
+.hero h1{font-size:38px;line-height:1.05;margin:0 0 8px;letter-spacing:-1.2px}
+.hero p{margin:0;color:var(--muted);font-size:16px}
+.heroArt{min-height:160px;border-radius:32px;background:linear-gradient(135deg,#fff,#fff6e8 45%,#ffe1e8);display:flex;align-items:center;justify-content:space-around;padding:18px;box-shadow:var(--shadow);border:1px solid #ffe1e8;overflow:hidden}
+.heroArt span{font-size:42px;filter:drop-shadow(0 8px 12px rgba(0,0,0,.05));animation:floatIcon 4s ease-in-out infinite}
+.heroArt span:nth-child(2){animation-delay:.5s}
+.heroArt span:nth-child(3){animation-delay:1s}
+.speech{background:linear-gradient(135deg,var(--red),var(--red2));color:#fff;font-weight:1000;border-radius:28px;padding:18px 20px;font-size:21px;line-height:1.05;box-shadow:0 13px 24px rgba(217,22,51,.25);animation:pulseSoft 2.8s ease-in-out infinite}
+@media (max-width:1180px){.hero{grid-template-columns:1fr}.heroArt{display:none}}
+@media (max-width:640px){.heroCard{padding:20px;border-radius:26px}.hero h1{font-size:28px}}

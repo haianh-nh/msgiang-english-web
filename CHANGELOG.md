@@ -1,5 +1,14 @@
 # Changelog
 
+## Phase 8D.4.1 — Tuition style hotfix
+
+- Sửa giao diện thẻ tổng quan Học phí đôi lúc bị kéo thành các dải ngang.
+- Chuyển CSS dùng chung của `.statGrid`, `.stat` và `.statIcon` về CSS lõi để Học phí không phụ thuộc vào việc tab Tổng quan đã từng được mở hay chưa.
+- Lazy CSS chỉ được đánh dấu sẵn sàng sau `link.onload`; link lỗi/stale được xóa và có thể tải lại.
+- Trang chỉ render module khi cả JavaScript và CSS của route đều đã sẵn sàng.
+- Đồng bộ build marker cho index, API version, response headers và runtime.
+- Không thay đổi database, API nghiệp vụ hay logic học phí.
+
 ## Phase 8D.4 — Startup, CSS & Network Cleanup
 
 - Giảm app core xuống khoảng 234 KB.

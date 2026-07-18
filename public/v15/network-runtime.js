@@ -1,7 +1,7 @@
 (function bootstrapMsgiangNetworkRuntime(global) {
   'use strict';
 
-  var BUILD_VERSION = '20phase8d4-startup-css-network-cleanup';
+  var BUILD_VERSION = '20phase8d4-1-tuition-style-hotfix';
   var GET_TTL_MS = 1800;
   var inflightGet = new Map();
   var shortGetCache = new Map();
