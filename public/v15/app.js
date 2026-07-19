@@ -1,4 +1,4 @@
-window.MSGIANG_BUILD_VERSION='20phase8d4-3-tuition-message-cleanup';
+window.MSGIANG_BUILD_VERSION='20phase8d4-4-tuition-search-reset';
 const SEED = {
       classes: [],
       teachers: [],
@@ -22,7 +22,13 @@ const SEED = {
       };
       if(billingAllowed){
         compactSettings.unitPrice=Number(settings.unitPrice||70000);
-        compactSettings.tuitionFilter=settings.tuitionFilter||{q:'',status:'all',month:new Date().toISOString().slice(0,7)};
+        const savedTuitionFilter=settings.tuitionFilter||{};
+        // Search text is session-only. Never restore it after a browser reload.
+        compactSettings.tuitionFilter={
+          q:'',
+          status:savedTuitionFilter.status||'all',
+          month:savedTuitionFilter.month||new Date().toISOString().slice(0,7)
+        };
       }
       return {
         _v18hCompact:true,
@@ -37,18 +43,30 @@ const SEED = {
         libraryUnit:s.libraryUnit||'all'
       };
     }
+    function v18hResetPersistedTuitionSearch(settings){
+      const next={...(settings||{})};
+      if(next.tuitionFilter){
+        next.tuitionFilter={
+          ...next.tuitionFilter,
+          q:'',
+          status:next.tuitionFilter.status||'all',
+          month:next.tuitionFilter.month||new Date().toISOString().slice(0,7)
+        };
+      }
+      return next;
+    }
     function v18hMergeLocalDb(raw){
       const base=JSON.parse(JSON.stringify(SEED));
       if(!raw || typeof raw!=='object') return base;
       if(raw._v18hCompact){
-        base.settings={...(base.settings||{}),...(raw.settings||{})};
+        base.settings={...(base.settings||{}),...v18hResetPersistedTuitionSearch(raw.settings||{})};
         ['managerClassScope','libraryTab','libraryQ','libraryLevel','librarySkill','libraryUnit'].forEach(k=>{
           if(raw[k]!==undefined) base[k]=raw[k];
         });
         return base;
       }
-      // Snapshot cũ/full: dùng được cho phiên hiện tại, sau lần save đầu sẽ được compact lại.
-      return {...base,...raw,settings:{...(base.settings||{}),...(raw.settings||{})}};
+      // Snapshot cũ/full: dùng được cho phiên hiện tại, nhưng bộ lọc tìm kiếm Học phí luôn bắt đầu trống.
+      return {...base,...raw,settings:{...(base.settings||{}),...v18hResetPersistedTuitionSearch(raw.settings||{})}};
     }
     function v18hLoadLocalDb(){
       try{return v18hMergeLocalDb(JSON.parse(localStorage.getItem('msgiang_v48_data')||'null'))}
@@ -2026,7 +2044,9 @@ const SEED = {
     }
     function applyBootstrapSnapshot(snapshot){
       if(!snapshot || typeof snapshot!=='object') return;
-      db.settings={...(db.settings||{}),...(snapshot.settings||{})};
+      const incomingSettings=v18hResetPersistedTuitionSearch(snapshot.settings||{});
+      db.settings={...(db.settings||{}),...incomingSettings};
+      if(db.settings?.tuitionFilter) db.settings.tuitionFilter.q='';
       ['managerClassScope','libraryTab','libraryQ','libraryLevel','librarySkill','libraryUnit'].forEach(k=>{
         if(snapshot[k]!==undefined) db[k]=snapshot[k];
       });
@@ -2077,7 +2097,14 @@ const SEED = {
       if(!currentUser) return;
       clearTimeout(officialSaveTimer);
       officialSaveTimer=setTimeout(async()=>{
-        try{await officialFetch('/api/v48-state',{method:'POST',body:JSON.stringify({payload:db})});}
+        try{
+          // Keep the tuition search query local to the current page session.
+          const payload={...db,settings:{...(db.settings||{})}};
+          if(payload.settings.tuitionFilter){
+            payload.settings.tuitionFilter={...payload.settings.tuitionFilter,q:''};
+          }
+          await officialFetch('/api/v48-state',{method:'POST',body:JSON.stringify({payload})});
+        }
         catch(e){console.warn('Official save failed',e);}
       },650);
     }

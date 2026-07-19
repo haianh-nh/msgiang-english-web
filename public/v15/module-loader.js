@@ -1,7 +1,7 @@
 (function bootstrapMsgiangRouteModules(global) {
   'use strict';
 
-  var BUILD_VERSION = '20phase8d4-3-tuition-message-cleanup';
+  var BUILD_VERSION = '20phase8d4-4-tuition-search-reset';
   var STYLE_TIMEOUT_MS = 12000;
   var ROUTE_MODULES = Object.freeze({
     overview: { file: 'dashboard.js', ready: 'overview', styles: ['dashboard.css'] },

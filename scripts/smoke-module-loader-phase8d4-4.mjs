@@ -108,4 +108,4 @@ await retry.sandbox.MsRouteModules.ensure('tuition');
 if (!retry.sandbox.MsRouteModules.isReady('tuition')) throw new Error('Tuition không ready sau khi retry CSS');
 if (retry.styleOrder.filter((x) => x === 'tuition.css').length !== 2) throw new Error('Tuition CSS chưa được tải lại đúng một lần');
 
-console.log('Phase 8D.4.3 module-loader + tuition-style retry smoke đạt.');
+console.log('Phase 8D.4.4 module-loader + tuition-style retry smoke đạt.');

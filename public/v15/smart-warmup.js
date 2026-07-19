@@ -1,7 +1,7 @@
 (function bootstrapSmartWarmup(global) {
   'use strict';
 
-  var BUILD_VERSION = '20phase8d4-3-tuition-message-cleanup';
+  var BUILD_VERSION = '20phase8d4-4-tuition-search-reset';
   var backgroundTimer = null;
   var generation = 0;
   var inflight = new Map();

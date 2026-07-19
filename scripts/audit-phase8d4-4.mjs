@@ -10,8 +10,8 @@ const fail = (message) => { console.error(`✗ ${message}`); process.exitCode = 
 const pass = (message) => console.log(`✓ ${message}`);
 const expect = (condition, message) => condition ? pass(message) : fail(message);
 
-const build = '20phase8d4-3-tuition-message-cleanup';
-const phase = '8d4-3-tuition-message-cleanup';
+const build = '20phase8d4-4-tuition-search-reset';
+const phase = '8d4-4-tuition-search-reset';
 const index = read('public/index-v15.html');
 const app = read('public/v15/app.js');
 const loader = read('public/v15/module-loader.js');
@@ -45,8 +45,8 @@ expect(deployment.build === build && deployment.phase === phase, 'deployment-ver
 expect([app, loader, network, realtime, warmup].every((body) => body.includes(build)), 'Toàn bộ frontend runtime dùng đúng build');
 expect(versionRoute.includes(`build: "${build}"`) && versionRoute.includes(`phase: "${phase}"`), 'API version dùng đúng build/phase');
 expect(nextConfig.match(new RegExp(build, 'g'))?.length === 2, 'Response headers dùng đúng build');
-expect(pkg.scripts.audit.includes('audit-phase8d4-3'), 'Package chạy audit 8D.4.2');
-expect(pkg.scripts.verify.includes('smoke-module-loader-phase8d4-3'), 'Package chạy smoke 8D.4.2');
+expect(pkg.scripts.audit.includes('audit-phase8d4-4'), 'Package chạy audit 8D.4.4');
+expect(pkg.scripts.verify.includes('smoke-module-loader-phase8d4-4'), 'Package chạy smoke 8D.4.4');
 
 const networkPos = index.indexOf('/v15/network-runtime.js');
 const appPos = index.indexOf('/v15/app.js');
@@ -88,6 +88,11 @@ expect(!/Trạng thái:/.test(tuitionModule.slice(tuitionModule.indexOf('functio
 expect(tuitionModule.includes('if(materialFee>0)') && tuitionModule.includes('if(previousDebt>0)') && tuitionModule.includes('if(creditAmount>0)'), 'Text học phí ẩn các khoản bằng 0');
 expect(tuitionModule.includes('𝗧𝗢̂̉𝗡𝗚 𝗖𝗔̂̀𝗡 Đ𝗢́𝗡𝗚') && tuitionModule.includes('tuitionMessageHtml'), 'Tổng cần đóng được nhấn mạnh');
 
+expect(app.includes("compactSettings.tuitionFilter={") && app.includes("q:'',"), 'Local snapshot không lưu lại từ khóa tìm kiếm Học phí');
+expect(app.includes('function v18hResetPersistedTuitionSearch(settings)') && app.includes("if(db.settings?.tuitionFilter) db.settings.tuitionFilter.q='';"), 'Bootstrap xóa từ khóa Học phí cũ');
+expect(app.includes("payload.settings.tuitionFilter={...payload.settings.tuitionFilter,q:''}"), 'Official snapshot không lưu từ khóa tìm kiếm Học phí');
+expect(app.includes("if(field==='q') v18bRenderDebounced('tuitionFilter',220)"), 'Tìm kiếm Học phí vẫn hoạt động trong phiên hiện tại');
+
 
 for (const [file, names] of Object.entries(requiredModules)) {
   expect(exists(file), `Có module ${path.basename(file)}`);
@@ -120,7 +125,7 @@ for (const file of [...new Set(jsFiles)]) {
 }
 
 if (process.exitCode) {
-  console.error('\nPhase 8D.4.3 audit thất bại. Không nên deploy.');
+  console.error('\nPhase 8D.4.4 audit thất bại. Không nên deploy.');
   process.exit(process.exitCode);
 }
-console.log('\nPhase 8D.4.3 audit đạt.');
+console.log('\nPhase 8D.4.4 audit đạt.');

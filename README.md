@@ -1,10 +1,10 @@
 # Ms.Giang English Center
 
-Bản ổn định hiện tại: `20phase8d4-3-tuition-message-cleanup`.
+Bản ổn định hiện tại: `20phase8d4-4-tuition-search-reset`.
 
 - App core: khoảng 234 KB.
 - CSS core: khoảng 59 KB.
-- Không cần migration SQL cho Phase 8D.4.1.
+- Không cần migration SQL cho Phase 8D.4.4.
 - Chạy `npm run verify` trước khi deploy.
 
 ## Kiểm tra trước deploy

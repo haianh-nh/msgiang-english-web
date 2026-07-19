@@ -5,14 +5,14 @@ export async function GET() {
   return Response.json(
     {
       ok: true,
-      build: "20phase8d4-3-tuition-message-cleanup",
-      phase: "8d4-3-tuition-message-cleanup",
+      build: "20phase8d4-4-tuition-search-reset",
+      phase: "8d4-4-tuition-search-reset",
       realtimeFrontend: true,
     },
     {
       headers: {
         "Cache-Control": "no-store, max-age=0",
-        "X-Msgiang-Build": "20phase8d4-3-tuition-message-cleanup",
+        "X-Msgiang-Build": "20phase8d4-4-tuition-search-reset",
       },
     },
   );

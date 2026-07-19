@@ -1,5 +1,12 @@
 # Phase 8D.4.3 — Tuition Compact UI
 
+## Phase 8D.4.4 — Tuition Search Reset
+
+- Sửa lỗi ô tìm kiếm Học phí tự khôi phục mã lớp sau khi reload.
+- Không còn lưu từ khóa tìm kiếm vào local snapshot hoặc official snapshot.
+- Snapshot cũ được làm sạch khi bootstrap; tháng/năm vẫn được giữ nguyên.
+- Không thay đổi database, API hoặc công thức học phí.
+
 - Compact tuition table for full-screen desktop use.
 - Removed tuition image generation.
 - Expanded class tables without internal vertical scrolling.
