@@ -10,8 +10,8 @@ const fail = (message) => { console.error(`✗ ${message}`); process.exitCode = 
 const pass = (message) => console.log(`✓ ${message}`);
 const expect = (condition, message) => condition ? pass(message) : fail(message);
 
-const build = '20phase8d4-5-staff-main-class-cards';
-const phase = '8d4-5-staff-main-class-cards';
+const build = '20phase8d4-6-staff-tutoring-visibility-fix';
+const phase = '8d4-6-staff-tutoring-visibility-fix';
 const index = read('public/index-v15.html');
 const app = read('public/v15/app.js');
 const loader = read('public/v15/module-loader.js');
@@ -46,8 +46,8 @@ expect(deployment.build === build && deployment.phase === phase, 'deployment-ver
 expect([app, loader, network, realtime, warmup].every((body) => body.includes(build)), 'Toàn bộ frontend runtime dùng đúng build');
 expect(versionRoute.includes(`build: "${build}"`) && versionRoute.includes(`phase: "${phase}"`), 'API version dùng đúng build/phase');
 expect(nextConfig.match(new RegExp(build, 'g'))?.length === 2, 'Response headers dùng đúng build');
-expect(pkg.scripts.audit.includes('audit-phase8d4-5'), 'Package chạy audit 8D.4.5');
-expect(pkg.scripts.verify.includes('smoke-module-loader-phase8d4-5'), 'Package chạy smoke 8D.4.5');
+expect(pkg.scripts.audit.includes('audit-phase8d4-6'), 'Package chạy audit 8D.4.6');
+expect(pkg.scripts.verify.includes('smoke-module-loader-phase8d4-6'), 'Package chạy smoke 8D.4.6');
 
 const networkPos = index.indexOf('/v15/network-runtime.js');
 const appPos = index.indexOf('/v15/app.js');
@@ -107,8 +107,9 @@ expect(!app.includes("['attendance','✅','Điểm danh']"), 'Sidebar vẫn khô
 expect(coreCss.includes('.staffStatusDot{'), 'CSS trạng thái nhân sự vẫn tách riêng');
 expect(staffModule.includes('function v7hIsTutoringClass(c)') && staffModule.includes('function mainClassesOfTeacher(t)'), 'Có bộ lọc lớp Học kèm riêng cho thẻ nhân sự');
 expect(/function teacherCard\(t,i\)\{\s*const cls=mainClassesOfTeacher\(t\);/.test(staffModule), 'Thẻ giáo viên chỉ dùng danh sách lớp chính');
-expect(staffModule.includes("note.startsWith('__tutoring_session__')") && staffModule.includes("grade==='hoc kem'") && staffModule.includes("name.startsWith('hoc kem ')"), 'Bộ lọc nhận diện đầy đủ lớp Học kèm');
-expect(/function v7hTeacherClassPanelMarkup\(t\)\{\s*const cls=classesOfTeacher\(t\);/.test(staffModule), 'Popup quản lý phân công vẫn giữ đầy đủ lớp để không ảnh hưởng nghiệp vụ');
+expect(staffModule.includes("note.startsWith('__tutoring_session__')") && staffModule.includes("sourceKey.startsWith('tutoring:')") && staffModule.includes("/^hoc kem(?:\\s|$)/.test(name)"), 'Bộ lọc nhận diện đầy đủ lớp Học kèm');
+expect(/function v7hTeacherClassPanelMarkup\(t\)\{\s*const cls=mainClassesOfTeacher\(t\);/.test(staffModule), 'Popup giáo viên chỉ hiển thị lớp chính');
+expect(staffModule.includes('.filter(c=>!v7hIsTutoringClass(c))') && staffModule.includes('Lớp học kèm không được quản lý trong popup nhân sự.'), 'Dropdown và thao tác gán lớp trong popup loại hoàn toàn lớp Học kèm');
 expect(/\.statusDot\{[^}]*white-space:nowrap/.test(scheduleCss), 'Badge Lịch dạy vẫn một hàng');
 expect(app.includes("const isReceptionist = () => hasRole('receptionist')"), 'Role Lễ tân vẫn tồn tại');
 expect(app.includes("const canViewTuition = () => isAdmin() || isManager()"), 'Lễ tân vẫn không có Học phí');
@@ -130,7 +131,7 @@ for (const file of [...new Set(jsFiles)]) {
 }
 
 if (process.exitCode) {
-  console.error('\nPhase 8D.4.5 audit thất bại. Không nên deploy.');
+  console.error('\nPhase 8D.4.6 audit thất bại. Không nên deploy.');
   process.exit(process.exitCode);
 }
-console.log('\nPhase 8D.4.5 audit đạt.');
+console.log('\nPhase 8D.4.6 audit đạt.');

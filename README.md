@@ -1,11 +1,11 @@
 # Ms.Giang English Center
 
-Bản ổn định hiện tại: `20phase8d4-5-staff-main-class-cards`.
+Bản ổn định hiện tại: `20phase8d4-6-staff-tutoring-visibility-fix`.
 
 - App core: khoảng 234 KB.
 - CSS core: khoảng 59 KB.
-- Không cần migration SQL cho Phase 8D.4.5.
-- Thẻ Giáo viên/TA/Quản lí chỉ hiển thị và đếm lớp chính; lớp Học kèm được ẩn khỏi thẻ.
+- Không cần migration SQL cho Phase 8D.4.6.
+- Thẻ và popup Giáo viên/TA/Quản lí chỉ hiển thị lớp chính; dropdown gán lớp cũng loại lớp Học kèm.
 - Chạy `npm run verify` trước khi deploy.
 
 ## Kiểm tra trước deploy

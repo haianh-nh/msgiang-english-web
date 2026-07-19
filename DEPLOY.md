@@ -1,9 +1,9 @@
-# Deploy Phase 8D.4.5
+# Deploy Phase 8D.4.6
 
 - Không có migration SQL mới.
-- Thẻ Giáo viên, TA và Quản lí chỉ hiển thị lớp chính.
-- Lớp Học kèm không còn xuất hiện trong nhãn lớp, số lớp hoặc `+X lớp` trên thẻ.
-- Dữ liệu và chức năng Học kèm ở các tab khác giữ nguyên.
+- Thẻ nhân sự và popup giáo viên chỉ hiển thị lớp chính.
+- Dropdown gán lớp trong popup nhân sự không còn liệt kê lớp Học kèm.
+- Dữ liệu và chức năng Học kèm ở Lịch dạy/Học bù giữ nguyên.
 - Chạy `npm ci && npm run verify` trước khi push.
 
-Build: `20phase8d4-5-staff-main-class-cards`
+Build: `20phase8d4-6-staff-tutoring-visibility-fix`

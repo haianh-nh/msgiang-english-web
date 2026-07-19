@@ -3,11 +3,27 @@
     function teacherRoleLabel(t){const v=teacherRoleValue(t); return v==='admin'?'Admin':v==='manager'?'Quản lí':v==='ta'?'TA':'Giáo viên'}
     function teacherRoleClasses(t){const v=teacherRoleValue(t); return v==='admin'?'red':v==='manager'?'blue':v==='ta'?'purple':'green'}
     function classesOfTeacher(t){return db.classes.filter(c=>c.teacherId===t.id || c.taId===t.id || c.teacher===t.name || c.ta===t.name)}
+    function v7hNormalizeClassMarker(value){
+      return String(value||'')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g,'')
+        .replace(/\s+/g,' ')
+        .toLocaleLowerCase('vi')
+        .trim();
+    }
     function v7hIsTutoringClass(c){
-      const note=String(c?.note||'').trim().toLocaleLowerCase('vi');
-      const grade=String(c?.grade||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('vi').trim();
-      const name=String(c?.name||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('vi').trim();
-      return note.startsWith('__tutoring_session__') || grade==='hoc kem' || name==='hoc kem' || name.startsWith('hoc kem ');
+      const note=v7hNormalizeClassMarker(c?.note);
+      const grade=v7hNormalizeClassMarker(c?.grade);
+      const name=v7hNormalizeClassMarker(c?.name);
+      const kind=v7hNormalizeClassMarker(c?.sessionKind||c?.session_kind||c?.kind||c?.type);
+      const sourceKey=v7hNormalizeClassMarker(c?.sourceSessionKey||c?.source_session_key);
+      return c?.isTutoring===true
+        || note.startsWith('__tutoring_session__')
+        || kind==='tutoring'
+        || sourceKey.startsWith('tutoring:')
+        || grade==='hoc kem'
+        || /^hoc kem(?:\s|$)/.test(name)
+        || /^lop hoc kem(?:\s|$)/.test(name);
     }
     function mainClassesOfTeacher(t){return classesOfTeacher(t).filter(c=>!v7hIsTutoringClass(c))}
 
@@ -171,10 +187,13 @@
       return `${first}${classes.length>3?`<span class="sessionTag more">+${classes.length-3} lớp</span>`:''}`;
     }
     function v7hTeacherClassPanelMarkup(t){
-      const cls=classesOfTeacher(t);
+      const cls=mainClassesOfTeacher(t);
       const role=teacherRoleValue(t);
       const assignmentRole=role==='ta'?'ta':'teacher';
-      const activeClassOptions=sortClassesByGrade(db.classes).filter(c=>!isClassEnded(c)).filter(c=>assignmentRole==='ta'?c.taId!==t.id:c.teacherId!==t.id);
+      const activeClassOptions=sortClassesByGrade(db.classes)
+        .filter(c=>!v7hIsTutoringClass(c))
+        .filter(c=>!isClassEnded(c))
+        .filter(c=>assignmentRole==='ta'?c.taId!==t.id:c.teacherId!==t.id);
       const classOptions=activeClassOptions.map(c=>`<option value="${c.id}">${h(c.name)}</option>`).join('');
       return `<div id="teacherClassPanel" class="teacherClassBox"><div class="teacherClassTitle"><b>Lớp đang phụ trách</b><span class="pill gray">${cls.length} lớp</span></div><div id="teacherAssignedClassList">${cls.length?cls.map(c=>`<div class="teacherClassRow" data-assigned-class="${c.id}"><span><b>${h(c.name)}</b><span class="mini"> • ${h(c.time||'Chưa có lịch')}</span>${isClassEnded(c)?'<span class="pill gray" style="margin-left:8px">Đã kết thúc</span>':''}</span>${isClassEnded(c)?'<span class="mini">Chỉ xem</span>':`<button class="btn ghost miniCardBtn" onclick="removeTeacherFromClass('${t.id}','${c.id}','${assignmentRole}',this)">Bỏ gán</button>`}</div>`).join(''):'<div class="staffEmptyInline">Chưa được gán lớp</div>'}</div><div class="teacherAssignBox"><label>Gán thêm lớp<select id="teacherAssignClass" class="input" data-ignore-dirty="1"><option value="">-- Chọn lớp --</option>${classOptions}</select></label><button id="assignTeacherClassBtn" class="btn primary" ${classOptions?'':'disabled'} onclick="const v=document.getElementById('teacherAssignClass').value;if(v)assignTeacherToClass('${t.id}',v,'${assignmentRole}',this)">Gán lớp</button></div></div>`;
     }
@@ -482,6 +501,7 @@
       if(!canManageOperations()) return;
       const t=teacherById(teacherId),c=classById(classId);
       if(!t?.id||!c?.id) return;
+      if(v7hIsTutoringClass(c)){v7hStaffFeedback('Lớp học kèm không được quản lý trong popup nhân sự.','error');return}
       if(isClassEnded(c)){v7hStaffFeedback('Lớp đã kết thúc, không thể gán.','error');return}
       if(assignmentRole==='ta'&&String(c.teacherId||'')===String(teacherId)){v7hStaffFeedback('Một người không thể vừa là giáo viên chính vừa là TA của cùng lớp.','error');return}
       if(assignmentRole!=='ta'&&String(c.taId||'')===String(teacherId)){v7hStaffFeedback('Một người không thể vừa là giáo viên chính vừa là TA của cùng lớp.','error');return}

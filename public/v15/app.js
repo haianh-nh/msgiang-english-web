@@ -1,4 +1,4 @@
-window.MSGIANG_BUILD_VERSION='20phase8d4-5-staff-main-class-cards';
+window.MSGIANG_BUILD_VERSION='20phase8d4-6-staff-tutoring-visibility-fix';
 const SEED = {
       classes: [],
       teachers: [],

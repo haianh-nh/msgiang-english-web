@@ -110,7 +110,7 @@ if (retry.styleOrder.filter((x) => x === 'tuition.css').length !== 2) throw new 
 
 
 
-// Staff cards must hide tutoring support classes while keeping main class counts/tags.
+// Staff cards and teacher popup must hide every tutoring support class.
 const staffSource = fs.readFileSync(path.join(root, 'public/v15/modules/staff.js'), 'utf8');
 const staffContext = {
   console, Map, Set, Promise, Object, Array, String, Number, Boolean, Date, Math, Error,
@@ -118,15 +118,21 @@ const staffContext = {
   db: {
     teachers: [{ id: 't1', name: 'Ms Bích', phone: '0867915950', roles: ['teacher'], status: 'active' }],
     classes: [
-      { id: 'c1', name: 'G2.2', grade: 'G2', teacherId: 't1', teacher: 'Ms Bích' },
+      { id: 'c1', name: 'G2.2', grade: 'G2', teacherId: 't1', teacher: 'Ms Bích', time: '17:00' },
       { id: 'c2', name: 'Học kèm G2.2', grade: 'Học kèm', teacherId: 't1', teacher: 'Ms Bích' },
       { id: 'c3', name: 'Tutoring legacy', note: '__tutoring_session__', teacherId: 't1', teacher: 'Ms Bích' },
       { id: 'c4', name: 'Học kèm GK+G', teacherId: 't1', teacher: 'Ms Bích' },
-      { id: 'c5', name: 'G3.1', grade: 'G3', taId: 't1', ta: 'Ms Bích' },
+      { id: 'c5', name: 'G3.1', grade: 'G3', taId: 't1', ta: 'Ms Bích', time: '18:30' },
+      { id: 'c6', name: 'G4.1', grade: 'G4', teacherId: '', teacher: '', time: '19:00' },
+      { id: 'c7', name: 'Lớp  học kèm G5', teacherId: 't1', teacher: 'Ms Bích' },
+      { id: 'c8', name: 'Ca riêng', sessionKind: 'tutoring', teacherId: 't1', teacher: 'Ms Bích' },
+      { id: 'c9', name: 'Ca hỗ trợ', sourceSessionKey: 'tutoring:c9', teacherId: 't1', teacher: 'Ms Bích' },
     ],
   },
   teacherRoleValue: () => 'teacher',
   h: (value) => String(value ?? ''),
+  sortClassesByGrade: (rows) => [...rows],
+  isClassEnded: () => false,
 };
 staffContext.window = staffContext;
 staffContext.globalThis = staffContext;
@@ -134,14 +140,21 @@ const staffSandbox = vm.createContext(staffContext);
 vm.runInContext(staffSource, staffSandbox, { filename: 'staff.js' });
 const mainClassNames = vm.runInContext("mainClassesOfTeacher(db.teachers[0]).map(c=>c.name)", staffSandbox);
 if (JSON.stringify(Array.from(mainClassNames)) !== JSON.stringify(['G2.2', 'G3.1'])) {
-  throw new Error(`Lọc lớp chính trên thẻ sai: ${JSON.stringify(Array.from(mainClassNames))}`);
+  throw new Error(`Lọc lớp chính sai: ${JSON.stringify(Array.from(mainClassNames))}`);
 }
 const staffCard = vm.runInContext("teacherCard(db.teachers[0],0)", staffSandbox);
 if (!staffCard.includes('2 lớp') || !staffCard.includes('G2.2') || !staffCard.includes('G3.1')) {
   throw new Error('Thẻ giáo viên chưa hiển thị đúng số lượng/tên lớp chính');
 }
-if (/Học kèm|Tutoring legacy/i.test(staffCard)) {
-  throw new Error('Thẻ giáo viên vẫn còn hiển thị lớp Học kèm');
+const teacherPanel = vm.runInContext("v7hTeacherClassPanelMarkup(db.teachers[0])", staffSandbox);
+if (!teacherPanel.includes('2 lớp') || !teacherPanel.includes('G2.2') || !teacherPanel.includes('G3.1')) {
+  throw new Error('Popup giáo viên chưa hiển thị đúng danh sách lớp chính');
+}
+if (!teacherPanel.includes('G4.1')) throw new Error('Dropdown gán lớp đã làm mất lớp chính chưa được gán');
+for (const markup of [staffCard, teacherPanel]) {
+  if (/Học kèm|Tutoring legacy|Lớp\s+ học kèm|Ca riêng|Ca hỗ trợ/i.test(markup)) {
+    throw new Error('Giao diện nhân sự vẫn còn hiển thị lớp Học kèm');
+  }
 }
 
-console.log('Phase 8D.4.5 module-loader + staff main-class card smoke đạt.');
+console.log('Phase 8D.4.6 module-loader + staff tutoring visibility smoke đạt.');
