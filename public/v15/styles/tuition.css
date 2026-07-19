@@ -1,292 +1,44 @@
-/* Phase 8D.4 lazy style: tuition */
-.paidBadge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;background:#eaf9ef;color:#11833b;border:1px solid #bfecc9;padding:6px 10px;font-weight:1000;font-size:12px}
-    .paidBadge:before{content:"✅"}
-    .unpaidBadge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;padding:6px 10px;font-weight:1000;font-size:12px}
-    .unpaidBadge:before{content:"⏳"}
-    .classBillingBlock{margin:18px 0;border:1px solid var(--line);border-radius:22px;background:#fff;overflow:hidden;box-shadow:0 12px 30px rgba(185,15,41,.06)}
-    .classBillingHead{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;background:linear-gradient(135deg,#fff4f6,#fff);border-bottom:1px solid var(--line)}
-    .classBillingHead h2{margin:0;font-size:20px}
-    .billingActions{display:flex;gap:8px;flex-wrap:wrap}
-    .tuitionMessageBox{background:#fff8f9;border:1px dashed #ffcbd4;border-radius:18px;padding:14px;line-height:1.55;white-space:pre-line}
-    .tuitionFilters{margin:14px 0 18px;padding:14px;border:1px solid #ffd3dc;border-radius:22px;background:linear-gradient(135deg,#fff7f9,#fff);box-shadow:0 10px 26px rgba(217,22,51,.06)}
-    .tuitionFilters label{font-weight:900;color:#344054;display:flex;flex-direction:column;gap:7px;min-width:0}
-    .tuitionFilters .input{width:100%;min-height:44px}
-    .tuitionMonthPick{display:grid;grid-template-columns:minmax(120px,1fr) 120px;gap:10px}
-    .tuitionMonthPick select,.tuitionMonthPick input{height:44px}
-    .tuitionFilters .filterSummary{align-self:center;white-space:nowrap;background:#fff1f3;border:1px solid #ffc7d2;border-radius:999px;padding:10px 14px}
-    .classBillingBlock table th,.classBillingBlock table td{padding:12px 10px;vertical-align:middle;line-height:1.28}
-    .classBillingBlock .tableActionStack{gap:8px;align-items:flex-start}
-    .classBillingBlock .mini{line-height:1.35}
-    @media (max-width:900px){.tuitionMonthPick{grid-template-columns:1fr 1fr}.tuitionFilters .filterSummary{white-space:normal;text-align:center}
-  .tuitionTable{min-width:1240px}
-  .tuitionTable th,.tuitionTable td{padding:11px 10px!important}
-  .tuitionMessageActions{justify-content:stretch}
-  .tuitionMessageActions .btn,.tuitionMessageActions .paidBadge{flex:1;min-width:110px}
-  .tuitionTableWrap{
-    max-height:72vh;
-  }
-  .billingHeadActions{
-    width:100%;
-    justify-content:stretch;
-  }
-  .billingHeadActions .btn{
-    flex:1;
-  }}
-    .materialFeeCell{min-width:150px;line-height:1.35}
-    .materialFeeCell .miniCardBtn{margin-top:6px}
-    .materialFeeSummary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-    .materialFeeSummary>div{border:1px solid #fecdd3;background:#fff7f8;border-radius:18px;padding:12px}
-    .materialFeeSummary span{display:block;color:#667085;font-size:12px;font-weight:800;margin-bottom:4px}
-    .materialFeeSummary b{color:#9f1239;font-size:16px}
-    @media (max-width:760px){.materialFeeSummary{grid-template-columns:1fr}.materialFeeCell{min-width:180px}
-  .tuitionTableWrap{
-    overflow-x:auto;
-  }
-  .tuitionTableV20O{
-    min-width:1120px;
-  }
-  .tuitionLogicNotice{
-    font-size:13px;
-  }}
-    .tuitionTableWrap{
-  overflow:auto;
-  padding-bottom:4px;
-}
-    .tuitionTable{
-  min-width:1320px;
-  table-layout:auto;
-  border-collapse:separate;
-  border-spacing:0;
-}
-    .tuitionTable th,
-.tuitionTable td{
-  vertical-align:middle;
-  padding:13px 12px!important;
-  line-height:1.35;
-}
-    .tuitionTable th{
-  white-space:nowrap;
-  text-align:center;
-  font-size:13px;
-  letter-spacing:.01em;
-}
-    .tuitionTable .colStudent,
-.tuitionTable .studentCell{
-  min-width:210px;
-  width:230px;
-  text-align:left;
-}
-    .tuitionTable .studentCell b{
-  display:block;
-  margin-bottom:4px;
-  font-size:15px;
-}
-    .tuitionTable .countCell,
-.tuitionTable .billableCell{
-  text-align:center;
-  min-width:70px;
-  font-weight:900;
-}
-    .tuitionTable .absentTotal{
-  min-width:86px;
-}
-    .tuitionTable .absentTotal .mini{
-  margin-top:3px;
-  white-space:nowrap;
-  font-size:11px;
-}
-    .tuitionTable .amountCell,
-.tuitionTable .totalCell,
-.tuitionTable .debtCell{
-  min-width:112px;
-  text-align:right;
-  white-space:nowrap;
-}
-    .tuitionTable .totalCell{
-  font-size:15px;
-  font-weight:1000;
-}
-    .tuitionTable .materialFeeCell{
-  min-width:136px;
-  text-align:center;
-}
-    .tuitionTable .materialFeeAmount{
-  margin-bottom:7px;
-  font-weight:1000;
-  white-space:nowrap;
-}
-    .tuitionTable .materialNoteText{
-  margin:0 auto 7px;
-  max-width:160px;
-}
-    .tuitionTable .materialEditBtn{
-  margin-top:2px;
-  width:100%;
-  max-width:126px;
-}
-    .tuitionTable .statusCell{
-  min-width:142px;
-  text-align:center;
-}
-    .tuitionTable .sendCell,
-.tuitionTable .paidActionCell{
-  min-width:112px;
-  text-align:center;
-}
-    .tuitionTable .tuitionSendStack,
-.tuitionTable .tableActionStack{
-  gap:7px;
-  align-items:stretch;
-}
-    .tuitionTable .miniCardBtn{
-  min-height:34px;
-  padding:7px 11px;
-  white-space:nowrap;
-}
-    .tuitionTable .paidBadge,
-.tuitionTable .unpaidBadge,
-.tuitionTable .sentBadge{
-  display:inline-flex;
-  justify-content:center;
-  align-items:center;
-  min-height:31px;
-  padding:6px 10px;
-  line-height:1.2;
-}
-    .tuitionMessageBox{
-  color:#111827!important;
-  font-weight:650;
-  font-size:16px;
-  line-height:1.62!important;
-}
-    .tuitionMessageActions{
-  display:flex;
-  justify-content:flex-end;
-  align-items:center;
-  gap:8px;
-  flex-wrap:wrap;
-}
-    .tuitionMessageActions .btn,
-.tuitionMessageActions .paidBadge{
-  min-height:42px;
-}
-    .tuitionLogicNotice{
-  border:1px solid #fecdd3;
-  background:linear-gradient(135deg,#fff1f2,#fff);
-  color:#7f1d1d;
-  border-radius:18px;
-  padding:12px 14px;
-  margin:0 0 14px;
-  font-weight:800;
-  line-height:1.45;
-}
-    .tuitionTableV20O th{
-  white-space:nowrap;
-}
-    .tuitionTableV20O td{
-  vertical-align:middle;
-}
-    .tuitionTableV20O .colStudent{
-  min-width:220px;
-}
-    .tuitionTableV20O .plannedCell{
-  text-align:center;
-  font-size:16px;
-}
-    .tuitionTableV20O .unitPriceCell,
-.tuitionTableV20O .amountCell,
-.tuitionTableV20O .debtCell,
-.tuitionTableV20O .creditCell,
-.tuitionTableV20O .totalCell{
-  text-align:right;
-  white-space:nowrap;
-}
-    .tuitionTableV20O .creditCell{
-  color:#15803d;
-  font-weight:1000;
-}
-    .tuitionTableV20O .totalCell{
-  color:#be123c;
-  font-size:17px;
-  font-weight:1000;
-  background:#fff7f8;
-  border-radius:12px;
-}
-    .tuitionTableV20O .sendCell{
-  min-width:112px;
-}
-    .tuitionTableV20O .paidActionCell{
-  min-width:105px;
-}
-    .tuitionTableV20O .tuitionSendStack,
-.tuitionTableV20O .tableActionStack{
-  gap:7px;
-}
-    .tuitionTableV20O .miniCardBtn{
-  width:100%;
-  min-height:32px;
-}
-    .tuitionQuickActions{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  flex-wrap:wrap;
-  margin:10px 0 14px;
-}
-    .billingHeadActions{
-  display:flex;
-  gap:8px;
-  align-items:center;
-  flex-wrap:wrap;
-  justify-content:flex-end;
-}
-    .collapsedBillingBlock{
-  padding-bottom:10px;
-}
-    .tuitionScrollHint{
-  color:#7f1d1d;
-  background:#fff7f8;
-  border:1px dashed #fecdd3;
-  border-radius:14px;
-  padding:7px 10px;
-  font-weight:800;
-  margin:0 12px 8px;
-  font-size:13px;
-}
-    .tuitionTableWrap{
-  max-height:68vh;
-  overflow:auto;
-  overscroll-behavior:contain;
-  border-radius:0 0 22px 22px;
-}
-    .tuitionTableV20O th{
-  position:sticky;
-  top:0;
-  z-index:6;
-}
-    .tuitionTableV20O .colStudent,
-.tuitionTableV20O .studentCell{
-  position:sticky;
-  left:0;
-  z-index:5;
-  box-shadow:10px 0 18px rgba(185,15,41,.05);
-}
-    .tuitionTableV20O th.colStudent{
-  z-index:8;
-}
-    .tuitionTableV20O .studentCell{
-  background:linear-gradient(90deg,#fff,#fff9fa);
-}
-    .tuitionTableV20O tbody tr:nth-child(even) .studentCell{
-  background:linear-gradient(90deg,#fff7f8,#fff9fa);
-}
-    .tuitionTableV20O tbody tr:hover .studentCell{
-  background:#fff1f2;
-}
-    .tuitionTableV20O .tableActionStack{
-  min-width:96px;
-}
-    .adjustmentCell{min-width:150px;max-width:230px}
-    .adjustmentAmount{color:#b42318;margin-bottom:4px}
-    .adjustmentDetailText{line-height:1.35;margin:3px 0 7px;color:#667085}
-    .adjustmentEditBtn{margin-top:5px}
+/* Phase 8D.4.3 compact tuition table */
+.paidBadge{display:inline-flex;align-items:center;justify-content:center;gap:4px;border-radius:999px;background:#eaf9ef;color:#11833b;border:1px solid #bfecc9;padding:4px 7px;font-weight:1000;font-size:11px;line-height:1.15}
+.paidBadge:before{content:"✅"}
+.unpaidBadge{display:inline-flex;align-items:center;justify-content:center;gap:4px;border-radius:999px;background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;padding:4px 7px;font-weight:1000;font-size:11px;line-height:1.15}
+.unpaidBadge:before{content:"⏳"}
+.notBilledBadge{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;background:#f2f4f7;color:#475467;border:1px solid #d0d5dd;padding:4px 7px;font-weight:900;font-size:10.5px;line-height:1.15}
+.billingStartNote{margin-top:3px;font-size:10px!important;white-space:nowrap}
+.notApplicableText{color:#98a2b3;font-weight:900}
+.classBillingBlock{margin:14px 0;border:1px solid var(--line);border-radius:20px;background:#fff;overflow:hidden;box-shadow:0 10px 24px rgba(185,15,41,.05)}
+.classBillingHead{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 13px;background:linear-gradient(135deg,#fff4f6,#fff);border-bottom:1px solid var(--line)}
+.classBillingHead h2{margin:0;font-size:18px}.classBillingHead .mini{font-size:12px;line-height:1.3}
+.billingHeadActions,.billingActions{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.tuitionMessageBox{background:#fff8f9;border:1px dashed #ffcbd4;border-radius:18px;padding:14px;line-height:1.55;white-space:pre-line;color:#111827!important;font-weight:650;font-size:16px}
+.tuitionFilters{margin:14px 0 18px;padding:14px;border:1px solid #ffd3dc;border-radius:22px;background:linear-gradient(135deg,#fff7f9,#fff);box-shadow:0 10px 26px rgba(217,22,51,.06)}
+.tuitionFilters label{font-weight:900;color:#344054;display:flex;flex-direction:column;gap:7px;min-width:0}.tuitionFilters .input{width:100%;min-height:44px}
+.tuitionMonthPick{display:grid;grid-template-columns:minmax(120px,1fr) 120px;gap:10px}.tuitionMonthPick select,.tuitionMonthPick input{height:44px}
+.tuitionFilters .filterSummary{align-self:center;white-space:nowrap;background:#fff1f3;border:1px solid #ffc7d2;border-radius:999px;padding:10px 14px}
+.tuitionTableWrap{width:100%;max-height:none;overflow:visible;padding:0;border-radius:0 0 20px 20px}
+.tuitionTable{width:100%;min-width:0!important;table-layout:fixed;border-collapse:separate;border-spacing:0}
+.tuitionTable th,.tuitionTable td{vertical-align:middle;padding:7px 5px!important;line-height:1.2;font-size:11px;overflow-wrap:anywhere}
+.tuitionTable th{white-space:normal;text-align:center;font-size:10.5px;letter-spacing:0;font-weight:1000;position:static!important}
+.tuitionTable .colStudent,.tuitionTable .studentCell{width:12.5%;min-width:0!important;text-align:left;position:static!important;box-shadow:none!important}
+.tuitionTable .studentCell b{display:block;margin-bottom:2px;font-size:12px;line-height:1.18}.tuitionTable .studentCell .mini{font-size:9.5px;word-break:break-word}
+.tuitionTable .plannedCell{width:5%;text-align:center;font-size:12px}.tuitionTable .unitPriceCell{width:7%}.tuitionTable .amountCell{width:7.5%}
+.tuitionTable .adjustmentCell{width:9%;min-width:0!important;max-width:none!important}.tuitionTable .materialFeeCell{width:9%;min-width:0!important;text-align:center}
+.tuitionTable .debtCell{width:7.5%}.tuitionTable .creditCell{width:6.5%}.tuitionTable .totalCell{width:7.5%}.tuitionTable .statusCell{width:9%;min-width:0!important;text-align:center}
+.tuitionTable .sendCell{width:8%;min-width:0!important;text-align:center}.tuitionTable .paidActionCell{width:7.5%;min-width:0!important;text-align:center}
+.tuitionTable .unitPriceCell,.tuitionTable .amountCell,.tuitionTable .debtCell,.tuitionTable .creditCell,.tuitionTable .totalCell{text-align:right;white-space:normal;word-break:keep-all;font-size:10.5px}
+.tuitionTable .creditCell{color:#15803d;font-weight:1000}.tuitionTable .totalCell{color:#be123c;font-size:11.5px;font-weight:1000;background:#fff7f8}
+.tuitionTable .materialFeeAmount{margin-bottom:3px;font-weight:1000;white-space:normal}.tuitionTable .materialNoteText,.tuitionTable .adjustmentDetailText{margin:2px 0 4px;font-size:9px;line-height:1.2}
+.tuitionTable .materialEditBtn,.tuitionTable .adjustmentEditBtn{margin-top:2px;width:100%;max-width:none}
+.tuitionTable .tuitionSendStack,.tuitionTable .tableActionStack{display:flex;flex-direction:column;gap:4px;align-items:stretch;min-width:0!important}
+.tuitionTable .miniCardBtn{width:100%;min-height:26px;padding:4px 5px;font-size:10px;line-height:1.1;white-space:normal;border-radius:8px}
+.tuitionTable .sentBadge{display:inline-flex;justify-content:center;align-items:center;min-height:25px;padding:4px 6px;font-size:10px;line-height:1.1}
+.tuitionQuickActions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0 14px}.collapsedBillingBlock{padding-bottom:8px}
+.tuitionMessageActions{display:flex;justify-content:flex-end;align-items:center;gap:8px;flex-wrap:wrap}.tuitionMessageActions .btn,.tuitionMessageActions .paidBadge{min-height:42px}
+.tuitionLogicNotice{border:1px solid #fecdd3;background:linear-gradient(135deg,#fff1f2,#fff);color:#7f1d1d;border-radius:18px;padding:12px 14px;margin:0 0 14px;font-weight:800;line-height:1.45}
+.materialFeeSummary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.materialFeeSummary>div{border:1px solid #fecdd3;background:#fff7f8;border-radius:18px;padding:12px}.materialFeeSummary span{display:block;color:#667085;font-size:12px;font-weight:800;margin-bottom:4px}.materialFeeSummary b{color:#9f1239;font-size:16px}
+@media (max-width:1100px){.tuitionTable th,.tuitionTable td{padding:6px 3px!important;font-size:9.5px}.tuitionTable th{font-size:9px}.tuitionTable .studentCell b{font-size:11px}.tuitionTable .miniCardBtn{font-size:9px;padding:3px}.tuitionTable .paidBadge,.tuitionTable .unpaidBadge,.tuitionTable .notBilledBadge{font-size:9px;padding:3px 4px}}
+@media (max-width:900px){.tuitionMonthPick{grid-template-columns:1fr 1fr}.tuitionFilters .filterSummary{white-space:normal;text-align:center}.billingHeadActions{width:100%;justify-content:stretch}.billingHeadActions .btn{flex:1}.tuitionTableWrap{overflow-x:auto}.tuitionTable{min-width:1050px!important}.tuitionMessageActions{justify-content:stretch}.tuitionMessageActions .btn,.tuitionMessageActions .paidBadge{flex:1;min-width:110px}}
+@media (max-width:760px){.materialFeeSummary{grid-template-columns:1fr}.tuitionTable{min-width:1050px!important}.tuitionLogicNotice{font-size:13px}}
+
+/* Phase 8D.4.3: emphasize the final payable total in the message preview. */
+.tuitionMessageTotal{display:inline-block;margin-top:4px;font-weight:1000;color:#9f1239}

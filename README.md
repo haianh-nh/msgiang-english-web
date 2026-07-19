@@ -1,6 +1,6 @@
 # Ms.Giang English Center
 
-Bản ổn định hiện tại: `20phase8d4-1-tuition-style-hotfix`.
+Bản ổn định hiện tại: `20phase8d4-3-tuition-message-cleanup`.
 
 - App core: khoảng 234 KB.
 - CSS core: khoảng 59 KB.

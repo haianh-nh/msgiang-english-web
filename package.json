@@ -1,5 +1,5 @@
 {
-  "name": "msgiang-english-official-backend-phase8d4-1-tuition-style-hotfix",
+  "name": "msgiang-english-official-backend-phase8d4-3-tuition-message-cleanup",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -8,8 +8,8 @@
     "start": "next start",
     "seed:admin": "node --env-file=.env.local scripts/seed-admin.mjs",
     "check": "next build",
-    "audit": "node scripts/audit-phase8d4-1.mjs",
-    "verify": "npm run audit && node scripts/smoke-module-loader-phase8d4-1.mjs && npm run build"
+    "audit": "node scripts/audit-phase8d4-3.mjs",
+    "verify": "npm run audit && node scripts/smoke-module-loader-phase8d4-3.mjs && npm run build"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.110.2",

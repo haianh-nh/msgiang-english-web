@@ -74,7 +74,7 @@ const expected = [
   'schedulePage', 'openScheduleMakeup', 'openAttendance', 'saveAttendance',
   'classesPage', 'openClassDetail', 'makeupPage', 'teachersPage', 'settingsPage', 'homeworkPage',
   'evaluationPage', 'saveEvaluation', 'openEvaluationImage',
-  'tuitionPage', 'markPaid', 'openTuitionImage', 'openGeneratedImageModal',
+  'tuitionPage', 'markPaid', 'openGeneratedImageModal',
   'openStudentTransferModal',
 ];
 for (const name of expected) if (typeof main.sandbox[name] !== 'function') throw new Error(`${name} không nằm trên global context`);
@@ -85,7 +85,6 @@ const mustLoadBefore = (a, b) => {
   }
 };
 mustLoadBefore('reportImages', 'evaluation');
-mustLoadBefore('reportImages', 'tuition');
 mustLoadBefore('attendanceRuntime', 'attendancePopup');
 mustLoadBefore('makeup', 'scheduleActions');
 mustLoadBefore('classesRuntime', 'classes');
@@ -109,4 +108,4 @@ await retry.sandbox.MsRouteModules.ensure('tuition');
 if (!retry.sandbox.MsRouteModules.isReady('tuition')) throw new Error('Tuition không ready sau khi retry CSS');
 if (retry.styleOrder.filter((x) => x === 'tuition.css').length !== 2) throw new Error('Tuition CSS chưa được tải lại đúng một lần');
 
-console.log('Phase 8D.4.1 module-loader + tuition-style retry smoke đạt.');
+console.log('Phase 8D.4.3 module-loader + tuition-style retry smoke đạt.');

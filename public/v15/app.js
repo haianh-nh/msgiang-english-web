@@ -1,4 +1,4 @@
-window.MSGIANG_BUILD_VERSION='20phase8d4-1-tuition-style-hotfix';
+window.MSGIANG_BUILD_VERSION='20phase8d4-3-tuition-message-cleanup';
 const SEED = {
       classes: [],
       teachers: [],
@@ -4652,7 +4652,7 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
       }else{
         rows=classesForUser().flatMap(c=>(c.students||[]).map(st=>({...feeRowForStudent(st),student:{...st,classId:c.id,className:c.name},className:c.name})));
       }
-      rows=rows.filter(r=>r.billingEligible!==false || Number(r.adjustmentAmount||0)>0 || Number(r.materialFee||0)>0 || Number(r.previousDebt||0)>0 || Number(r.creditAmount||0)>0 || r.paid || isTuitionMessageSent(r.student.id));
+      // Phase 8D.4.3: giữ toàn bộ học sinh đang có trong lớp; học sinh chưa tới tháng tính phí hiển thị 0đ và trạng thái riêng.
       rows=sortBillingRows(rows);
       v18Memo.billingKey=key; v18Memo.billingRows=rows;
       return rows;

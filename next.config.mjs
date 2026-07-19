@@ -15,14 +15,14 @@ const nextConfig = {
         source: "/index-v15.html",
         headers: [
           { key: "Cache-Control", value: "no-store, max-age=0" },
-          { key: "X-Msgiang-Build", value: "20phase8d4-1-tuition-style-hotfix" }
+          { key: "X-Msgiang-Build", value: "20phase8d4-3-tuition-message-cleanup" }
         ]
       },
       {
         source: "/deployment-version.json",
         headers: [
           { key: "Cache-Control", value: "no-store, max-age=0" },
-          { key: "X-Msgiang-Build", value: "20phase8d4-1-tuition-style-hotfix" }
+          { key: "X-Msgiang-Build", value: "20phase8d4-3-tuition-message-cleanup" }
         ]
       }
     ];

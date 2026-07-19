@@ -1,3 +1,11 @@
+# Phase 8D.4.3 — Tuition Compact UI
+
+- Compact tuition table for full-screen desktop use.
+- Removed tuition image generation.
+- Expanded class tables without internal vertical scrolling.
+- Class summary now shows paid count.
+- Students not yet billable remain visible with a zero-fee status.
+
 # Changelog
 
 ## Phase 8D.4.1 — Tuition style hotfix

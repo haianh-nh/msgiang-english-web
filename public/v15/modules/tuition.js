@@ -16,7 +16,7 @@ function tuitionGroupSummaryDomId(className){
 function tuitionGroupSummaryText(g){
   const groupAdjustment=(g.items||[]).reduce((s,r)=>s+Number(r.adjustmentAmount||0),0);
   const groupCredit=(g.items||[]).reduce((s,r)=>s+Number(r.creditAmount||0),0);
-  return `${g.items.length} học sinh • Tổng ${fmt.format(g.total)}đ • Phát sinh ${fmt.format(groupAdjustment)}đ • Khấu trừ ${fmt.format(groupCredit)}đ • Đã gửi ${g.sent}/${g.items.length}`;
+  return `${g.items.length} học sinh • Tổng ${fmt.format(g.total)}đ • Phát sinh ${fmt.format(groupAdjustment)}đ • Khấu trừ ${fmt.format(groupCredit)}đ • Đã đóng ${g.paid}/${g.items.length}`;
 }
 function tuitionStudentRowMarkup(r){
   const sendKey=`send:${tuitionMonthKey()}:${r.student.id}`;
@@ -37,8 +37,8 @@ function tuitionStudentRowMarkup(r){
     <td class="debtCell">${Number(r.previousDebt||0)?`<b>${fmt.format(Number(r.previousDebt||0))}đ</b><div class="mini">${h(tuitionArrearsText(r))}</div>`:'0đ'}</td>
     <td class="money creditCell">${Number(r.creditAmount||0)?`-${fmt.format(Number(r.creditAmount||0))}đ`:'0đ'}</td>
     <td class="money totalCell">${fmt.format(Number(r.amount||0))}đ</td>
-    <td class="statusCell">${r.paid?'<span class="paidBadge">Đã đóng học phí</span>':'<span class="unpaidBadge">Chưa đóng</span>'}</td>
-    ${canManageTuition()?`<td class="sendCell"><div class="tableActionStack tuitionSendStack">${isTuitionMessageSent(r.student.id)?'<span class="sentBadge">Đã gửi</span>':`<button class="btn ghost miniCardBtn" ${v20o2BusyButtonAttrs(sendKey,'Đang gửi...')} onclick="openTuitionMessage('${r.student.id}')">Gửi</button>`}<button class="btn ghost miniCardBtn" onclick="copyTuitionMessage('${r.student.id}')">Copy</button><button class="btn ghost miniCardBtn" onclick="openTuitionImage('${r.student.id}')">Tạo ảnh</button></div></td><td class="paidActionCell">${r.paid?`<div class="tableActionStack"><span class="paidBadge">Đã nộp</span><button class="btn ghost miniCardBtn" ${v20o2BusyButtonAttrs(paidKey,'Đang lưu...')} onclick="unmarkPaid('${r.student.id}')">Bỏ nộp</button></div>`:`<button class="btn primary miniCardBtn" ${v20o2BusyButtonAttrs(paidKey,'Đang lưu...')} onclick="markPaid('${r.student.id}')">Đã nộp</button>`}</td>`:''}
+    <td class="statusCell">${r.billingEligible===false?`<span class="notBilledBadge">Chưa tính tháng này</span>${r.regularStartMonth?`<div class="mini billingStartNote">Từ ${h(r.regularStartMonth.split('-').reverse().join('/'))}</div>`:''}`:(r.paid?'<span class="paidBadge">Đã đóng học phí</span>':'<span class="unpaidBadge">Chưa đóng</span>')}</td>
+    ${canManageTuition()?`<td class="sendCell"><div class="tableActionStack tuitionSendStack">${isTuitionMessageSent(r.student.id)?'<span class="sentBadge">Đã gửi</span>':`<button class="btn ghost miniCardBtn" ${v20o2BusyButtonAttrs(sendKey,'Đang gửi...')} onclick="openTuitionMessage('${r.student.id}')">Gửi</button>`}<button class="btn ghost miniCardBtn" onclick="copyTuitionMessage('${r.student.id}')">Copy</button></div></td><td class="paidActionCell">${r.billingEligible===false&&!Number(r.amount||0)?'<span class="notApplicableText">—</span>':(r.paid?`<div class="tableActionStack"><span class="paidBadge">Đã nộp</span><button class="btn ghost miniCardBtn" ${v20o2BusyButtonAttrs(paidKey,'Đang lưu...')} onclick="unmarkPaid('${r.student.id}')">Bỏ nộp</button></div>`:`<button class="btn primary miniCardBtn" ${v20o2BusyButtonAttrs(paidKey,'Đang lưu...')} onclick="markPaid('${r.student.id}')">Đã nộp</button>`)}</td>`:''}
   </tr>`;
 }
 function tuitionGroupBlockMarkup(g,gi=0){
@@ -318,26 +318,33 @@ CTK: CAO HUONG GIANG`;
     }
 
 function tuitionMessageText(r){
-      const planned=Number(r.plannedSessions||r.billable||0), unit=Number(r.unitPrice||db.settings?.unitPrice||70000), tuitionAmount=Number(r.tuitionAmount||0), materialFee=Number(r.materialFee||0), adjustmentAmount=Number(r.adjustmentAmount||0), previousDebt=Number(r.previousDebt||0), creditAmount=Number(r.creditAmount||0), total=Number(r.amount||0);
-      const adjustmentLines=(r.adjustmentItems||[]).map(item=>{const x=v27NormalizeAdjustmentItem(item); return x?`- Học phí phát sinh ${v27MonthLabel(x.sourceMonth).toLowerCase()}: ${x.sessionCount} buổi × ${fmt.format(x.unitPrice)}đ = ${fmt.format(x.amount)}đ`:''}).filter(Boolean).join('\n');
+      const planned=Number(r.plannedSessions||r.billable||0), tuitionAmount=Number(r.tuitionAmount||0), materialFee=Number(r.materialFee||0), adjustmentAmount=Number(r.adjustmentAmount||0), previousDebt=Number(r.previousDebt||0), creditAmount=Number(r.creditAmount||0), total=Number(r.amount||0);
+      const moneyLines=[];
+      if(tuitionAmount>0) moneyLines.push(`- Học phí tháng: ${fmt.format(tuitionAmount)}đ`);
+      const adjustmentLines=(r.adjustmentItems||[]).map(item=>{const x=v27NormalizeAdjustmentItem(item); return x&&Number(x.amount||0)>0?`- Học phí phát sinh ${v27MonthLabel(x.sourceMonth).toLowerCase()}: ${x.sessionCount} buổi × ${fmt.format(x.unitPrice)}đ = ${fmt.format(x.amount)}đ`:''}).filter(Boolean);
+      if(adjustmentLines.length) moneyLines.push(...adjustmentLines);
+      else if(adjustmentAmount>0) moneyLines.push(`- Học phí phát sinh: ${fmt.format(adjustmentAmount)}đ`);
+      if(materialFee>0) moneyLines.push(`- Tiền học liệu: ${fmt.format(materialFee)}đ${r.materialNote?` (${r.materialNote})`:''}`);
+      if(previousDebt>0) moneyLines.push(`- Công nợ cũ chưa nộp: ${fmt.format(previousDebt)}đ (${tuitionArrearsText(r)})`);
+      if(creditAmount>0) moneyLines.push(`- Khấu trừ từ tháng trước: ${fmt.format(creditAmount)}đ`);
+      const details=moneyLines.length?`${moneyLines.join('\n')}\n`:'';
       return `Kính gửi phụ huynh bé ${r.student.name},
 
 Trung tâm Ms.Giang English gửi thông tin học phí ${formatTuitionMonth(tuitionMonthKey()).toLowerCase()} của bé:
 - Lớp: ${r.className}
 - Số buổi dự kiến trong tháng: ${planned} buổi
-- Đơn giá/buổi: ${fmt.format(unit)}đ
-- Học phí tháng: ${fmt.format(tuitionAmount)}đ
-${adjustmentLines?adjustmentLines+'\n':''}- Tiền học liệu: ${fmt.format(materialFee)}đ${r.materialNote?` (${r.materialNote})`:''}
-- Công nợ cũ chưa nộp: ${fmt.format(previousDebt)}đ${previousDebt?` (${tuitionArrearsText(r)})`:''}
-- Khấu trừ từ tháng trước: ${fmt.format(creditAmount)}đ
-- Tổng cần đóng: ${fmt.format(total)}đ
-- Trạng thái: ${r.paid?'Đã đóng học phí':'Chưa đóng học phí'}
+${details}𝗧𝗢̂̉𝗡𝗚 𝗖𝗔̂̀𝗡 Đ𝗢́𝗡𝗚: ${fmt.format(total)}đ
 
 Phụ huynh vui lòng kiểm tra và thanh toán đúng hạn. Xin cảm ơn!
 
 ${tuitionPaymentInfoText()}
 
 Ms.Giang English`;
+    }
+
+function tuitionMessageHtml(r){
+      const text=tuitionMessageText(r);
+      return h(text).replace(/(𝗧𝗢̂̉𝗡𝗚 𝗖𝗔̂̀𝗡 Đ𝗢́𝗡𝗚:[^\n]*)/, '<strong class="tuitionMessageTotal">$1</strong>');
     }
 
 async function copyTuitionMessage(studentId){
@@ -366,8 +373,8 @@ function openTuitionMessage(studentId){
       const r=tuitionRowByStudentId(studentId);
       if(!r){toast('Không tìm thấy học sinh trong bảng học phí');return}
       modal(`<div class="modalHead"><h2>Gửi học phí phụ huynh</h2><button class="close" onclick="closeModal()">×</button></div>
-      <div class="tuitionMessageBox" id="tuitionMessageBox_${studentId}">${h(tuitionMessageText(r))}</div>
-      <div style="margin-top:14px;text-align:right" class="billingActions tuitionMessageActions"><button class="btn ghost" onclick="closeModal()">Đóng</button><button class="btn ghost" onclick="copyTuitionMessage('${studentId}')">Copy</button><button class="btn ghost" onclick="openTuitionImage('${studentId}')">Tạo ảnh</button><button class="btn primary" ${v20o2BusyButtonAttrs(`send:${tuitionMonthKey()}:${studentId}`,'Đang gửi...')} onclick="sendTuitionMessage('${studentId}')">Gửi</button>${r.paid?'<span class="paidBadge">Đã nộp</span>':`<button class="btn green" ${v20o2BusyButtonAttrs(`paid:${tuitionMonthKey()}:${studentId}`,'Đang lưu...')} onclick="markPaid('${studentId}')">Đã nộp</button>`}</div>`)
+      <div class="tuitionMessageBox" id="tuitionMessageBox_${studentId}">${tuitionMessageHtml(r)}</div>
+      <div style="margin-top:14px;text-align:right" class="billingActions tuitionMessageActions"><button class="btn ghost" onclick="closeModal()">Đóng</button><button class="btn ghost" onclick="copyTuitionMessage('${studentId}')">Copy</button><button class="btn primary" ${v20o2BusyButtonAttrs(`send:${tuitionMonthKey()}:${studentId}`,'Đang gửi...')} onclick="sendTuitionMessage('${studentId}')">Gửi</button>${r.paid?'<span class="paidBadge">Đã nộp</span>':`<button class="btn green" ${v20o2BusyButtonAttrs(`paid:${tuitionMonthKey()}:${studentId}`,'Đang lưu...')} onclick="markPaid('${studentId}')">Đã nộp</button>`}</div>`)
     }
 
 async function sendTuitionMessage(studentId){
@@ -439,63 +446,6 @@ async function sendTuitionMessageBulk(){
       if(!pending.length){toast('Danh sách đang lọc đã được đánh dấu gửi hết');return}
       if(!confirm(`Đánh dấu đã gửi cho ${pending.length} học sinh trong danh sách đang lọc?`)) return;
       return v7gSendTuitionRowsBulk(pending,`sendbulk:${tuitionMonthKey()}`,'Đã gửi hàng loạt');
-    }
-
-function tuitionImageData(studentId){
-      const r=tuitionRowByStudentId(studentId); if(!r) return '';
-      const planned=Number(r.plannedSessions||0), unit=Number(r.unitPrice||db.settings?.unitPrice||70000), tuitionAmount=Number(r.tuitionAmount||0), adjustmentAmount=Number(r.adjustmentAmount||0), materialFee=Number(r.materialFee||0), previousDebt=Number(r.previousDebt||0), creditAmount=Number(r.creditAmount||0), totalDue=Number(r.amount||0);
-      const c=document.createElement('canvas'); c.width=1800; c.height=1540; const ctx=c.getContext('2d');
-      const grad=ctx.createLinearGradient(0,0,1800,1540); grad.addColorStop(0,'#fff5f7'); grad.addColorStop(1,'#ffffff'); ctx.fillStyle=grad; ctx.fillRect(0,0,c.width,c.height);
-      fillRoundRect(ctx,28,28,1744,1484,34,'#ffffff','#fecdd3');
-      ctx.fillStyle='#be123c'; ctx.font='bold 54px Arial'; ctx.fillText('Ms.Giang English',72,100);
-      ctx.fillStyle='#fb7185'; ctx.font='28px Arial'; ctx.fillText('Thông báo học phí thu trước theo tháng',74,142);
-      fillRoundRect(ctx,1360,58,330,58,24,'#fff1f2','#fecdd3');
-      ctx.fillStyle='#9f1239'; ctx.font='bold 30px Arial'; ctx.textAlign='center'; ctx.fillText(formatTuitionMonth(tuitionMonthKey()),1525,97); ctx.textAlign='left';
-
-      fillRoundRect(ctx,60,182,1680,110,26,'#fff7f8','#fecdd3');
-      ctx.fillStyle='#111827'; ctx.font='bold 42px Arial'; ctx.fillText(r.student.name,92,240);
-      ctx.fillStyle='#6b7280'; ctx.font='28px Arial'; ctx.fillText(`Lớp: ${r.className}`,92,278); ctx.fillText(`Liên hệ: ${r.student.contact||'Chưa có'}`,700,278);
-
-      const leftX=60, leftY=330, leftW=690, leftH=1120;
-      const rightX=780, rightY=330, rightW=960, rightH=1120;
-      fillRoundRect(ctx,leftX,leftY,leftW,leftH,28,'#ffffff','#fecdd3');
-      fillRoundRect(ctx,rightX,rightY,rightW,rightH,28,'#ffffff','#fecdd3');
-
-      const cards=[['Buổi dự kiến',planned],['Đơn giá',fmt.format(unit)+'đ'],['Phát sinh',fmt.format(adjustmentAmount)+'đ'],['Học liệu',fmt.format(materialFee)+'đ'],['Khấu trừ',creditAmount?'-'+fmt.format(creditAmount)+'đ':'0đ'],['Nợ cũ',fmt.format(previousDebt)+'đ']];
-      cards.forEach((it,i)=>{
-        const x=leftX+26+(i%2)*310; const y=leftY+26+Math.floor(i/2)*145;
-        fillRoundRect(ctx,x,y,275,110,22,'#fff','#fecdd3');
-        ctx.fillStyle='#6b7280'; ctx.font='26px Arial'; ctx.fillText(it[0],x+20,y+40);
-        ctx.fillStyle=i===4&&creditAmount?'#16a34a':'#e11d48'; ctx.font='bold 36px Arial'; ctx.fillText(String(it[1]),x+20,y+88);
-      });
-
-      fillRoundRect(ctx,leftX+26,leftY+478,leftW-52,235,24,'#fff1f2','#fecdd3');
-      ctx.fillStyle='#9f1239'; ctx.font='bold 31px Arial'; ctx.fillText('Tổng học phí cần đóng',leftX+48,leftY+528);
-      ctx.fillStyle='#e11d48'; ctx.font='bold 66px Arial'; ctx.fillText(fmt.format(totalDue)+'đ',leftX+48,leftY+608);
-      ctx.fillStyle='#374151'; ctx.font='25px Arial';
-      ctx.fillText(`Học phí tháng: ${fmt.format(tuitionAmount)}đ`,leftX+48,leftY+666);
-      ctx.fillText(`Phát sinh: ${fmt.format(adjustmentAmount)}đ`,leftX+48,leftY+704);
-      ctx.fillText(`Trạng thái: ${r.paid?'Đã đóng học phí':'Chưa đóng học phí'}`,leftX+48,leftY+742);
-
-      fillRoundRect(ctx,leftX+26,leftY+782,leftW-52,118,24,'#ffffff','#fecdd3',true);
-      ctx.strokeStyle='#fecdd3'; ctx.lineWidth=3; ctx.setLineDash([12,10]); ctx.stroke(); ctx.setLineDash([]);
-      ctx.fillStyle='#9ca3af'; ctx.font='bold 30px Arial'; ctx.textAlign='center';
-      ctx.fillText('QR thanh toán',leftX + leftW/2,leftY+837);
-      ctx.fillStyle='#cbd5e1'; ctx.font='23px Arial';
-      ctx.fillText('Để trống - sẽ thêm QR sau',leftX + leftW/2,leftY+872);
-      ctx.textAlign='left';
-
-      ctx.fillStyle='#111827'; ctx.font='bold 34px Arial'; ctx.fillText('Nội dung gửi phụ huynh',rightX+30,rightY+48);
-      fillRoundRect(ctx,rightX+24,rightY+76,rightW-48,1004,24,'#fff7f8','#fecdd3');
-      drawCanvasText(ctx,tuitionMessageText(r),rightX+48,rightY+126,rightW-96,36,'#374151','24px Arial',27);
-
-      return c.toDataURL('image/png');
-    }
-
-function openTuitionImage(studentId){
-      const r=tuitionRowByStudentId(studentId); if(!r){toast('Không tìm thấy học sinh');return}
-      const url=tuitionImageData(studentId);
-      openGeneratedImageModal(`Ảnh học phí • ${r.student.name}`,url,`hocphi_${r.student.name.replace(/\s+/g,'_')}.png`,'Ảnh thông báo học phí đã sẵn sàng. Bạn có thể tải về hoặc gửi thủ công cho phụ huynh.');
     }
 
 let v7fTuitionBackgroundTimer=null;

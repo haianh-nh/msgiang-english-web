@@ -10,8 +10,8 @@ const fail = (message) => { console.error(`✗ ${message}`); process.exitCode = 
 const pass = (message) => console.log(`✓ ${message}`);
 const expect = (condition, message) => condition ? pass(message) : fail(message);
 
-const build = '20phase8d4-1-tuition-style-hotfix';
-const phase = '8d4-1-tuition-style-hotfix';
+const build = '20phase8d4-3-tuition-message-cleanup';
+const phase = '8d4-3-tuition-message-cleanup';
 const index = read('public/index-v15.html');
 const app = read('public/v15/app.js');
 const loader = read('public/v15/module-loader.js');
@@ -31,7 +31,7 @@ const pkg = JSON.parse(read('package.json'));
 const requiredModules = {
   'public/v15/modules/dashboard.js': ['overview', 'quickTodos', 'notifications'],
   'public/v15/modules/report-images.js': ['openGeneratedImageModal', 'drawCanvasText'],
-  'public/v15/modules/tuition.js': ['tuitionPage', 'markPaid', 'openTuitionImage', 'v7fPatchTuitionVisibleDom'],
+  'public/v15/modules/tuition.js': ['tuitionPage', 'markPaid', 'v7fPatchTuitionVisibleDom'],
   'public/v15/modules/evaluation.js': ['evaluationPage', 'saveEvaluation', 'openEvaluationImage', 'v7fIsEvaluationDirty'],
   'public/v15/modules/classes-runtime.js': ['openClassDetail', 'openClassModal', 'saveStudentToClass'],
   'public/v15/modules/attendance-runtime.js': ['saveAttendance', 'setAttendanceStatus'],
@@ -45,8 +45,8 @@ expect(deployment.build === build && deployment.phase === phase, 'deployment-ver
 expect([app, loader, network, realtime, warmup].every((body) => body.includes(build)), 'Toàn bộ frontend runtime dùng đúng build');
 expect(versionRoute.includes(`build: "${build}"`) && versionRoute.includes(`phase: "${phase}"`), 'API version dùng đúng build/phase');
 expect(nextConfig.match(new RegExp(build, 'g'))?.length === 2, 'Response headers dùng đúng build');
-expect(pkg.scripts.audit.includes('audit-phase8d4-1'), 'Package chạy audit 8D.4.1');
-expect(pkg.scripts.verify.includes('smoke-module-loader-phase8d4-1'), 'Package chạy smoke 8D.4.1');
+expect(pkg.scripts.audit.includes('audit-phase8d4-3'), 'Package chạy audit 8D.4.2');
+expect(pkg.scripts.verify.includes('smoke-module-loader-phase8d4-3'), 'Package chạy smoke 8D.4.2');
 
 const networkPos = index.indexOf('/v15/network-runtime.js');
 const appPos = index.indexOf('/v15/app.js');
@@ -76,7 +76,18 @@ for (const name of lazyStyles) {
   if (exists(file)) lazyCssTotal += size(file);
 }
 expect(lazyCssTotal > 35000, `Vẫn tách ${Math.round(lazyCssTotal / 1024)} KB CSS theo module`);
-expect(loader.includes("styles: ['tuition.css']") && loader.includes("styles: ['evaluation.css']"), 'Học phí và Đánh giá vẫn tải style riêng');
+expect(loader.includes("tuition: { file: 'tuition.js', ready: 'tuitionPage', styles: ['tuition.css'] }") && loader.includes("styles: ['evaluation.css']"), 'Học phí tải style riêng và không còn phụ thuộc tạo ảnh');
+expect(!read('public/v15/modules/tuition.js').includes('openTuitionImage') && !read('public/v15/modules/tuition.js').includes('tuitionImageData'), 'Đã loại bỏ tính năng tạo ảnh Học phí');
+expect(read('public/v15/modules/tuition.js').includes('Đã đóng ${g.paid}/${g.items.length}'), 'Tóm tắt lớp dùng trạng thái Đã đóng');
+expect(!app.includes('rows=rows.filter(r=>r.billingEligible!==false'), 'Danh sách Học phí giữ cả học sinh chưa tới tháng tính phí');
+expect(tuitionCss.includes('max-height:none') && tuitionCss.includes('overflow:visible'), 'Bảng lớp hiển thị toàn bộ học sinh, không cuộn dọc riêng');
+expect(tuitionCss.includes('table-layout:fixed') && tuitionCss.includes('min-width:0!important'), 'Bảng Học phí desktop được thu gọn vừa chiều ngang');
+const tuitionModule = read('public/v15/modules/tuition.js');
+expect(!/Đơn giá\/buổi:/.test(tuitionModule.slice(tuitionModule.indexOf('function tuitionMessageText'), tuitionModule.indexOf('async function copyTuitionMessage'))), 'Text học phí đã bỏ đơn giá');
+expect(!/Trạng thái:/.test(tuitionModule.slice(tuitionModule.indexOf('function tuitionMessageText'), tuitionModule.indexOf('async function copyTuitionMessage'))), 'Text học phí đã bỏ trạng thái');
+expect(tuitionModule.includes('if(materialFee>0)') && tuitionModule.includes('if(previousDebt>0)') && tuitionModule.includes('if(creditAmount>0)'), 'Text học phí ẩn các khoản bằng 0');
+expect(tuitionModule.includes('𝗧𝗢̂̉𝗡𝗚 𝗖𝗔̂̀𝗡 Đ𝗢́𝗡𝗚') && tuitionModule.includes('tuitionMessageHtml'), 'Tổng cần đóng được nhấn mạnh');
+
 
 for (const [file, names] of Object.entries(requiredModules)) {
   expect(exists(file), `Có module ${path.basename(file)}`);
@@ -109,7 +120,7 @@ for (const file of [...new Set(jsFiles)]) {
 }
 
 if (process.exitCode) {
-  console.error('\nPhase 8D.4.1 audit thất bại. Không nên deploy.');
+  console.error('\nPhase 8D.4.3 audit thất bại. Không nên deploy.');
   process.exit(process.exitCode);
 }
-console.log('\nPhase 8D.4.1 audit đạt.');
+console.log('\nPhase 8D.4.3 audit đạt.');

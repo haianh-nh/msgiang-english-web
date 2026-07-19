@@ -1,7 +1,7 @@
 (function bootstrapMsgiangRouteModules(global) {
   'use strict';
 
-  var BUILD_VERSION = '20phase8d4-1-tuition-style-hotfix';
+  var BUILD_VERSION = '20phase8d4-3-tuition-message-cleanup';
   var STYLE_TIMEOUT_MS = 12000;
   var ROUTE_MODULES = Object.freeze({
     overview: { file: 'dashboard.js', ready: 'overview', styles: ['dashboard.css'] },
@@ -14,7 +14,7 @@
     makeup: { file: 'makeup.js', ready: 'makeupPage', styles: ['schedule.css'] },
     scheduleActions: { file: 'schedule-actions.js', ready: 'openScheduleMakeup', dependencies: ['makeup'], styles: ['schedule.css'] },
     schedule: { file: 'schedule.js', ready: 'schedulePage', dependencies: ['attendancePopup', 'classesRuntime', 'scheduleActions'], styles: ['schedule.css'] },
-    tuition: { file: 'tuition.js', ready: 'tuitionPage', dependencies: ['reportImages'], styles: ['tuition.css'] },
+    tuition: { file: 'tuition.js', ready: 'tuitionPage', styles: ['tuition.css'] },
     homeworkRuntime: { file: 'homework-library-runtime.js', ready: 'ensureHomework', styles: ['library.css'] },
     homework: { file: 'library.js', ready: 'homeworkPage', dependencies: ['homeworkRuntime'], styles: ['library.css'] },
     evaluation: { file: 'evaluation.js', ready: 'evaluationPage', dependencies: ['reportImages'], styles: ['evaluation.css'] },
