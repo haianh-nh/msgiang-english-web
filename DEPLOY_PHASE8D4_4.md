@@ -7,4 +7,4 @@ npm ci
 npm run verify
 ```
 
-Build cần kiểm tra: `20phase8d4-4-tuition-search-reset`.
+Build cần kiểm tra: `20phase8d4-5-staff-main-class-cards`.

@@ -1,10 +1,11 @@
 # Ms.Giang English Center
 
-Bản ổn định hiện tại: `20phase8d4-4-tuition-search-reset`.
+Bản ổn định hiện tại: `20phase8d4-5-staff-main-class-cards`.
 
 - App core: khoảng 234 KB.
 - CSS core: khoảng 59 KB.
-- Không cần migration SQL cho Phase 8D.4.4.
+- Không cần migration SQL cho Phase 8D.4.5.
+- Thẻ Giáo viên/TA/Quản lí chỉ hiển thị và đếm lớp chính; lớp Học kèm được ẩn khỏi thẻ.
 - Chạy `npm run verify` trước khi deploy.
 
 ## Kiểm tra trước deploy
@@ -21,7 +22,7 @@ npm run verify
 - `public/v15/modules/dashboard.js`: Dashboard/Tổng quan.
 - `public/v15/modules/tuition.js`: trang và runtime Học phí.
 - `public/v15/modules/evaluation.js`: trang và runtime Đánh giá học sinh.
-- `public/v15/modules/report-images.js`: helper tạo ảnh Học phí/Đánh giá.
+- `public/v15/modules/report-images.js`: helper tạo ảnh Đánh giá.
 - `public/v15/modules/classes-runtime.js`: popup và mutation Lớp học.
 - `public/v15/modules/attendance-runtime.js`: mutation Điểm danh.
 - `public/v15/modules/schedule-actions.js`: thao tác Lịch dạy/Học bù.

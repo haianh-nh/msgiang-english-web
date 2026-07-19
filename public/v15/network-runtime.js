@@ -1,7 +1,7 @@
 (function bootstrapMsgiangNetworkRuntime(global) {
   'use strict';
 
-  var BUILD_VERSION = '20phase8d4-4-tuition-search-reset';
+  var BUILD_VERSION = '20phase8d4-5-staff-main-class-cards';
   var GET_TTL_MS = 1800;
   var inflightGet = new Map();
   var shortGetCache = new Map();

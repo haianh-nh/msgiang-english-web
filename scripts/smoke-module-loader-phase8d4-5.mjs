@@ -108,4 +108,40 @@ await retry.sandbox.MsRouteModules.ensure('tuition');
 if (!retry.sandbox.MsRouteModules.isReady('tuition')) throw new Error('Tuition không ready sau khi retry CSS');
 if (retry.styleOrder.filter((x) => x === 'tuition.css').length !== 2) throw new Error('Tuition CSS chưa được tải lại đúng một lần');
 
-console.log('Phase 8D.4.4 module-loader + tuition-style retry smoke đạt.');
+
+
+// Staff cards must hide tutoring support classes while keeping main class counts/tags.
+const staffSource = fs.readFileSync(path.join(root, 'public/v15/modules/staff.js'), 'utf8');
+const staffContext = {
+  console, Map, Set, Promise, Object, Array, String, Number, Boolean, Date, Math, Error,
+  setTimeout, clearTimeout,
+  db: {
+    teachers: [{ id: 't1', name: 'Ms Bích', phone: '0867915950', roles: ['teacher'], status: 'active' }],
+    classes: [
+      { id: 'c1', name: 'G2.2', grade: 'G2', teacherId: 't1', teacher: 'Ms Bích' },
+      { id: 'c2', name: 'Học kèm G2.2', grade: 'Học kèm', teacherId: 't1', teacher: 'Ms Bích' },
+      { id: 'c3', name: 'Tutoring legacy', note: '__tutoring_session__', teacherId: 't1', teacher: 'Ms Bích' },
+      { id: 'c4', name: 'Học kèm GK+G', teacherId: 't1', teacher: 'Ms Bích' },
+      { id: 'c5', name: 'G3.1', grade: 'G3', taId: 't1', ta: 'Ms Bích' },
+    ],
+  },
+  teacherRoleValue: () => 'teacher',
+  h: (value) => String(value ?? ''),
+};
+staffContext.window = staffContext;
+staffContext.globalThis = staffContext;
+const staffSandbox = vm.createContext(staffContext);
+vm.runInContext(staffSource, staffSandbox, { filename: 'staff.js' });
+const mainClassNames = vm.runInContext("mainClassesOfTeacher(db.teachers[0]).map(c=>c.name)", staffSandbox);
+if (JSON.stringify(Array.from(mainClassNames)) !== JSON.stringify(['G2.2', 'G3.1'])) {
+  throw new Error(`Lọc lớp chính trên thẻ sai: ${JSON.stringify(Array.from(mainClassNames))}`);
+}
+const staffCard = vm.runInContext("teacherCard(db.teachers[0],0)", staffSandbox);
+if (!staffCard.includes('2 lớp') || !staffCard.includes('G2.2') || !staffCard.includes('G3.1')) {
+  throw new Error('Thẻ giáo viên chưa hiển thị đúng số lượng/tên lớp chính');
+}
+if (/Học kèm|Tutoring legacy/i.test(staffCard)) {
+  throw new Error('Thẻ giáo viên vẫn còn hiển thị lớp Học kèm');
+}
+
+console.log('Phase 8D.4.5 module-loader + staff main-class card smoke đạt.');

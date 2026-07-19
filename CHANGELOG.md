@@ -1,4 +1,11 @@
-# Phase 8D.4.3 — Tuition Compact UI
+# Changelog
+
+## Phase 8D.4.5 — Staff Main-Class Cards
+
+- Ẩn hoàn toàn lớp Học kèm khỏi thẻ Giáo viên, TA và Quản lí.
+- Số lớp và nhãn `+X lớp` chỉ tính lớp chính.
+- Giữ nguyên dữ liệu/phân công Học kèm trong popup và các tab nghiệp vụ khác.
+- Không thay đổi database hoặc API.
 
 ## Phase 8D.4.4 — Tuition Search Reset
 
@@ -12,8 +19,6 @@
 - Expanded class tables without internal vertical scrolling.
 - Class summary now shows paid count.
 - Students not yet billable remain visible with a zero-fee status.
-
-# Changelog
 
 ## Phase 8D.4.1 — Tuition style hotfix
 

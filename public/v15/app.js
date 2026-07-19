@@ -1,4 +1,4 @@
-window.MSGIANG_BUILD_VERSION='20phase8d4-4-tuition-search-reset';
+window.MSGIANG_BUILD_VERSION='20phase8d4-5-staff-main-class-cards';
 const SEED = {
       classes: [],
       teachers: [],

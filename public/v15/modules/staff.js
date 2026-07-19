@@ -3,6 +3,13 @@
     function teacherRoleLabel(t){const v=teacherRoleValue(t); return v==='admin'?'Admin':v==='manager'?'Quản lí':v==='ta'?'TA':'Giáo viên'}
     function teacherRoleClasses(t){const v=teacherRoleValue(t); return v==='admin'?'red':v==='manager'?'blue':v==='ta'?'purple':'green'}
     function classesOfTeacher(t){return db.classes.filter(c=>c.teacherId===t.id || c.taId===t.id || c.teacher===t.name || c.ta===t.name)}
+    function v7hIsTutoringClass(c){
+      const note=String(c?.note||'').trim().toLocaleLowerCase('vi');
+      const grade=String(c?.grade||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('vi').trim();
+      const name=String(c?.name||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('vi').trim();
+      return note.startsWith('__tutoring_session__') || grade==='hoc kem' || name==='hoc kem' || name.startsWith('hoc kem ');
+    }
+    function mainClassesOfTeacher(t){return classesOfTeacher(t).filter(c=>!v7hIsTutoringClass(c))}
 
     function roleChoiceMarkup(active='teacher',prefix='teacherRoleChoice',allowAdmin=isAdmin()){
       const roles=[
@@ -302,7 +309,7 @@
     }
 
     function teacherCard(t,i){
-      const cls=classesOfTeacher(t);
+      const cls=mainClassesOfTeacher(t);
       const active=t.status!=='inactive';
       const id=String(t.id||'');
       const staffName=String(t.name||'').toLocaleLowerCase('vi');
