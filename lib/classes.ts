@@ -109,29 +109,96 @@ function canManageClasses(user: any) {
   return roles.includes("admin") || roles.includes("manager") || roles.includes("receptionist");
 }
 
-export async function teacherForUser(user: any): Promise<any> {
-  if (!user?.id && !user?.phone) return null;
+function normalizeTeacherPhone(value: any) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  if (raw === "admin") return raw;
+  return raw.replace(/\D/g, "");
+}
+
+function teacherIdentityRank(row: any) {
+  const active = String(row?.status || "active").toLowerCase() === "active" ? 1 : 0;
+  const updated = Date.parse(String(row?.updated_at || row?.created_at || "")) || 0;
+  return { active, updated };
+}
+
+/**
+ * Return every teacher row that can legitimately represent the logged-in user.
+ *
+ * Older production data may contain more than one official_teachers row for the
+ * same account. Using maybeSingle() made those users impossible to resolve and
+ * caused attendance saves to be rejected even though the weekly schedule could
+ * still be visible through the schedule RPC. Keep all matching IDs for permission
+ * checks and expose the best active row as the canonical teacher.
+ */
+export async function teacherIdentitiesForUser(user: any): Promise<any[]> {
+  if (!user?.id && !user?.phone) return [];
   const supabase = supabaseAdmin();
+  const rows: any[] = [];
 
   if (user?.id) {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("official_teachers")
-      .select("id")
+      .select("id,user_id,name,phone,status,updated_at,created_at")
       .eq("user_id", user.id)
-      .maybeSingle();
-    if (data) return data;
+      .order("updated_at", { ascending: false, nullsFirst: false })
+      .limit(20);
+    if (error) throw error;
+    rows.push(...(data || []));
   }
 
-  if (user?.phone) {
-    const { data } = await supabase
+  const phone = normalizeTeacherPhone(user?.phone);
+  if (phone) {
+    const { data, error } = await supabase
       .from("official_teachers")
-      .select("id")
-      .eq("phone", user.phone)
-      .maybeSingle();
-    if (data) return data;
+      .select("id,user_id,name,phone,status,updated_at,created_at")
+      .eq("phone", phone)
+      .order("updated_at", { ascending: false, nullsFirst: false })
+      .limit(20);
+    if (error) throw error;
+    rows.push(...(data || []));
+
+    // Very old teacher rows may contain spaces/dashes in phone numbers. Only use
+    // this broader fallback when the indexed exact lookup found nothing.
+    if (!(data || []).length) {
+      const { data: legacyRows, error: legacyError } = await supabase
+        .from("official_teachers")
+        .select("id,user_id,name,phone,status,updated_at,created_at")
+        .not("phone", "is", null)
+        .limit(500);
+      if (legacyError) throw legacyError;
+      rows.push(...(legacyRows || []).filter((row: any) => normalizeTeacherPhone(row?.phone) === phone));
+    }
   }
 
-  return null;
+  // Imported classes from early versions could point to one name-only teacher
+  // row, while the later login account created a second linked row. Include the
+  // old row only when there is exactly one unlinked, phone-less exact-name match;
+  // this avoids granting access when two different teachers share a name.
+  const name = String(user?.name || "").trim();
+  if (name) {
+    const { data: nameRows, error: nameError } = await supabase
+      .from("official_teachers")
+      .select("id,user_id,name,phone,status,updated_at,created_at")
+      .eq("name", name)
+      .limit(20);
+    if (nameError) throw nameError;
+    const safeLegacyNameRows = (nameRows || []).filter((row: any) => !row?.user_id && !normalizeTeacherPhone(row?.phone));
+    if (safeLegacyNameRows.length === 1) rows.push(safeLegacyNameRows[0]);
+  }
+
+  const unique = Array.from(new Map(rows.filter((row) => row?.id).map((row) => [String(row.id), row])).values());
+  unique.sort((a: any, b: any) => {
+    const ra = teacherIdentityRank(a);
+    const rb = teacherIdentityRank(b);
+    return rb.active - ra.active || rb.updated - ra.updated || String(a.id).localeCompare(String(b.id));
+  });
+  return unique;
+}
+
+export async function teacherForUser(user: any): Promise<any> {
+  const rows = await teacherIdentitiesForUser(user);
+  return rows[0] || null;
 }
 
 const CLASS_SELECT_V48 = CLASS_WITH_RELATIONS_SELECT;
@@ -140,23 +207,25 @@ export async function fetchClassesV48(user?: any) {
   const supabase = supabaseAdmin();
 
   if (user && !canManageClasses(user)) {
-    const teacher = await teacherForUser(user);
-    if (!teacher?.id) return [];
+    const teacherRows = await teacherIdentitiesForUser(user);
+    const teacherIds = Array.from(new Set(teacherRows.map((row: any) => String(row?.id || "")).filter(Boolean)));
+    if (!teacherIds.length) return [];
 
     const activeClassFilter = "status.is.null,status.eq.active";
+    const assignmentFilter = `teacher_id.in.(${teacherIds.join(",")}),assistant_teacher_id.in.(${teacherIds.join(",")})`;
 
     const [mainRes, makeupRowsRes] = await Promise.all([
       supabase
         .from("official_classes")
         .select(CLASS_SELECT_V48)
-        .or(`teacher_id.eq.${teacher.id},assistant_teacher_id.eq.${teacher.id}`)
+        .or(assignmentFilter)
         .or(activeClassFilter)
         .or("note.is.null,note.not.like.__tutoring_session__%")
         .order("name", { ascending: true }),
       supabase
         .from("official_class_makeup_sessions")
         .select("class_id")
-        .eq("teacher_id", teacher.id)
+        .in("teacher_id", teacherIds)
         .neq("status", "cancelled")
     ]);
 

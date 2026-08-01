@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { canManage, hasRole, requireUser } from "@/lib/auth";
-import { teacherForUser } from "@/lib/classes";
+import { teacherIdentitiesForUser } from "@/lib/classes";
 import { supabaseAdmin } from "@/lib/supabase";
 
 function uniq(values: any[]) {
@@ -88,24 +88,23 @@ export async function GET(req: NextRequest) {
   const classRows = classRes.data || [];
   const classById = new Map<string, any>(classRows.map((c:any)=>[String(c.id), c]));
 
-  let currentTeacherId = "";
+  let currentTeacherIds = new Set<string>();
   if (!canManage(user) && (hasRole(user, "teacher") || hasRole(user, "ta"))) {
-    const teacher = await teacherForUser(user);
-    currentTeacherId = String(teacher?.id || "");
+    const teachers = await teacherIdentitiesForUser(user);
+    currentTeacherIds = new Set(teachers.map((row: any) => String(row?.id || "")).filter(Boolean));
   }
 
   const visibleRows = canManage(user)
     ? allRows
     : allRows.filter((r:any)=>{
-        if (!currentTeacherId) return false;
+        if (!currentTeacherIds.size) return false;
         const assigned = String(r.teacher_id || "");
         const classRow = classById.get(String(r.class_id || ""));
         const mainTeacher = String(classRow?.teacher_id || "");
         const assistantTeacher = String(classRow?.assistant_teacher_id || "");
-        // V20N: giáo viên chính hoặc TA của lớp đều thấy lịch dạy bù liên quan.
         return assigned
-          ? assigned === currentTeacherId || mainTeacher === currentTeacherId || assistantTeacher === currentTeacherId
-          : mainTeacher === currentTeacherId || assistantTeacher === currentTeacherId;
+          ? currentTeacherIds.has(assigned) || currentTeacherIds.has(mainTeacher) || currentTeacherIds.has(assistantTeacher)
+          : currentTeacherIds.has(mainTeacher) || currentTeacherIds.has(assistantTeacher);
       });
 
   const visibleClassIds = uniq(visibleRows.map((r:any)=>r.class_id));
@@ -169,7 +168,7 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({
     ok: true,
-    currentTeacherId: currentTeacherId || null,
+    currentTeacherId: Array.from(currentTeacherIds)[0] || null,
     classCancellations,
     classMakeupSessions,
   });

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { canManage, hasRole, requireUser } from "@/lib/auth";
-import { teacherForUser } from "@/lib/classes";
+import { teacherIdentitiesForUser } from "@/lib/classes";
 import { supabaseAdmin } from "@/lib/supabase";
 
 function validDate(v: string | null) {
@@ -159,8 +159,8 @@ async function legacyGET(req: NextRequest) {
           .in("id", allMakeupClassIds)
       : Promise.resolve({ data: [], error: null } as any),
     !canManage(user) && (hasRole(user, "teacher") || hasRole(user, "ta"))
-      ? teacherForUser(user)
-      : Promise.resolve(null),
+      ? teacherIdentitiesForUser(user)
+      : Promise.resolve([]),
     sourceAbsenceIds.length
       ? supabase
           .from("official_absence_records")
@@ -174,20 +174,21 @@ async function legacyGET(req: NextRequest) {
 
   const classRows = classRes.data || [];
   const classById = new Map<string, any>(classRows.map((c:any)=>[String(c.id), c]));
-  const currentTeacherId = String(currentTeacher?.id || "");
+  const currentTeacherIds = new Set((currentTeacher || []).map((row: any) => String(row?.id || "")).filter(Boolean));
 
   const visibleMakeupRows = canManage(user)
     ? allMakeupRows
     : allMakeupRows.filter((r:any) => {
-        if (!currentTeacherId) return false;
+        if (!currentTeacherIds.size) return false;
         const assignedTeacherId = String(r.teacher_id || "");
         const classRow = classById.get(String(r.class_id || ""));
         const classTeacherId = String(classRow?.teacher_id || "");
         const classAssistantId = String(classRow?.assistant_teacher_id || "");
-        // V20N: giáo viên chính hoặc TA của lớp đều thấy lịch dạy bù liên quan.
+        // Giáo viên chính, TA hoặc bất kỳ hồ sơ giáo viên cũ nào cùng tài khoản
+        // đều thấy buổi dạy bù liên quan.
         return assignedTeacherId
-          ? assignedTeacherId === currentTeacherId || classTeacherId === currentTeacherId || classAssistantId === currentTeacherId
-          : classTeacherId === currentTeacherId || classAssistantId === currentTeacherId;
+          ? currentTeacherIds.has(assignedTeacherId) || currentTeacherIds.has(classTeacherId) || currentTeacherIds.has(classAssistantId)
+          : currentTeacherIds.has(classTeacherId) || currentTeacherIds.has(classAssistantId);
       });
 
   const visibleClassIds = uniq(visibleMakeupRows.map((r:any)=>r.class_id));
@@ -285,7 +286,7 @@ async function legacyGET(req: NextRequest) {
     ok: true,
     start: start || null,
     end: end || null,
-    currentTeacherId: currentTeacherId || null,
+    currentTeacherId: Array.from(currentTeacherIds)[0] || null,
     classCancellations,
     classMakeupSessions,
     makeupPlans,
@@ -361,6 +362,21 @@ export async function GET(req: NextRequest) {
   const { start, end } = resolveWeekRange(req);
   const manage = canManage(user);
   const supabase = supabaseAdmin();
+
+  // The SQL week RPC resolves one canonical teacher row. Legacy databases may
+  // contain duplicate teacher rows for the same account, while classes still
+  // reference an older row. In that rare case use the alias-aware TypeScript
+  // path so the teacher sees every assigned class and can save attendance.
+  if (!manage && (hasRole(user, "teacher") || hasRole(user, "ta"))) {
+    const identities = await teacherIdentitiesForUser(user);
+    if (identities.length > 1) {
+      const fallback = await legacyGET(req);
+      fallback.headers.set("X-Schedule-Mode", "legacy-teacher-aliases");
+      fallback.headers.set("X-Teacher-Identity-Count", String(identities.length));
+      return fallback;
+    }
+  }
+
   const inflightKey = [
     String(user?.id || user?.phone || "anonymous"),
     manage ? "manage" : "teaching",

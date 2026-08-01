@@ -1,4 +1,4 @@
-window.MSGIANG_BUILD_VERSION='20phase8d4-6-staff-tutoring-visibility-fix';
+window.MSGIANG_BUILD_VERSION='20phase8d4-7-teacher-attendance-fix';
 const SEED = {
       classes: [],
       teachers: [],
@@ -2812,7 +2812,10 @@ const SEED = {
     const classesForTeachingUser = () => {
       normalizeClassOperations();
       if(isAdmin()) return operationalClasses();
-      if(isTeachingUser()) return operationalClasses().filter(c=>classBelongsToTeacher(c,currentUser.name));
+      // /api/classes đã giới hạn đúng phạm vi Giáo viên/TA ở phía server.
+      // Không lọc lại bằng tên/SĐT ở trình duyệt vì hồ sơ cũ hoặc tên đổi có thể
+      // làm mất lớp và khiến giáo viên không mở được điểm danh.
+      if(isTeachingUser()) return operationalClasses();
       if(isParent()) return operationalClasses().filter(c=>c.students.some(s=>selectedParentChildIds().includes(s.id)));
       return [];
     };
@@ -2823,7 +2826,7 @@ const SEED = {
       if(v18Memo.classesForUser.key===key) return v18Memo.classesForUser.rows;
       let rows=[];
       if(canManageOperations()) rows=operationalClasses();
-      else if(isTeachingUser()) rows=operationalClasses().filter(c=>classBelongsToTeacher(c,currentUser.name));
+      else if(isTeachingUser()) rows=operationalClasses();
       else if(isParent()){
         const selected=new Set(selectedParentChildIds());
         rows=operationalClasses().filter(c=>(c.students||[]).some(s=>selected.has(s.id)));
@@ -3275,7 +3278,8 @@ const SEED = {
       const [start,end] = String(slot||'').split('-');
       const c=classById(classId);
       if(!c?.id || !day || !start || !end) return null;
-      return {classId, className:c.name, teacher:c.teacher, ta:c.ta, students:c.students?.length||0, day, date, start, end, slot, raw:c.time};
+      const makeup=classMakeupForAnySessionKey(key);
+      return {classId, className:c.name, teacher:makeup?.teacher||c.teacher, teacherId:makeup?.teacherId||c.teacherId, ta:c.ta, students:c.students?.length||0, day, date, start, end, slot, raw:c.time, type:makeup?'class_makeup':'regular', sessionKind:makeup?.sessionKind||(makeup?'class_makeup':'regular'), makeupId:makeup?.id||null};
     }
 
 
@@ -3820,7 +3824,7 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
         isEarly:now<openAt,
         isLate:now>closeAt,
         cancelled:false,
-        label:`Mở từ ${openAt.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'})} đến 23:59`
+        label:`Mở từ ${openAt.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit',timeZone:'Asia/Ho_Chi_Minh'})} đến 23:59 (giờ Việt Nam)`
       };
     }
 
@@ -4125,8 +4129,15 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
     function dayDateFor(dayKey){const idx=WEEK_DAYS.findIndex(d=>d.key===dayKey); return addDays(weekStartDate(), idx<0?0:idx)}
 
     function dateTimeForSession(s,field){
-      const [hh,mm]=String(s[field]||'00:00').split(':').map(Number);
-      const d=s.date?parseISODate(s.date):dayDateFor(s.day); d.setHours(hh||0,mm||0,0,0); return d;
+      // Điểm danh/lịch dạy luôn theo giờ Việt Nam, không phụ thuộc timezone
+      // đang cài trên máy giáo viên. Date.now() là thời điểm tuyệt đối; chỉ phần
+      // ghép ngày + giờ cần gắn rõ UTC+07:00.
+      const dateKey=String(s?.date||isoDate(dayDateFor(s?.day||'Mon')));
+      const timeKey=String(s?.[field]||'00:00').slice(0,5);
+      const timestamp=Date.parse(`${dateKey}T${timeKey}:00+07:00`);
+      if(Number.isFinite(timestamp)) return new Date(timestamp);
+      const [hh,mm]=timeKey.split(':').map(Number);
+      const fallback=parseISODate(dateKey); fallback.setHours(hh||0,mm||0,0,0); return fallback;
     }
 
 

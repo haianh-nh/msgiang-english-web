@@ -1,7 +1,7 @@
 (function bootstrapSmartWarmup(global) {
   'use strict';
 
-  var BUILD_VERSION = '20phase8d4-6-staff-tutoring-visibility-fix';
+  var BUILD_VERSION = '20phase8d4-7-teacher-attendance-fix';
   var backgroundTimer = null;
   var generation = 0;
   var inflight = new Map();

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireUser, canManage } from "@/lib/auth";
+import { requireUser, canManage, hasRole } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
-import { teacherForUser } from "@/lib/classes";
+import { teacherIdentitiesForUser } from "@/lib/classes";
 
 
 function isMissingAttendanceFastRpc(error: any) {
@@ -351,18 +351,41 @@ async function syncMakeupPlansFromAttendance(supabase: any, sessionKey: string, 
   return { makeupPlanUpdates, makeupAbsenceRecords, makeupResolvedAbsenceIds };
 }
 
-async function userCanSaveAttendance(user: any, classId: string, body: any) {
-  // Không cho bất kỳ vai trò nào lưu điểm danh trước giờ bắt đầu buổi học.
-  // Admin/Quản lí/Lễ tân vẫn được sửa ngoài giờ sau khi buổi học đã bắt đầu.
-  if (!attendanceStarted(body)) return false;
-  if (canManage(user)) return true;
-  if (!attendanceWindowOpen(body)) return false;
+type AttendancePermission = { allowed: boolean; error?: string; code?: string };
 
-  const teacher = await teacherForUser(user);
-  if (!teacher?.id) return false;
+async function attendancePermissionForUser(user: any, classId: string, body: any): Promise<AttendancePermission> {
+  // The server always uses Vietnam time. Client device timezone/clock must not be
+  // trusted for authorization.
+  if (!attendanceStarted(body)) {
+    return {
+      allowed: false,
+      code: "attendance_not_started",
+      error: "Điểm danh chỉ mở từ giờ bắt đầu buổi học theo giờ Việt Nam.",
+    };
+  }
+  if (canManage(user)) return { allowed: true };
+  if (!attendanceWindowOpen(body)) {
+    return {
+      allowed: false,
+      code: "attendance_window_closed",
+      error: "Giáo viên chỉ được lưu điểm danh từ giờ bắt đầu đến 23:59 trong ngày học.",
+    };
+  }
+  if (!hasRole(user, "teacher") && !hasRole(user, "ta")) {
+    return { allowed: false, code: "teaching_role_required", error: "Tài khoản này không có quyền Giáo viên/TA." };
+  }
+
+  const teacherRows = await teacherIdentitiesForUser(user);
+  const teacherIds = Array.from(new Set(teacherRows.map((row: any) => String(row?.id || "")).filter(Boolean)));
+  if (!teacherIds.length) {
+    return {
+      allowed: false,
+      code: "teacher_profile_not_linked",
+      error: "Tài khoản chưa liên kết đúng với hồ sơ giáo viên. Hãy báo Admin mở Giáo viên và lưu lại thông tin tài khoản.",
+    };
+  }
 
   const supabase = supabaseAdmin();
-
   const { data: cls, error: ce } = await supabase
     .from("official_classes")
     .select("id, teacher_id, assistant_teacher_id")
@@ -370,26 +393,38 @@ async function userCanSaveAttendance(user: any, classId: string, body: any) {
     .maybeSingle();
 
   if (ce) throw ce;
-  if (String(cls?.teacher_id || "") === String(teacher.id)) return true;
-  if (String(cls?.assistant_teacher_id || "") === String(teacher.id)) return true;
+  if (!cls?.id) return { allowed: false, code: "class_not_found", error: "Không tìm thấy lớp cần điểm danh." };
 
-  // Also allow a teacher explicitly assigned to a class makeup session.
+  const assignedIds = new Set([String(cls.teacher_id || ""), String(cls.assistant_teacher_id || "")].filter(Boolean));
+  if (teacherIds.some((id) => assignedIds.has(id))) return { allowed: true };
+
+  // Also allow any linked teacher identity explicitly assigned to a class makeup
+  // session. This supports older databases that accidentally contain duplicate
+  // teacher rows for the same account.
   const date = validDate(body.date);
   const start = validTime(body.start);
   const end = validTime(body.end);
-  if (!date || !start || !end) return false;
+  if (!date || !start || !end) {
+    return { allowed: false, code: "invalid_session", error: "Thông tin ngày/giờ buổi học không hợp lệ." };
+  }
 
   const { data: makeup, error: me } = await supabase
     .from("official_class_makeup_sessions")
     .select("id")
     .eq("class_id", classId)
-    .eq("teacher_id", teacher.id)
+    .in("teacher_id", teacherIds)
     .eq("makeup_date", date)
     .neq("status", "cancelled")
     .limit(1);
 
   if (me) throw me;
-  return !!(makeup || []).length;
+  if ((makeup || []).length) return { allowed: true };
+
+  return {
+    allowed: false,
+    code: "teacher_not_assigned",
+    error: "Bạn chưa được phân công làm Giáo viên/TA của lớp hoặc buổi dạy bù này.",
+  };
 }
 
 
@@ -412,16 +447,17 @@ export async function POST(req: NextRequest) {
 
   const supabase = supabaseAdmin();
 
-  let allowed = false;
+  let permission: AttendancePermission = { allowed: false };
   try {
-    allowed = await userCanSaveAttendance(user, classId, body);
+    permission = await attendancePermissionForUser(user, classId, body);
   } catch (e: any) {
     return NextResponse.json({ error: e.message || "Không kiểm tra được quyền điểm danh" }, { status: 500 });
   }
 
-  if (!allowed) {
+  if (!permission.allowed) {
     return NextResponse.json({
-      error: "Điểm danh chỉ mở từ giờ bắt đầu buổi học. Admin/Quản lí/Lễ tân không được điểm danh trước giờ học, nhưng vẫn có thể sửa ngoài giờ sau khi buổi học đã bắt đầu.",
+      error: permission.error || "Bạn không có quyền lưu điểm danh buổi này.",
+      code: permission.code || "attendance_forbidden",
     }, { status: 403 });
   }
 

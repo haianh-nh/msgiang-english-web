@@ -1,7 +1,7 @@
 (function bootstrapMsgiangNetworkRuntime(global) {
   'use strict';
 
-  var BUILD_VERSION = '20phase8d4-6-staff-tutoring-visibility-fix';
+  var BUILD_VERSION = '20phase8d4-7-teacher-attendance-fix';
   var GET_TTL_MS = 1800;
   var inflightGet = new Map();
   var shortGetCache = new Map();

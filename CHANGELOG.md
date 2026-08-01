@@ -1,5 +1,14 @@
 # Changelog
 
+## Phase 8D.4.7 – Teacher Attendance Fix
+
+- Sửa lỗi một số Giáo viên/TA không lưu được điểm danh do timezone thiết bị.
+- Không còn dùng `maybeSingle()` để xác định hồ sơ giáo viên.
+- Hỗ trợ nhiều hồ sơ giáo viên cùng tài khoản/SĐT trong dữ liệu cũ.
+- Đồng bộ quyền lớp chính, TA và buổi dạy bù.
+- Thêm thông báo lỗi quyền điểm danh rõ ràng.
+- Không cần migration SQL.
+
 ## Phase 8D.4.6 — Staff Tutoring Visibility Fix
 
 - Sửa thiếu sót của 8D.4.5: popup giáo viên không còn hiển thị lớp Học kèm.
