@@ -1,5 +1,5 @@
 {
-  "name": "msgiang-english-official-backend-phase8d4-7-teacher-attendance-fix",
+  "name": "msgiang-english-official-backend-phase8d4-8-cross-month-makeup-backlog",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -8,8 +8,8 @@
     "start": "next start",
     "seed:admin": "node --env-file=.env.local scripts/seed-admin.mjs",
     "check": "next build",
-    "audit": "node scripts/audit-phase8d4-7.mjs",
-    "verify": "npm run audit && node scripts/smoke-module-loader-phase8d4-7.mjs && node scripts/smoke-attendance-phase8d4-7.mjs && npm run build"
+    "audit": "node scripts/audit-phase8d4-8.mjs",
+    "verify": "npm run audit && node scripts/smoke-module-loader-phase8d4-8.mjs && node scripts/smoke-attendance-phase8d4-8.mjs && node scripts/smoke-makeup-backlog-phase8d4-8.mjs && npm run build"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.110.2",

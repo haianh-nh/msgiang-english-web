@@ -88,34 +88,33 @@ function teacherOptionsWithEmpty(selectedId='',emptyLabel='Không chọn'){
       return `<option value="">${h(emptyLabel)}</option>`+active.map(t=>`<option value="${t.id}" ${String(t.id)===String(selectedId||'')?'selected':''}>${h(t.name)}${t.roles?.includes('manager')?' • Quản lí':''}</option>`).join('');
     }
 
-function tutoringPendingRows(monthKey=makeupSelectedMonthKey()){
-      if(makeupMonthDeleted(monthKey)) return [];
+function tutoringPendingRows(){
+      const monthKey=makeupSelectedMonthKey();
       const st=makeupTabStateForMonth(monthKey);
-      return makeupTabPendingRows(st,monthKey);
+      return makeupTabPendingRows(st,null);
     }
 
-function tutoringStudentChecklist(monthKey=makeupSelectedMonthKey(),query=''){
-      const rows=tutoringPendingRows(monthKey).filter(x=>smartSearchMatch(smartSearchIndex(x.student?.name,x.sourceClass?.name,x.record?.sourceSessionLabel,x.record?.reason,classGradeLabel(x.sourceClass?.name)),query));
-      if(!rows.length) return '<div class="empty">Không có học sinh chờ học bù trong tháng này.</div>';
+function tutoringStudentChecklist(query=''){
+      const rows=tutoringPendingRows().filter(x=>smartSearchMatch(smartSearchIndex(x.student?.name,x.sourceClass?.name,x.record?.sourceSessionLabel,x.record?.reason,classGradeLabel(x.sourceClass?.name),absenceRecordMonth(x.record)),query));
+      if(!rows.length) return '<div class="empty">Không còn học sinh chờ xếp học bù.</div>';
       const grouped=new Map();
       rows.forEach(x=>{const g=classGradeLabel(x.sourceClass?.name||'Khác')||'Khác'; if(!grouped.has(g)) grouped.set(g,[]); grouped.get(g).push(x);});
-      return [...grouped.entries()].map(([grade,items])=>`<div class="makeupGroup"><h3>${h(grade)}</h3><div class="modalTableWrap"><table class="modalTable"><thead><tr><th>Chọn</th><th>Học sinh</th><th>Lớp vắng</th><th>Buổi vắng</th></tr></thead><tbody>${items.map(x=>`<tr><td><input type="checkbox" class="tutoringAbsenceCheck" value="${h(x.record.id)}"></td><td><b>${h(x.student.name)}</b></td><td>${h(x.sourceClass.name)}</td><td>${h(x.record.sourceSessionLabel||safeSessionLabel(x.record.sourceSessionKey))}</td></tr>`).join('')}</tbody></table></div></div>`).join('');
+      return [...grouped.entries()].map(([grade,items])=>`<div class="makeupGroup"><h3>${h(grade)}</h3><div class="modalTableWrap"><table class="modalTable"><thead><tr><th>Chọn</th><th>Học sinh</th><th>Lớp vắng</th><th>Buổi vắng</th></tr></thead><tbody>${items.map(x=>{const sourceMonth=absenceRecordMonth(x.record);return `<tr><td><input type="checkbox" class="tutoringAbsenceCheck" value="${h(x.record.id)}"></td><td><b>${h(x.student.name)}</b></td><td>${h(x.sourceClass.name)}</td><td>${h(x.record.sourceSessionLabel||safeSessionLabel(x.record.sourceSessionKey))}<div class="mini">Phát sinh ${h(formatMonthKeyVN(sourceMonth))}</div></td></tr>`}).join('')}</tbody></table></div></div>`).join('');
     }
 
-async function openTutoringClassModal(monthKey=makeupSelectedMonthKey()){
+async function openTutoringClassModal(){
       if(!canManageOperations()){toast('Không có quyền tạo lớp học kèm');return}
-      if(!db.makeupTabState || db.makeupTabState.month!==monthKey){
-        modal(`<div class="modalHead"><h2>Thêm lớp học kèm</h2><button class="close" onclick="closeModal()">×</button></div><div class="empty">Đang tải danh sách chờ học bù...</div>`);
-        await refreshOfficialMakeupState({month:monthKey,applyGlobal:true,skipSave:true}).catch(e=>toast(e.message||'Không tải được học bù'));
+      const monthKey=makeupSelectedMonthKey();
+      if(!db.makeupTabState || db.makeupTabState.month!==monthKey || db.makeupTabState.pendingScope!=='all-open-months'){
+        modal(`<div class="modalHead"><h2>Thêm lớp học kèm</h2><button class="close" onclick="closeModal()">×</button></div><div class="empty">Đang tải toàn bộ danh sách chờ học bù...</div>`);
+        await refreshOfficialMakeupState({month:monthKey,forceNetwork:true,applyGlobal:true,skipSave:true}).catch(e=>toast(e.message||'Không tải được học bù'));
       }
-      await refreshMakeupMonths();
       const today=isoDate(new Date());
-      const monthOptions=makeupMonthOptions(monthKey);
       const teacherOptions=classMakeupTeacherOptions('', currentTeacherRecord()?.id||'') || '<option value="">Chưa có giáo viên</option>';
       const taOptions=teacherOptionsWithEmpty('', 'Không chọn TA');
       modal(`<div class="modalHead"><h2>Thêm lớp học kèm</h2><button class="close" onclick="closeModal()">×</button></div>
-        <div class="formGrid"><label>Tên lớp học kèm<input id="tutoringName" class="input" placeholder="VD: Học kèm G3.3 tối thứ 7"></label><label>Tháng dữ liệu vắng<select id="tutoringMonth" class="input" onchange="openTutoringClassModal(this.value)">${monthOptions}</select></label><label>Giáo viên dạy<select id="tutoringTeacher" class="input">${teacherOptions}</select></label><label>TA<select id="tutoringTA" class="input">${taOptions}</select></label><label>Ngày dạy<input id="tutoringDate" class="input" type="date" value="${today}"></label><label>Giờ bắt đầu<input id="tutoringStart" class="input" type="time" value="19:00"></label><label>Giờ kết thúc<input id="tutoringEnd" class="input" type="time" value="20:30"></label><label>Tìm học sinh<input id="tutoringSearch" class="input" placeholder="Tìm tên, lớp, buổi vắng..." oninput="document.getElementById('tutoringList').innerHTML=tutoringStudentChecklist(document.getElementById('tutoringMonth').value,this.value)"></label></div>
-        <div class="panel softPanel"><div class="panelHead"><h2>Chọn học sinh chờ học bù</h2><span class="pill yellow">${formatMonthKeyVN(monthKey)}</span></div><div id="tutoringList">${tutoringStudentChecklist(monthKey)}</div></div>
+        <div class="formGrid"><label>Tên lớp học kèm<input id="tutoringName" class="input" placeholder="VD: Học kèm G3.3 tối thứ 7"></label><label>Giáo viên dạy<select id="tutoringTeacher" class="input">${teacherOptions}</select></label><label>TA<select id="tutoringTA" class="input">${taOptions}</select></label><label>Ngày dạy<input id="tutoringDate" class="input" type="date" value="${today}"></label><label>Giờ bắt đầu<input id="tutoringStart" class="input" type="time" value="19:00"></label><label>Giờ kết thúc<input id="tutoringEnd" class="input" type="time" value="20:30"></label><label>Tìm học sinh<input id="tutoringSearch" class="input" placeholder="Tìm tên, lớp, buổi vắng, tháng..." oninput="document.getElementById('tutoringList').innerHTML=tutoringStudentChecklist(this.value)"></label></div>
+        <div class="panel softPanel"><div class="panelHead"><div><h2>Chọn học sinh chờ học bù</h2><div class="mini">Hiện toàn bộ lượt chưa xử lý từ tháng hiện tại và các tháng trước</div></div><span class="pill yellow">Tất cả tháng</span></div><div id="tutoringList">${tutoringStudentChecklist()}</div></div>
         <div style="text-align:right;margin-top:14px"><button class="btn ghost" onclick="closeModal()">Hủy</button><button class="btn primary" onclick="submitTutoringClass()">Tạo lớp học kèm</button></div>`);
     }
 
@@ -294,7 +293,8 @@ function makeupCandidateTableRows(rows,targetClassId,targetSessionKey){
         const label=x.record.sourceSessionLabel||sessionLabelFromKey(x.record.sourceSessionKey);
         const reason=x.record.reason||'Vắng';
         const search=makeupCandidateSearchIndex(x,label,reason);
-        return `<tr data-makeup-candidate data-absence-id="${h(x.record.id)}" data-student-id="${h(x.student.id)}" data-search="${h(search)}"><td>${i+1}</td><td><b>${h(x.student.name)}</b><div class="mini">${h(classGradeLabel(x.sourceClass.name))}</div></td><td><span class="pill blue">${h(x.sourceClass.name)}</span></td><td>${h(label)}</td><td>${h(reason)}</td><td><button class="btn primary smallBtn" onclick="queueMakeupCandidate('${x.record.id}','${x.student.id}','${x.sourceClass.id}','${x.record.sourceSessionKey}','${targetClassId}','${targetSessionKey}')">Chọn</button></td></tr>`;
+        const sourceMonth=absenceRecordMonth(x.record);
+        return `<tr data-makeup-candidate data-absence-id="${h(x.record.id)}" data-student-id="${h(x.student.id)}" data-search="${h(search)}"><td>${i+1}</td><td><b>${h(x.student.name)}</b><div class="mini">${h(classGradeLabel(x.sourceClass.name))}</div></td><td><span class="pill blue">${h(x.sourceClass.name)}</span></td><td>${h(label)}<div class="mini">Phát sinh ${h(formatMonthKeyVN(sourceMonth))}</div></td><td>${h(reason)}</td><td><button class="btn primary smallBtn" onclick="queueMakeupCandidate('${x.record.id}','${x.student.id}','${x.sourceClass.id}','${x.record.sourceSessionKey}','${targetClassId}','${targetSessionKey}')">Chọn</button></td></tr>`;
       }).join('');
     }
 
@@ -357,7 +357,7 @@ function refreshScheduleMakeupDraftDom(targetClassId,targetSessionKey){
       const savedTotal=totalRosterCountForSession(targetClassId,targetSessionKey);
       const projectedTotal=Math.max(0,savedTotal-cancelCount+draftRows.length);
       const capacity=db.settings.capacity||15;
-      const allPending=pendingMakeupRows(targetMonth);
+      const allPending=pendingMakeupRows(null);
       const draftAbsenceIds=new Set(draft.items.map(x=>String(x.absenceId)));
       const draftStudentIds=new Set(draft.items.map(x=>String(x.studentId)));
       const canPlace=canOpenScheduleMakeupPopup(targetSessionKey) && projectedTotal<capacity;
@@ -412,7 +412,7 @@ function openScheduleMakeup(targetClassId,targetSessionKey=null){
       const projectedTotal=Math.max(0,savedTotal-cancelCount+draftRows.length);
       const capacity=db.settings.capacity||15;
       const canPlace=!!(targetSessionKey && canOpenScheduleMakeupPopup(targetSessionKey) && projectedTotal<capacity);
-      const allPending=pendingMakeupRows(targetMonth);
+      const allPending=pendingMakeupRows(null);
       const draftAbsenceIds=new Set(draft.items.map(x=>String(x.absenceId)));
       const draftStudentIds=new Set(draft.items.map(x=>String(x.studentId)));
       const allCandidates=targetSessionKey?absentCandidatesForTargetSession(targetClassId,targetSessionKey,{cancelPlanIds:[...cancelIds]}):[];

@@ -1,5 +1,14 @@
 # Changelog
 
+## Phase 8D.4.8 – Cross-month Makeup Backlog
+
+- Danh sách Chờ xếp học bù hiển thị mọi lượt vắng còn tồn đọng, không giới hạn tháng đang xem.
+- Popup xếp học bù trong Lịch dạy và popup tạo lớp Học kèm đều dùng cùng backlog toàn bộ tháng.
+- Loại lượt thuộc tháng đã xóa, lượt đã có lịch và lượt đã hoàn tất.
+- Hiển thị rõ tháng phát sinh/ngày nghỉ gốc để tránh nhầm khi xếp sang tháng mới.
+- Đổi cache schema Học bù để không khôi phục dữ liệu lọc tháng cũ sau deploy.
+- Không cần migration SQL.
+
 ## Phase 8D.4.7 – Teacher Attendance Fix
 
 - Sửa lỗi một số Giáo viên/TA không lưu được điểm danh do timezone thiết bị.

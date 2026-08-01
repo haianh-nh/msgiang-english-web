@@ -8,6 +8,30 @@ function validMonth(v: string | null) {
   return new Date().toISOString().slice(0, 7);
 }
 
+
+function sourceMonthFromSessionKey(key: any) {
+  const parts = String(key || "").split("|");
+  const date = parts.length >= 4 ? parts[1] : "";
+  return /^\d{4}-\d{2}-\d{2}$/.test(date) ? date.slice(0, 7) : "";
+}
+
+function absenceSourceMonth(row: any) {
+  return sourceMonthFromSessionKey(row?.source_session_key || row?.sourceSessionKey)
+    || String(row?.created_at || row?.createdAt || "").slice(0, 7);
+}
+
+function mergeById<T extends { id?: any }>(...groups: T[][]) {
+  const map = new Map<string, T>();
+  for (const group of groups) {
+    for (const row of group || []) {
+      const id = String(row?.id || "");
+      if (!id) continue;
+      map.set(id, { ...(map.get(id) || {} as T), ...row });
+    }
+  }
+  return Array.from(map.values());
+}
+
 function attendanceKey(sessionKey: string) {
   return `att_${sessionKey}`;
 }
@@ -211,6 +235,65 @@ async function legacyMonthState(supabase: any, month: string) {
   };
 }
 
+
+async function includeOpenPendingBacklog(supabase: any, payload: any) {
+  const deletedMonths = new Set((payload?.deletedMonths || []).map((m: any) => String(m)));
+  const { data: pendingRows, error: pendingError } = await supabase
+    .from("official_absence_records")
+    .select("id,student_id,source_class_id,source_session_key,source_session_label,reason,generated_from_attendance,status,created_at,updated_at")
+    .eq("status", "pending")
+    .order("created_at", { ascending: true });
+
+  if (pendingError) throw pendingError;
+
+  const notDeletedPending = (pendingRows || []).filter((row: any) => {
+    const month = absenceSourceMonth(row);
+    return !month || !deletedMonths.has(month);
+  });
+
+  const pendingIds = notDeletedPending.map((row: any) => String(row?.id || "")).filter(Boolean);
+  const blockedAbsenceIds = new Set<string>();
+  if (pendingIds.length) {
+    const { data: activePlans, error: activePlanError } = await supabase
+      .from("official_makeup_plans")
+      .select("absence_id,status")
+      .in("absence_id", pendingIds)
+      .in("status", ["scheduled", "completed"]);
+    if (activePlanError) throw activePlanError;
+    for (const plan of activePlans || []) {
+      if (plan?.absence_id) blockedAbsenceIds.add(String(plan.absence_id));
+    }
+  }
+
+  const openPending = notDeletedPending.filter((row: any) => !blockedAbsenceIds.has(String(row?.id || "")));
+  const pendingMapped = openPending.map(mapAbsence);
+  const absenceRecords = mergeById(payload?.absenceRecords || [], pendingMapped)
+    .sort((a: any, b: any) => String(a.createdAt || "").localeCompare(String(b.createdAt || "")));
+
+  const existingClasses = payload?.supportClasses || [];
+  const existingIds = new Set(existingClasses.map((c: any) => String(c?.id || "")).filter(Boolean));
+  const missingClassIds = Array.from(new Set(openPending
+    .map((row: any) => String(row?.source_class_id || ""))
+    .filter((id: string) => id && !existingIds.has(id))));
+
+  let extraClasses: any[] = [];
+  if (missingClassIds.length) {
+    const { data, error } = await supabase
+      .from("official_classes")
+      .select("id,name,grade,teacher_id,assistant_teacher_id,assistant_name,start_date,end_date,status,note,created_at,official_teachers:teacher_id(id,name),official_assistant_teacher:assistant_teacher_id(id,name)")
+      .in("id", missingClassIds);
+    if (error) throw error;
+    extraClasses = (data || []).map(mapSupportClass);
+  }
+
+  return {
+    ...payload,
+    pendingScope: "all-open-months",
+    absenceRecords,
+    supportClasses: mergeById(existingClasses, extraClasses),
+  };
+}
+
 export async function GET(req: NextRequest) {
   const started = performance.now();
   const { response } = await requireUser();
@@ -245,6 +328,12 @@ export async function GET(req: NextRequest) {
     }
   } else {
     return NextResponse.json({ error: rpc.error.message || "Không tải được dữ liệu học bù" }, { status: rpc.error?.code === "P0001" ? 400 : 500 });
+  }
+
+  try {
+    payload = await includeOpenPendingBacklog(supabase, payload);
+  } catch (e: any) {
+    return NextResponse.json({ error: e.message || "Không tải được danh sách chờ học bù tồn đọng" }, { status: 500 });
   }
 
   const res = NextResponse.json({ ok: true, month, ...payload, mode });

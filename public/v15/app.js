@@ -1,4 +1,4 @@
-window.MSGIANG_BUILD_VERSION='20phase8d4-7-teacher-attendance-fix';
+window.MSGIANG_BUILD_VERSION='20phase8d4-8-cross-month-makeup-backlog';
 const SEED = {
       classes: [],
       teachers: [],
@@ -541,9 +541,10 @@ const SEED = {
         attendanceSessions: st?.attendanceSessions || db.attendanceSessions || {},
         supportClasses: st?.supportClasses || [],
         deletedMonths: db.deletedMakeupMonths || [],
-        availableMonths: db.makeupAvailableMonths || []
+        availableMonths: db.makeupAvailableMonths || [],
+        pendingScope: st?.pendingScope || ''
       };
-      moduleCacheSet(`makeup:${month}`, payload);
+      moduleCacheSet(makeupModuleCacheKey(month), payload);
       v26StoreSet(v26MakeupStoreKey(month),payload,{source:'local-makeup'});
     }
     function v18fUpdateTuitionModuleCache(){
@@ -623,7 +624,7 @@ const SEED = {
           v18Memo.rosterRows=null;
         }else if(key==='makeup'){
           months.forEach(m=>{
-            moduleCacheRemove(`makeup:${m}`);
+            moduleCacheRemove(makeupModuleCacheKey(m));
             v22InvalidateMakeupMonthMemory(m);
           });
           lazyRouteState.makeup={};
@@ -756,7 +757,7 @@ const SEED = {
     function v22PersistMakeupMonthCache(month){
       if(!/^\d{4}-\d{2}$/.test(String(month||''))) return;
       const st=(db.makeupTabState && db.makeupTabState.month===month)?db.makeupTabState:null;
-      const old=moduleCacheGet(`makeup:${month}`)||{};
+      const old=moduleCacheGet(makeupModuleCacheKey(month))||{};
       const payload={
         makeupMonth:month,
         makeupPlans:st?.makeupPlans||old.makeupPlans||db.makeupPlans||[],
@@ -764,9 +765,10 @@ const SEED = {
         attendanceSessions:st?.attendanceSessions||old.attendanceSessions||{},
         supportClasses:st?.supportClasses||old.supportClasses||[],
         deletedMonths:db.deletedMakeupMonths||old.deletedMonths||[],
-        availableMonths:db.makeupAvailableMonths||old.availableMonths||[]
+        availableMonths:db.makeupAvailableMonths||old.availableMonths||[],
+        pendingScope:st?.pendingScope||old.pendingScope||''
       };
-      moduleCacheSet(`makeup:${month}`,payload);
+      moduleCacheSet(makeupModuleCacheKey(month),payload);
       v22InvalidateMakeupMonthMemory(month);
       v22MakeupMonthMemoryCache.set(month,{ts:Date.now(),payload:v18gCloneJson(payload)});
     }
@@ -1020,12 +1022,13 @@ const SEED = {
       clearTimeout(v20eModuleCacheTimer);
       v20eModuleCacheTimer=setTimeout(v20eCommitModuleCache,700);
     }
+    function makeupModuleCacheKey(month=makeupSelectedMonthKey()){return `makeup-all-open-v1:${month}`}
     function moduleCacheKeyForRoute(r){
       const key=routeDataKey(r);
       if(key==='core') return 'classes:latest';
       if(key==='schedule') return `schedule:${isoDate(weekStartDate())}`;
       if(key==='attendance') return `attendance:${isoDate(weekStartDate())}`;
-      if(key==='makeup') return `makeup:${makeupSelectedMonthKey()}`;
+      if(key==='makeup') return makeupModuleCacheKey();
       if(key==='tuition') return `tuition:${tuitionMonthKey()}`;
       if(key==='evaluation') return `evaluation:${evaluationMonthKey()}`;
       if(key==='library') return 'library:latest';
@@ -1147,6 +1150,7 @@ const SEED = {
           absenceRecords: payload.absenceRecords||[],
           attendanceSessions: payload.attendanceSessions||{},
           supportClasses: payload.supportClasses||[],
+          pendingScope: payload.pendingScope||'',
           updatedAt: Date.now()
         };
         db.deletedMakeupMonths=payload.deletedMonths||db.deletedMakeupMonths||[];
@@ -1213,7 +1217,7 @@ const SEED = {
       return scope?`${type}:${scope}`:String(type||'');
     }
     function v26WeekStoreKey(start=isoDate(weekStartDate())){return v26StoreKey('week',start)}
-    function v26MakeupStoreKey(month=makeupSelectedMonthKey()){return v26StoreKey('makeup',month)}
+    function v26MakeupStoreKey(month=makeupSelectedMonthKey()){return v26StoreKey('makeup',`${month}:all-open-v1`)}
     function v26TuitionStoreKey(month=tuitionMonthKey()){return v26StoreKey('tuition',month)}
     function v26EvaluationStoreKey(month=evaluationMonthKey()){return v26StoreKey('evaluation',month)}
     function v26StoreTtl(key){
@@ -1414,7 +1418,8 @@ const SEED = {
           attendanceSessions:st?.attendanceSessions||db.attendanceSessions||{},
           supportClasses:st?.supportClasses||[],
           deletedMonths:db.deletedMakeupMonths||[],
-          availableMonths:db.makeupAvailableMonths||[]
+          availableMonths:db.makeupAvailableMonths||[],
+          pendingScope:st?.pendingScope||''
         };
       }
       if(descriptor.kind==='tuition' && canViewTuition()) payload={tuitionRollup:db.tuitionRollup||{},tuitionRollupMonth:db.tuitionRollupMonth||tuitionMonthKey(),payments:db.payments||{},tuitionMessages:db.tuitionMessages||{},unitPrice:db.settings?.unitPrice||70000};
@@ -1474,7 +1479,8 @@ const SEED = {
             attendanceSessions:st?.attendanceSessions||old.attendanceSessions||db.attendanceSessions||{},
             supportClasses:st?.supportClasses||old.supportClasses||[],
             deletedMonths:db.deletedMakeupMonths||old.deletedMonths||[],
-            availableMonths:db.makeupAvailableMonths||old.availableMonths||[]
+            availableMonths:db.makeupAvailableMonths||old.availableMonths||[],
+            pendingScope:st?.pendingScope||old.pendingScope||''
           },{source:'mutation'});
         });
       }
@@ -2345,7 +2351,8 @@ const SEED = {
         attendanceSessions:data.attendanceSessions||{},
         supportClasses:data.supportClasses||[],
         deletedMonths:data.deletedMonths||[],
-        availableMonths:data.availableMonths||data.months||[]
+        availableMonths:data.availableMonths||data.months||[],
+        pendingScope:data.pendingScope||''
       };
     }
     function v22MakeupMonthGenerationValue(month){
@@ -2364,7 +2371,7 @@ const SEED = {
       const copy=v18gCloneJson(payload);
       v22MakeupMonthMemoryCache.set(month,{ts:Date.now(),payload:copy});
       v26StoreSet(v26MakeupStoreKey(month),copy,{ttl:V26_SHARED_STORE_TTL.makeup,source:'makeup-memory'});
-      moduleCacheSet(`makeup:${month}`,copy);
+      moduleCacheSet(makeupModuleCacheKey(month),copy);
       return payload;
     }
     function v22FreshMakeupMonthPayload(month){
@@ -2375,7 +2382,7 @@ const SEED = {
       return null;
     }
     function v22CurrentMakeupStateFresh(month){
-      return !!(db.makeupTabState && db.makeupTabState.month===month && Date.now()-(db.makeupTabState.updatedAt||0)<V22_MAKEUP_PREFETCH_TTL_MS);
+      return !!(db.makeupTabState && db.makeupTabState.month===month && db.makeupTabState.pendingScope==='all-open-months' && Date.now()-(db.makeupTabState.updatedAt||0)<V22_MAKEUP_PREFETCH_TTL_MS);
     }
     function v22ApplyMakeupPayloadForPopup(month,payload){
       if(!payload) return false;
@@ -2400,7 +2407,8 @@ const SEED = {
             attendanceSessions:db.makeupTabState.attendanceSessions||{},
             supportClasses:db.makeupTabState.supportClasses||[],
             deletedMonths:db.deletedMakeupMonths||[],
-            availableMonths:db.makeupAvailableMonths||[]
+            availableMonths:db.makeupAvailableMonths||[],
+            pendingScope:db.makeupTabState.pendingScope||''
           });
         }
       }
@@ -2451,7 +2459,8 @@ const SEED = {
           attendanceSessions:currentState.attendanceSessions||{},
           supportClasses:currentState.supportClasses||[],
           deletedMonths:db.deletedMakeupMonths||[],
-          availableMonths:db.makeupAvailableMonths||[]
+          availableMonths:db.makeupAvailableMonths||[],
+          pendingScope:currentState.pendingScope||''
         };
         const payloadComparable={
           makeupMonth:payload.makeupMonth||month,
@@ -2460,7 +2469,8 @@ const SEED = {
           attendanceSessions:payload.attendanceSessions||{},
           supportClasses:payload.supportClasses||[],
           deletedMonths:payload.deletedMonths||[],
-          availableMonths:payload.availableMonths||[]
+          availableMonths:payload.availableMonths||[],
+          pendingScope:payload.pendingScope||''
         };
         const localNeedsApply=JSON.stringify(currentMakeupComparable)!==JSON.stringify(payloadComparable);
         if(changed || localNeedsApply || options.applyGlobal){
@@ -2471,6 +2481,7 @@ const SEED = {
             absenceRecords:payload.absenceRecords||[],
             attendanceSessions:payload.attendanceSessions||{},
             supportClasses:payload.supportClasses||[],
+            pendingScope:payload.pendingScope||'',
             updatedAt:Date.now()
           };
           v20tMergeSupportClasses(payload.supportClasses||[]);
@@ -2487,7 +2498,7 @@ const SEED = {
           v18Touch();
           if(!options.skipSave) save();
         }
-        moduleCacheSet(`makeup:${month}`, payload);
+        moduleCacheSet(makeupModuleCacheKey(month), payload);
         return changed || localNeedsApply || !!options.applyGlobal;
       }catch(e){console.warn('Không tải được dữ liệu học bù theo tháng',e); return false}
     }
@@ -3699,16 +3710,17 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
     }
     function pendingMakeupRows(monthKey=null){
       if(monthKey && makeupMonthDeleted(monthKey)) return [];
-      if(monthKey && db.makeupTabState?.month===monthKey){
+      if(db.makeupTabState && (!monthKey || db.makeupTabState.month===monthKey)){
         return makeupTabPendingRows(db.makeupTabState,monthKey);
       }
       ensureAbsenceRecords();
       return (db.absenceRecords||[])
+        .filter(a=>a && !makeupMonthDeleted(absenceRecordMonth(a)))
         .filter(a=>a && (!monthKey || absenceRecordMonth(a)===monthKey))
         .filter(a=>a && absenceRecordStatus(a.id)==='pending')
         .map(a=>({record:a, student:studentById(a.studentId), sourceClass:classById(a.sourceClassId), sourceSession:sessionObjectFromKey(a.sourceSessionKey)}))
         .filter(x=>x.student?.id && x.sourceClass?.id)
-        .sort((a,b)=>String(a.sourceClass?.name||'').localeCompare(String(b.sourceClass?.name||''),'vi',{numeric:true}) || String(a.student.name||'').localeCompare(String(b.student.name||''),'vi'));
+        .sort((a,b)=>String(a.record?.sourceSessionKey||'').localeCompare(String(b.record?.sourceSessionKey||'')) || String(a.sourceClass?.name||'').localeCompare(String(b.sourceClass?.name||''),'vi',{numeric:true}) || String(a.student.name||'').localeCompare(String(b.student.name||''),'vi'));
     }
     function makeupTargetStatusText(plan){
       const s=sessionObjectFromKey(plan.targetSessionKey);
@@ -3728,9 +3740,7 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
       const alreadyInTarget=new Set(plannedMakeupsForSession(targetSessionKey).filter(p=>!stagedCancelIds.has(String(p.id))).map(p=>p.studentId));
       // V20L.3: dữ liệu học bù lấy từ attendance/state. Không giới hạn cùng khối và không ẩn do khác tuần.
       // Chỉ loại chính lớp nhận, lượt đã xếp, học sinh đã có trong buổi đích, và lớp nhận không còn hoạt động.
-      const targetMonth=sessionKeyMonth(targetSessionKey)||makeupSelectedMonthKey();
-      if(makeupMonthDeleted(targetMonth)) return [];
-      return pendingMakeupRows(targetMonth)
+      return pendingMakeupRows(null)
         .filter(x=>!alreadyInTarget.has(x.student.id))
         .filter(x=>String(x.sourceClass.id)!==String(targetClassId))
         .sort((a,b)=>String(a.student.name||'').localeCompare(String(b.student.name||''),'vi') || String(a.sourceClass.name||'').localeCompare(String(b.sourceClass.name||''),'vi',{numeric:true}));
