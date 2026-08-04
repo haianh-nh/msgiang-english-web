@@ -1,5 +1,5 @@
 {
-  "name": "msgiang-english-official-backend-phase8d4-11-library-pdf-tab-fix",
+  "name": "msgiang-english-official-backend-phase8d4-12-library-all-fast-loading",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -8,8 +8,8 @@
     "start": "next start",
     "seed:admin": "node --env-file=.env.local scripts/seed-admin.mjs",
     "check": "next build",
-    "audit": "node scripts/audit-phase8d4-11.mjs",
-    "verify": "npm run audit && node scripts/smoke-module-loader-phase8d4-9.mjs && node scripts/smoke-attendance-phase8d4-8.mjs && node scripts/smoke-makeup-backlog-phase8d4-8.mjs && node scripts/smoke-library-preview-phase8d4-9.mjs && node scripts/smoke-library-tabs-phase8d4-11.mjs && node scripts/smoke-tutoring-today-phase8d4-10.mjs && npm run build"
+    "audit": "node scripts/audit-phase8d4-12.mjs",
+    "verify": "npm run audit && node scripts/smoke-module-loader-phase8d4-9.mjs && node scripts/smoke-attendance-phase8d4-8.mjs && node scripts/smoke-makeup-backlog-phase8d4-8.mjs && node scripts/smoke-library-preview-phase8d4-9.mjs && node scripts/smoke-library-tabs-phase8d4-11.mjs && node scripts/smoke-library-fast-phase8d4-12.mjs && node scripts/smoke-tutoring-today-phase8d4-10.mjs && npm run build"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.110.2",

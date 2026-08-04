@@ -1,3 +1,12 @@
+# Phase 8D.4.12 — Library All Tab & Fast Loading
+
+- Thêm tab Tất cả và đặt làm mặc định khi mở/reload Thư viện.
+- Đổi Word/PDF/Audio bằng lọc dữ liệu trong bộ nhớ, không gọi lại API.
+- Partial render vùng danh sách/bộ lọc để giảm nháy và thời gian phản hồi.
+- Cache metadata Thư viện 24 giờ theo tài khoản; tự revalidate nền.
+- Smart warm-up ưu tiên Thư viện và Audio không preload ở card.
+- Không có SQL mới.
+
 # Phase 8D.4.11 — Library PDF Tab Fix
 
 - Sửa lỗi bấm tab PDF nhưng giao diện vẫn quay về Word.

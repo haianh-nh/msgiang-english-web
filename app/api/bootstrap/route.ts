@@ -9,11 +9,11 @@ function sanitizeBootstrapSnapshot(payload: any, user: any) {
     settings: sanitizeSettingsForUser(payload.settings || {}, user),
     managerClassScope: payload.managerClassScope || "all",
     managerAttendanceScope: payload.managerAttendanceScope || "all",
-    libraryTab: payload.libraryTab || "word",
-    libraryQ: payload.libraryQ || "",
-    libraryLevel: payload.libraryLevel || "all",
-    librarySkill: payload.librarySkill || "all",
-    libraryUnit: payload.libraryUnit || "all",
+    libraryTab: "all",
+    libraryQ: "",
+    libraryLevel: "all",
+    librarySkill: "all",
+    libraryUnit: "all",
   };
 }
 

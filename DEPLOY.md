@@ -1,10 +1,12 @@
-# Deploy Phase 8D.4.11
+# Deploy Phase 8D.4.12
 
 - Không có migration SQL mới.
-- Sửa lỗi tab PDF bị ép quay về Word.
-- PDF không còn bị đổi `type` thành Word trong runtime hoặc bước normalize dữ liệu.
-- Tab Word/PDF/Audio hoạt động độc lập và giữ trạng thái sau reload.
-- File PDF cũ lưu nhầm `type=word` vẫn được nhận diện đúng qua phần mở rộng/MIME.
+- Thêm tab **Tất cả** và đặt làm mặc định mỗi lần mở Thư viện.
+- Chuyển Word/PDF/Audio chỉ lọc metadata đã tải, không gọi lại API.
+- Tab và bộ lọc dùng partial render, không dựng lại toàn bộ app.
+- Cache metadata Thư viện trên thiết bị trong 24 giờ để quay lại tab hiển thị ngay, sau đó tự làm mới nền.
+- Smart warm-up ưu tiên tải module và metadata Thư viện.
+- Audio không preload khi chỉ đang xem danh sách.
 - Chạy `npm ci && npm run verify` trước khi push.
 
-Build: `20phase8d4-11-library-pdf-tab-fix`
+Build: `20phase8d4-12-library-all-fast-loading`

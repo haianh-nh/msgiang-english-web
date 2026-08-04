@@ -1,4 +1,4 @@
-window.MSGIANG_BUILD_VERSION='20phase8d4-11-library-pdf-tab-fix';
+window.MSGIANG_BUILD_VERSION='20phase8d4-12-library-all-fast-loading';
 const SEED = {
       classes: [],
       teachers: [],
@@ -36,11 +36,11 @@ const SEED = {
         savedAt:Date.now(),
         settings:compactSettings,
         managerClassScope:s.managerClassScope||'mine',
-                libraryTab:s.libraryTab||'word',
-        libraryQ:s.libraryQ||'',
-        libraryLevel:s.libraryLevel||'all',
-        librarySkill:s.librarySkill||'all',
-        libraryUnit:s.libraryUnit||'all'
+                libraryTab:'all',
+        libraryQ:'',
+        libraryLevel:'all',
+        librarySkill:'all',
+        libraryUnit:'all'
       };
     }
     function v18hResetPersistedTuitionSearch(settings){
@@ -60,13 +60,12 @@ const SEED = {
       if(!raw || typeof raw!=='object') return base;
       if(raw._v18hCompact){
         base.settings={...(base.settings||{}),...v18hResetPersistedTuitionSearch(raw.settings||{})};
-        ['managerClassScope','libraryTab','libraryQ','libraryLevel','librarySkill','libraryUnit'].forEach(k=>{
-          if(raw[k]!==undefined) base[k]=raw[k];
-        });
+        if(raw.managerClassScope!==undefined) base.managerClassScope=raw.managerClassScope;
+        base.libraryTab='all'; base.libraryQ=''; base.libraryLevel='all'; base.librarySkill='all'; base.libraryUnit='all';
         return base;
       }
       // Snapshot cũ/full: dùng được cho phiên hiện tại, nhưng bộ lọc tìm kiếm Học phí luôn bắt đầu trống.
-      return {...base,...raw,settings:{...(base.settings||{}),...v18hResetPersistedTuitionSearch(raw.settings||{})}};
+      return {...base,...raw,libraryTab:'all',libraryQ:'',libraryLevel:'all',librarySkill:'all',libraryUnit:'all',settings:{...(base.settings||{}),...v18hResetPersistedTuitionSearch(raw.settings||{})}};
     }
     function v18hLoadLocalDb(){
       try{return v18hMergeLocalDb(JSON.parse(localStorage.getItem('msgiang_v48_data')||'null'))}
@@ -965,7 +964,9 @@ const SEED = {
     }
 
     const MODULE_CACHE_TTL_MS=10*60*1000;
+    const MODULE_CACHE_LIBRARY_TTL_MS=24*60*60*1000;
     const MODULE_CACHE_MAX_KEYS=18;
+    function moduleCacheTtlMs(cacheKey){return String(cacheKey||'').startsWith('library:')?MODULE_CACHE_LIBRARY_TTL_MS:MODULE_CACHE_TTL_MS}
     function moduleCacheUserKey(){
       const uid=currentUser?.id || currentUser?.phone || currentUser?.name || 'anonymous';
       return `msgiang_module_cache_v15_${uid}`;
@@ -974,7 +975,7 @@ const SEED = {
       const now=Date.now();
       const cleaned={};
       Object.entries(store||{}).forEach(([k,v])=>{
-        if(v && v.ts && now-v.ts<=MODULE_CACHE_TTL_MS) cleaned[k]=v;
+        if(v && v.ts && now-v.ts<=moduleCacheTtlMs(k)) cleaned[k]=v;
       });
       const keys=Object.keys(cleaned).sort((a,b)=>(cleaned[b]?.ts||0)-(cleaned[a]?.ts||0));
       keys.slice(MODULE_CACHE_MAX_KEYS).forEach(k=>delete cleaned[k]);
@@ -1038,7 +1039,7 @@ const SEED = {
     function moduleCacheGet(cacheKey){
       const store=readModuleCacheStore();
       const item=store[cacheKey];
-      if(!item || !item.ts || Date.now()-item.ts>MODULE_CACHE_TTL_MS) return null;
+      if(!item || !item.ts || Date.now()-item.ts>moduleCacheTtlMs(cacheKey)) return null;
       return item.payload || null;
     }
     function moduleCacheSet(cacheKey,payload){
@@ -1177,6 +1178,7 @@ const SEED = {
       }
       if(key==='library'){
         db.exerciseLibrary=payload.exerciseLibrary||[];
+        v18Memo.library={}; v18Memo.libraryCatalogStats={}; v18Memo.libraryFilterValues={};
         return true;
       }
       if(key==='evaluation'){
@@ -1682,7 +1684,7 @@ const SEED = {
       const adminLike=canManageOperations();
       const teacherLike=isTeachingUser();
       const plan={
-        overview: adminLike?['schedule']:teacherLike?['schedule']:['homework','evaluation'],
+        overview: adminLike?['schedule','homework']:teacherLike?['schedule','homework']:['homework','evaluation'],
         classes:['schedule'],
         // Phase 4A: không preload Học phí tự động từ Lịch dạy/Điểm danh.
         // Học phí chỉ tải khi người dùng thực sự mở tab đó.
@@ -2053,9 +2055,8 @@ const SEED = {
       const incomingSettings=v18hResetPersistedTuitionSearch(snapshot.settings||{});
       db.settings={...(db.settings||{}),...incomingSettings};
       if(db.settings?.tuitionFilter) db.settings.tuitionFilter.q='';
-      ['managerClassScope','libraryTab','libraryQ','libraryLevel','librarySkill','libraryUnit'].forEach(k=>{
-        if(snapshot[k]!==undefined) db[k]=snapshot[k];
-      });
+      if(snapshot.managerClassScope!==undefined) db.managerClassScope=snapshot.managerClassScope;
+      db.libraryTab='all'; db.libraryQ=''; db.libraryLevel='all'; db.librarySkill='all'; db.libraryUnit='all';
     }
     async function bootstrapOfficial(){
       let renderedEarly=false;
@@ -2105,7 +2106,7 @@ const SEED = {
       officialSaveTimer=setTimeout(async()=>{
         try{
           // Keep the tuition search query local to the current page session.
-          const payload={...db,settings:{...(db.settings||{})}};
+          const payload={...db,libraryTab:'all',libraryQ:'',libraryLevel:'all',librarySkill:'all',libraryUnit:'all',settings:{...(db.settings||{})}};
           if(payload.settings.tuitionFilter){
             payload.settings.tuitionFilter={...payload.settings.tuitionFilter,q:''};
           }
@@ -2591,12 +2592,13 @@ const SEED = {
         const changed=v18iHashPayload('library:latest',payload);
         if(changed){
           db.exerciseLibrary=payload.exerciseLibrary||[];
+          v18Memo.library={}; v18Memo.libraryCatalogStats={}; v18Memo.libraryFilterValues={};
           v18Touch();
           if(!options.skipSave) save();
         }
         moduleCacheSet('library:latest', payload);
         return changed;
-      }catch(e){console.warn('Không tải được thư viện bài tập',e); return false}
+      }catch(e){console.warn('Không tải được thư viện bài tập',e); if(options.throwOnError) throw e; return false}
     }
 
     function evaluationMonthKey(){
@@ -2669,7 +2671,7 @@ const SEED = {
     function normalizeV9Data(){
       db.settings ||= {};
       db.settings.evaluationFilter ||= {month:new Date().toISOString().slice(0,7)};
-      if(!['word','pdf','audio'].includes(db.libraryTab)) db.libraryTab='word';
+      if(!['all','word','pdf','audio'].includes(db.libraryTab)) db.libraryTab='all';
       db.evaluations ||= [];
       db.evaluations.forEach(e=>{e.monthKey ||= normalizeEvaluationMonthValue?normalizeEvaluationMonthValue(e.month):new Date().toISOString().slice(0,7); e.month=e.monthKey});
     }
@@ -4252,6 +4254,7 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
       // Mỗi lần mở Lịch dạy đều quay về đúng tuần hiện tại; đổi tuần thủ công vẫn hoạt động
       // cho tới khi người dùng rời tab và mở Lịch dạy lại.
       if(r==='schedule') resetScheduleWeekToCurrent();
+      if(r==='homework'){db.libraryTab='all';db.libraryQ='';db.libraryLevel='all';db.librarySkill='all';db.libraryUnit='all';}
       route=r; notifOpen=false; saveUser(); animateRoute();
       // Phase 5: apply the route snapshot before painting. Schedule, Attendance
       // and Makeup now reuse the shared store and only revalidate when stale.

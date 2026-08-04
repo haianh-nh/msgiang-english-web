@@ -1,7 +1,7 @@
 (function bootstrapSmartWarmup(global) {
   'use strict';
 
-  var BUILD_VERSION = '20phase8d4-11-library-pdf-tab-fix';
+  var BUILD_VERSION = '20phase8d4-12-library-all-fast-loading';
   var backgroundTimer = null;
   var generation = 0;
   var inflight = new Map();
@@ -35,8 +35,8 @@
     if (!api) return [];
     var flags = api.roleFlags();
     var routes;
-    if (flags.admin || flags.manager) routes = ['teachers', 'homework', 'evaluation', 'tuition'];
-    else if (flags.receptionist) routes = ['teachers', 'homework', 'evaluation'];
+    if (flags.admin || flags.manager) routes = ['homework', 'teachers', 'evaluation', 'tuition'];
+    else if (flags.receptionist) routes = ['homework', 'teachers', 'evaluation'];
     else routes = ['homework', 'evaluation'];
     var allowed = api.availableRoutes();
     return routes.filter(function (route) {

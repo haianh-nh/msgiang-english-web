@@ -95,23 +95,71 @@ function homeworkTypeOptions(){
     function ensureExerciseLibrary(){
       db.exerciseLibrary ||= [];
       db.exerciseLibrary = (db.exerciseLibrary||[]).filter(Boolean);
-      if(!['word','pdf','audio'].includes(db.libraryTab)) db.libraryTab='word';
+      if(!['all','word','pdf','audio'].includes(db.libraryTab)) db.libraryTab='all';
       return db.exerciseLibrary;
     }
-    
-    function setLibraryTab(tab){
-      ensureExerciseLibrary();
-      db.libraryTab=['word','pdf','audio'].includes(tab)?tab:'word';
-      v18bSetLocalUiState();
+
+    function libraryCatalogToken(){
+      const rows=ensureExerciseLibrary();
+      const first=rows[0]||{};
+      const last=rows[rows.length-1]||{};
+      return `${rows.length}|${first.id||''}|${first.uploadedAt||first.createdAt||''}|${last.id||''}|${last.uploadedAt||last.createdAt||''}`;
+    }
+    function libraryCatalogStats(){
+      const token=libraryCatalogToken();
+      v18Memo.libraryCatalogStats ||= {};
+      if(v18Memo.libraryCatalogStats.token===token) return v18Memo.libraryCatalogStats.value;
+      const value={all:0,word:0,pdf:0,audio:0,doc:0,docx:0};
+      (db.exerciseLibrary||[]).forEach(item=>{
+        const kind=libraryFileKind(item);
+        value.all+=1;
+        if(value[kind]!==undefined) value[kind]+=1;
+        const ext=libraryExtension(item);
+        if(kind==='word' && (ext==='doc'||ext==='docx')) value[ext]+=1;
+      });
+      v18Memo.libraryCatalogStats={token,value};
+      return value;
+    }
+    function libraryRowsForType(type=normalizeLibraryTab()){
+      const rows=ensureExerciseLibrary();
+      return type==='all'?rows:rows.filter(x=>libraryFileKind(x)===type);
+    }
+    function normalizeLibraryFiltersForTab(type=normalizeLibraryTab()){
+      const rows=libraryRowsForType(type);
+      const valid=(field,value)=>value==='all'||rows.some(x=>String(x?.[field]||'')===String(value||''));
+      if(!valid('level',db.libraryLevel||'all')) db.libraryLevel='all';
+      if(!valid('skill',db.librarySkill||'all')) db.librarySkill='all';
+      if(!valid('unit',db.libraryUnit||'all')) db.libraryUnit='all';
+    }
+    function renderLibraryUi(options={}){
+      if(typeof renderLibraryResultsDom==='function' && typeof route!=='undefined' && route==='homework'){
+        renderLibraryResultsDom(options);
+        return;
+      }
       render();
     }
-    function setLibrarySearch(v){ensureExerciseLibrary(); db.libraryQ=v; v18bSetLocalUiState(); v18bRenderDebounced('librarySearch',220)}
+    function setLibraryTab(tab){
+      ensureExerciseLibrary();
+      db.libraryTab=['all','word','pdf','audio'].includes(tab)?tab:'all';
+      normalizeLibraryFiltersForTab(db.libraryTab);
+      v18bSetLocalUiState();
+      renderLibraryUi({syncFilters:true});
+    }
+    let v8d412LibrarySearchTimer=null;
+    function setLibrarySearch(v){
+      ensureExerciseLibrary();
+      db.libraryQ=v;
+      v18bSetLocalUiState();
+      clearTimeout(v8d412LibrarySearchTimer);
+      v8d412LibrarySearchTimer=setTimeout(()=>renderLibraryUi({syncFilters:false}),170);
+    }
     function libraryFilterValues(field,type=normalizeLibraryTab()){
       ensureExerciseLibrary();
-      const key=v18FastKey()+`|libraryFilterValues|${field}|${type}`;
+      const token=libraryCatalogToken();
+      const key=`${token}|libraryFilterValues|${field}|${type}`;
       v18Memo.libraryFilterValues ||= {};
       if(v18Memo.libraryFilterValues[key]) return v18Memo.libraryFilterValues[key];
-      const values=[...new Set((db.exerciseLibrary||[]).filter(x=>libraryFileKind(x)===type).map(x=>x[field]).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b),'vi',{numeric:true}));
+      const values=[...new Set(libraryRowsForType(type).map(x=>x[field]).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b),'vi',{numeric:true}));
       v18Memo.libraryFilterValues[key]=values;
       return values;
     }
@@ -120,12 +168,25 @@ function homeworkTypeOptions(){
       if(field==='level') db.libraryLevel=value;
       if(field==='skill') db.librarySkill=value;
       if(field==='unit') db.libraryUnit=value;
-      v18bSetLocalUiState(); render();
+      v18bSetLocalUiState();
+      renderLibraryUi({syncFilters:false});
     }
     function resetLibraryFilters(){
       ensureExerciseLibrary();
       db.libraryQ=''; db.libraryLevel='all'; db.librarySkill='all'; db.libraryUnit='all';
-      v18bSetLocalUiState(); render();
+      v18bSetLocalUiState();
+      renderLibraryUi({syncFilters:true,syncSearch:true});
+    }
+    async function reloadLibraryNow(){
+      const btn=document.getElementById('libraryReloadBtn');
+      if(btn){btn.disabled=true;btn.textContent='Đang tải...';}
+      try{
+        await refreshOfficialLibrary({skipSave:true,forceNetwork:true,throwOnError:true});
+        normalizeLibraryFiltersForTab();
+        renderLibraryUi({syncFilters:true,syncSearch:true});
+        toast('Đã cập nhật thư viện');
+      }catch(e){toast(e.message||'Không tải lại được thư viện')}
+      finally{if(btn){btn.disabled=false;btn.textContent='Tải lại';}}
     }
     // V19E: library filter UI helpers moved to /v15/modules/library.js
     function libraryItems(type=normalizeLibraryTab()){
@@ -134,15 +195,15 @@ function homeworkTypeOptions(){
       const level=db.libraryLevel||'all';
       const skill=db.librarySkill||'all';
       const unit=db.libraryUnit||'all';
-      const key=v18FastKey()+`|library|${type}|${q}|${level}|${skill}|${unit}`;
+      const key=`${libraryCatalogToken()}|library|${type}|${q}|${level}|${skill}|${unit}`;
       v18Memo.library ||= {};
       if(v18Memo.library.key===key) return v18Memo.library.rows;
-      const rows=(db.exerciseLibrary||[])
-        .filter(x=>libraryFileKind(x)===type)
+      const rows=libraryRowsForType(type)
         .filter(x=>!q || smartSearchMatch(smartSearchIndex(x.title,x.level,x.skill,x.unit,x.fileName,x.uploadedBy), q))
         .filter(x=>level==='all' || x.level===level)
         .filter(x=>skill==='all' || x.skill===skill)
         .filter(x=>unit==='all' || x.unit===unit)
+        .slice()
         .sort((a,b)=>String(b.uploadedAt||b.createdAt||'').localeCompare(String(a.uploadedAt||a.createdAt||''),'vi') || String(a.title).localeCompare(String(b.title),'vi'));
       v18Memo.library={key,rows};
       return rows;
@@ -162,6 +223,7 @@ function homeworkTypeOptions(){
     }
     function libraryTypeLabel(t,item=null){
       const kind=item?libraryFileKind(item):t;
+      if(kind==='all') return 'Tất cả';
       if(kind==='audio') return 'Audio';
       if(kind==='pdf') return 'PDF';
       const ext=libraryExtension(item);
@@ -188,8 +250,8 @@ function canManageLibrary(){return canManageOperations()||isTeachingUser()}
       return d.toLocaleString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
     }
     function normalizeLibraryTab(){
-      if(!['word','pdf','audio'].includes(db.libraryTab)) db.libraryTab='word';
-      db.libraryTab ||= 'word';
+      if(!['all','word','pdf','audio'].includes(db.libraryTab)) db.libraryTab='all';
+      db.libraryTab ||= 'all';
       return db.libraryTab;
     }
 
@@ -276,7 +338,7 @@ function canManageLibrary(){return canManageOperations()||isTeachingUser()}
 
     function openLibraryItemModal(){
       ensureExerciseLibrary();
-      const currentType=normalizeLibraryTab();
+      const currentType=normalizeLibraryTab()==='all'?'word':normalizeLibraryTab();
       modal(`<div class="modalHead"><h2>+ Upload tài liệu vào thư viện</h2><button class="close" onclick="closeModal()">×</button></div>
       <div class="libraryUploadBox"><b>File thật sẽ được lưu vào Supabase Storage</b><span class="mini">Hỗ trợ Word (.doc/.docx), PDF, MP3, WAV, M4A, AAC. Tối đa 50MB/file.</span><input id="libFile" class="input" type="file" accept=".doc,.docx,.pdf,.mp3,.wav,.m4a,.aac,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf,audio/*" onchange="syncLibraryFileType()"></div>
       <div class="formGrid" style="margin-top:14px"><label>Loại tài liệu<select id="libType" class="input"><option value="word" ${currentType==='word'?'selected':''}>Word</option><option value="pdf" ${currentType==='pdf'?'selected':''}>PDF</option><option value="audio" ${currentType==='audio'?'selected':''}>Audio</option></select></label>
@@ -319,7 +381,8 @@ function canManageLibrary(){return canManageOperations()||isTeachingUser()}
         if(!res.ok) throw new Error(data.error||'Upload lỗi');
         db.exerciseLibrary ||= [];
         db.exerciseLibrary.unshift(data.item);
-        db.libraryTab=data.item.type;
+        db.libraryTab='all';
+        v18Memo.library={}; v18Memo.libraryCatalogStats={}; v18Memo.libraryFilterValues={};
         v18gClearNetworkCache();
         v18fUpdateLibraryModuleCache();
         v20bAfterMutation(['library']);
@@ -341,6 +404,7 @@ function canManageLibrary(){return canManageOperations()||isTeachingUser()}
       try{
         await officialFetch(`/api/library/${encodeURIComponent(id)}`,{method:'DELETE',body:'{}'});
         db.exerciseLibrary=(db.exerciseLibrary||[]).filter(x=>x.id!==id);
+        v18Memo.library={}; v18Memo.libraryCatalogStats={}; v18Memo.libraryFilterValues={};
         v18fUpdateLibraryModuleCache();
         v20bAfterMutation(['library']);
         save(); closeModal(); render(); toast('Đã xóa tài liệu');

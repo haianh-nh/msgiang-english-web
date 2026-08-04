@@ -1,6 +1,6 @@
 (function bootstrapMsgiangRealtime(global) {
   'use strict';
-  var BUILD_VERSION = '20phase8d4-11-library-pdf-tab-fix';
+  var BUILD_VERSION = '20phase8d4-12-library-all-fast-loading';
   global.MSGIANG_BUILD_VERSION = BUILD_VERSION;
   global.__msgiangRealtimeBootstrapLoaded = true;
 
