@@ -1,3 +1,12 @@
+# Phase 8D.4.11 — Library PDF Tab Fix
+
+- Sửa lỗi bấm tab PDF nhưng giao diện vẫn quay về Word.
+- Không còn đổi dữ liệu `type=pdf` thành `type=word`.
+- Word/PDF/Audio được lọc và hiển thị độc lập.
+- Giữ tab PDF sau reload.
+- PDF legacy lưu nhầm type vẫn được nhận diện đúng theo phần mở rộng/MIME.
+- Không cần SQL.
+
 # Phase 8D.4.10 — Tutoring Today Fix
 
 - Sửa tạo lớp Học kèm khi chọn lượt vắng từ nhiều tháng.

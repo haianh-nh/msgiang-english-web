@@ -94,13 +94,17 @@ function homeworkTypeOptions(){
 
     function ensureExerciseLibrary(){
       db.exerciseLibrary ||= [];
-      db.exerciseLibrary = (db.exerciseLibrary||[]).map(x=>x?.type==='pdf'?{...x,type:'word'}:x).filter(Boolean);
-      if(db.libraryTab==='pdf') db.libraryTab='word';
-      db.libraryTab ||= 'word';
+      db.exerciseLibrary = (db.exerciseLibrary||[]).filter(Boolean);
+      if(!['word','pdf','audio'].includes(db.libraryTab)) db.libraryTab='word';
       return db.exerciseLibrary;
     }
     
-    function setLibraryTab(tab){ensureExerciseLibrary(); db.libraryTab=(tab==='pdf'?'word':tab); v18bSetLocalUiState(); render()}
+    function setLibraryTab(tab){
+      ensureExerciseLibrary();
+      db.libraryTab=['word','pdf','audio'].includes(tab)?tab:'word';
+      v18bSetLocalUiState();
+      render();
+    }
     function setLibrarySearch(v){ensureExerciseLibrary(); db.libraryQ=v; v18bSetLocalUiState(); v18bRenderDebounced('librarySearch',220)}
     function libraryFilterValues(field,type=normalizeLibraryTab()){
       ensureExerciseLibrary();

@@ -1,4 +1,4 @@
-window.MSGIANG_BUILD_VERSION='20phase8d4-10-tutoring-today-fix';
+window.MSGIANG_BUILD_VERSION='20phase8d4-11-library-pdf-tab-fix';
 const SEED = {
       classes: [],
       teachers: [],
@@ -2669,8 +2669,7 @@ const SEED = {
     function normalizeV9Data(){
       db.settings ||= {};
       db.settings.evaluationFilter ||= {month:new Date().toISOString().slice(0,7)};
-      if(db.libraryTab==='pdf') db.libraryTab='word';
-      (db.exerciseLibrary||[]).forEach(x=>{if(x.type==='pdf')x.type='word'});
+      if(!['word','pdf','audio'].includes(db.libraryTab)) db.libraryTab='word';
       db.evaluations ||= [];
       db.evaluations.forEach(e=>{e.monthKey ||= normalizeEvaluationMonthValue?normalizeEvaluationMonthValue(e.month):new Date().toISOString().slice(0,7); e.month=e.monthKey});
     }
