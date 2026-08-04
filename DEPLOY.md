@@ -1,9 +1,11 @@
-# Deploy Phase 8D.4.8
+# Deploy Phase 8D.4.9
 
 - Không có migration SQL mới.
-- Chờ xếp học bù hiển thị toàn bộ lượt vắng chưa xử lý từ mọi tháng còn dữ liệu.
-- Lịch dạy và lớp Học kèm đều có thể chọn học sinh nghỉ từ tháng trước.
-- Lượt thuộc tháng đã xóa, đã xếp hoặc đã hoàn tất không xuất hiện lại.
+- PDF được xem trước trong popup bằng trình xem PDF của trình duyệt.
+- DOCX được chuyển thành HTML khi bấm Xem trước; giữ văn bản, ảnh và bảng cơ bản.
+- File `.doc` cũ hoặc DOCX quá lớn sẽ yêu cầu tải xuống.
+- Thẻ tài liệu dùng thống nhất `Xem trước`, `Tải xuống`, `Xóa`.
+- API nhận diện định dạng theo tên file/MIME thật và tự sửa trường hợp PDF bị lưu nhầm nhãn Word ở frontend.
 - Chạy `npm ci && npm run verify` trước khi push.
 
-Build: `20phase8d4-8-cross-month-makeup-backlog`
+Build: `20phase8d4-10-tutoring-today-fix`

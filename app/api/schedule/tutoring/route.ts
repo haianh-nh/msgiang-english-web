@@ -140,15 +140,24 @@ export async function POST(req: NextRequest) {
   const found = absences || [];
   if (found.length !== absenceIds.length) return NextResponse.json({ error: "Có lượt vắng không còn tồn tại" }, { status: 409 });
   const months = Array.from(new Set(found.map((a: any) => monthFromSessionKey(a.source_session_key)).filter(Boolean)));
-  if (months.length !== 1) return NextResponse.json({ error: "Chỉ chọn học sinh cùng một tháng học bù" }, { status: 400 });
+  if (!months.length) {
+    return NextResponse.json({ error: "Không xác định được tháng phát sinh của lượt vắng" }, { status: 409 });
+  }
 
-  let isDeleted = false;
+  // Phase 8D.4.10: một lớp Học kèm có thể gom các lượt vắng còn tồn đọng
+  // từ nhiều tháng. Kiểm tra từng tháng thay vì bắt tất cả phải cùng tháng.
   try {
-    isDeleted = await safeMonthDeleted(supabase, String(months[0] || ""));
+    for (const monthKey of months) {
+      if (await safeMonthDeleted(supabase, String(monthKey))) {
+        return NextResponse.json(
+          { error: `Dữ liệu vắng tháng ${String(monthKey).slice(5, 7)}/${String(monthKey).slice(0, 4)} đã bị xóa, không thể xếp học bù` },
+          { status: 409 },
+        );
+      }
+    }
   } catch (e: any) {
     return NextResponse.json({ error: e.message || "Không kiểm tra được tháng đã xóa" }, { status: 500 });
   }
-  if (isDeleted) return NextResponse.json({ error: "Tháng này đã bị xóa dữ liệu vắng, không thể xếp học bù" }, { status: 409 });
 
   const pending = found.filter((a: any) => String(a.status || "pending") === "pending");
   if (pending.length !== found.length) return NextResponse.json({ error: "Có học sinh không còn ở trạng thái Chờ xếp" }, { status: 409 });
@@ -161,10 +170,23 @@ export async function POST(req: NextRequest) {
   if (existingError) return NextResponse.json({ error: existingError.message }, { status: 500 });
   if ((existingPlans || []).length) return NextResponse.json({ error: "Có lượt vắng đã được xếp học bù" }, { status: 409 });
 
-  const { data: teacher } = await supabase.from("official_teachers").select("id,name").eq("id", teacherId).maybeSingle();
-  const { data: assistant } = assistantTeacherId
-    ? await supabase.from("official_teachers").select("id,name").eq("id", assistantTeacherId).maybeSingle()
-    : ({ data: null } as any);
+  const { data: teacher, error: teacherError } = await supabase
+    .from("official_teachers")
+    .select("id,name,status")
+    .eq("id", teacherId)
+    .maybeSingle();
+  if (teacherError) return NextResponse.json({ error: teacherError.message }, { status: 500 });
+  if (!teacher?.id || String(teacher.status || "active") === "inactive") {
+    return NextResponse.json({ error: "Giáo viên dạy không còn hoạt động hoặc chưa được liên kết" }, { status: 409 });
+  }
+
+  const { data: assistant, error: assistantError } = assistantTeacherId
+    ? await supabase.from("official_teachers").select("id,name,status").eq("id", assistantTeacherId).maybeSingle()
+    : ({ data: null, error: null } as any);
+  if (assistantError) return NextResponse.json({ error: assistantError.message }, { status: 500 });
+  if (assistantTeacherId && (!assistant?.id || String(assistant.status || "active") === "inactive")) {
+    return NextResponse.json({ error: "TA không còn hoạt động hoặc không tồn tại" }, { status: 409 });
+  }
 
   let createdClassId = "";
   let createdClassMakeupId = "";

@@ -88,7 +88,14 @@ function teacherOptionsWithEmpty(selectedId='',emptyLabel='Không chọn'){
       return `<option value="">${h(emptyLabel)}</option>`+active.map(t=>`<option value="${t.id}" ${String(t.id)===String(selectedId||'')?'selected':''}>${h(t.name)}${t.roles?.includes('manager')?' • Quản lí':''}</option>`).join('');
     }
 
-function tutoringPendingRows(){
+function tutoringTodayVNISO(){
+      // Ngày của form Học kèm luôn theo lịch Việt Nam, không phụ thuộc
+      // timezone đang cài trên máy của giáo viên/quản lí.
+      const vn=new Date(Date.now()+7*60*60*1000);
+      return `${vn.getUTCFullYear()}-${String(vn.getUTCMonth()+1).padStart(2,'0')}-${String(vn.getUTCDate()).padStart(2,'0')}`;
+    }
+
+    function tutoringPendingRows(){
       const monthKey=makeupSelectedMonthKey();
       const st=makeupTabStateForMonth(monthKey);
       return makeupTabPendingRows(st,null);
@@ -109,7 +116,7 @@ async function openTutoringClassModal(){
         modal(`<div class="modalHead"><h2>Thêm lớp học kèm</h2><button class="close" onclick="closeModal()">×</button></div><div class="empty">Đang tải toàn bộ danh sách chờ học bù...</div>`);
         await refreshOfficialMakeupState({month:monthKey,forceNetwork:true,applyGlobal:true,skipSave:true}).catch(e=>toast(e.message||'Không tải được học bù'));
       }
-      const today=isoDate(new Date());
+      const today=tutoringTodayVNISO();
       const teacherOptions=classMakeupTeacherOptions('', currentTeacherRecord()?.id||'') || '<option value="">Chưa có giáo viên</option>';
       const taOptions=teacherOptionsWithEmpty('', 'Không chọn TA');
       modal(`<div class="modalHead"><h2>Thêm lớp học kèm</h2><button class="close" onclick="closeModal()">×</button></div>

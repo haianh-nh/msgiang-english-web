@@ -1,13 +1,15 @@
 # Ms.Giang English Center
 
-Bản ổn định hiện tại: `20phase8d4-8-cross-month-makeup-backlog`.
+Bản ổn định hiện tại: `20phase8d4-10-tutoring-today-fix`.
 
 - App core: khoảng 234 KB.
 - CSS core: khoảng 59 KB.
-- Không cần migration SQL cho Phase 8D.4.8.
+- Không cần migration SQL cho Phase 8D.4.9.
 - Thẻ và popup Giáo viên/TA/Quản lí chỉ hiển thị lớp chính; dropdown gán lớp cũng loại lớp Học kèm.
 - Điểm danh Giáo viên/TA dùng giờ Việt Nam cố định và hỗ trợ hồ sơ giáo viên cũ/trùng.
 - Danh sách Chờ xếp học bù lấy toàn bộ lượt vắng chưa xử lý từ các tháng trước.
+- Thư viện bài tập xem trước PDF và DOCX trong popup; các nút thẻ được chuẩn hóa thành Xem trước, Tải xuống và Xóa.
+- File được nhận diện theo phần mở rộng/MIME thật, nên PDF lưu nhầm nhãn Word vẫn chuyển đúng tab.
 - Chạy `npm run verify` trước khi deploy.
 
 ## Kiểm tra trước deploy
@@ -29,3 +31,5 @@ npm run verify
 - `public/v15/modules/attendance-runtime.js`: mutation Điểm danh.
 - `public/v15/modules/schedule-actions.js`: thao tác Lịch dạy/Học bù.
 - `public/v15/modules/makeup.js`: trang Học bù.
+- `public/v15/modules/library.js`: thẻ tài liệu và giao diện Thư viện.
+- `public/v15/modules/homework-library-runtime.js`: upload, xem trước và tải tài liệu.

@@ -1,8 +1,8 @@
 /*
  * V19E Library Module
  * Tách riêng phần render UI Thư viện.
- * Không đổi UI/UX, wording, filter hoặc card thư viện.
- * Các hàm upload/delete/preview/API vẫn nằm ở app core để giảm rủi ro.
+ * Phase 8D.4.9: chuẩn hóa card và nút thao tác Thư viện.
+ * Runtime upload/delete/preview/API nằm trong homework-library-runtime.js.
  */
 
 function filterSelect(label,field,current,values){
@@ -22,11 +22,11 @@ function homeworkPage(){
       if(isParent()) return `<div class="screenTitle"><div><h1>Thư viện bài tập</h1><p>Phần này chỉ dành cho giáo viên và quản trị trung tâm.</p></div></div><div class="blockedBox"><h2>🔒 Không có quyền truy cập</h2></div>`;
       const tab=normalizeLibraryTab();
       const items=libraryItems(tab);
-      const wordCount=(db.exerciseLibrary||[]).filter(x=>x.type==='word').length;
-      const pdfCount=(db.exerciseLibrary||[]).filter(x=>x.type==='pdf').length;
-      const docCount=(db.exerciseLibrary||[]).filter(x=>x.type==='word' && libraryExtension(x)==='doc').length;
-      const docxCount=(db.exerciseLibrary||[]).filter(x=>x.type==='word' && libraryExtension(x)==='docx').length;
-      const audioCount=(db.exerciseLibrary||[]).filter(x=>x.type==='audio').length;
+      const wordCount=(db.exerciseLibrary||[]).filter(x=>libraryFileKind(x)==='word').length;
+      const pdfCount=(db.exerciseLibrary||[]).filter(x=>libraryFileKind(x)==='pdf').length;
+      const docCount=(db.exerciseLibrary||[]).filter(x=>libraryFileKind(x)==='word' && libraryExtension(x)==='doc').length;
+      const docxCount=(db.exerciseLibrary||[]).filter(x=>libraryFileKind(x)==='word' && libraryExtension(x)==='docx').length;
+      const audioCount=(db.exerciseLibrary||[]).filter(x=>libraryFileKind(x)==='audio').length;
       const levels=libraryFilterValues('level',tab);
       const skills=libraryFilterValues('skill',tab);
       const units=libraryFilterValues('unit',tab);
@@ -49,24 +49,21 @@ function homeworkPage(){
 
     
 function libraryCard(item,i){
-      const isAudio=item.type==='audio';
-      const isPdf=item.type==='pdf';
-      const url=item.publicUrl||item.url||'';
+      const kind=libraryFileKind(item);
+      const isAudio=kind==='audio';
+      const pillClass=isAudio?'blue':kind==='pdf'?'green':'red';
       const meta=`${h(item.level||'All')} • ${h(item.skill||'-')} • ${h(item.unit||'-')}`;
-      const openLabel=isAudio?'Mở / tải Audio':isPdf?'Mở / tải PDF':'Mở / tải Word';
-      const previewLabel=isPdf?'Xem PDF':'Xem trước';
-      const pillClass=isAudio?'blue':isPdf?'green':'red';
       return `<div class="simpleLibraryCard" style="--i:${i}">
         <div class="simpleLibraryHead">
           <div class="simpleLibraryTitle"><h3>${h(item.title)}</h3><div class="mini">${meta}</div></div>
-          <span class="pill ${pillClass}">${libraryTypeLabel(item.type,item)}</span>
+          <span class="pill ${pillClass}">${libraryTypeLabel(kind,item)}</span>
         </div>
         <div class="mini">${libraryDateLabel(item.uploadedAt||item.createdAt)}${item.uploadedBy?` • ${h(item.uploadedBy)}`:''}</div>
-        ${isAudio&&url?`<audio class="libraryAudio" controls src="${h(url)}"></audio>`:''}
-        <div class="simpleLibraryActions">
-          ${!isAudio?`<button class="btn ghost" onclick="openLibraryPreview('${item.id}')">${previewLabel}</button>`:''}
-          ${url?`<a class="btn primary" href="${h(url)}" target="_blank" rel="noopener">${openLabel}</a>`:''}
-          ${canDeleteLibrary()?`<button class="btn ghost dangerMini" onclick="openDeleteLibraryItem('${item.id}')">Xóa</button>`:''}
+        ${isAudio?(item.publicUrl||item.url)?`<audio class="libraryAudio" controls preload="metadata" src="${h(item.publicUrl||item.url)}"></audio>`:'':''}
+        <div class="simpleLibraryActions ${canDeleteLibrary()?'hasDelete':'noDelete'}">
+          <button class="btn ghost libraryActionPreview" type="button" onclick="openLibraryPreview('${item.id}')">Xem trước</button>
+          <a class="btn primary libraryActionDownload" href="${h(libraryDownloadUrl(item.id))}">Tải xuống</a>
+          ${canDeleteLibrary()?`<button class="btn ghost dangerMini libraryActionDelete" type="button" onclick="openDeleteLibraryItem('${item.id}')">Xóa</button>`:''}
         </div>
       </div>`
     }

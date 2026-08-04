@@ -107,7 +107,7 @@ function homeworkTypeOptions(){
       const key=v18FastKey()+`|libraryFilterValues|${field}|${type}`;
       v18Memo.libraryFilterValues ||= {};
       if(v18Memo.libraryFilterValues[key]) return v18Memo.libraryFilterValues[key];
-      const values=[...new Set((db.exerciseLibrary||[]).filter(x=>x.type===type).map(x=>x[field]).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b),'vi',{numeric:true}));
+      const values=[...new Set((db.exerciseLibrary||[]).filter(x=>libraryFileKind(x)===type).map(x=>x[field]).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b),'vi',{numeric:true}));
       v18Memo.libraryFilterValues[key]=values;
       return values;
     }
@@ -134,7 +134,7 @@ function homeworkTypeOptions(){
       v18Memo.library ||= {};
       if(v18Memo.library.key===key) return v18Memo.library.rows;
       const rows=(db.exerciseLibrary||[])
-        .filter(x=>x.type===type)
+        .filter(x=>libraryFileKind(x)===type)
         .filter(x=>!q || smartSearchMatch(smartSearchIndex(x.title,x.level,x.skill,x.unit,x.fileName,x.uploadedBy), q))
         .filter(x=>level==='all' || x.level===level)
         .filter(x=>skill==='all' || x.skill===skill)
@@ -148,13 +148,25 @@ function homeworkTypeOptions(){
       const ext=String(item?.extension||item?.fileName?.split('.').pop()||'').toLowerCase();
       return ['doc','docx','pdf','mp3','wav','m4a','aac'].includes(ext)?ext:'';
     }
+    function libraryFileKind(item){
+      const ext=libraryExtension(item);
+      const mime=String(item?.mimeType||'').toLowerCase();
+      if(ext==='pdf'||mime==='application/pdf') return 'pdf';
+      if(['doc','docx'].includes(ext)||mime==='application/msword'||mime.includes('wordprocessingml')) return 'word';
+      if(['mp3','wav','m4a','aac'].includes(ext)||mime.startsWith('audio/')) return 'audio';
+      return ['word','pdf','audio'].includes(item?.type)?item.type:'word';
+    }
     function libraryTypeLabel(t,item=null){
-      if(t==='audio') return 'Audio';
-      if(t==='pdf') return 'PDF';
+      const kind=item?libraryFileKind(item):t;
+      if(kind==='audio') return 'Audio';
+      if(kind==='pdf') return 'PDF';
       const ext=libraryExtension(item);
       return ext?`Word .${ext.toUpperCase()}`:'Word';
     }
     function libraryIcon(t){return t==='audio'?'🎧':t==='pdf'?'📄':'📝'}
+    function libraryDownloadUrl(id){return `/api/library/${encodeURIComponent(id)}/file?download=1`}
+    function libraryInlineFileUrl(id){return `/api/library/${encodeURIComponent(id)}/file`}
+    const v8d49LibraryPreviewCache=new Map();
     
 
 function canManageLibrary(){return canManageOperations()||isTeachingUser()}
@@ -178,42 +190,83 @@ function canManageLibrary(){return canManageOperations()||isTeachingUser()}
     }
 
     // V19E: homeworkPage/libraryCard moved to /v15/modules/library.js. Upload/delete/preview API stays in app core for safety.
+    function libraryPreviewModal(content,id=''){
+      modal(`<div class="libraryPreviewShell" data-library-preview-id="${h(id)}" data-disable-modal-autofocus>${content}</div>`,{className:'libraryPreviewModal'});
+    }
+    function libraryPreviewMeta(item,kind){
+      const pillClass=kind==='pdf'?'green':kind==='audio'?'blue':'red';
+      return `<div class="wordPreviewMeta"><span class="pill ${pillClass}">${h(libraryTypeLabel(kind,item))}</span><span class="pill gray">${h(item.fileName||'')}</span><span class="pill green">${h(item.level||'All')}</span><span class="pill blue">${fileSizeLabel(item.fileSize)}</span></div>`;
+    }
+    function libraryPreviewFooter(item,{showOpen=false,openUrl=''}={}){
+      const downloadUrl=libraryDownloadUrl(item.id);
+      return `<div class="libraryPreviewFooter">
+        <div class="libraryPreviewFooterHint">Tài liệu chỉ được tải khi bạn bấm xem trước hoặc tải xuống.</div>
+        <div class="libraryPreviewFooterActions">
+          ${showOpen&&openUrl?`<a class="btn ghost" href="${h(openUrl)}" target="_blank" rel="noopener">Mở tab mới</a>`:''}
+          <a class="btn primary" href="${h(downloadUrl)}">Tải xuống</a>
+          <button class="btn ghost" type="button" onclick="closeModal()">Đóng</button>
+        </div>
+      </div>`;
+    }
     function openLibraryPreview(id){
       const item=(db.exerciseLibrary||[]).find(x=>x.id===id); if(!item) return;
-      if(item.type==='word') return openWordPreview(id);
-      const url=item.publicUrl||item.url||'';
-      if(item.type==='pdf'){
-        modal(`<div class="modalHead"><h2>${h(item.title)}</h2><button class="close" onclick="closeModal()">×</button></div>
-        <div class="wordPreviewMeta"><span class="pill red">PDF</span><span class="pill gray">${h(item.fileName||'')}</span><span class="pill green">${h(item.level||'All')}</span><span class="pill blue">${fileSizeLabel(item.fileSize)}</span></div>
-        ${url?`<iframe class="pdfPreviewFrame" src="${h(url)}#toolbar=1" title="${h(item.title)}"></iframe>`:'<div class="empty">File chưa có link mở.</div>'}
-        <div style="text-align:right;margin-top:14px">${url?`<a class="btn primary" href="${h(url)}" target="_blank" rel="noopener">Mở / tải PDF</a>`:''}</div>`);
+      const kind=libraryFileKind(item);
+      if(kind==='word') return openWordPreview(id);
+      if(kind==='pdf'){
+        const inlineUrl=item.publicUrl||item.url||libraryInlineFileUrl(id);
+        const pdfSrc=`${inlineUrl}#toolbar=1&navpanes=0&view=FitH`;
+        libraryPreviewModal(`<div class="modalHead libraryPreviewHead"><div><h2>${h(item.title)}</h2><p>Xem trước PDF trong trình duyệt</p></div><button class="close" onclick="closeModal()">×</button></div>
+          ${libraryPreviewMeta(item,kind)}
+          <div class="libraryPreviewNotice">Thanh công cụ PDF cho phép chuyển trang, phóng to và thu nhỏ. Nếu trình duyệt không hiển thị, hãy dùng “Mở tab mới” hoặc “Tải xuống”.</div>
+          <div class="libraryPreviewViewport libraryPdfViewport">
+            <iframe class="pdfPreviewFrame" src="${h(pdfSrc)}" title="${h(item.title)}" loading="eager"></iframe>
+          </div>
+          ${libraryPreviewFooter(item,{showOpen:true,openUrl:inlineUrl})}`,item.id);
         return;
       }
-      modal(`<div class="modalHead"><h2>${h(item.title)}</h2><button class="close" onclick="closeModal()">×</button></div>
-      <div class="wordPreviewMeta"><span class="pill blue">Audio</span><span class="pill gray">${fileSizeLabel(item.fileSize)}</span><span class="pill green">${h(item.level||'All')}</span></div>
-      ${url?`<audio class="libraryAudio" controls src="${h(url)}"></audio>`:'<div class="empty">File chưa có link mở.</div>'}
-      <div style="text-align:right;margin-top:14px">${url?`<a class="btn primary" href="${h(url)}" target="_blank" rel="noopener">Mở / tải Audio</a>`:''}</div>`)
+      const inlineUrl=item.publicUrl||item.url||libraryInlineFileUrl(id);
+      libraryPreviewModal(`<div class="modalHead libraryPreviewHead"><div><h2>${h(item.title)}</h2><p>Xem trước Audio</p></div><button class="close" onclick="closeModal()">×</button></div>
+        ${libraryPreviewMeta(item,kind)}
+        <div class="libraryAudioPreview"><audio class="libraryAudio" controls preload="metadata" src="${h(inlineUrl)}"></audio></div>
+        ${libraryPreviewFooter(item)}`,item.id);
+    }
+
+    function renderWordPreviewResult(item,data){
+      const kind='word';
+      const messages=Array.isArray(data?.messages)?data.messages.filter(Boolean):[];
+      const previewBody=data?.previewable
+        ? `<div class="libraryPreviewViewport libraryWordViewport"><article class="docxPreviewDocument">${data.html||'<p>File Word không có nội dung có thể hiển thị.</p>'}</article></div>`
+        : `<div class="libraryPreviewFallback"><div class="libraryPreviewFallbackIcon">📝</div><h3>Chưa thể xem trước file này</h3><p>${h(data?.message||'Vui lòng tải xuống để mở tài liệu đầy đủ.')}</p></div>`;
+      const warning=messages.length?`<details class="libraryPreviewWarnings"><summary>Lưu ý về định dạng (${messages.length})</summary><p>Một số thành phần phức tạp của Word có thể hiển thị khác Microsoft Word.</p></details>`:'';
+      libraryPreviewModal(`<div class="modalHead libraryPreviewHead"><div><h2>${h(data?.title||item.title)}</h2><p>Xem trước Word (.docx)</p></div><button class="close" onclick="closeModal()">×</button></div>
+        ${libraryPreviewMeta({...item,fileName:data?.fileName||item.fileName},kind)}
+        ${warning}
+        ${previewBody}
+        ${libraryPreviewFooter(item)}`,item.id);
     }
 
     async function openWordPreview(id){
       const item=(db.exerciseLibrary||[]).find(x=>x.id===id); if(!item) return;
-      const url=item.publicUrl||item.url||'';
-      modal(`<div class="modalHead"><h2>Xem trước Word</h2><button class="close" onclick="closeModal()">×</button></div>
-        <div class="wordPreviewMeta"><span class="pill red">${libraryTypeLabel(item.type,item)}</span><span class="pill gray">${h(item.fileName||'')}</span><span class="pill green">${h(item.level||'All')}</span></div>
-        <div class="uploadProgressNote">Đang tải nội dung xem trước...</div>`);
+      const cacheKey=`${id}|${item.uploadedAt||item.createdAt||''}|${item.fileSize||0}`;
+      const cached=v8d49LibraryPreviewCache.get(cacheKey);
+      if(cached){renderWordPreviewResult(item,cached);return;}
+      libraryPreviewModal(`<div class="modalHead libraryPreviewHead"><div><h2>${h(item.title)}</h2><p>Đang chuẩn bị bản xem trước Word</p></div><button class="close" onclick="closeModal()">×</button></div>
+        ${libraryPreviewMeta(item,'word')}
+        <div class="libraryPreviewLoading"><span class="libraryPreviewSpinner"></span><b>Đang tải và chuyển đổi DOCX...</b><small>File chỉ được xử lý khi bạn bấm Xem trước.</small></div>
+        ${libraryPreviewFooter(item)}`,item.id);
       try{
         const data=await officialFetch(`/api/library/${encodeURIComponent(id)}/preview`);
-        const text=data.text||'Không có nội dung xem trước.';
-        const note=data.previewable?'' : '<div class="uploadProgressNote">File này không hỗ trợ preview trực tiếp. Hãy tải về để xem đầy đủ.</div>';
-        modal(`<div class="modalHead"><h2>${h(data.title||item.title)}</h2><button class="close" onclick="closeModal()">×</button></div>
-          <div class="wordPreviewMeta"><span class="pill red">${libraryTypeLabel(item.type,{...item,fileName:data.fileName||item.fileName})}</span><span class="pill gray">${h(data.fileName||item.fileName||'')}</span><span class="pill green">${h(item.level||'All')}</span></div>
-          ${note}
-          <div class="wordPreviewText">${h(text)}</div>
-          <div style="text-align:right;margin-top:14px">${url?`<a class="btn primary" href="${h(url)}" target="_blank" rel="noopener">Mở / tải file Word</a>`:''}</div>`);
+        v8d49LibraryPreviewCache.set(cacheKey,data);
+        const activeShell=modalBackdrop?.querySelector?.('.libraryPreviewShell');
+        if(!modalBackdrop?.classList?.contains('show')||activeShell?.getAttribute?.('data-library-preview-id')!==String(id)) return;
+        renderWordPreviewResult(item,data);
       }catch(e){
-        modal(`<div class="modalHead"><h2>${h(item.title)}</h2><button class="close" onclick="closeModal()">×</button></div>
-          <div class="dangerBox"><b>Không xem trước được file này</b><span>${h(e.message||'Có lỗi khi đọc file Word')}</span></div>
-          <div style="text-align:right;margin-top:14px">${url?`<a class="btn primary" href="${h(url)}" target="_blank" rel="noopener">Mở / tải file Word</a>`:''}</div>`);
+        const activeShell=modalBackdrop?.querySelector?.('.libraryPreviewShell');
+        if(!modalBackdrop?.classList?.contains('show')||activeShell?.getAttribute?.('data-library-preview-id')!==String(id)) return;
+        libraryPreviewModal(`<div class="modalHead libraryPreviewHead"><div><h2>${h(item.title)}</h2><p>Không xem trước được</p></div><button class="close" onclick="closeModal()">×</button></div>
+          ${libraryPreviewMeta(item,'word')}
+          <div class="libraryPreviewFallback"><div class="libraryPreviewFallbackIcon">⚠️</div><h3>Không xem trước được file này</h3><p>${h(e.message||'Có lỗi khi đọc file Word')}</p></div>
+          ${libraryPreviewFooter(item)}`,item.id);
       }
     }
 

@@ -1,4 +1,4 @@
-window.MSGIANG_BUILD_VERSION='20phase8d4-8-cross-month-makeup-backlog';
+window.MSGIANG_BUILD_VERSION='20phase8d4-10-tutoring-today-fix';
 const SEED = {
       classes: [],
       teachers: [],
@@ -4805,14 +4805,16 @@ function safeStudentName(id){return h(studentById(id)?.name || 'Không tìm th�
       const existing=modalBackdrop.querySelector('.modal');
       const wasOpen=modalBackdrop.classList.contains('show') && !!existing;
       const preserveScroll=!!options.preserveScroll;
+      const modalClass=['modal',String(options.className||'').trim()].filter(Boolean).join(' ');
       const previousScroll=preserveScroll?Number(existing?.scrollTop||0):0;
       if(wasOpen){
+        existing.className=modalClass;
         existing.innerHTML=html;
         existing.removeAttribute('data-saving');
         existing.removeAttribute('aria-busy');
         existing.scrollTop=preserveScroll?previousScroll:0;
       }else{
-        modalBackdrop.innerHTML=`<div class="modal">${html}</div>`;
+        modalBackdrop.innerHTML=`<div class="${h(modalClass)}">${html}</div>`;
         modalBackdrop.classList.add('show');
       }
       // Phase 8B: thay nội dung trên cùng modal shell để tránh fade/nháy khi chuyển bước.

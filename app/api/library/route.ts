@@ -35,10 +35,11 @@ function isPdfFile(file?: File) {
 
 function normalizeType(value: any, file?: File) {
   const raw = String(value || "").toLowerCase();
-  if (raw === "word" || raw === "pdf" || raw === "audio") return raw;
+  // Luôn ưu tiên định dạng thật của file để tránh lưu PDF nhầm vào tab Word.
   if (isPdfFile(file)) return "pdf";
   if (isWordFile(file)) return "word";
-  if ((file?.type || "").startsWith("audio/")) return "audio";
+  if ((file?.type || "").startsWith("audio/") || /\.(mp3|wav|m4a|aac)$/i.test(file?.name || "")) return "audio";
+  if (raw === "word" || raw === "pdf" || raw === "audio") return raw;
   return "word";
 }
 
@@ -74,11 +75,21 @@ function fileExtension(name = "") {
   return m ? m[1] : "";
 }
 
+function clientType(row: any) {
+  const name = String(row?.file_name || "");
+  const mime = String(row?.mime_type || "");
+  const ext = fileExtension(name);
+  if (ext === "pdf" || mime === "application/pdf") return "pdf";
+  if (["doc", "docx"].includes(ext) || WORD_MIMES.has(mime)) return "word";
+  if (["mp3", "wav", "m4a", "aac"].includes(ext) || mime.startsWith("audio/")) return "audio";
+  return ["word", "pdf", "audio"].includes(row?.type) ? row.type : "word";
+}
+
 function toClientRow(row: any) {
   const ext = fileExtension(row.file_name || "");
   return {
     id: row.id,
-    type: row.type,
+    type: clientType(row),
     extension: ext,
     title: row.title,
     level: row.level || "All",

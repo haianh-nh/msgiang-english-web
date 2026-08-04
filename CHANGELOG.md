@@ -1,4 +1,22 @@
+# Phase 8D.4.10 — Tutoring Today Fix
+
+- Sửa tạo lớp Học kèm khi chọn lượt vắng từ nhiều tháng.
+- Ngày mặc định dùng lịch Việt Nam.
+- Kiểm tra rõ giáo viên/TA còn hoạt động.
+- Không cần SQL.
+
 # Changelog
+
+## Phase 8D.4.9 – Library PDF/DOCX Preview
+
+- Thêm popup xem trước PDF gần toàn màn hình với trình xem tích hợp của trình duyệt.
+- DOCX được chuyển sang HTML theo yêu cầu, hỗ trợ văn bản, ảnh và bảng cơ bản.
+- Thêm giới hạn dung lượng và phương án tải xuống cho `.doc`, file lớn, file lỗi hoặc không thể chuyển đổi.
+- Thêm API file có kiểm tra quyền để xem inline hoặc tải xuống với đúng tên file.
+- Chuẩn hóa nút thẻ thành `Xem trước`, `Tải xuống`, `Xóa`; giữ nguyên phân quyền Xóa.
+- Nhận diện định dạng theo phần mở rộng/MIME thật, sửa trường hợp PDF bị lưu nhầm trong tab Word.
+- Cache kết quả xem trước DOCX trong phiên để không chuyển đổi lại cùng một file.
+- Không cần migration SQL.
 
 ## Phase 8D.4.8 – Cross-month Makeup Backlog
 
