@@ -108,9 +108,45 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
+  // Phase 8D.4.13: hủy các lịch học bù CHƯA diễn ra (status = scheduled) của lượt vắng tháng này,
+  // để học sinh không còn hiện trong buổi học bù ở Lịch dạy. Buổi đã học bù (completed) và lịch sử
+  // điểm danh được giữ nguyên. Lượt vắng trả về pending để nếu khôi phục tháng vẫn xếp lại được.
+  // Chạy lại POST cho cùng tháng là an toàn (upsert + chỉ hủy plan còn scheduled).
+  let cancelledPlans = 0;
+  try {
+    const { data: openPlans, error: openError } = await supabase
+      .from("official_makeup_plans")
+      .select("id,absence_id")
+      .eq("status", "scheduled")
+      .like("source_session_key", `%|${month}-%`);
+    if (openError) throw openError;
+    const planIds = uniq((openPlans || []).map((p: any) => p.id));
+    const absenceIds = uniq((openPlans || []).map((p: any) => p.absence_id));
+    if (planIds.length) {
+      const now = new Date().toISOString();
+      const { error: cancelError } = await supabase
+        .from("official_makeup_plans")
+        .update({ status: "cancelled", cancelled_at: now })
+        .in("id", planIds)
+        .eq("status", "scheduled");
+      if (cancelError) throw cancelError;
+      if (absenceIds.length) {
+        const { error: absError } = await supabase
+          .from("official_absence_records")
+          .update({ status: "pending", updated_at: now })
+          .in("id", absenceIds)
+          .eq("status", "scheduled");
+        if (absError) throw absError;
+      }
+      cancelledPlans = planIds.length;
+    }
+  } catch (e: any) {
+    return NextResponse.json({ error: `Đã đánh dấu xóa tháng nhưng chưa hủy được lịch học bù chưa diễn ra: ${e.message || e}. Hãy bấm xóa lại tháng này.` }, { status: 500 });
+  }
+
   try {
     const data = await monthState(supabase);
-    return NextResponse.json({ ok: true, month, ...data });
+    return NextResponse.json({ ok: true, month, cancelledPlans, ...data });
   } catch (e: any) {
     return NextResponse.json({ ok: true, month, warning: e.message || "Đã xóa nhưng không tải lại được danh sách tháng" });
   }
