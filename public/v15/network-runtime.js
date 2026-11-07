@@ -1,7 +1,7 @@
 (function bootstrapMsgiangNetworkRuntime(global) {
   'use strict';
 
-  var BUILD_VERSION = '20phase8d4-12-library-all-fast-loading';
+  var BUILD_VERSION = '20phase8d4-13-makeup-month-fix';
   var GET_TTL_MS = 1800;
   var inflightGet = new Map();
   var shortGetCache = new Map();

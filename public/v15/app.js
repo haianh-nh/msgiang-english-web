@@ -1,4 +1,4 @@
-window.MSGIANG_BUILD_VERSION='20phase8d4-12-library-all-fast-loading';
+window.MSGIANG_BUILD_VERSION='20phase8d4-13-makeup-month-fix';
 const SEED = {
       classes: [],
       teachers: [],
@@ -1023,6 +1023,11 @@ const SEED = {
       clearTimeout(v20eModuleCacheTimer);
       v20eModuleCacheTimer=setTimeout(v20eCommitModuleCache,700);
     }
+    // Phase 8D.4.13: API legacy trả availableMonths rỗng; không ghi đè danh sách tháng đã tải từ /api/makeup/months.
+    function v26KeepMakeupAvailableMonths(months){
+      if(Array.isArray(months) && months.length) db.makeupAvailableMonths=months;
+      else db.makeupAvailableMonths ||= [];
+    }
     function makeupModuleCacheKey(month=makeupSelectedMonthKey()){return `makeup-all-open-v1:${month}`}
     function moduleCacheKeyForRoute(r){
       const key=routeDataKey(r);
@@ -1155,7 +1160,7 @@ const SEED = {
           updatedAt: Date.now()
         };
         db.deletedMakeupMonths=payload.deletedMonths||db.deletedMakeupMonths||[];
-        db.makeupAvailableMonths=payload.availableMonths||db.makeupAvailableMonths||[];
+        v26KeepMakeupAvailableMonths(payload.availableMonths);
         // Giữ global để các helper cũ vẫn hoạt động khi đang ở tab Học bù,
         // nhưng dữ liệu tab Học bù chính thức luôn nằm trong db.makeupTabState.
         v20tMergeSupportClasses(payload.supportClasses||[]);
@@ -1163,7 +1168,7 @@ const SEED = {
         db.absenceRecords=payload.absenceRecords||[];
         if(payload.attendanceSessions){
           db.deletedMakeupMonths=payload.deletedMonths||db.deletedMakeupMonths||[];
-          db.makeupAvailableMonths=payload.availableMonths||db.makeupAvailableMonths||[];
+          v26KeepMakeupAvailableMonths(payload.availableMonths);
           db.attendanceSessions={...(db.attendanceSessions||{}),...(payload.attendanceSessions||{})};
         }
         return true;
@@ -2494,7 +2499,7 @@ const SEED = {
             db.absenceRecords=payload.absenceRecords||[];
           }
           db.deletedMakeupMonths=payload.deletedMonths||db.deletedMakeupMonths||[];
-          db.makeupAvailableMonths=payload.availableMonths||db.makeupAvailableMonths||[];
+          v26KeepMakeupAvailableMonths(payload.availableMonths);
           db.attendanceSessions={...(db.attendanceSessions||{}),...(payload.attendanceSessions||{})};
           v18Touch();
           if(!options.skipSave) save();
